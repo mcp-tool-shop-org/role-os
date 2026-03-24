@@ -47,36 +47,40 @@ Role OS 与 Claude 项目的内存集成，而不是替代它。
 
 顺序：首先进行发布检查，然后进行完整的处理流程。在通过所有关键检查之前，不能发布 v1.0.0 版本。
 
-## 核心
+## 32个角色，分布在8个模块中
 
-Role OS 提供了 8 种经过验证的角色合约：
+| 模块 | 角色 |
+|------|-------|
+| **Core** (3) | 协调员、产品策略师、评审专家 |
+| **Engineering** (7) | 前端开发工程师、后端工程师、测试工程师、重构工程师、性能工程师、依赖性审计员、安全评审员 |
+| **Design** (2) | UI设计师、品牌守护者 |
+| **Marketing** (1) | 发布文案撰写员 |
+| **Treatment** (7) | 代码仓库研究员、代码仓库翻译员、文档架构师、元数据管理员、覆盖范围审计员、部署验证员、发布工程师 |
+| **Product** (4) | 反馈综合分析员、路线图优先级排序员、规格文档撰写员、信息架构师 |
+| **Research** (4) | 用户体验研究员、竞争分析师、趋势研究员、用户访谈综合分析员 |
+| **Growth** (4) | 发布策略师、内容策略师、社区管理员、支持问题处理负责人 |
 
-| 角色 | 职责 |
-|------|-----|
-| **Orchestrator** | 将工作分解为最小的、合法的流程链 |
-| **Product Strategist** | 塑造范围并保护产品意图 |
-| **UI Designer** | 设计层次结构、交互和视觉结构 |
-| **Frontend Developer** | 忠实地实现用户界面 |
-| **Backend Engineer** | 实现服务器/数据合约和系统行为 |
-| **Test Engineer** | 根据实际风险进行验证，而不是形式主义 |
-| **Launch Copywriter** | 编写基于实际工作成果的真实信息 |
-| **Critic Reviewer** | 根据合约合规性进行接受或拒绝 |
+每个角色都有完整的说明：任务、适用时机、不适用时机、预期输入、所需输出、质量标准以及升级流程。
 
 ## 快速入门
 
 ```bash
-# Copy the starter pack into your repo
-cp -r starter-pack/ your-repo/.claude/
+npx @mcptoolshop/role-os init
 
-# Fill the four context files
-# - context/product-brief.md   (what this product is)
-# - context/repo-map.md        (how the repo works)
-# - context/current-priorities.md (what's happening now)
-# - context/brand-rules.md     (identity law)
-
-# Create your first packet, route it, review it
-# See starter-pack/handbook.md for the full flow
+# Fill context/ files for your project, then:
+roleos packet new feature
+roleos route .claude/packets/my-feature.md
+roleos review .claude/packets/my-feature.md accept
+roleos status
 ```
+
+## 何时不应使用角色操作系统
+
+- 简单的修复、拼写错误或明显的错误
+- 没有明确输出的探索性研究
+- 可以在一个人5分钟内完成的工作
+- 需要在评审流程完成之前立即发布的紧急修复
+- 追求速度而非结构的工程项目
 
 ## 证据
 
@@ -98,6 +102,14 @@ Role OS 已在两个结构不同的代码仓库中的三个试验项目中得到
 - 相同的核心，不同的语言/领域/技术栈
 - 仅在上下文发生变化的情况下采用，不进行核心合同的修改。
 
+**完整方案 FT-001** (portlight-desktop)
+- 包含7个阶段，配备人员，使用方案模块中的角色
+- 已验证的发布检查机制，无角色冲突
+
+**完整方案 FT-002** (studioflow)
+- 使用相同的方案模块，但结构不同的代码仓库（创意工作区与游戏）
+- 方案模块可移植，无需修改任何说明
+
 ## 核心特性
 
 这些是不可谈判的。如果任何一项特性被削弱，则应拒绝该更改。
@@ -113,14 +125,16 @@ Role OS 已在两个结构不同的代码仓库中的三个试验项目中得到
 ```
 role-os/
   README.md                    ← You are here
+  bin/roleos.mjs               ← CLI entrypoint
+  src/                         ← CLI implementation
   starter-pack/
-    handbook.md                ← How Role OS works (under 500 words)
+    handbook.md                ← How Role OS works
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
-    agents/                    ← 8 role contracts
+    agents/                    ← 32 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
 ```
 
 ## 安全性
@@ -129,11 +143,13 @@ role-os/
 
 ## 状态
 
-**v1.0.0 — 已发布**
+**v1.0.0 — 广泛应用，相同规则**
 
-- v0.1: 运行中 — 3 次试验，3 次通过，0 次角色冲突
-- v0.2: 采用 — 默认工作流程集成到主仓库，可移植到第二个仓库
-- v0.3: 产品化 — 启动包，引导式命令行工具，采用文档
+- v0.1: 试运行 — 3次试用，3次通过，无角色冲突
+- v0.2: 采用 — 默认工作流程，可移植到第二个代码仓库
+- v0.3: 产品化 — 基础模块，启动命令行工具，提供示例
+- v0.4: 方案模块 — 8个方案/身份角色，配备完整人员，可移植到2个代码仓库
+- v1.0.0: 32个角色，分布在8个模块中，完整命令行工具，经过验证的方案，支持多代码仓库移植
 
 ## 许可证
 

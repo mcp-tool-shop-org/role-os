@@ -47,36 +47,40 @@ La **vérification de la livraison** est la porte de qualité de 31 éléments q
 
 Ordre : Vérification de la livraison, puis traitement complet. Aucune version 1.0.0 sans validation des portes obligatoires.
 
-## L'épine dorsale
+## 32 rôles répartis dans 8 ensembles
 
-Role OS est livré avec 8 contrats de rôle éprouvés :
+| Ensemble | Rôles |
+|------|-------|
+| **Core** (3) | Orchestrateur, Stratège produit, Rédacteur de critiques |
+| **Engineering** (7) | Développeur frontend, Ingénieur backend, Ingénieur de tests, Ingénieur de refactoring, Ingénieur des performances, Auditeur de dépendances, Rédacteur de revues de sécurité |
+| **Design** (2) | Concepteur d'interface utilisateur, Gardien de la marque |
+| **Marketing** (1) | Rédacteur de contenu pour le lancement |
+| **Treatment** (7) | Chercheur de référentiels, Traducteur de référentiels, Architecte de documentation, Conservateur de métadonnées, Auditeur de couverture, Vérificateur de déploiement, Ingénieur de publication |
+| **Product** (4) | Synthétiseur de retours, Priorisateur de feuille de route, Rédacteur de spécifications, Architecte de l'information |
+| **Research** (4) | Chercheur UX, Analyste concurrentiel, Chercheur de tendances, Synthétiseur d'entretiens utilisateurs |
+| **Growth** (4) | Stratège de lancement, Stratège de contenu, Responsable de la communauté, Responsable du triage du support |
 
-| Rôle | Fonction |
-|------|-----|
-| **Orchestrator** | Décompose le travail en la chaîne la plus petite et la plus logique. |
-| **Product Strategist** | Définit la portée et protège l'intention du produit. |
-| **UI Designer** | Conçoit la hiérarchie, l'interaction et la structure visuelle. |
-| **Frontend Developer** | Implémente les interfaces utilisateur fidèlement. |
-| **Backend Engineer** | Implémente les contrats serveur/données et le comportement du système. |
-| **Test Engineer** | Vérifie le travail par rapport aux risques réels, et non aux formalités. |
-| **Launch Copywriter** | Rédige des messages véridiques basés sur le travail réalisé. |
-| **Critic Reviewer** | Accepte ou rejette en fonction de la conformité au contrat. |
+Chaque rôle possède un contrat complet : mission, utilisation appropriée, non-utilisation, entrées attendues, sorties requises, critères de qualité et déclencheurs d'escalade.
 
 ## Démarrage rapide
 
 ```bash
-# Copy the starter pack into your repo
-cp -r starter-pack/ your-repo/.claude/
+npx @mcptoolshop/role-os init
 
-# Fill the four context files
-# - context/product-brief.md   (what this product is)
-# - context/repo-map.md        (how the repo works)
-# - context/current-priorities.md (what's happening now)
-# - context/brand-rules.md     (identity law)
-
-# Create your first packet, route it, review it
-# See starter-pack/handbook.md for the full flow
+# Fill context/ files for your project, then:
+roleos packet new feature
+roleos route .claude/packets/my-feature.md
+roleos review .claude/packets/my-feature.md accept
+roleos status
 ```
+
+## Quand ne pas utiliser Role OS
+
+- Corrections ponctuelles, fautes de frappe ou bogues évidents
+- Recherches exploratoires sans résultat défini
+- Travaux qui tiennent dans la tête d'une seule personne en 5 minutes
+- Corrections urgentes qui doivent être déployées avant la fin du processus de revue
+- Projets où la rapidité est privilégiée par rapport à la structure
 
 ## Preuves
 
@@ -98,6 +102,14 @@ Role OS a été testé sur trois types de tâches différents dans deux référe
 - Même structure de base, mais langage/domaine/pile différents.
 - adoption (du produit) avec modification du contexte uniquement – aucune modification du contrat principal.
 
+**Traitement complet FT-001** (portlight-desktop)
+- Traitement complet avec personnel affecté, utilisant les rôles de l'ensemble de traitement
+- Contrôle de qualité avant déploiement prouvé, aucune collision de rôles.
+
+**Traitement complet FT-002** (studioflow)
+- Même ensemble de traitement, référentiel structurellement différent (espace de travail créatif vs jeu)
+- Ensemble de traitement portable – aucune modification de contrat nécessaire.
+
 ## Propriétés essentielles
 
 Ce sont des éléments non négociables. Si une modification affaiblit l'un de ces éléments, elle doit être rejetée.
@@ -113,14 +125,16 @@ Ce sont des éléments non négociables. Si une modification affaiblit l'un de c
 ```
 role-os/
   README.md                    ← You are here
+  bin/roleos.mjs               ← CLI entrypoint
+  src/                         ← CLI implementation
   starter-pack/
-    handbook.md                ← How Role OS works (under 500 words)
+    handbook.md                ← How Role OS works
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
-    agents/                    ← 8 role contracts
+    agents/                    ← 32 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
 ```
 
 ## Sécurité
@@ -129,11 +143,13 @@ Le rôle OS fonctionne **uniquement localement**. Il copie les modèles Markdown
 
 ## Statut
 
-**v1.0.0 — Disponible**
+**v1.0.0 — Surface large, mêmes règles**
 
-- v0.1 : Fonctionnel — 3 essais, 3 acceptations, 0 conflits de rôles.
-- v0.2 : adoption (du produit) — flux de travail par défaut dans le dépôt principal, portable vers un deuxième dépôt.
-- v0.3 : Industrialisation — kit de démarrage, CLI de base, documentation pour l'adoption.
+- v0.1 : Opérationnel – 3 essais, 3 acceptations, 0 collision de rôles
+- v0.2 : adoption (du produit) – flux de travail par défaut dans le référentiel principal, portable vers un deuxième référentiel
+- v0.3 : Productivité – ensemble de démarrage, CLI de démarrage, surface de démonstration
+- v0.4 : Ensemble de traitement – 8 rôles de traitement/identité, traitement complet avec personnel affecté, portable entre 2 référentiels
+- v1.0.0 : 32 rôles répartis dans 8 ensembles, CLI complète, traitement prouvé, portabilité multi-référentiels.
 
 ## Licence
 

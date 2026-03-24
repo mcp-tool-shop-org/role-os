@@ -111,8 +111,8 @@ export const ROLE_CATALOG = [
   },
   {
     name: "Docs Architect", pack: "treatment", phase: 3,
-    keywords: ["documentation", "handbook", "docs", "starlight", "guide", "tutorial", "reference", "api docs"],
-    triggers: ["handbook creation", "docs site", "starlight setup", "documentation restructuring"],
+    keywords: ["documentation", "handbook", "docs", "starlight", "guide", "tutorial", "reference", "api docs", "navigation", "hierarchy", "findability", "labeling", "taxonomy", "sitemap"],
+    triggers: ["handbook creation", "docs site", "starlight setup", "documentation restructuring", "navigation design", "content organization", "information structure"],
     excludeWhen: ["no docs needed"],
     deliverableAffinity: ["Plan"],
   },
@@ -182,12 +182,6 @@ export const ROLE_CATALOG = [
     keywords: ["feedback", "signal", "cluster", "theme", "complaint", "user signal", "sentiment"],
     triggers: ["signal clustering", "theme extraction", "complaint-to-action"],
     excludeWhen: ["no user feedback available"],
-  },
-  {
-    name: "Information Architect", pack: "product", phase: 2,
-    keywords: ["navigation", "hierarchy", "findability", "labeling", "taxonomy", "information structure", "sitemap"],
-    triggers: ["navigation design", "content organization", "cross-surface consistency"],
-    excludeWhen: ["no information structure concern"],
   },
   {
     name: "Roadmap Prioritizer", pack: "product", phase: 1,
@@ -390,7 +384,6 @@ const HANDOFF_HINTS = {
   "Support Triage Lead": "hands off: classified tickets, priority assignments, recurring patterns",
   "Launch Copywriter": "hands off: release notes, positioning copy, announcement drafts",
   "Feedback Synthesizer": "hands off: signal clusters, themes, actionable insights",
-  "Information Architect": "hands off: navigation structure, labeling recommendations, hierarchy",
   "Roadmap Prioritizer": "hands off: sequenced backlog, dependency map, stop-doing list",
   "Spec Writer": "hands off: execution-grade spec, acceptance criteria, edge cases, NFRs",
   "UX Researcher": "hands off: friction inventory, heuristic findings, design input",

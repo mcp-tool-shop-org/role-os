@@ -47,36 +47,40 @@ A **verificação de envio (Shipcheck)** é a porta de qualidade de 31 itens que
 
 Ordem: Verificação de envio primeiro, depois tratamento completo. Não há v1.0.0 sem a aprovação das portas rígidas.
 
-## A espinha dorsal
+## 32 funções em 8 pacotes
 
-O Role OS oferece 8 contratos de função comprovados:
+| Pacote | Funções |
+|------|-------|
+| **Core** (3) | Coordenador, Estrategista de Produto, Avaliador Crítico |
+| **Engineering** (7) | Desenvolvedor Front-end, Engenheiro Back-end, Engenheiro de Testes, Engenheiro de Refatoração, Engenheiro de Desempenho, Auditor de Dependências, Avaliador de Segurança |
+| **Design** (2) | Designer de Interface, Guardião da Marca |
+| **Marketing** (1) | Redator para Lançamento |
+| **Treatment** (7) | Pesquisador de Repositórios, Tradutor de Repositórios, Arquiteto de Documentação, Curador de Metadados, Auditor de Cobertura, Verificador de Implantação, Engenheiro de Lançamento |
+| **Product** (4) | Sintetizador de Feedback, Priorizador de Roteiro, Redator de Especificações, Arquiteto de Informação |
+| **Research** (4) | Pesquisador de Experiência do Usuário, Analista da Concorrência, Pesquisador de Tendências, Sintetizador de Entrevistas com Usuários |
+| **Growth** (4) | Estrategista de Lançamento, Estrategista de Conteúdo, Gerente de Comunidade, Líder de Triagem de Suporte |
 
-| Função | Trabalho |
-|------|-----|
-| **Orchestrator** | Decompõe o trabalho na menor cadeia possível. |
-| **Product Strategist** | Define o escopo e protege a intenção do produto. |
-| **UI Designer** | Projeta a hierarquia, a interação e a estrutura visual. |
-| **Frontend Developer** | Implementa as interfaces voltadas para o usuário de forma fiel. |
-| **Backend Engineer** | Implementa contratos de servidor/dados e comportamento do sistema. |
-| **Test Engineer** | Verifica o trabalho em relação a riscos reais, não a formalidades. |
-| **Launch Copywriter** | Escreve mensagens precisas e baseadas no trabalho realizado. |
-| **Critic Reviewer** | Aceita ou rejeita com base na conformidade com o contrato. |
+Cada função possui um contrato completo: missão, quando usar, quando não usar, entradas esperadas, saídas necessárias, padrão de qualidade e gatilhos de escalonamento.
 
 ## Como começar
 
 ```bash
-# Copy the starter pack into your repo
-cp -r starter-pack/ your-repo/.claude/
+npx @mcptoolshop/role-os init
 
-# Fill the four context files
-# - context/product-brief.md   (what this product is)
-# - context/repo-map.md        (how the repo works)
-# - context/current-priorities.md (what's happening now)
-# - context/brand-rules.md     (identity law)
-
-# Create your first packet, route it, review it
-# See starter-pack/handbook.md for the full flow
+# Fill context/ files for your project, then:
+roleos packet new feature
+roleos route .claude/packets/my-feature.md
+roleos review .claude/packets/my-feature.md accept
+roleos status
 ```
+
+## Quando não usar o Role OS
+
+- Correções simples, erros de digitação ou bugs óbvios
+- Pesquisa exploratória sem saída definida
+- Trabalho que cabe na cabeça de uma pessoa em 5 minutos
+- Correções emergenciais que precisam ser lançadas antes que a cadeia de revisão seja concluída
+- Projetos onde a velocidade é mais importante que a estrutura
 
 ## Evidências
 
@@ -98,6 +102,14 @@ O Role OS foi comprovado em três modelos de teste em dois repositórios estrutu
 - Mesma estrutura básica, diferentes idiomas/domínios/pilhas de tecnologias.
 - Adaptado apenas com mudanças de contexto — sem modificações no contrato principal.
 
+**Tratamento Completo FT-001** (portlight-desktop)
+- Tratamento completo em 7 fases, com funções do Pacote de Tratamento
+- Verificação de lançamento comprovada, sem colisões de funções
+
+**Tratamento Completo FT-002** (studioflow)
+- Mesmo pacote de tratamento, repositório estruturalmente diferente (ambiente de criação vs. jogo)
+- Pacote de tratamento portátil — nenhuma modificação no contrato é necessária
+
 ## Propriedades essenciais
 
 Estas são inegociáveis. Se uma alteração enfraquecer qualquer uma delas, rejeite-a.
@@ -113,14 +125,16 @@ Estas são inegociáveis. Se uma alteração enfraquecer qualquer uma delas, rej
 ```
 role-os/
   README.md                    ← You are here
+  bin/roleos.mjs               ← CLI entrypoint
+  src/                         ← CLI implementation
   starter-pack/
-    handbook.md                ← How Role OS works (under 500 words)
+    handbook.md                ← How Role OS works
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
-    agents/                    ← 8 role contracts
+    agents/                    ← 32 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
 ```
 
 ## Segurança
@@ -129,11 +143,13 @@ O sistema "Role OS" opera **apenas localmente**. Ele copia modelos em formato Ma
 
 ## Status
 
-**v1.0.0 — Lançado**
+**v1.0.0 — Superfície Ampla, Mesmas Regras**
 
-- v0.1: Operacional — 3 testes, 3 aprovações, 0 conflitos de função.
-- v0.2: Adoção — fluxo de trabalho padrão no repositório principal, portável para um segundo repositório.
-- v0.3: Produto final — pacote inicial, CLI de inicialização, documentação de adoção.
+- v0.1: Operacional — 3 testes, 3 aprovações, 0 colisões de funções
+- v0.2: Adoção — fluxo de trabalho padrão no repositório principal, portátil para o segundo repositório
+- v0.3: Produto — pacote inicial, CLI de inicialização, superfície de evidências
+- v0.4: Pacote de Tratamento — 8 funções de tratamento/identidade, tratamento completo com equipe, portátil entre 2 repositórios
+- v1.0.0: 32 funções em 8 pacotes, CLI completa, tratamento comprovado, portabilidade multi-repositório
 
 ## Licença
 

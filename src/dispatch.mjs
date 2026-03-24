@@ -57,7 +57,6 @@ const TOOL_PROFILES = {
 
   // Product
   "Feedback Synthesizer": ["Read", "Glob", "Grep"],
-  "Information Architect":["Read", "Glob", "Grep", "Write"],
   "Roadmap Prioritizer":  ["Read", "Glob", "Grep", "Write"],
   "Spec Writer":          ["Read", "Glob", "Grep", "Write", "Edit"],
 

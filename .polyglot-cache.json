@@ -1,0 +1,2714 @@
+{
+  "version": 1,
+  "entries": {
+    "11ead8591f56ed67": {
+      "translation": "Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role OS",
+      "targetLang": "ja"
+    },
+    "46d20432a5e2b218": {
+      "translation": "Role OSは、役割契約、構造化されたデータパケット、レビュー、エスカレーションを通じて作業を管理する、移植可能でリポジトリに統合されたオペレーティングレイヤーです。これにより、チームは、ドリフト、誤った完了、または主観的な進捗報告なしに、機能開発、統合、ID修正、およびリポジトリ全体の管理を行うことができます。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.",
+      "targetLang": "ja"
+    },
+    "f0d0f0accd3c50fa": {
+      "translation": "Role OSの機能",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "What it does",
+      "targetLang": "ja"
+    },
+    "58361215f3a6b2cc": {
+      "translation": "Role OSは、一般的なAIワークフローで発生する特定の課題を解決します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role OS prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "ja"
+    },
+    "f0078dc06b3ab96e": {
+      "translation": "- **ドリフト（逸脱）**: 各役割は、自身の担当範囲にとどまります。製品の再設計、フロントエンドのスコープ変更、バックエンドの製品方向性の変更を防ぎます。\n- **誤った完了**: 完了の定義は明確です。不備を隠したり、検証を省略したり、別の問題を解決したりする作業は却下されます。\n- **汚染**: 分岐または継承されたプロジェクトには、元のプロジェクトの要素が残存する可能性があります。Role OSは、用語、ビジュアル、および思考モデルにおけるプロジェクト間の逸脱を検出し、却下します。\n- **主観的な進捗**: すべての手渡し作業は構造化されています。すべての判断は、証拠に基づいています。「完了したように感じる」という主観的な判断は認められません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "- **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.\n- **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.\n- **Contamination** — forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.\n- **Vibes-based progress** — every handoff is structured. Every verdict ties to evidence. \"It feels done\" is not a valid state.",
+      "targetLang": "ja"
+    },
+    "2fee4ce31f4e8dc1": {
+      "translation": "Role OSの仕組み",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "How it works",
+      "targetLang": "ja"
+    },
+    "527be0a743a96a05": {
+      "translation": "1. **データパケットの作成**: 作業が完了したときに必要な要素を定義します。\n2. **役割チェーンによるルーティング**: 必要な専門的な役割の最小限のセットで作業をルーティングします。\n3. **各役割による手渡し**: 次の役割が理解しやすいように、構造化された出力を提供します。\n4. **レビュー担当者による契約との照合**: 証拠に基づいて、作業を承認、却下、または保留とします。主観的な判断は行いません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "1. **Create a packet** — define what needs to exist when the work is done\n2. **Route through a chain** — the smallest set of specialized roles needed\n3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role\n4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression",
+      "targetLang": "ja"
+    },
+    "4851c28cd4f3bec5": {
+      "translation": "メモリと継続性",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Memory and continuity",
+      "targetLang": "ja"
+    },
+    "b6c397ef37337c26": {
+      "translation": "Role OSは、メモリレイヤーを所有または複製しません。Claudeプロジェクトのメモリが存在する場合、それが標準的な継続性システムです。リポジトリの情報、決定事項、未解決の問題、および処理履歴は、そこに保存されます。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.",
+      "targetLang": "ja"
+    },
+    "c2d6749c9a334be8": {
+      "translation": "Role OSは、Claudeプロジェクトのメモリと連携します。置き換えるものではありません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role OS integrates with Claude project memory. It does not replace it.",
+      "targetLang": "ja"
+    },
+    "d082a5e637ff20e9": {
+      "translation": "完全な処理と品質チェック",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Full treatment and shipcheck",
+      "targetLang": "ja"
+    },
+    "445981c4e58cd193": {
+      "translation": "完全な処理は、Claudeプロジェクトのメモリ (`memory/full-treatment.md`) に定義された、7段階の標準的なプロセスです。Role OSは、役割契約、手渡し、およびレビューゲートを使用して、処理をルーティングおよびレビューします。このプロセスを再定義するものではありません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.",
+      "targetLang": "ja"
+    },
+    "dbd6943a016e86cb": {
+      "translation": "**品質チェック**は、完全な処理の前に実行される、31項目の品質ゲートです。完全な処理を開始する前に、AからDまでの必須ゲートをすべて通過する必要があります。参照先: `memory/shipcheck.md`.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.",
+      "targetLang": "ja"
+    },
+    "e7d337d5140dc8e7": {
+      "translation": "順序: 品質チェックを最初に実行し、次に完全な処理を行います。必須ゲートをすべて通過しない限り、バージョン1.0.0をリリースできません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.",
+      "targetLang": "ja"
+    },
+    "a0e8f8b8f9e202db": {
+      "translation": "Role OSの構成要素",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "The spine",
+      "targetLang": "ja"
+    },
+    "e78376018bfda4a8": {
+      "translation": "Role OSは、以下の8つの役割契約を標準で提供します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role OS ships 8 proven role contracts:",
+      "targetLang": "ja"
+    },
+    "6e8089669d746c27": {
+      "translation": "役割",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role",
+      "targetLang": "ja"
+    },
+    "592f7b339a21879f": {
+      "translation": "ジョブ",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Job",
+      "targetLang": "ja"
+    },
+    "23505a714540b864": {
+      "translation": "作業を最小限の役割チェーンに分解します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Decomposes work into the smallest lawful chain",
+      "targetLang": "ja"
+    },
+    "5465b12a5ddcc3f4": {
+      "translation": "スコープを定義し、製品の意図を保護します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Shapes scope and protects product intent",
+      "targetLang": "ja"
+    },
+    "b1b0ab57f06f13f2": {
+      "translation": "階層構造、インタラクション、および視覚的な構造を設計します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Designs hierarchy, interaction, and visual structure",
+      "targetLang": "ja"
+    },
+    "3abc086deab2e594": {
+      "translation": "ユーザーインターフェースを忠実に実装します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Implements user-facing surfaces faithfully",
+      "targetLang": "ja"
+    },
+    "c7241a6a87c57938": {
+      "translation": "サーバー/データ契約およびシステム動作を実装します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Implements server/data contracts and system behavior",
+      "targetLang": "ja"
+    },
+    "6c137f23bd1f0463": {
+      "translation": "作業を、形式的な手順ではなく、実際のリスクに基づいて検証します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Verifies work against real risk, not ceremony",
+      "targetLang": "ja"
+    },
+    "fe5ec11db39ac3d7": {
+      "translation": "実装された作業に基づいて、正確な情報を伝えます。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Writes truthful messaging grounded in shipped work",
+      "targetLang": "ja"
+    },
+    "09b08b6966e04732": {
+      "translation": "契約への準拠に基づいて、作業を承認または却下します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Accepts or rejects based on contract compliance",
+      "targetLang": "ja"
+    },
+    "91e85678d132ad8f": {
+      "translation": "クイックスタート",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Quick start",
+      "targetLang": "ja"
+    },
+    "0a811d33a0e7e12e": {
+      "translation": "検証",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Evidence",
+      "targetLang": "ja"
+    },
+    "39c0870b12d46092": {
+      "translation": "Role OSは、構造が異なる2つのリポジトリで、3つの異なるテストケースで検証されました。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role OS was proven across three trial shapes in two structurally different repos:",
+      "targetLang": "ja"
+    },
+    "77ab89a307628763": {
+      "translation": "**テストケース001 — 機能開発** (Crew Screen, Star Freight)\n- 7つの役割チェーン、45のテストシナリオ、役割の衝突は0件。\n- 分岐元のプロジェクトからの汚染を防ぎ、意図しない変更を検出し、問題点を明確にしました。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "**Trial 001 — Feature work** (Crew Screen, Star Freight)\n- 7-role chain, 45 test scenarios, 0 role collisions\n- Prevented contamination from fork ancestor, caught inline invention, surfaced honest blockers",
+      "targetLang": "ja"
+    },
+    "7afd60899f8e23a2": {
+      "translation": "**テストケース002 — 統合** (CampaignState wiring, Star Freight)\n- 5つの役割チェーン、フォールバックによる問題を解決しました。\n- フォールバックテストにより、実際に動作するパスが存在することを確認しました。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "**Trial 002 — Integration work** (CampaignState wiring, Star Freight)\n- 5-role chain, resolved architectural seam without fallback lies\n- Anti-fallback tests proved the live path is real, not placeholder",
+      "targetLang": "ja"
+    },
+    "9128384124b60c65": {
+      "translation": "**テストケース003 — ID管理** (Contamination purge, Star Freight)\n- 6つの役割チェーン、耐久性のあるCIによる汚染防御を含む、51のテストシナリオ。\n- 継承された不整合を修正し、大規模な再設計を回避しました。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "**Trial 003 — Identity work** (Contamination purge, Star Freight)\n- 6-role chain, 51 test scenarios including durable CI contamination defense\n- Repaired inherited fiction drift without collapsing into broad redesign",
+      "targetLang": "ja"
+    },
+    "3634cb97565a4b3f": {
+      "translation": "**移植性テスト** (Personaの一貫性、センサーの挙動)\n- 同じ基本構造を持ちながら、異なる言語、ドメイン、技術スタックを使用\n- コンテキストの変更のみで導入可能。コアとなる契約の変更は行わない。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "**Portability trial** (Persona consistency, sensor-humor)\n- Same spine, different language/domain/stack\n- Adopted with context changes only — no core contract modifications",
+      "targetLang": "ja"
+    },
+    "45a672ca8731d9be": {
+      "translation": "主要な特性",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Core properties",
+      "targetLang": "ja"
+    },
+    "cb80fa58496a0bc4": {
+      "translation": "これらは変更できません。変更によってこれらのいずれかが弱体化する場合は、却下してください。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "These are non-negotiable. If a change weakens any of them, reject it.",
+      "targetLang": "ja"
+    },
+    "dfae7eaac5311354": {
+      "translation": "- ロールの境界が維持される\n- レビューは厳格である\n- エスカレーションは誠実に行われる\n- テスト可能な状態が維持される\n- 移植性は、コア部分の変更ではなく、コンテキストへの適応が必要",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "- Role boundaries hold\n- Review has teeth\n- Escalation stays honest\n- Packets stay testable\n- Portability requires context adaptation, not core surgery",
+      "targetLang": "ja"
+    },
+    "f41d8b5c4501d064": {
+      "translation": "プロジェクト構造",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Project structure",
+      "targetLang": "ja"
+    },
+    "4c41d6ce84660bef": {
+      "translation": "セキュリティ",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Security",
+      "targetLang": "ja"
+    },
+    "3a0f1f31942c4878": {
+      "translation": "Role OSは、**ローカルでのみ**動作します。Markdownテンプレートをコピーし、パケット/判定ファイルを、あなたのリポジトリの`.claude/`ディレクトリに書き込みます。ネットワークへのアクセス、機密情報の取り扱い、テレメトリーの収集は行いません。危険な操作は一切行いません。すべてのファイル書き込みは、デフォルトでファイルが存在する場合はスキップします。詳細については、[SECURITY.md](SECURITY.md) を参照してください。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.",
+      "targetLang": "ja"
+    },
+    "8105677e590065e2": {
+      "translation": "ステータス",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Status",
+      "targetLang": "ja"
+    },
+    "872f5850fae2bfe0": {
+      "translation": "**v1.0.0 — リリース済み**",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "**v1.0.0 — Shipped**",
+      "targetLang": "ja"
+    },
+    "1d6a5e9570d00d53": {
+      "translation": "- v0.1: 稼働中 — 3回のテスト、3回の採用、ロールの競合は0件\n- v0.2: 導入 — メインリポジトリでのデフォルトワークフロー、別のリポジトリへの移植\n- v0.3: 製品化 — スターターパック、初期設定CLI、導入ドキュメント",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, adoption docs",
+      "targetLang": "ja"
+    },
+    "08ea9dfbe36d981b": {
+      "translation": "ライセンス",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "License",
+      "targetLang": "ja"
+    },
+    "e7e3e12e1fe5eda9": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "MIT",
+      "targetLang": "ja"
+    },
+    "033f1f72f24283d2": {
+      "translation": "作成者: <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "model": "translategemma:12b",
+      "timestamp": 1774328004213,
+      "source": "Built by <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "targetLang": "ja"
+    },
+    "f48a23037dd82da7": {
+      "translation": "Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role OS",
+      "targetLang": "fr"
+    },
+    "6bfcec1670e24f5d": {
+      "translation": "Une couche d'abstraction portable et native du référentiel qui dirige le travail à travers des contrats de rôle, des paquets structurés, des revues et des escalades, afin que les équipes puissent réaliser des fonctionnalités, des intégrations, des corrections d'identité et des traitements complets du référentiel, sans dérive, sans fausses déclarations de complétion, ni progrès basés sur des impressions subjectives.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.",
+      "targetLang": "fr"
+    },
+    "fc4ac195d297082b": {
+      "translation": "Ce que cela fait",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "What it does",
+      "targetLang": "fr"
+    },
+    "569fedb30be289f9": {
+      "translation": "Role OS empêche les échecs spécifiques que produisent les flux de travail d'IA génériques :",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role OS prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "fr"
+    },
+    "401730736583a08a": {
+      "translation": "- **Dérive** : les rôles restent dans leur domaine. Le produit ne subit pas de refonte. L'interface utilisateur ne redéfinit pas la portée. Le backend n'invente pas la direction du produit.\n- **Fausse complétion** : la définition de \"terminé\" est concrète. Le travail qui masque des lacunes, saute des vérifications ou résout un problème différent est rejeté.\n- **Contamination** : les projets divisés ou hérités conservent des résidus d'identité. Role OS détecte et rejette les dérives inter-projets en termes de terminologie, de visuels et de modèles mentaux.\n- **Progrès basé sur des impressions** : chaque transmission est structurée. Chaque verdict est étayé par des preuves. \"Cela semble terminé\" n'est pas un état valide.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "- **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.\n- **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.\n- **Contamination** — forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.\n- **Vibes-based progress** — every handoff is structured. Every verdict ties to evidence. \"It feels done\" is not a valid state.",
+      "targetLang": "fr"
+    },
+    "bd900f2b327065ec": {
+      "translation": "Comment cela fonctionne",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "How it works",
+      "targetLang": "fr"
+    },
+    "337920a7fadcc0b1": {
+      "translation": "1. **Créer un paquet** : définir ce qui doit exister lorsque le travail est terminé.\n2. **Diriger à travers une chaîne** : l'ensemble le plus petit de rôles spécialisés nécessaires.\n3. **Chaque rôle produit une transmission** : une sortie structurée qui réduit l'ambiguïté pour le rôle suivant.\n4. **Le critique examine par rapport au contrat** : accepte, rejette ou bloque en fonction des preuves, et non des impressions.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "1. **Create a packet** — define what needs to exist when the work is done\n2. **Route through a chain** — the smallest set of specialized roles needed\n3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role\n4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression",
+      "targetLang": "fr"
+    },
+    "a7de2fd7279cbab8": {
+      "translation": "Mémoire et continuité",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Memory and continuity",
+      "targetLang": "fr"
+    },
+    "3af50c0cb2ead3c9": {
+      "translation": "Role OS ne possède ni ne duplique la couche de mémoire. Lorsqu'une mémoire de projet Claude existe, elle constitue le système de continuité canonique : les faits du référentiel, les décisions, les boucles ouvertes et l'historique des traitements y sont stockés.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.",
+      "targetLang": "fr"
+    },
+    "99e90336e914cb21": {
+      "translation": "Role OS s'intègre à la mémoire du projet Claude. Il ne la remplace pas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role OS integrates with Claude project memory. It does not replace it.",
+      "targetLang": "fr"
+    },
+    "0edd9f1137425a3a": {
+      "translation": "Traitement complet et vérification de la livraison",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Full treatment and shipcheck",
+      "targetLang": "fr"
+    },
+    "e535256fb41e1d39": {
+      "translation": "Le traitement complet est un protocole canonique en 7 phases défini dans la mémoire du projet Claude (`memory/full-treatment.md`). Role OS dirige et examine les traitements à l'aide de contrats de rôle, de transmissions et de passerelles de critique ; il ne redéfinit pas le protocole.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.",
+      "targetLang": "fr"
+    },
+    "d4fff2236df7b43d": {
+      "translation": "La **vérification de la livraison** est la porte de qualité de 31 éléments qui s'exécute avant le traitement complet. Les portes obligatoires A à D doivent être validées avant que tout traitement ne commence. Référence canonique : `memory/shipcheck.md`.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.",
+      "targetLang": "fr"
+    },
+    "dd9273ab84040f58": {
+      "translation": "Ordre : Vérification de la livraison, puis traitement complet. Aucune version 1.0.0 sans validation des portes obligatoires.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.",
+      "targetLang": "fr"
+    },
+    "dbef06d78611bc66": {
+      "translation": "L'épine dorsale",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "The spine",
+      "targetLang": "fr"
+    },
+    "257978226f550a91": {
+      "translation": "Role OS est livré avec 8 contrats de rôle éprouvés :",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role OS ships 8 proven role contracts:",
+      "targetLang": "fr"
+    },
+    "597573c42d9830db": {
+      "translation": "Rôle",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role",
+      "targetLang": "fr"
+    },
+    "7f9aab7d1aa79b0e": {
+      "translation": "Fonction",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Job",
+      "targetLang": "fr"
+    },
+    "4d9778b7faeed8ee": {
+      "translation": "Décompose le travail en la chaîne la plus petite et la plus logique.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Decomposes work into the smallest lawful chain",
+      "targetLang": "fr"
+    },
+    "896ec01e5ccc4a83": {
+      "translation": "Définit la portée et protège l'intention du produit.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Shapes scope and protects product intent",
+      "targetLang": "fr"
+    },
+    "8924e70d0c00826c": {
+      "translation": "Conçoit la hiérarchie, l'interaction et la structure visuelle.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Designs hierarchy, interaction, and visual structure",
+      "targetLang": "fr"
+    },
+    "1130a8983274d951": {
+      "translation": "Implémente les interfaces utilisateur fidèlement.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Implements user-facing surfaces faithfully",
+      "targetLang": "fr"
+    },
+    "d416369bf31b3583": {
+      "translation": "Implémente les contrats serveur/données et le comportement du système.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Implements server/data contracts and system behavior",
+      "targetLang": "fr"
+    },
+    "f2731a57feb031ad": {
+      "translation": "Vérifie le travail par rapport aux risques réels, et non aux formalités.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Verifies work against real risk, not ceremony",
+      "targetLang": "fr"
+    },
+    "629de9d5d5778e83": {
+      "translation": "Rédige des messages véridiques basés sur le travail réalisé.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Writes truthful messaging grounded in shipped work",
+      "targetLang": "fr"
+    },
+    "c880f2de79977a3c": {
+      "translation": "Accepte ou rejette en fonction de la conformité au contrat.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Accepts or rejects based on contract compliance",
+      "targetLang": "fr"
+    },
+    "7b3fa894dced7a0d": {
+      "translation": "Démarrage rapide",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Quick start",
+      "targetLang": "fr"
+    },
+    "39de5d5c6e8c5c8e": {
+      "translation": "Preuves",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Evidence",
+      "targetLang": "fr"
+    },
+    "3e5cc31134ae2a9d": {
+      "translation": "Role OS a été testé sur trois types de tâches différents dans deux référentiels structurellement différents :",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role OS was proven across three trial shapes in two structurally different repos:",
+      "targetLang": "fr"
+    },
+    "54c97afcf78b4acc": {
+      "translation": "**Test 001 — Travail de fonctionnalité** (Écran de l'équipe, Star Freight)\n- Chaîne de 7 rôles, 45 scénarios de test, 0 conflit de rôle.\n- A empêché la contamination provenant de l'ancêtre de la branche, a détecté les inventions improvisées, et a mis en évidence les blocages réels.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "**Trial 001 — Feature work** (Crew Screen, Star Freight)\n- 7-role chain, 45 test scenarios, 0 role collisions\n- Prevented contamination from fork ancestor, caught inline invention, surfaced honest blockers",
+      "targetLang": "fr"
+    },
+    "9d1e31bd58eb5910": {
+      "translation": "**Test 002 — Travail d'intégration** (Câblage de l'état de la campagne, Star Freight)\n- Chaîne de 5 rôles, a résolu la limite architecturale sans mensonges.\n- Les tests anti-fallback ont prouvé que le chemin actif est réel, et non un simple espace réservé.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "**Trial 002 — Integration work** (CampaignState wiring, Star Freight)\n- 5-role chain, resolved architectural seam without fallback lies\n- Anti-fallback tests proved the live path is real, not placeholder",
+      "targetLang": "fr"
+    },
+    "89c839a2e64bbfe9": {
+      "translation": "**Test 003 — Travail d'identité** (Suppression de la contamination, Star Freight)\n- Chaîne de 6 rôles, 51 scénarios de test, y compris une défense durable contre la contamination de l'intégration continue.\n- A corrigé la dérive de la fiction héritée sans se transformer en une refonte complète.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "**Trial 003 — Identity work** (Contamination purge, Star Freight)\n- 6-role chain, 51 test scenarios including durable CI contamination defense\n- Repaired inherited fiction drift without collapsing into broad redesign",
+      "targetLang": "fr"
+    },
+    "d57fc562042e719c": {
+      "translation": "**Phase d'essai de portabilité** (Cohérence des personas, humour lié aux capteurs)\n- Même structure de base, mais langage/domaine/pile différents.\n- adoption (du produit) avec modification du contexte uniquement – aucune modification du contrat principal.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "**Portability trial** (Persona consistency, sensor-humor)\n- Same spine, different language/domain/stack\n- Adopted with context changes only — no core contract modifications",
+      "targetLang": "fr"
+    },
+    "071afe76fca9f740": {
+      "translation": "Propriétés essentielles",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Core properties",
+      "targetLang": "fr"
+    },
+    "cd750395c8d045d1": {
+      "translation": "Ce sont des éléments non négociables. Si une modification affaiblit l'un de ces éléments, elle doit être rejetée.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "These are non-negotiable. If a change weakens any of them, reject it.",
+      "targetLang": "fr"
+    },
+    "4cb7159142bd829a": {
+      "translation": "- Les limites des rôles sont respectées.\n- Les revues sont rigoureuses.\n- Les escalades restent transparentes.\n- Les tests restent réalisables.\n- La portabilité nécessite une adaptation du contexte, et non une modification profonde.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "- Role boundaries hold\n- Review has teeth\n- Escalation stays honest\n- Packets stay testable\n- Portability requires context adaptation, not core surgery",
+      "targetLang": "fr"
+    },
+    "e93a440847fc2abc": {
+      "translation": "Structure du projet",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Project structure",
+      "targetLang": "fr"
+    },
+    "8466119e3ad13873": {
+      "translation": "Sécurité",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Security",
+      "targetLang": "fr"
+    },
+    "75f782b24dfa2a08": {
+      "translation": "Le rôle OS fonctionne **uniquement localement**. Il copie les modèles Markdown et écrit les fichiers de paquets/de verdicts dans le répertoire `.claude/` de votre dépôt. Il n'accède pas au réseau, ne gère pas les secrets et ne collecte pas de données télémétriques. Aucune opération dangereuse n'est effectuée : toutes les écritures de fichiers utilisent par défaut la fonction \"skip-if-exists\". Consultez le fichier [SECURITY.md](SECURITY.md) pour connaître la politique complète.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.",
+      "targetLang": "fr"
+    },
+    "a28b1903efedd58a": {
+      "translation": "Statut",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Status",
+      "targetLang": "fr"
+    },
+    "81675d9f32a7c0f0": {
+      "translation": "**v1.0.0 — Disponible**",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "**v1.0.0 — Shipped**",
+      "targetLang": "fr"
+    },
+    "1f0336e7c25f9344": {
+      "translation": "- v0.1 : Fonctionnel — 3 essais, 3 acceptations, 0 conflits de rôles.\n- v0.2 : adoption (du produit) — flux de travail par défaut dans le dépôt principal, portable vers un deuxième dépôt.\n- v0.3 : Industrialisation — kit de démarrage, CLI de base, documentation pour l'adoption.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, adoption docs",
+      "targetLang": "fr"
+    },
+    "0174ffc9d6992c72": {
+      "translation": "Licence",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "License",
+      "targetLang": "fr"
+    },
+    "578a30e6c813dbde": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "MIT",
+      "targetLang": "fr"
+    },
+    "bfd2be7f82ec587c": {
+      "translation": "Créé par <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a",
+      "model": "translategemma:12b",
+      "timestamp": 1774328054890,
+      "source": "Built by <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "targetLang": "fr"
+    },
+    "f3faf72981b75b6e": {
+      "translation": "रोल ओएस",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Role OS",
+      "targetLang": "hi"
+    },
+    "78527230df04f508": {
+      "translation": "यह एक पोर्टेबल, रिपॉ-आधारित ऑपरेटिंग लेयर है जो रोल अनुबंधों, संरचित पैकेट्स, समीक्षा और एस्केलेशन के माध्यम से काम को निर्देशित करता है, ताकि टीमें बिना किसी विचलन, झूठे समापन या केवल धारणाओं पर आधारित प्रगति दावों के बिना, फीचर कार्य, एकीकरण कार्य, पहचान सुधार और संपूर्ण रिपॉ प्रबंधन कर सकें।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.",
+      "targetLang": "hi"
+    },
+    "8d4c11deafc74044": {
+      "translation": "यह क्या करता है",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "What it does",
+      "targetLang": "hi"
+    },
+    "9c9e444b48c51e35": {
+      "translation": "रोल ओएस उन विशिष्ट विफलताओं को रोकता है जो सामान्य एआई वर्कफ़्लो उत्पन्न करते हैं:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Role OS prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "hi"
+    },
+    "6851eb05d354e01a": {
+      "translation": "- **विचलन (Drift)** — भूमिकाएं अपने दायरे में ही रहती हैं। उत्पाद का पुन: डिज़ाइन नहीं होता है। फ्रंटएंड दायरे को फिर से परिभाषित नहीं करता है। बैकएंड उत्पाद की दिशा का आविष्कार नहीं करता है।\n- **झूठा समापन (False completion)** — 'पूर्ण' की परिभाषा स्पष्ट होती है। वह काम जो कमियों को छिपाता है, सत्यापन को छोड़ देता है, या किसी अलग समस्या को हल करता है, उसे अस्वीकार कर दिया जाता है।\n- **संदूषण (Contamination)** — फोर्क किए गए या विरासत में मिले प्रोजेक्ट्स में पहचान के अवशेष रहते हैं। रोल ओएस शब्दावली, दृश्यों और मानसिक मॉडलों में क्रॉस-प्रोजेक्ट विचलन का पता लगाता है और उसे अस्वीकार करता है।\n- **धारणा-आधारित प्रगति (Vibes-based progress)** — प्रत्येक हैंडऑफ़ संरचित होता है। प्रत्येक निर्णय सबूत पर आधारित होता है। \"यह पूरा हुआ हुआ लगता है\" एक मान्य स्थिति नहीं है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "- **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.\n- **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.\n- **Contamination** — forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.\n- **Vibes-based progress** — every handoff is structured. Every verdict ties to evidence. \"It feels done\" is not a valid state.",
+      "targetLang": "hi"
+    },
+    "7573acd26640d31a": {
+      "translation": "यह कैसे काम करता है",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "How it works",
+      "targetLang": "hi"
+    },
+    "b7c83b41790a72bb": {
+      "translation": "1. **एक पैकेट बनाएं** — परिभाषित करें कि काम पूरा होने पर क्या मौजूद होना चाहिए।\n2. **एक श्रृंखला के माध्यम से रूट करें** — आवश्यक विशेषज्ञ भूमिकाओं का सबसे छोटा सेट।\n3. **प्रत्येक भूमिका एक हैंडऑफ़ उत्पन्न करती है** — संरचित आउटपुट जो अगली भूमिका के लिए अस्पष्टता को कम करता है।\n4. **समीक्षक अनुबंध के विरुद्ध समीक्षा करता है** — सबूत के आधार पर स्वीकार करता है, अस्वीकार करता है, या अवरुद्ध करता है, न कि केवल धारणा के आधार पर।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "1. **Create a packet** — define what needs to exist when the work is done\n2. **Route through a chain** — the smallest set of specialized roles needed\n3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role\n4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression",
+      "targetLang": "hi"
+    },
+    "4592f42e4fc913ea": {
+      "translation": "मेमोरी और निरंतरता",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Memory and continuity",
+      "targetLang": "hi"
+    },
+    "efa80a500144cfc0": {
+      "translation": "रोल ओएस मेमोरी लेयर का स्वामित्व नहीं लेता है और न ही उसे दोहराता है। जहां क्लाउड प्रोजेक्ट मेमोरी मौजूद है, वह निरंतरता की आधिकारिक प्रणाली है — रिपॉ तथ्य, निर्णय, खुले मुद्दे और उपचार इतिहास वहां संग्रहीत होते हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.",
+      "targetLang": "hi"
+    },
+    "36b0b7999be1fff4": {
+      "translation": "रोल ओएस क्लाउड प्रोजेक्ट मेमोरी के साथ एकीकृत होता है। यह इसे प्रतिस्थापित नहीं करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Role OS integrates with Claude project memory. It does not replace it.",
+      "targetLang": "hi"
+    },
+    "127a3ee2f269e601": {
+      "translation": "पूर्ण उपचार और शिपचेक",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Full treatment and shipcheck",
+      "targetLang": "hi"
+    },
+    "f4a1e72f55975994": {
+      "translation": "पूर्ण उपचार एक आधिकारिक 7-चरण प्रोटोकॉल है जो क्लाउड प्रोजेक्ट मेमोरी (`memory/full-treatment.md`) में परिभाषित है। रोल ओएस रोल अनुबंधों, हैंडऑफ़ और समीक्षक गेटों का उपयोग करके उपचारों को रूट और समीक्षा करता है — यह प्रोटोकॉल को फिर से परिभाषित नहीं करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.",
+      "targetLang": "hi"
+    },
+    "931fb4ae0357aab3": {
+      "translation": "**शिपचेक** 31-आइटम गुणवत्ता गेट है जो पूर्ण उपचार से पहले चलता है। किसी भी उपचार को शुरू करने से पहले हार्ड गेट A-D पास होने चाहिए। आधिकारिक संदर्भ: `memory/shipcheck.md`।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.",
+      "targetLang": "hi"
+    },
+    "0a3f8066fc5e611b": {
+      "translation": "क्रम: शिपचेक पहले, फिर पूर्ण उपचार। बिना हार्ड गेट पास किए v1.0.0 नहीं।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.",
+      "targetLang": "hi"
+    },
+    "c00d95ab050cd35a": {
+      "translation": "मुख्य भाग",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "The spine",
+      "targetLang": "hi"
+    },
+    "d52fd940da2ecfd8": {
+      "translation": "रोल ओएस 8 सिद्ध रोल अनुबंधों के साथ आता है:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Role OS ships 8 proven role contracts:",
+      "targetLang": "hi"
+    },
+    "453b86fce34b629f": {
+      "translation": "भूमिका",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Role",
+      "targetLang": "hi"
+    },
+    "2393d8b48d7c8f9a": {
+      "translation": "कार्य",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Job",
+      "targetLang": "hi"
+    },
+    "29f42eae68ccd5be": {
+      "translation": "काम को सबसे छोटे कानूनी श्रृंखला में विभाजित करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Decomposes work into the smallest lawful chain",
+      "targetLang": "hi"
+    },
+    "e8a6f3c951b8162f": {
+      "translation": "दायरे को आकार देता है और उत्पाद के इरादे की रक्षा करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Shapes scope and protects product intent",
+      "targetLang": "hi"
+    },
+    "7457481edae65ef8": {
+      "translation": "पदानुक्रम, इंटरैक्शन और दृश्य संरचना को डिजाइन करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Designs hierarchy, interaction, and visual structure",
+      "targetLang": "hi"
+    },
+    "9f3cd3e2be6b0c4c": {
+      "translation": "उपयोगकर्ता-सामना करने वाले इंटरफेस को सटीक रूप से लागू करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Implements user-facing surfaces faithfully",
+      "targetLang": "hi"
+    },
+    "b84bcec02d031d1f": {
+      "translation": "सर्वर/डेटा अनुबंध और सिस्टम व्यवहार को लागू करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Implements server/data contracts and system behavior",
+      "targetLang": "hi"
+    },
+    "49ac39a31cbad854": {
+      "translation": "वास्तविक जोखिम के खिलाफ काम की जांच करता है, न कि केवल औपचारिकता के आधार पर।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Verifies work against real risk, not ceremony",
+      "targetLang": "hi"
+    },
+    "1ed12b1eae3299b4": {
+      "translation": "सत्यापित काम पर आधारित सटीक संदेश लिखता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Writes truthful messaging grounded in shipped work",
+      "targetLang": "hi"
+    },
+    "f77839c832ec59f5": {
+      "translation": "अनुबंध के अनुपालन के आधार पर स्वीकार या अस्वीकार करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Accepts or rejects based on contract compliance",
+      "targetLang": "hi"
+    },
+    "7563292f8022ac13": {
+      "translation": "शुरुआत कैसे करें",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Quick start",
+      "targetLang": "hi"
+    },
+    "f7ba7f5b2527de2d": {
+      "translation": "सबूत",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106640,
+      "source": "Evidence",
+      "targetLang": "hi"
+    },
+    "4778fd55a707ba91": {
+      "translation": "रोल ओएस को दो संरचनात्मक रूप से भिन्न रिपॉ में तीन परीक्षणों में सिद्ध किया गया है:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "Role OS was proven across three trial shapes in two structurally different repos:",
+      "targetLang": "hi"
+    },
+    "92c1841c3d5ba12b": {
+      "translation": "**परीक्षण 001 — फीचर कार्य** (क्रू स्क्रीन, स्टार फ्रेट)\n- 7-भूमिका श्रृंखला, 45 परीक्षण परिदृश्य, 0 भूमिका टकराव।\n- फोर्क किए गए पूर्वज से संदूषण को रोका, इनलाइन आविष्कार को पकड़ा, ईमानदार अवरोधकों को उजागर किया।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "**Trial 001 — Feature work** (Crew Screen, Star Freight)\n- 7-role chain, 45 test scenarios, 0 role collisions\n- Prevented contamination from fork ancestor, caught inline invention, surfaced honest blockers",
+      "targetLang": "hi"
+    },
+    "5f75d435b3a9687d": {
+      "translation": "**परीक्षण 002 — एकीकरण कार्य** (कैंपेनस्टेट वायरिंग, स्टार फ्रेट)\n- 5-भूमिका श्रृंखला, आर्किटेक्चरल सीम को बिना किसी झूठे समाधान के हल किया।\n- एंटी-फॉलबैक परीक्षणों ने साबित किया कि लाइव पथ वास्तविक है, न कि केवल एक अस्थायी समाधान।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "**Trial 002 — Integration work** (CampaignState wiring, Star Freight)\n- 5-role chain, resolved architectural seam without fallback lies\n- Anti-fallback tests proved the live path is real, not placeholder",
+      "targetLang": "hi"
+    },
+    "cc314da8b0d8f030": {
+      "translation": "**परीक्षण 003 — पहचान कार्य** (संदूषण हटाना, स्टार फ्रेट)\n- 6-भूमिका श्रृंखला, 51 परीक्षण परिदृश्य, जिसमें स्थायी CI संदूषण रक्षा शामिल है।\n- विरासत में मिली त्रुटियों को ठीक किया बिना व्यापक पुन: डिज़ाइन में जाने से बचाया।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "**Trial 003 — Identity work** (Contamination purge, Star Freight)\n- 6-role chain, 51 test scenarios including durable CI contamination defense\n- Repaired inherited fiction drift without collapsing into broad redesign",
+      "targetLang": "hi"
+    },
+    "043086bb0715174c": {
+      "translation": "**पोर्टेबिलिटी परीक्षण** (पर्सोना स्थिरता, सेंसर-हास्य)\n- समान आधार संरचना, लेकिन अलग भाषा/डोमेन/स्टैक।\n- केवल संदर्भ में बदलाव के साथ अपनाया गया है - कोई भी मुख्य अनुबंध संशोधन नहीं।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "**Portability trial** (Persona consistency, sensor-humor)\n- Same spine, different language/domain/stack\n- Adopted with context changes only — no core contract modifications",
+      "targetLang": "hi"
+    },
+    "6f960cf4406e7740": {
+      "translation": "मुख्य विशेषताएं",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "Core properties",
+      "targetLang": "hi"
+    },
+    "34ba69e1bfe28864": {
+      "translation": "ये अपरिवर्तनीय हैं। यदि कोई बदलाव इनमें से किसी भी विशेषता को कमजोर करता है, तो उसे अस्वीकार कर दें।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "These are non-negotiable. If a change weakens any of them, reject it.",
+      "targetLang": "hi"
+    },
+    "70cd7cea2038effe": {
+      "translation": "- भूमिका की सीमाएं बरकरार हैं।\n- समीक्षा प्रक्रिया प्रभावी है।\n- शिकायत प्रक्रिया ईमानदार है।\n- परीक्षण योग्य पैकेट बरकरार हैं।\n- पोर्टेबिलिटी के लिए संदर्भ के अनुकूलन की आवश्यकता होती है, न कि मुख्य संरचना में बदलाव की।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "- Role boundaries hold\n- Review has teeth\n- Escalation stays honest\n- Packets stay testable\n- Portability requires context adaptation, not core surgery",
+      "targetLang": "hi"
+    },
+    "b35df92195b33d24": {
+      "translation": "परियोजना संरचना",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "Project structure",
+      "targetLang": "hi"
+    },
+    "00228de290a9d993": {
+      "translation": "सुरक्षा",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "Security",
+      "targetLang": "hi"
+    },
+    "aba1a462c13c94dd": {
+      "translation": "रोल ओएस केवल **स्थानीय रूप से** काम करता है। यह मार्कडाउन टेम्पलेट्स की प्रतियां बनाता है और आपके रिपॉजिटरी के `.claude/` फ़ोल्डर में पैकेट/निर्णय फ़ाइलें लिखता है। यह नेटवर्क तक नहीं पहुंचता है, गोपनीय जानकारी को नहीं संभालता है, और न ही कोई डेटा एकत्र करता है। कोई भी खतरनाक ऑपरेशन नहीं किया जाता है - सभी फ़ाइल लिखने में डिफ़ॉल्ट रूप से \"यदि मौजूद है तो छोड़ दें\" का उपयोग किया जाता है। पूर्ण नीति के लिए [SECURITY.md](SECURITY.md) देखें।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.",
+      "targetLang": "hi"
+    },
+    "eaa53e354428ae45": {
+      "translation": "स्थिति",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "Status",
+      "targetLang": "hi"
+    },
+    "d548073c4adff4c0": {
+      "translation": "**v1.0.0 — जारी**",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "**v1.0.0 — Shipped**",
+      "targetLang": "hi"
+    },
+    "e2cad262338412e1": {
+      "translation": "- v0.1: परिचालन - 3 परीक्षण, 3 स्वीकृत, 0 भूमिका टकराव।\n- v0.2: अपनाना - मुख्य रिपॉजिटरी में डिफ़ॉल्ट कार्यप्रवाह, दूसरे रिपॉजिटरी में पोर्टेबल।\n- v0.3: उत्पाद निर्माण - स्टार्टर पैक, बूटस्ट्रैप CLI, अपनाने के दस्तावेज़।",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, adoption docs",
+      "targetLang": "hi"
+    },
+    "cfbc372f8058f151": {
+      "translation": "लाइसेंस",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "License",
+      "targetLang": "hi"
+    },
+    "13d3b4f38b3b7282": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "MIT",
+      "targetLang": "hi"
+    },
+    "2fda6988a445ef2b": {
+      "translation": "द्वारा निर्मित: <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a",
+      "model": "translategemma:12b",
+      "timestamp": 1774328106641,
+      "source": "Built by <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "targetLang": "hi"
+    },
+    "71d1dd6bea353cdd": {
+      "translation": "Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145323,
+      "source": "Role OS",
+      "targetLang": "pt"
+    },
+    "4ef077e1f63e8613": {
+      "translation": "Uma camada de sistema operacional portátil e nativa do repositório que direciona o trabalho através de contratos de função, pacotes estruturados, revisões e escalonamento, para que as equipes possam realizar trabalhos de funcionalidade, integração, correção de identidade e tratamento completo do repositório, sem desvios, conclusão falsa ou alegações de progresso baseadas em impressões.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145323,
+      "source": "A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.",
+      "targetLang": "pt"
+    },
+    "8be565b99ee88cd8": {
+      "translation": "O que ele faz",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145323,
+      "source": "What it does",
+      "targetLang": "pt"
+    },
+    "5dbb94e8f0c18572": {
+      "translation": "O Role OS previne as falhas específicas que os fluxos de trabalho de IA genéricos produzem:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145323,
+      "source": "Role OS prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "pt"
+    },
+    "4d222a323060ecf1": {
+      "translation": "- **Desvio (Drift)** — as funções permanecem em seu domínio. O produto não é redesenhado. A interface não redefine o escopo. O backend não inventa a direção do produto.\n- **Conclusão falsa** — a definição de \"concluído\" é concreta. O trabalho que esconde lacunas, ignora a verificação ou resolve um problema diferente é rejeitado.\n- **Contaminação** — projetos bifurcados ou herdados carregam resíduos de identidade. O Role OS detecta e rejeita desvios entre projetos em termos, visuais e modelos mentais.\n- **Progresso baseado em impressões** — cada transferência é estruturada. Cada veredicto está vinculado a evidências. \"Parece pronto\" não é um estado válido.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145323,
+      "source": "- **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.\n- **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.\n- **Contamination** — forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.\n- **Vibes-based progress** — every handoff is structured. Every verdict ties to evidence. \"It feels done\" is not a valid state.",
+      "targetLang": "pt"
+    },
+    "3786fdf0aaf7a7c2": {
+      "translation": "Como funciona",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145323,
+      "source": "How it works",
+      "targetLang": "pt"
+    },
+    "581e69d7cb8a3e0e": {
+      "translation": "1. **Crie um pacote** — defina o que deve existir quando o trabalho estiver concluído.\n2. **Direcione através de uma cadeia** — o menor conjunto de funções especializadas necessárias.\n3. **Cada função produz uma transferência** — uma saída estruturada que reduz a ambiguidade para a próxima função.\n4. **O revisor avalia em relação ao contrato** — aceita, rejeita ou bloqueia com base em evidências, não em impressões.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145323,
+      "source": "1. **Create a packet** — define what needs to exist when the work is done\n2. **Route through a chain** — the smallest set of specialized roles needed\n3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role\n4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression",
+      "targetLang": "pt"
+    },
+    "228191efd929e153": {
+      "translation": "Memória e continuidade",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Memory and continuity",
+      "targetLang": "pt"
+    },
+    "4fdb5e76e5345f50": {
+      "translation": "O Role OS não possui nem duplica a camada de memória. Onde a memória do projeto Claude existe, ela é o sistema de continuidade canônico — os fatos do repositório, decisões, lacunas abertas e histórico de tratamento residem lá.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.",
+      "targetLang": "pt"
+    },
+    "58de1867bf8be6aa": {
+      "translation": "O Role OS se integra com a memória do projeto Claude. Ele não a substitui.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Role OS integrates with Claude project memory. It does not replace it.",
+      "targetLang": "pt"
+    },
+    "f3fa42b19a4a9864": {
+      "translation": "Tratamento completo e verificação de envio",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Full treatment and shipcheck",
+      "targetLang": "pt"
+    },
+    "96901538b470479d": {
+      "translation": "O tratamento completo é um protocolo canônico de 7 fases definido na memória do projeto Claude (`memory/full-treatment.md`). O Role OS direciona e revisa os tratamentos usando contratos de função, transferências e portas de revisão — ele não redefine o protocolo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.",
+      "targetLang": "pt"
+    },
+    "1c429cad6073465a": {
+      "translation": "A **verificação de envio (Shipcheck)** é a porta de qualidade de 31 itens que é executada antes do tratamento completo. As portas rígidas A a D devem ser aprovadas antes que qualquer tratamento comece. Referência canônica: `memory/shipcheck.md`.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.",
+      "targetLang": "pt"
+    },
+    "3f649c6c0893532c": {
+      "translation": "Ordem: Verificação de envio primeiro, depois tratamento completo. Não há v1.0.0 sem a aprovação das portas rígidas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.",
+      "targetLang": "pt"
+    },
+    "635e5a31a133a399": {
+      "translation": "A espinha dorsal",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "The spine",
+      "targetLang": "pt"
+    },
+    "e4a6802b2c039f3e": {
+      "translation": "O Role OS oferece 8 contratos de função comprovados:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Role OS ships 8 proven role contracts:",
+      "targetLang": "pt"
+    },
+    "e8639e95a29ef1fc": {
+      "translation": "Função",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Role",
+      "targetLang": "pt"
+    },
+    "247a8c2e8c346d5f": {
+      "translation": "Trabalho",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Job",
+      "targetLang": "pt"
+    },
+    "03b111396b2a8055": {
+      "translation": "Decompõe o trabalho na menor cadeia possível.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Decomposes work into the smallest lawful chain",
+      "targetLang": "pt"
+    },
+    "d003175faa9e8876": {
+      "translation": "Define o escopo e protege a intenção do produto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Shapes scope and protects product intent",
+      "targetLang": "pt"
+    },
+    "231cc42607115184": {
+      "translation": "Projeta a hierarquia, a interação e a estrutura visual.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Designs hierarchy, interaction, and visual structure",
+      "targetLang": "pt"
+    },
+    "14cd1c2f42f194b5": {
+      "translation": "Implementa as interfaces voltadas para o usuário de forma fiel.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Implements user-facing surfaces faithfully",
+      "targetLang": "pt"
+    },
+    "ab6ba5152f118332": {
+      "translation": "Implementa contratos de servidor/dados e comportamento do sistema.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Implements server/data contracts and system behavior",
+      "targetLang": "pt"
+    },
+    "71ce8e10f7b1e701": {
+      "translation": "Verifica o trabalho em relação a riscos reais, não a formalidades.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Verifies work against real risk, not ceremony",
+      "targetLang": "pt"
+    },
+    "6701e14a5baacf6f": {
+      "translation": "Escreve mensagens precisas e baseadas no trabalho realizado.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Writes truthful messaging grounded in shipped work",
+      "targetLang": "pt"
+    },
+    "b094cc2bd9e4ed86": {
+      "translation": "Aceita ou rejeita com base na conformidade com o contrato.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Accepts or rejects based on contract compliance",
+      "targetLang": "pt"
+    },
+    "8239484ef1dd7afb": {
+      "translation": "Como começar",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Quick start",
+      "targetLang": "pt"
+    },
+    "be57d402d0c13c7a": {
+      "translation": "Evidências",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Evidence",
+      "targetLang": "pt"
+    },
+    "502e69fbc3f83e37": {
+      "translation": "O Role OS foi comprovado em três modelos de teste em dois repositórios estruturalmente diferentes:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Role OS was proven across three trial shapes in two structurally different repos:",
+      "targetLang": "pt"
+    },
+    "8a19131a5daf1eb3": {
+      "translation": "**Teste 001 — Trabalho de funcionalidade** (Tela da Equipe, Star Freight)\n- Cadeia de 7 funções, 45 cenários de teste, 0 conflito de funções.\n- Preveniu a contaminação de um ancestral bifurcado, detectou invenções inline e revelou bloqueios reais.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "**Trial 001 — Feature work** (Crew Screen, Star Freight)\n- 7-role chain, 45 test scenarios, 0 role collisions\n- Prevented contamination from fork ancestor, caught inline invention, surfaced honest blockers",
+      "targetLang": "pt"
+    },
+    "0f301f327315012c": {
+      "translation": "**Teste 002 — Trabalho de integração** (Conexão do Estado da Campanha, Star Freight)\n- Cadeia de 5 funções, resolveu a junção arquitetural sem mentiras de fallback.\n- Testes anti-fallback provaram que o caminho ativo é real, não um espaço reservado.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "**Trial 002 — Integration work** (CampaignState wiring, Star Freight)\n- 5-role chain, resolved architectural seam without fallback lies\n- Anti-fallback tests proved the live path is real, not placeholder",
+      "targetLang": "pt"
+    },
+    "2840a9052367e4a1": {
+      "translation": "**Teste 003 — Trabalho de identidade** (Remoção de contaminação, Star Freight)\n- Cadeia de 6 funções, 51 cenários de teste, incluindo defesa durável contra contaminação do CI.\n- Corrigiu a derivação de ficção herdada sem reverter para uma grande reformulação.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "**Trial 003 — Identity work** (Contamination purge, Star Freight)\n- 6-role chain, 51 test scenarios including durable CI contamination defense\n- Repaired inherited fiction drift without collapsing into broad redesign",
+      "targetLang": "pt"
+    },
+    "84f5dadab5a2dcd5": {
+      "translation": "**Teste de portabilidade** (Consistência da persona, sensibilidade aos sensores)\n- Mesma estrutura básica, diferentes idiomas/domínios/pilhas de tecnologias.\n- Adaptado apenas com mudanças de contexto — sem modificações no contrato principal.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "**Portability trial** (Persona consistency, sensor-humor)\n- Same spine, different language/domain/stack\n- Adopted with context changes only — no core contract modifications",
+      "targetLang": "pt"
+    },
+    "b8d3946c641ea081": {
+      "translation": "Propriedades essenciais",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Core properties",
+      "targetLang": "pt"
+    },
+    "f49c13fde1f4a513": {
+      "translation": "Estas são inegociáveis. Se uma alteração enfraquecer qualquer uma delas, rejeite-a.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "These are non-negotiable. If a change weakens any of them, reject it.",
+      "targetLang": "pt"
+    },
+    "a63f59cfdfc5f14c": {
+      "translation": "- Os limites de função são mantidos.\n- A revisão é rigorosa.\n- A escalação permanece transparente.\n- Os pacotes permanecem testáveis.\n- A portabilidade requer adaptação ao contexto, não alterações profundas na estrutura.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "- Role boundaries hold\n- Review has teeth\n- Escalation stays honest\n- Packets stay testable\n- Portability requires context adaptation, not core surgery",
+      "targetLang": "pt"
+    },
+    "02a057e5f1dd6ea4": {
+      "translation": "Estrutura do projeto",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Project structure",
+      "targetLang": "pt"
+    },
+    "cbbafb6d61133246": {
+      "translation": "Segurança",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Security",
+      "targetLang": "pt"
+    },
+    "265b8e4835661e4e": {
+      "translation": "O sistema \"Role OS\" opera **apenas localmente**. Ele copia modelos em formato Markdown e escreve arquivos de pacotes/resultados no diretório `.claude/` do seu repositório. Ele não acessa a rede, não lida com informações confidenciais e não coleta dados de telemetria. Não há operações perigosas — todas as operações de escrita de arquivos usam a opção \"skip-if-exists\" por padrão. Consulte o arquivo [SECURITY.md](SECURITY.md) para a política completa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.",
+      "targetLang": "pt"
+    },
+    "7531057f66c85d76": {
+      "translation": "Status",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Status",
+      "targetLang": "pt"
+    },
+    "7e35132114a7b3ca": {
+      "translation": "**v1.0.0 — Lançado**",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "**v1.0.0 — Shipped**",
+      "targetLang": "pt"
+    },
+    "b41074e43b8cca59": {
+      "translation": "- v0.1: Operacional — 3 testes, 3 aprovações, 0 conflitos de função.\n- v0.2: Adoção — fluxo de trabalho padrão no repositório principal, portável para um segundo repositório.\n- v0.3: Produto final — pacote inicial, CLI de inicialização, documentação de adoção.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, adoption docs",
+      "targetLang": "pt"
+    },
+    "2aca9b0e72841008": {
+      "translation": "Licença",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "License",
+      "targetLang": "pt"
+    },
+    "312ce0190b306cc2": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "MIT",
+      "targetLang": "pt"
+    },
+    "ebd0b28cfb3b5a49": {
+      "translation": "Desenvolvido por <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a",
+      "model": "translategemma:12b",
+      "timestamp": 1774328145324,
+      "source": "Built by <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "targetLang": "pt"
+    },
+    "e3218b44ba8b1e65": {
+      "translation": "Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179442,
+      "source": "Role OS",
+      "targetLang": "zh"
+    },
+    "0ed12e3ebdbad62c": {
+      "translation": "Role OS 是一种可移植、原生支持代码仓库的操作系统层，它通过角色合约、结构化数据包、评审和升级流程，确保团队在进行功能开发、集成、身份修复以及完整的代码仓库管理时，不会出现偏差、虚报完成情况或基于主观感受的进度报告。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179442,
+      "source": "A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.",
+      "targetLang": "zh"
+    },
+    "e69eb472f86c7cb9": {
+      "translation": "其作用",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179442,
+      "source": "What it does",
+      "targetLang": "zh"
+    },
+    "ca20bdd39bd59146": {
+      "translation": "Role OS 旨在避免通用人工智能工作流程中常见的特定问题：",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Role OS prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "zh"
+    },
+    "1da61e2ba0b2c74a": {
+      "translation": "- **偏差 (Drift)**：每个角色都专注于其职责范围。产品不会被重新设计。前端不会重新定义范围。后端不会自行决定产品方向。\n- **虚报完成 (False completion)**：完成的标准是明确的。隐藏缺陷、跳过验证或解决不同问题的成果会被拒绝。\n- **污染 (Contamination)**：分叉或继承的项目可能包含身份残留。Role OS 可以检测并拒绝跨项目的术语、视觉和思维模式上的偏差。\n- **基于主观感受的进度 (Vibes-based progress)**：每个交接环节都是结构化的。每个结论都必须基于证据。 “感觉完成了” 并不是一个有效的状态。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "- **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.\n- **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.\n- **Contamination** — forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.\n- **Vibes-based progress** — every handoff is structured. Every verdict ties to evidence. \"It feels done\" is not a valid state.",
+      "targetLang": "zh"
+    },
+    "96fff1a6471ac37c": {
+      "translation": "工作原理",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "How it works",
+      "targetLang": "zh"
+    },
+    "95fcae8ea3e501a8": {
+      "translation": "1. **创建数据包 (Create a packet)**：定义完成工作后需要存在的内容。\n2. **通过链条进行处理 (Route through a chain)**：选择完成工作所需的最少且专业的角色集合。\n3. **每个角色进行交接 (Each role produces a handoff)**：提供结构化的输出，以减少对下一个角色的歧义。\n4. **评审员根据合约进行评审 (Critic reviews against contract)**：根据证据，而不是主观印象，接受、拒绝或阻止。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "1. **Create a packet** — define what needs to exist when the work is done\n2. **Route through a chain** — the smallest set of specialized roles needed\n3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role\n4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression",
+      "targetLang": "zh"
+    },
+    "6e76fd47886b7ca2": {
+      "translation": "内存与连续性",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Memory and continuity",
+      "targetLang": "zh"
+    },
+    "c4abd1d4a52bfa60": {
+      "translation": "Role OS 不拥有或复制内存层。如果 Claude 项目中存在内存，它就是标准的连续性系统，代码仓库的事实、决策、未解决的问题和处理历史都存储在那里。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.",
+      "targetLang": "zh"
+    },
+    "c6f6516d81c25e66": {
+      "translation": "Role OS 与 Claude 项目的内存集成，而不是替代它。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Role OS integrates with Claude project memory. It does not replace it.",
+      "targetLang": "zh"
+    },
+    "39e4178fcdfa9cd0": {
+      "translation": "完整的处理流程和发布检查",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Full treatment and shipcheck",
+      "targetLang": "zh"
+    },
+    "14a7c21da608dcb4": {
+      "translation": "完整的处理流程是一个由 7 个阶段组成的规范流程，定义在 Claude 项目的内存中（`memory/full-treatment.md`）。Role OS 使用角色合约、交接和评审环节来处理流程，而不是重新定义该流程。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.",
+      "targetLang": "zh"
+    },
+    "c71a3fb96d03cb3f": {
+      "translation": "**发布检查 (Shipcheck)** 是在完整处理流程之前执行的 31 个项目质量检查。在开始任何处理之前，必须通过 A 到 D 这四个关键检查。参考文档：`memory/shipcheck.md`。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.",
+      "targetLang": "zh"
+    },
+    "233272023159bb41": {
+      "translation": "顺序：首先进行发布检查，然后进行完整的处理流程。在通过所有关键检查之前，不能发布 v1.0.0 版本。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.",
+      "targetLang": "zh"
+    },
+    "27e53af8143994ec": {
+      "translation": "核心",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "The spine",
+      "targetLang": "zh"
+    },
+    "7397c69e9bfeba25": {
+      "translation": "Role OS 提供了 8 种经过验证的角色合约：",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Role OS ships 8 proven role contracts:",
+      "targetLang": "zh"
+    },
+    "dc65bbf1cd89d47a": {
+      "translation": "角色",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Role",
+      "targetLang": "zh"
+    },
+    "59f17ec92a83acbb": {
+      "translation": "职责",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Job",
+      "targetLang": "zh"
+    },
+    "3344ebbf37d29cba": {
+      "translation": "将工作分解为最小的、合法的流程链",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Decomposes work into the smallest lawful chain",
+      "targetLang": "zh"
+    },
+    "dc58adc4fcdf6720": {
+      "translation": "塑造范围并保护产品意图",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Shapes scope and protects product intent",
+      "targetLang": "zh"
+    },
+    "69269680a18cbdc4": {
+      "translation": "设计层次结构、交互和视觉结构",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Designs hierarchy, interaction, and visual structure",
+      "targetLang": "zh"
+    },
+    "b4896e30188e6378": {
+      "translation": "忠实地实现用户界面",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Implements user-facing surfaces faithfully",
+      "targetLang": "zh"
+    },
+    "0e1ccc04fae30842": {
+      "translation": "实现服务器/数据合约和系统行为",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Implements server/data contracts and system behavior",
+      "targetLang": "zh"
+    },
+    "c0646155340361e8": {
+      "translation": "根据实际风险进行验证，而不是形式主义",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Verifies work against real risk, not ceremony",
+      "targetLang": "zh"
+    },
+    "4ac7a98cdf890f6d": {
+      "translation": "编写基于实际工作成果的真实信息",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Writes truthful messaging grounded in shipped work",
+      "targetLang": "zh"
+    },
+    "a228e752583e3822": {
+      "translation": "根据合约合规性进行接受或拒绝",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Accepts or rejects based on contract compliance",
+      "targetLang": "zh"
+    },
+    "1fb369ca8e60a6ad": {
+      "translation": "快速入门",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Quick start",
+      "targetLang": "zh"
+    },
+    "2bf734933855711f": {
+      "translation": "证据",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Evidence",
+      "targetLang": "zh"
+    },
+    "057f3a4d5818c1a6": {
+      "translation": "Role OS 已在两个结构不同的代码仓库中的三个试验项目中得到验证：",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Role OS was proven across three trial shapes in two structurally different repos:",
+      "targetLang": "zh"
+    },
+    "f1ed884affbc77ea": {
+      "translation": "**试验 001 — 功能开发 (Feature work)** (Crew Screen, Star Freight)\n- 7 个角色链，45 个测试场景，0 个角色冲突\n- 避免了从父代码仓库的污染，发现了代码中的即兴创作，并暴露了真实的障碍。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "**Trial 001 — Feature work** (Crew Screen, Star Freight)\n- 7-role chain, 45 test scenarios, 0 role collisions\n- Prevented contamination from fork ancestor, caught inline invention, surfaced honest blockers",
+      "targetLang": "zh"
+    },
+    "871583f03cfae9e3": {
+      "translation": "**试验 002 — 集成 (Integration work)** (CampaignState wiring, Star Freight)\n- 5 个角色链，解决了架构接口问题，避免了虚假的回滚。\n- 抗回滚测试证明了当前路径是真实的，而不是占位符。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "**Trial 002 — Integration work** (CampaignState wiring, Star Freight)\n- 5-role chain, resolved architectural seam without fallback lies\n- Anti-fallback tests proved the live path is real, not placeholder",
+      "targetLang": "zh"
+    },
+    "035fd7e0c29e97a1": {
+      "translation": "**试验 003 — 身份验证 (Identity work)** (Contamination purge, Star Freight)\n- 6 个角色链，51 个测试场景，包括持久的 CI 污染防御\n- 在修复继承的错误偏差时，避免了对整个产品的重新设计。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "**Trial 003 — Identity work** (Contamination purge, Star Freight)\n- 6-role chain, 51 test scenarios including durable CI contamination defense\n- Repaired inherited fiction drift without collapsing into broad redesign",
+      "targetLang": "zh"
+    },
+    "dffddcf5b3c832e3": {
+      "translation": "**可移植性试验**（角色一致性，传感器幽默）\n- 相同的核心，不同的语言/领域/技术栈\n- 仅在上下文发生变化的情况下采用，不进行核心合同的修改。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "**Portability trial** (Persona consistency, sensor-humor)\n- Same spine, different language/domain/stack\n- Adopted with context changes only — no core contract modifications",
+      "targetLang": "zh"
+    },
+    "8672407b71299c3a": {
+      "translation": "核心特性",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Core properties",
+      "targetLang": "zh"
+    },
+    "b01441e8493f1130": {
+      "translation": "这些是不可谈判的。如果任何一项特性被削弱，则应拒绝该更改。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "These are non-negotiable. If a change weakens any of them, reject it.",
+      "targetLang": "zh"
+    },
+    "a967dc2b84830a96": {
+      "translation": "- 角色边界保持不变\n- 审查具有实际效力\n- 升级流程保持诚实\n- 测试用例保持可测试性\n- 可移植性需要根据上下文进行调整，而不是进行核心修改。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "- Role boundaries hold\n- Review has teeth\n- Escalation stays honest\n- Packets stay testable\n- Portability requires context adaptation, not core surgery",
+      "targetLang": "zh"
+    },
+    "f19f5c5cacea9ff1": {
+      "translation": "项目结构",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Project structure",
+      "targetLang": "zh"
+    },
+    "42c62123ad8478c2": {
+      "translation": "安全性",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Security",
+      "targetLang": "zh"
+    },
+    "3e9322331c40693e": {
+      "translation": "角色操作系统仅在本地运行。它复制 Markdown 模板，并将数据包/判决文件写入到您仓库的 `.claude/` 目录中。它不访问网络，不处理敏感信息，也不收集遥测数据。没有危险操作——所有文件写入默认使用“如果存在则跳过”的方式。请参阅 [SECURITY.md](SECURITY.md) 以获取完整策略。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.",
+      "targetLang": "zh"
+    },
+    "32267c3a5dcfbc50": {
+      "translation": "状态",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Status",
+      "targetLang": "zh"
+    },
+    "bba400910670bba2": {
+      "translation": "**v1.0.0 — 已发布**",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "**v1.0.0 — Shipped**",
+      "targetLang": "zh"
+    },
+    "5e21ad29c5cf7b43": {
+      "translation": "- v0.1: 运行中 — 3 次试验，3 次通过，0 次角色冲突\n- v0.2: 采用 — 默认工作流程集成到主仓库，可移植到第二个仓库\n- v0.3: 产品化 — 启动包，引导式命令行工具，采用文档",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, adoption docs",
+      "targetLang": "zh"
+    },
+    "1fb815b9a436fadb": {
+      "translation": "许可证",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "License",
+      "targetLang": "zh"
+    },
+    "3bad90e6b35de752": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "MIT",
+      "targetLang": "zh"
+    },
+    "18bc4501f7fcd9c9": {
+      "translation": "由 <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a> 构建。",
+      "model": "translategemma:12b",
+      "timestamp": 1774328179443,
+      "source": "Built by <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "targetLang": "zh"
+    },
+    "af5fa0a78f626eac": {
+      "translation": "Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role OS",
+      "targetLang": "es"
+    },
+    "a8c8b87fa2ca251c": {
+      "translation": "Una capa de sistema operativo portátil y nativa del repositorio que dirige el trabajo a través de contratos de roles, paquetes estructurados, revisiones y escalamientos, para que los equipos puedan realizar tareas de desarrollo de funciones, integración, corrección de identidad y tratamiento completo del repositorio, sin desviaciones, finalizaciones falsas ni afirmaciones de progreso basadas en impresiones subjetivas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.",
+      "targetLang": "es"
+    },
+    "0e509b9c9203fa41": {
+      "translation": "¿Qué hace?",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "What it does",
+      "targetLang": "es"
+    },
+    "ee007930614988b9": {
+      "translation": "Role OS previene las fallas específicas que producen los flujos de trabajo de IA genéricos:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role OS prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "es"
+    },
+    "0a493fe50e114798": {
+      "translation": "- **Desviación (Drift)**: Los roles se mantienen dentro de su ámbito. El producto no se rediseña. La interfaz de usuario no redefine el alcance. El backend no inventa la dirección del producto.\n- **Finalización falsa**: La definición de \"hecho\" es concreta. El trabajo que oculta deficiencias, omite la verificación o resuelve un problema diferente es rechazado.\n- **Contaminación**: Los proyectos bifurcados o heredados conservan residuos de identidad. Role OS detecta y rechaza las desviaciones entre proyectos en terminología, elementos visuales y modelos mentales.\n- **Progreso basado en impresiones**: Cada transferencia es estructurada. Cada decisión se basa en evidencia. \"Parece que está terminado\" no es un estado válido.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "- **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.\n- **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.\n- **Contamination** — forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.\n- **Vibes-based progress** — every handoff is structured. Every verdict ties to evidence. \"It feels done\" is not a valid state.",
+      "targetLang": "es"
+    },
+    "130a763c03e14db5": {
+      "translation": "¿Cómo funciona?",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "How it works",
+      "targetLang": "es"
+    },
+    "4d3150abcb7fd1aa": {
+      "translation": "1. **Crear un paquete**: Definir qué elementos deben existir cuando se complete el trabajo.\n2. **Dirigir a través de una cadena**: El conjunto más pequeño de roles especializados necesarios.\n3. **Cada rol produce una transferencia**: Una salida estructurada que reduce la ambigüedad para el siguiente rol.\n4. **El revisor evalúa según el contrato**: Acepta, rechaza o bloquea basándose en evidencia, no en impresiones.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "1. **Create a packet** — define what needs to exist when the work is done\n2. **Route through a chain** — the smallest set of specialized roles needed\n3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role\n4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression",
+      "targetLang": "es"
+    },
+    "968021dea152cdba": {
+      "translation": "Memoria y continuidad",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Memory and continuity",
+      "targetLang": "es"
+    },
+    "c2ef276e62ca125a": {
+      "translation": "Role OS no posee ni duplica la capa de memoria. Cuando existe la memoria del proyecto Claude, esta es el sistema de continuidad canónico: los hechos del repositorio, las decisiones, los problemas pendientes y el historial de tratamiento se almacenan allí.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.",
+      "targetLang": "es"
+    },
+    "316cedfbbc399e6d": {
+      "translation": "Role OS se integra con la memoria del proyecto Claude. No la reemplaza.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role OS integrates with Claude project memory. It does not replace it.",
+      "targetLang": "es"
+    },
+    "3530bf3c457289bb": {
+      "translation": "Tratamiento completo y verificación de entrega",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Full treatment and shipcheck",
+      "targetLang": "es"
+    },
+    "b948c0e1cb1f9e2a": {
+      "translation": "El tratamiento completo es un protocolo canónico de 7 fases definido en la memoria del proyecto Claude (`memory/full-treatment.md`). Role OS dirige y revisa los tratamientos utilizando contratos de roles, transferencias y puertas de revisión, y no redefine el protocolo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.",
+      "targetLang": "es"
+    },
+    "491ecbcb9d1139ec": {
+      "translation": "La **verificación de entrega (Shipcheck)** es la puerta de calidad de 31 elementos que se ejecuta antes del tratamiento completo. Las puertas A, B, C y D deben superarse antes de que comience cualquier tratamiento. Referencia canónica: `memory/shipcheck.md`.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.",
+      "targetLang": "es"
+    },
+    "6f5e3489cd1bab55": {
+      "translation": "Orden: Verificación de entrega primero, luego tratamiento completo. No hay versión 1.0.0 sin superar las puertas obligatorias.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.",
+      "targetLang": "es"
+    },
+    "45a1df970ae97a64": {
+      "translation": "La estructura",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "The spine",
+      "targetLang": "es"
+    },
+    "4eb2cfbe47b8b3e9": {
+      "translation": "Role OS incluye 8 contratos de roles probados:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role OS ships 8 proven role contracts:",
+      "targetLang": "es"
+    },
+    "b33c00b41606095f": {
+      "translation": "Rol",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role",
+      "targetLang": "es"
+    },
+    "ac002407fb691dc1": {
+      "translation": "Tarea",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Job",
+      "targetLang": "es"
+    },
+    "be396e92c251580a": {
+      "translation": "Descompone el trabajo en la cadena más pequeña y lógica.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Decomposes work into the smallest lawful chain",
+      "targetLang": "es"
+    },
+    "a441d92673be39ac": {
+      "translation": "Define el alcance y protege la intención del producto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Shapes scope and protects product intent",
+      "targetLang": "es"
+    },
+    "12c52956a4aca41f": {
+      "translation": "Diseña la jerarquía, la interacción y la estructura visual.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Designs hierarchy, interaction, and visual structure",
+      "targetLang": "es"
+    },
+    "7f8727fa36a02e95": {
+      "translation": "Implementa las interfaces de usuario de forma fiel.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Implements user-facing surfaces faithfully",
+      "targetLang": "es"
+    },
+    "0831fb06eb04ffff": {
+      "translation": "Implementa los contratos de servidor/datos y el comportamiento del sistema.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Implements server/data contracts and system behavior",
+      "targetLang": "es"
+    },
+    "ab6308df6f433e6f": {
+      "translation": "Verifica el trabajo en función de riesgos reales, no de formalidades.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Verifies work against real risk, not ceremony",
+      "targetLang": "es"
+    },
+    "afe3793112a0fe0b": {
+      "translation": "Escribe mensajes precisos basados en el trabajo realizado.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Writes truthful messaging grounded in shipped work",
+      "targetLang": "es"
+    },
+    "d4219e59c562a03f": {
+      "translation": "Acepta o rechaza según el cumplimiento del contrato.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Accepts or rejects based on contract compliance",
+      "targetLang": "es"
+    },
+    "c6a94589bfc54406": {
+      "translation": "Cómo empezar",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Quick start",
+      "targetLang": "es"
+    },
+    "874b0f1358399373": {
+      "translation": "Evidencia",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Evidence",
+      "targetLang": "es"
+    },
+    "7c6bfb25fd544e73": {
+      "translation": "Role OS se ha probado en tres tipos de tareas diferentes en dos repositorios con estructuras diferentes:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role OS was proven across three trial shapes in two structurally different repos:",
+      "targetLang": "es"
+    },
+    "42e2f02a9585b7a4": {
+      "translation": "**Prueba 001: Trabajo de funciones** (Pantalla de la tripulación, Star Freight)\n- Cadena de 7 roles, 45 escenarios de prueba, 0 conflictos de roles.\n- Evitó la contaminación de un proyecto derivado, detectó invenciones realizadas directamente y reveló bloqueos reales.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "**Trial 001 — Feature work** (Crew Screen, Star Freight)\n- 7-role chain, 45 test scenarios, 0 role collisions\n- Prevented contamination from fork ancestor, caught inline invention, surfaced honest blockers",
+      "targetLang": "es"
+    },
+    "d03cd41da4fc1b71": {
+      "translation": "**Prueba 002: Trabajo de integración** (Conexión de CampaignState, Star Freight)\n- Cadena de 5 roles, resolvió la interfaz arquitectónica sin soluciones alternativas falsas.\n- Las pruebas anti-fallback demostraron que la ruta activa es real, no un marcador de posición.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "**Trial 002 — Integration work** (CampaignState wiring, Star Freight)\n- 5-role chain, resolved architectural seam without fallback lies\n- Anti-fallback tests proved the live path is real, not placeholder",
+      "targetLang": "es"
+    },
+    "8007a97d34ee4a94": {
+      "translation": "**Prueba 003: Trabajo de identidad** (Eliminación de contaminación, Star Freight)\n- Cadena de 6 roles, 51 escenarios de prueba, incluyendo una defensa duradera contra la contaminación en el sistema de integración continua.\n- Corrigió la desviación de la ficción heredada sin provocar una reestructuración general.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "**Trial 003 — Identity work** (Contamination purge, Star Freight)\n- 6-role chain, 51 test scenarios including durable CI contamination defense\n- Repaired inherited fiction drift without collapsing into broad redesign",
+      "targetLang": "es"
+    },
+    "b71dd97cbbd83223": {
+      "translation": "**Prueba de portabilidad** (Consistencia de la persona, sensor-humor)\n- Misma estructura base, diferentes idioma/dominio/entorno.\n- Se adapta solo con cambios de contexto; no se realizan modificaciones en el contrato principal.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "**Portability trial** (Persona consistency, sensor-humor)\n- Same spine, different language/domain/stack\n- Adopted with context changes only — no core contract modifications",
+      "targetLang": "es"
+    },
+    "6d69888a1f5c673a": {
+      "translation": "Propiedades fundamentales",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Core properties",
+      "targetLang": "es"
+    },
+    "1b1f59b721332456": {
+      "translation": "Estas son innegociables. Si un cambio debilita alguna de ellas, recházalo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "These are non-negotiable. If a change weakens any of them, reject it.",
+      "targetLang": "es"
+    },
+    "ca7b786e78cf355d": {
+      "translation": "- Los límites de los roles se mantienen.\n- La revisión es rigurosa.\n- La escalación se mantiene transparente.\n- Los paquetes siguen siendo verificables.\n- La portabilidad requiere adaptación al contexto, no una modificación profunda.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "- Role boundaries hold\n- Review has teeth\n- Escalation stays honest\n- Packets stay testable\n- Portability requires context adaptation, not core surgery",
+      "targetLang": "es"
+    },
+    "808c0405db55a5df": {
+      "translation": "Estructura del proyecto",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Project structure",
+      "targetLang": "es"
+    },
+    "edb9ecece3282b17": {
+      "translation": "Seguridad",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Security",
+      "targetLang": "es"
+    },
+    "58212d8411fb39e9": {
+      "translation": "El sistema operativo del rol opera **únicamente de forma local**. Copia las plantillas de Markdown y escribe archivos de paquetes/verdictos en el directorio `.claude/` de su repositorio. No accede a la red, no maneja secretos ni recopila datos de telemetría. No se realizan operaciones peligrosas; todas las escrituras de archivos utilizan la opción \"omitir si existe\" de forma predeterminada. Consulte [SECURITY.md](SECURITY.md) para obtener la política completa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.",
+      "targetLang": "es"
+    },
+    "bc143d1ce1653d6a": {
+      "translation": "Estado",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Status",
+      "targetLang": "es"
+    },
+    "f4b53832ea758908": {
+      "translation": "**v1.0.0 — Lanzado**",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "**v1.0.0 — Shipped**",
+      "targetLang": "es"
+    },
+    "98b41687eab69725": {
+      "translation": "- v0.1: Operacional — 3 pruebas, 3 aprobaciones, 0 conflictos de roles.\n- v0.2: Adopción — flujo de trabajo predeterminado en el repositorio principal, portable a un segundo repositorio.\n- v0.3: Productización — paquete de inicio, CLI de configuración inicial, documentación de adopción.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, adoption docs",
+      "targetLang": "es"
+    },
+    "9572f74b6d3f62b1": {
+      "translation": "Licencia",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "License",
+      "targetLang": "es"
+    },
+    "ef863aa3ea773881": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "MIT",
+      "targetLang": "es"
+    },
+    "4de4422789eac672": {
+      "translation": "Creado por <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a",
+      "model": "translategemma:12b",
+      "timestamp": 1774328216823,
+      "source": "Built by <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "targetLang": "es"
+    },
+    "e913cdd86b7fbb54": {
+      "translation": "Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role OS",
+      "targetLang": "it"
+    },
+    "28e5c88d6d77174b": {
+      "translation": "Un livello operativo portatile e integrato che indirizza il lavoro attraverso contratti di ruolo, pacchetti strutturati, revisioni e escalation, in modo che i team possano svolgere attività di sviluppo funzionalità, integrazione, correzione di identità e gestione completa del repository, senza deviazioni, completamenti errati o affermazioni di avanzamento basate su impressioni.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.",
+      "targetLang": "it"
+    },
+    "7a3f850cba096da0": {
+      "translation": "Cosa fa",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "What it does",
+      "targetLang": "it"
+    },
+    "c095a471d8bc692c": {
+      "translation": "Role OS previene i specifici errori che i flussi di lavoro AI generici producono:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role OS prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "it"
+    },
+    "939c50cd4be0cb87": {
+      "translation": "- **Deviazioni (Drift)**: i ruoli rimangono nel loro ambito. Il prodotto non viene ridisegnato. L'interfaccia utente non ridefinisce l'ambito. Il backend non inventa la direzione del prodotto.\n- **Completamenti errati (False completion)**: la definizione di \"completato\" è concreta. Il lavoro che nasconde lacune, omette verifiche o risolve un problema diverso viene rifiutato.\n- **Contaminazione (Contamination)**: i progetti derivati o ereditati contengono residui di identità. Role OS rileva e rifiuta le deviazioni cross-progetto in termini, elementi visivi e modelli mentali.\n- **Avanzamento basato su impressioni (Vibes-based progress)**: ogni passaggio è strutturato. Ogni decisione si basa su prove. \"Sembra fatto\" non è uno stato valido.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "- **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.\n- **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.\n- **Contamination** — forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.\n- **Vibes-based progress** — every handoff is structured. Every verdict ties to evidence. \"It feels done\" is not a valid state.",
+      "targetLang": "it"
+    },
+    "b525d724f397f28f": {
+      "translation": "Come funziona",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "How it works",
+      "targetLang": "it"
+    },
+    "15bd057278c3f2c7": {
+      "translation": "1. **Crea un pacchetto**: definisci cosa deve esistere quando il lavoro è completato.\n2. **Indirizza attraverso una catena**: il più piccolo insieme di ruoli specializzati necessari.\n3. **Ogni ruolo produce un passaggio (handoff)**: un output strutturato che riduce l'ambiguità per il ruolo successivo.\n4. **Il revisore valuta rispetto al contratto**: accetta, rifiuta o blocca in base alle prove, non alle impressioni.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "1. **Create a packet** — define what needs to exist when the work is done\n2. **Route through a chain** — the smallest set of specialized roles needed\n3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role\n4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression",
+      "targetLang": "it"
+    },
+    "d42da774a5d6a4ba": {
+      "translation": "Memoria e continuità",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Memory and continuity",
+      "targetLang": "it"
+    },
+    "63007ccba46fae02": {
+      "translation": "Role OS non possiede né duplica il livello di memoria. Quando esiste la memoria del progetto Claude, questa è il sistema di continuità canonico: i fatti del repository, le decisioni, i problemi aperti e la cronologia delle modifiche sono memorizzati lì.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.",
+      "targetLang": "it"
+    },
+    "46dfb03cad1501bf": {
+      "translation": "Role OS si integra con la memoria del progetto Claude. Non la sostituisce.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role OS integrates with Claude project memory. It does not replace it.",
+      "targetLang": "it"
+    },
+    "378abfed3c9bac6d": {
+      "translation": "Elaborazione completa e controllo di qualità",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Full treatment and shipcheck",
+      "targetLang": "it"
+    },
+    "44d2c3aee178946c": {
+      "translation": "L'elaborazione completa è un protocollo canonico di 7 fasi definito nella memoria del progetto Claude (`memory/full-treatment.md`). Role OS indirizza e valuta le elaborazioni utilizzando contratti di ruolo, passaggi e controlli, ma non ridefinisce il protocollo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.",
+      "targetLang": "it"
+    },
+    "9fa4c0a35cb04374": {
+      "translation": "Il **controllo di qualità (shipcheck)** è il sistema di controllo di 31 elementi che viene eseguito prima dell'elaborazione completa. I controlli obbligatori A-D devono essere superati prima che qualsiasi elaborazione possa iniziare. Riferimento canonico: `memory/shipcheck.md`.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.",
+      "targetLang": "it"
+    },
+    "73f6d9dd2690db87": {
+      "translation": "Ordine: controllo di qualità, quindi elaborazione completa. Nessuna versione 1.0.0 senza aver superato i controlli obbligatori.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.",
+      "targetLang": "it"
+    },
+    "59757048ad88422c": {
+      "translation": "La struttura",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "The spine",
+      "targetLang": "it"
+    },
+    "3869119629b86b62": {
+      "translation": "Role OS include 8 contratti di ruolo collaudati:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role OS ships 8 proven role contracts:",
+      "targetLang": "it"
+    },
+    "7d43b0e575c2a5e2": {
+      "translation": "Ruolo",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role",
+      "targetLang": "it"
+    },
+    "6fd40c695d4f2afc": {
+      "translation": "Lavoro",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Job",
+      "targetLang": "it"
+    },
+    "b16fe384e83deaa5": {
+      "translation": "Decompone il lavoro nella catena più piccola e logica.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Decomposes work into the smallest lawful chain",
+      "targetLang": "it"
+    },
+    "1d83c01a5cebddbe": {
+      "translation": "Definisce l'ambito e protegge l'intento del prodotto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Shapes scope and protects product intent",
+      "targetLang": "it"
+    },
+    "0e48d1e5702f4f23": {
+      "translation": "Progetta la gerarchia, l'interazione e la struttura visiva.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Designs hierarchy, interaction, and visual structure",
+      "targetLang": "it"
+    },
+    "efd5c7ac7a76a625": {
+      "translation": "Implementa le interfacce utente in modo fedele.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Implements user-facing surfaces faithfully",
+      "targetLang": "it"
+    },
+    "52140e90983a0306": {
+      "translation": "Implementa i contratti e il comportamento del server/dati.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Implements server/data contracts and system behavior",
+      "targetLang": "it"
+    },
+    "2f9a5e38effef010": {
+      "translation": "Verifica il lavoro rispetto a rischi reali, non a formalità.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Verifies work against real risk, not ceremony",
+      "targetLang": "it"
+    },
+    "d6a189be364ff8b5": {
+      "translation": "Scrive messaggi veritieri basati sul lavoro completato.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Writes truthful messaging grounded in shipped work",
+      "targetLang": "it"
+    },
+    "3f3eb0d42ef75662": {
+      "translation": "Accetta o rifiuta in base alla conformità al contratto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Accepts or rejects based on contract compliance",
+      "targetLang": "it"
+    },
+    "ffc51555df1d7131": {
+      "translation": "Guida rapida",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Quick start",
+      "targetLang": "it"
+    },
+    "29bfa4661f0074da": {
+      "translation": "Prove",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Evidence",
+      "targetLang": "it"
+    },
+    "79f67fdccb883e6a": {
+      "translation": "Role OS è stato testato in tre scenari diversi in due repository strutturalmente diversi:",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role OS was proven across three trial shapes in two structurally different repos:",
+      "targetLang": "it"
+    },
+    "00483bfe4dad6c14": {
+      "translation": "**Test 001 — Sviluppo funzionalità** (Schermata Crew, Star Freight)\n- Catena di 7 ruoli, 45 scenari di test, 0 conflitti di ruolo.\n- Ha prevenuto la contaminazione da un progetto antenato, ha rilevato modifiche non autorizzate e ha evidenziato i blocchi reali.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "**Trial 001 — Feature work** (Crew Screen, Star Freight)\n- 7-role chain, 45 test scenarios, 0 role collisions\n- Prevented contamination from fork ancestor, caught inline invention, surfaced honest blockers",
+      "targetLang": "it"
+    },
+    "70347df7158407cd": {
+      "translation": "**Test 002 — Integrazione** (Collegamento CampaignState, Star Freight)\n- Catena di 5 ruoli, ha risolto la connessione architetturale senza soluzioni di ripiego.\n- I test anti-fallback hanno dimostrato che il percorso attivo è reale, non un segnaposto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "**Trial 002 — Integration work** (CampaignState wiring, Star Freight)\n- 5-role chain, resolved architectural seam without fallback lies\n- Anti-fallback tests proved the live path is real, not placeholder",
+      "targetLang": "it"
+    },
+    "9d83e480956038dd": {
+      "translation": "**Test 003 — Correzione di identità** (Pulizia della contaminazione, Star Freight)\n- Catena di 6 ruoli, 51 scenari di test, inclusa la difesa duratura contro la contaminazione del sistema di integrazione continua.\n- Ha corretto le incongruenze ereditate senza dover rifare completamente il progetto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "**Trial 003 — Identity work** (Contamination purge, Star Freight)\n- 6-role chain, 51 test scenarios including durable CI contamination defense\n- Repaired inherited fiction drift without collapsing into broad redesign",
+      "targetLang": "it"
+    },
+    "c0764183a45f0a15": {
+      "translation": "**Prova di portabilità** (Coerenza della persona, sensibilità al contesto)\n- Stessa struttura di base, ma con linguaggio/ambito/stack diversi.\n- Adattamento solo al contesto, senza modifiche al contratto principale.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "**Portability trial** (Persona consistency, sensor-humor)\n- Same spine, different language/domain/stack\n- Adopted with context changes only — no core contract modifications",
+      "targetLang": "it"
+    },
+    "e3a7828636266a61": {
+      "translation": "Proprietà fondamentali",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Core properties",
+      "targetLang": "it"
+    },
+    "ad6a1e82d60c43ee": {
+      "translation": "Queste sono non negoziabili. Se una modifica ne indebolisce una, rifiutarla.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "These are non-negotiable. If a change weakens any of them, reject it.",
+      "targetLang": "it"
+    },
+    "75a8d3576551db3d": {
+      "translation": "- I confini dei ruoli rimangono validi.\n- La revisione è efficace.\n- L'escalation rimane trasparente.\n- I pacchetti rimangono testabili.\n- La portabilità richiede adattamento al contesto, non modifiche radicali.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "- Role boundaries hold\n- Review has teeth\n- Escalation stays honest\n- Packets stay testable\n- Portability requires context adaptation, not core surgery",
+      "targetLang": "it"
+    },
+    "d58d52ec2fbcf2de": {
+      "translation": "Struttura del progetto",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Project structure",
+      "targetLang": "it"
+    },
+    "49ec3d573727da5b": {
+      "translation": "Sicurezza",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Security",
+      "targetLang": "it"
+    },
+    "c3f5a5580a9aca79": {
+      "translation": "Il sistema operativo del ruolo opera **solo localmente**. Copia i modelli Markdown e scrive i file dei pacchetti/verdetto nella directory `.claude/` del tuo repository. Non accede alla rete, non gestisce segreti e non raccoglie dati di telemetria. Nessuna operazione pericolosa: tutte le scritture di file utilizzano la funzione \"skip-if-exists\" per impostazione predefinita. Consultare il file [SECURITY.md](SECURITY.md) per la politica completa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.",
+      "targetLang": "it"
+    },
+    "dcc569eca4c93eef": {
+      "translation": "Stato",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Status",
+      "targetLang": "it"
+    },
+    "208e878114b6bd94": {
+      "translation": "**v1.0.0 — Rilasciata**",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "**v1.0.0 — Shipped**",
+      "targetLang": "it"
+    },
+    "eea662bef1549809": {
+      "translation": "- v0.1: Funzionante — 3 prove, 3 accettazioni, 0 conflitti di ruolo.\n- v0.2: Adozione — flusso di lavoro predefinito nel repository principale, portabile a un secondo repository.\n- v0.3: Prodotto — pacchetto di avvio, CLI di bootstrap, documentazione sull'adozione.",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, adoption docs",
+      "targetLang": "it"
+    },
+    "0870aa1dcfea97cc": {
+      "translation": "Licenza",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "License",
+      "targetLang": "it"
+    },
+    "03370a30744b1197": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "MIT",
+      "targetLang": "it"
+    },
+    "a81962b07c9bed08": {
+      "translation": "Creato da <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a",
+      "model": "translategemma:12b",
+      "timestamp": 1774328256847,
+      "source": "Built by <a href=\"https://mcp-tool-shop.github.io/\">MCP Tool Shop</a>",
+      "targetLang": "it"
+    },
+    "edaefe5f8785522f": {
+      "translation": "32の役割、8つのパッケージに分類",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "32 roles across 8 packs",
+      "targetLang": "ja"
+    },
+    "fc4189399b8ca8d6": {
+      "translation": "パッケージ",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Pack",
+      "targetLang": "ja"
+    },
+    "88fa8229e3928a94": {
+      "translation": "役割",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Roles",
+      "targetLang": "ja"
+    },
+    "95fb174cd5deaa67": {
+      "translation": "オーケストレーター、プロダクトストラテジスト、レビュー担当者",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Orchestrator, Product Strategist, Critic Reviewer",
+      "targetLang": "ja"
+    },
+    "81ccc255d001bcf6": {
+      "translation": "フロントエンド開発者、バックエンドエンジニア、テストエンジニア、リファクタリングエンジニア、パフォーマンスエンジニア、依存関係監査担当者、セキュリティレビュー担当者",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer",
+      "targetLang": "ja"
+    },
+    "4d0eb1199c876b3c": {
+      "translation": "UIデザイナー、ブランド担当者",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "UI Designer, Brand Guardian",
+      "targetLang": "ja"
+    },
+    "ac42f89fa07e0dc8": {
+      "translation": "ローンチコピーライター",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Launch Copywriter",
+      "targetLang": "ja"
+    },
+    "2051013ce9b954e9": {
+      "translation": "リポジトリ研究者、リポジトリ翻訳者、ドキュメントアーキテクト、メタデータキュレーター、カバレッジ監査担当者、デプロイ検証担当者、リリースエンジニア",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer",
+      "targetLang": "ja"
+    },
+    "0bbc0a6a32ba34a6": {
+      "translation": "フィードバック合成担当者、ロードマップ優先順位担当者、仕様書作成者、情報アーキテクト",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer, Information Architect",
+      "targetLang": "ja"
+    },
+    "58eea7be7100fc18": {
+      "translation": "UXリサーチャー、競合分析担当者、トレンドリサーチャー、ユーザーインタビュー合成担当者",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer",
+      "targetLang": "ja"
+    },
+    "6f07d73942ab7189": {
+      "translation": "ローンチストラテジスト、コンテンツストラテジスト、コミュニティマネージャー、サポートトリアージリーダー",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Launch Strategist, Content Strategist, Community Manager, Support Triage Lead",
+      "targetLang": "ja"
+    },
+    "f16fcf73e93e5670": {
+      "translation": "各役割には、ミッション、使用するタイミング、使用しないタイミング、期待される入力、必要な出力、品質基準、およびエスカレーション条件が詳細に記載されています。",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers.",
+      "targetLang": "ja"
+    },
+    "0e3ce481a5f21330": {
+      "translation": "Role OSを使用しない場合",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "When not to use Role OS",
+      "targetLang": "ja"
+    },
+    "5b2d1a0fc8dd4ab3": {
+      "translation": "- 単一行の修正、タイプミス、または明白なバグ\n- 明確な出力がない探索的な調査\n- 5分で1人の担当者が完了できる作業\n- レビュープロセスが完了する前にリリースする必要がある緊急の修正\n- 速度を重視し、構造を後回しにしたいプロジェクト",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "- Single-line fixes, typos, or obvious bugs\n- Exploratory research with no defined output\n- Work that fits in one person's head in 5 minutes\n- Emergency hotfixes that need to ship before a review chain completes\n- Projects where you want speed over structure",
+      "targetLang": "ja"
+    },
+    "f5c88ee715be9014": {
+      "translation": "**フルトリートメント FT-001** (portlight-desktop)\n- 7段階の担当者配置によるトリートメント。トリートメントパッケージの役割を使用。\n- 品質チェックが確立されており、役割の競合はゼロ。",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "**Full treatment FT-001** (portlight-desktop)\n- 7-phase staffed treatment with Treatment Pack roles\n- Shipcheck gating proven, zero role collisions",
+      "targetLang": "ja"
+    },
+    "2d780608eabf44d8": {
+      "translation": "**フルトリートメント FT-002** (studioflow)\n- 同じトリートメントパッケージを使用。構造は異なり、リポジトリの内容も異なる（クリエイティブワークスペース vs ゲーム）。\n- トリートメントパッケージは移植可能。契約の変更は不要。",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "**Full treatment FT-002** (studioflow)\n- Same treatment pack, structurally different repo (creative workspace vs game)\n- Treatment Pack portable — no contract modifications needed",
+      "targetLang": "ja"
+    },
+    "ae3226f3ccd6fbba": {
+      "translation": "**v1.0.0 — 基本構造は同じ**",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "**v1.0.0 — Broad Surface, Same Laws**",
+      "targetLang": "ja"
+    },
+    "4c7e0fa2dfb167e7": {
+      "translation": "- v0.1: 運用開始 — 3回のトライアル、3回の承認、役割の競合はゼロ。\n- v0.2: 導入 — メインリポジトリでのデフォルトワークフロー。別のリポジトリへの移植も可能。\n- v0.3: 製品化 — スターターパック、ブートストラップCLI、検証可能な成果物。\n- v0.4: トリートメントパッケージ — 8つのトリートメント/アイデンティティの役割。担当者配置によるフルトリートメント。2つのリポジトリ間で移植可能。\n- v1.0.0: 32の役割、8つのパッケージ。フルCLI、実績のあるトリートメント、マルチリポジトリでの移植性。",
+      "model": "translategemma:12b",
+      "timestamp": 1774332616710,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, evidence surface\n- v0.4: Treatment Pack — 8 treatment/identity roles, full treatment staffed, portable across 2 repos\n- v1.0.0: 32 roles across 8 packs, full CLI, proven treatment, multi-repo portability",
+      "targetLang": "ja"
+    },
+    "0080a702fdcfb254": {
+      "translation": "32 roles en 8 paquetes.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "32 roles across 8 packs",
+      "targetLang": "es"
+    },
+    "258c1e95801aea41": {
+      "translation": "Paquete",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Pack",
+      "targetLang": "es"
+    },
+    "287d15508afa13b4": {
+      "translation": "Roles",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Roles",
+      "targetLang": "es"
+    },
+    "1e19ede05dd0332a": {
+      "translation": "Orquestador, Estratega de Producto, Evaluador Crítico.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Orchestrator, Product Strategist, Critic Reviewer",
+      "targetLang": "es"
+    },
+    "f2acd957eb56a91a": {
+      "translation": "Desarrollador Frontend, Ingeniero Backend, Ingeniero de Pruebas, Ingeniero de Refactorización, Ingeniero de Rendimiento, Auditor de Dependencias, Evaluador de Seguridad.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer",
+      "targetLang": "es"
+    },
+    "f8e6a3659beabec1": {
+      "translation": "Diseñador de Interfaz de Usuario, Guardián de la Marca.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "UI Designer, Brand Guardian",
+      "targetLang": "es"
+    },
+    "e9044d075aa764a6": {
+      "translation": "Redactor para Lanzamiento.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Launch Copywriter",
+      "targetLang": "es"
+    },
+    "18a78b271529ba56": {
+      "translation": "Investigador de Repositorios, Traductor de Repositorios, Arquitecto de Documentación, Curador de Metadatos, Auditor de Cobertura, Verificador de Despliegue, Ingeniero de Lanzamiento.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer",
+      "targetLang": "es"
+    },
+    "ef14d7b7f6f0989f": {
+      "translation": "Sintetizador de Retroalimentación, Priorizador de la Hoja de Ruta, Redactor de Especificaciones, Arquitecto de la Información.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer, Information Architect",
+      "targetLang": "es"
+    },
+    "e496d0b994069f03": {
+      "translation": "Investigador de Experiencia de Usuario, Analista de la Competencia, Investigador de Tendencias, Sintetizador de Entrevistas con Usuarios.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer",
+      "targetLang": "es"
+    },
+    "056661892d843e6a": {
+      "translation": "Estratega de Lanzamiento, Estratega de Contenido, Community Manager, Líder de Soporte.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Launch Strategist, Content Strategist, Community Manager, Support Triage Lead",
+      "targetLang": "es"
+    },
+    "6874b992b821a664": {
+      "translation": "Cada rol tiene un contrato completo: misión, cuándo usar, cuándo no usar, entradas esperadas, salidas requeridas, estándares de calidad y desencadenantes de escalamiento.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers.",
+      "targetLang": "es"
+    },
+    "f32f607bf91fa1a7": {
+      "translation": "Cuándo no usar Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "When not to use Role OS",
+      "targetLang": "es"
+    },
+    "567354e5676a92b3": {
+      "translation": "- Correcciones de una sola línea, errores tipográficos o errores obvios.\n- Investigación exploratoria sin una salida definida.\n- Trabajo que se puede realizar en la mente de una persona en 5 minutos.\n- Correcciones urgentes que deben enviarse antes de que se complete una cadena de revisión.\n- Proyectos donde se prioriza la velocidad sobre la estructura.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "- Single-line fixes, typos, or obvious bugs\n- Exploratory research with no defined output\n- Work that fits in one person's head in 5 minutes\n- Emergency hotfixes that need to ship before a review chain completes\n- Projects where you want speed over structure",
+      "targetLang": "es"
+    },
+    "c99843b21c97bea3": {
+      "translation": "**Tratamiento completo FT-001** (portlight-desktop)\n- Tratamiento con personal en 7 fases con roles del paquete de tratamiento.\n- Verificación de envío probada, sin colisiones de roles.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "**Full treatment FT-001** (portlight-desktop)\n- 7-phase staffed treatment with Treatment Pack roles\n- Shipcheck gating proven, zero role collisions",
+      "targetLang": "es"
+    },
+    "be90b64715aeee43": {
+      "translation": "**Tratamiento completo FT-002** (studioflow)\n- Mismo paquete de tratamiento, repositorio estructuralmente diferente (espacio de trabajo creativo vs. juego).\n- Paquete de tratamiento portátil: no se requieren modificaciones en el contrato.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "**Full treatment FT-002** (studioflow)\n- Same treatment pack, structurally different repo (creative workspace vs game)\n- Treatment Pack portable — no contract modifications needed",
+      "targetLang": "es"
+    },
+    "e41babf7284dc7c6": {
+      "translation": "**v1.0.0 — Superficie Amplia, Mismas Reglas**",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "**v1.0.0 — Broad Surface, Same Laws**",
+      "targetLang": "es"
+    },
+    "c2a14a5380e69a52": {
+      "translation": "- v0.1: Operacional — 3 pruebas, 3 aprobaciones, 0 colisiones de roles.\n- v0.2: Adopción — flujo de trabajo predeterminado en el repositorio principal, portátil a un segundo repositorio.\n- v0.3: Productización — paquete de inicio, CLI de inicio, superficie de pruebas.\n- v0.4: Paquete de tratamiento — 8 roles de tratamiento/identidad, tratamiento completo con personal, portátil entre 2 repositorios.\n- v1.0.0: 32 roles en 8 paquetes, CLI completa, tratamiento probado, portabilidad multi-repositorio.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332638472,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, evidence surface\n- v0.4: Treatment Pack — 8 treatment/identity roles, full treatment staffed, portable across 2 repos\n- v1.0.0: 32 roles across 8 packs, full CLI, proven treatment, multi-repo portability",
+      "targetLang": "es"
+    },
+    "6e3d095fe28ee3c8": {
+      "translation": "32 ruoli in 8 pacchetti",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "32 roles across 8 packs",
+      "targetLang": "it"
+    },
+    "1b5fa24f27e9e468": {
+      "translation": "Pacchetto",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Pack",
+      "targetLang": "it"
+    },
+    "bdabd756209d25e2": {
+      "translation": "Ruoli",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Roles",
+      "targetLang": "it"
+    },
+    "abf2cc3dda668214": {
+      "translation": "Orchestratore, Product Strategist, Recensore",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Orchestrator, Product Strategist, Critic Reviewer",
+      "targetLang": "it"
+    },
+    "b05029a06ce4d596": {
+      "translation": "Sviluppatore Frontend, Ingegnere Backend, Ingegnere di Test, Ingegnere di Refactoring, Ingegnere delle Prestazioni, Revisore delle Dipendenze, Revisore di Sicurezza",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer",
+      "targetLang": "it"
+    },
+    "7e51d1f6dd1a9d6c": {
+      "translation": "UI Designer, Responsabile del Brand",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "UI Designer, Brand Guardian",
+      "targetLang": "it"
+    },
+    "359301204c028a82": {
+      "translation": "Copywriter per il lancio",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Launch Copywriter",
+      "targetLang": "it"
+    },
+    "1e81fa69a2197d78": {
+      "translation": "Ricercatore di Repository, Traduttore di Repository, Architetto della Documentazione, Curatore dei Metadati, Revisore della Copertura, Verificatore del Deployment, Ingegnere del Rilascio",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer",
+      "targetLang": "it"
+    },
+    "a136345a0c08f16f": {
+      "translation": "Sintetizzatore di Feedback, Prioritizzatore della Roadmap, Redattore di Specifiche, Architetto dell'Informazione",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer, Information Architect",
+      "targetLang": "it"
+    },
+    "16d3c0d7bde82245": {
+      "translation": "Ricercatore UX, Analista della Concorrenza, Ricercatore di Tendenze, Sintetizzatore di Interviste con gli Utenti",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer",
+      "targetLang": "it"
+    },
+    "58007c84b2c67ce4": {
+      "translation": "Strategista per il lancio, Strategista dei Contenuti, Community Manager, Responsabile del Supporto",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Launch Strategist, Content Strategist, Community Manager, Support Triage Lead",
+      "targetLang": "it"
+    },
+    "062a088bc9fd7c78": {
+      "translation": "Ogni ruolo ha un contratto completo: missione, quando utilizzare, quando non utilizzare, input previsti, output richiesti, standard di qualità e trigger di escalation.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers.",
+      "targetLang": "it"
+    },
+    "12f1dc8ee599c14f": {
+      "translation": "Quando non utilizzare Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "When not to use Role OS",
+      "targetLang": "it"
+    },
+    "9fb1a8f574453907": {
+      "translation": "- Correzioni di una sola riga, errori di battitura o bug evidenti\n- Ricerche esplorative senza un output definito\n- Lavori che possono essere completati nella mente di una persona in 5 minuti\n- Correzioni urgenti che devono essere rilasciate prima che la catena di revisione sia completa\n- Progetti in cui si privilegia la velocità rispetto alla struttura",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "- Single-line fixes, typos, or obvious bugs\n- Exploratory research with no defined output\n- Work that fits in one person's head in 5 minutes\n- Emergency hotfixes that need to ship before a review chain completes\n- Projects where you want speed over structure",
+      "targetLang": "it"
+    },
+    "acd5c81dd4366ae0": {
+      "translation": "**Trattamento completo FT-001** (portlight-desktop)\n- Trattamento con personale dedicato in 7 fasi, con ruoli del pacchetto di trattamento\n- Controllo di spedizione dimostrato, zero conflitti tra ruoli",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "**Full treatment FT-001** (portlight-desktop)\n- 7-phase staffed treatment with Treatment Pack roles\n- Shipcheck gating proven, zero role collisions",
+      "targetLang": "it"
+    },
+    "e465b83675003b64": {
+      "translation": "**Trattamento completo FT-002** (studioflow)\n- Stesso pacchetto di trattamento, repository strutturalmente diverso (spazio di lavoro creativo vs gioco)\n- Pacchetto di trattamento portatile: non sono necessarie modifiche al contratto",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "**Full treatment FT-002** (studioflow)\n- Same treatment pack, structurally different repo (creative workspace vs game)\n- Treatment Pack portable — no contract modifications needed",
+      "targetLang": "it"
+    },
+    "620c8db1c3379c6b": {
+      "translation": "**v1.0.0 — Superficie ampia, stesse regole**",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "**v1.0.0 — Broad Surface, Same Laws**",
+      "targetLang": "it"
+    },
+    "8f68036e98342123": {
+      "translation": "- v0.1: Operativo — 3 prove, 3 accettazioni, 0 conflitti tra ruoli\n- v0.2: Adozione — flusso di lavoro predefinito nel repository principale, portabile in un secondo repository\n- v0.3: Prodotto — pacchetto di avvio, CLI di bootstrap, superficie di prova\n- v0.4: Pacchetto di trattamento — 8 ruoli di trattamento/identità, trattamento completo con personale dedicato, portabile tra 2 repository\n- v1.0.0: 32 ruoli in 8 pacchetti, CLI completa, trattamento dimostrato, portabilità multi-repository",
+      "model": "translategemma:12b",
+      "timestamp": 1774332659837,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, evidence surface\n- v0.4: Treatment Pack — 8 treatment/identity roles, full treatment staffed, portable across 2 repos\n- v1.0.0: 32 roles across 8 packs, full CLI, proven treatment, multi-repo portability",
+      "targetLang": "it"
+    },
+    "ba50da2d5a489e2e": {
+      "translation": "32 funções em 8 pacotes",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "32 roles across 8 packs",
+      "targetLang": "pt"
+    },
+    "9edd32b0f377a44c": {
+      "translation": "Pacote",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Pack",
+      "targetLang": "pt"
+    },
+    "227c52145824ffa8": {
+      "translation": "Funções",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Roles",
+      "targetLang": "pt"
+    },
+    "22b99d728a95bde5": {
+      "translation": "Coordenador, Estrategista de Produto, Avaliador Crítico",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Orchestrator, Product Strategist, Critic Reviewer",
+      "targetLang": "pt"
+    },
+    "c9ffbffcc68e3c46": {
+      "translation": "Desenvolvedor Front-end, Engenheiro Back-end, Engenheiro de Testes, Engenheiro de Refatoração, Engenheiro de Desempenho, Auditor de Dependências, Avaliador de Segurança",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer",
+      "targetLang": "pt"
+    },
+    "a826ed7f7850cd6d": {
+      "translation": "Designer de Interface, Guardião da Marca",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "UI Designer, Brand Guardian",
+      "targetLang": "pt"
+    },
+    "4193a39c2040c7b4": {
+      "translation": "Redator para Lançamento",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Launch Copywriter",
+      "targetLang": "pt"
+    },
+    "1ff1165b9dbef2fc": {
+      "translation": "Pesquisador de Repositórios, Tradutor de Repositórios, Arquiteto de Documentação, Curador de Metadados, Auditor de Cobertura, Verificador de Implantação, Engenheiro de Lançamento",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer",
+      "targetLang": "pt"
+    },
+    "f05a7cd42f77aca3": {
+      "translation": "Sintetizador de Feedback, Priorizador de Roteiro, Redator de Especificações, Arquiteto de Informação",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer, Information Architect",
+      "targetLang": "pt"
+    },
+    "812067a6dd633f30": {
+      "translation": "Pesquisador de Experiência do Usuário, Analista da Concorrência, Pesquisador de Tendências, Sintetizador de Entrevistas com Usuários",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer",
+      "targetLang": "pt"
+    },
+    "126675ea8d893268": {
+      "translation": "Estrategista de Lançamento, Estrategista de Conteúdo, Gerente de Comunidade, Líder de Triagem de Suporte",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Launch Strategist, Content Strategist, Community Manager, Support Triage Lead",
+      "targetLang": "pt"
+    },
+    "59a4403c74f54e7b": {
+      "translation": "Cada função possui um contrato completo: missão, quando usar, quando não usar, entradas esperadas, saídas necessárias, padrão de qualidade e gatilhos de escalonamento.",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers.",
+      "targetLang": "pt"
+    },
+    "30dd49be696ef454": {
+      "translation": "Quando não usar o Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "When not to use Role OS",
+      "targetLang": "pt"
+    },
+    "a2e1333506bc9ce2": {
+      "translation": "- Correções simples, erros de digitação ou bugs óbvios\n- Pesquisa exploratória sem saída definida\n- Trabalho que cabe na cabeça de uma pessoa em 5 minutos\n- Correções emergenciais que precisam ser lançadas antes que a cadeia de revisão seja concluída\n- Projetos onde a velocidade é mais importante que a estrutura",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "- Single-line fixes, typos, or obvious bugs\n- Exploratory research with no defined output\n- Work that fits in one person's head in 5 minutes\n- Emergency hotfixes that need to ship before a review chain completes\n- Projects where you want speed over structure",
+      "targetLang": "pt"
+    },
+    "2f11d5677a5ef60c": {
+      "translation": "**Tratamento Completo FT-001** (portlight-desktop)\n- Tratamento completo em 7 fases, com funções do Pacote de Tratamento\n- Verificação de lançamento comprovada, sem colisões de funções",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "**Full treatment FT-001** (portlight-desktop)\n- 7-phase staffed treatment with Treatment Pack roles\n- Shipcheck gating proven, zero role collisions",
+      "targetLang": "pt"
+    },
+    "323be46d2c176d0b": {
+      "translation": "**Tratamento Completo FT-002** (studioflow)\n- Mesmo pacote de tratamento, repositório estruturalmente diferente (ambiente de criação vs. jogo)\n- Pacote de tratamento portátil — nenhuma modificação no contrato é necessária",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "**Full treatment FT-002** (studioflow)\n- Same treatment pack, structurally different repo (creative workspace vs game)\n- Treatment Pack portable — no contract modifications needed",
+      "targetLang": "pt"
+    },
+    "004c810431f95542": {
+      "translation": "**v1.0.0 — Superfície Ampla, Mesmas Regras**",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "**v1.0.0 — Broad Surface, Same Laws**",
+      "targetLang": "pt"
+    },
+    "dff92f23575379f3": {
+      "translation": "- v0.1: Operacional — 3 testes, 3 aprovações, 0 colisões de funções\n- v0.2: Adoção — fluxo de trabalho padrão no repositório principal, portátil para o segundo repositório\n- v0.3: Produto — pacote inicial, CLI de inicialização, superfície de evidências\n- v0.4: Pacote de Tratamento — 8 funções de tratamento/identidade, tratamento completo com equipe, portátil entre 2 repositórios\n- v1.0.0: 32 funções em 8 pacotes, CLI completa, tratamento comprovado, portabilidade multi-repositório",
+      "model": "translategemma:12b",
+      "timestamp": 1774332676563,
+      "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, evidence surface\n- v0.4: Treatment Pack — 8 treatment/identity roles, full treatment staffed, portable across 2 repos\n- v1.0.0: 32 roles across 8 packs, full CLI, proven treatment, multi-repo portability",
+      "targetLang": "pt"
+    }
+  }
+}

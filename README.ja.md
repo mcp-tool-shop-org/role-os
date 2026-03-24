@@ -47,36 +47,40 @@ Role OSは、Claudeプロジェクトのメモリと連携します。置き換�
 
 順序: 品質チェックを最初に実行し、次に完全な処理を行います。必須ゲートをすべて通過しない限り、バージョン1.0.0をリリースできません。
 
-## Role OSの構成要素
+## 32の役割、8つのパッケージに分類
 
-Role OSは、以下の8つの役割契約を標準で提供します。
+| パッケージ | 役割 |
+|------|-------|
+| **Core** (3) | オーケストレーター、プロダクトストラテジスト、レビュー担当者 |
+| **Engineering** (7) | フロントエンド開発者、バックエンドエンジニア、テストエンジニア、リファクタリングエンジニア、パフォーマンスエンジニア、依存関係監査担当者、セキュリティレビュー担当者 |
+| **Design** (2) | UIデザイナー、ブランド担当者 |
+| **Marketing** (1) | ローンチコピーライター |
+| **Treatment** (7) | リポジトリ研究者、リポジトリ翻訳者、ドキュメントアーキテクト、メタデータキュレーター、カバレッジ監査担当者、デプロイ検証担当者、リリースエンジニア |
+| **Product** (4) | フィードバック合成担当者、ロードマップ優先順位担当者、仕様書作成者、情報アーキテクト |
+| **Research** (4) | UXリサーチャー、競合分析担当者、トレンドリサーチャー、ユーザーインタビュー合成担当者 |
+| **Growth** (4) | ローンチストラテジスト、コンテンツストラテジスト、コミュニティマネージャー、サポートトリアージリーダー |
 
-| 役割 | ジョブ |
-|------|-----|
-| **Orchestrator** | 作業を最小限の役割チェーンに分解します。 |
-| **Product Strategist** | スコープを定義し、製品の意図を保護します。 |
-| **UI Designer** | 階層構造、インタラクション、および視覚的な構造を設計します。 |
-| **Frontend Developer** | ユーザーインターフェースを忠実に実装します。 |
-| **Backend Engineer** | サーバー/データ契約およびシステム動作を実装します。 |
-| **Test Engineer** | 作業を、形式的な手順ではなく、実際のリスクに基づいて検証します。 |
-| **Launch Copywriter** | 実装された作業に基づいて、正確な情報を伝えます。 |
-| **Critic Reviewer** | 契約への準拠に基づいて、作業を承認または却下します。 |
+各役割には、ミッション、使用するタイミング、使用しないタイミング、期待される入力、必要な出力、品質基準、およびエスカレーション条件が詳細に記載されています。
 
 ## クイックスタート
 
 ```bash
-# Copy the starter pack into your repo
-cp -r starter-pack/ your-repo/.claude/
+npx @mcptoolshop/role-os init
 
-# Fill the four context files
-# - context/product-brief.md   (what this product is)
-# - context/repo-map.md        (how the repo works)
-# - context/current-priorities.md (what's happening now)
-# - context/brand-rules.md     (identity law)
-
-# Create your first packet, route it, review it
-# See starter-pack/handbook.md for the full flow
+# Fill context/ files for your project, then:
+roleos packet new feature
+roleos route .claude/packets/my-feature.md
+roleos review .claude/packets/my-feature.md accept
+roleos status
 ```
+
+## Role OSを使用しない場合
+
+- 単一行の修正、タイプミス、または明白なバグ
+- 明確な出力がない探索的な調査
+- 5分で1人の担当者が完了できる作業
+- レビュープロセスが完了する前にリリースする必要がある緊急の修正
+- 速度を重視し、構造を後回しにしたいプロジェクト
 
 ## 検証
 
@@ -98,6 +102,14 @@ Role OSは、構造が異なる2つのリポジトリで、3つの異なるテ�
 - 同じ基本構造を持ちながら、異なる言語、ドメイン、技術スタックを使用
 - コンテキストの変更のみで導入可能。コアとなる契約の変更は行わない。
 
+**フルトリートメント FT-001** (portlight-desktop)
+- 7段階の担当者配置によるトリートメント。トリートメントパッケージの役割を使用。
+- 品質チェックが確立されており、役割の競合はゼロ。
+
+**フルトリートメント FT-002** (studioflow)
+- 同じトリートメントパッケージを使用。構造は異なり、リポジトリの内容も異なる（クリエイティブワークスペース vs ゲーム）。
+- トリートメントパッケージは移植可能。契約の変更は不要。
+
 ## 主要な特性
 
 これらは変更できません。変更によってこれらのいずれかが弱体化する場合は、却下してください。
@@ -113,14 +125,16 @@ Role OSは、構造が異なる2つのリポジトリで、3つの異なるテ�
 ```
 role-os/
   README.md                    ← You are here
+  bin/roleos.mjs               ← CLI entrypoint
+  src/                         ← CLI implementation
   starter-pack/
-    handbook.md                ← How Role OS works (under 500 words)
+    handbook.md                ← How Role OS works
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
-    agents/                    ← 8 role contracts
+    agents/                    ← 32 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
 ```
 
 ## セキュリティ
@@ -129,11 +143,13 @@ Role OSは、**ローカルでのみ**動作します。Markdownテンプレー�
 
 ## ステータス
 
-**v1.0.0 — リリース済み**
+**v1.0.0 — 基本構造は同じ**
 
-- v0.1: 稼働中 — 3回のテスト、3回の採用、ロールの競合は0件
-- v0.2: 導入 — メインリポジトリでのデフォルトワークフロー、別のリポジトリへの移植
-- v0.3: 製品化 — スターターパック、初期設定CLI、導入ドキュメント
+- v0.1: 運用開始 — 3回のトライアル、3回の承認、役割の競合はゼロ。
+- v0.2: 導入 — メインリポジトリでのデフォルトワークフロー。別のリポジトリへの移植も可能。
+- v0.3: 製品化 — スターターパック、ブートストラップCLI、検証可能な成果物。
+- v0.4: トリートメントパッケージ — 8つのトリートメント/アイデンティティの役割。担当者配置によるフルトリートメント。2つのリポジトリ間で移植可能。
+- v1.0.0: 32の役割、8つのパッケージ。フルCLI、実績のあるトリートメント、マルチリポジトリでの移植性。
 
 ## ライセンス
 

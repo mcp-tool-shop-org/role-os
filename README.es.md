@@ -47,36 +47,40 @@ La **verificación de entrega (Shipcheck)** es la puerta de calidad de 31 elemen
 
 Orden: Verificación de entrega primero, luego tratamiento completo. No hay versión 1.0.0 sin superar las puertas obligatorias.
 
-## La estructura
+## 32 roles en 8 paquetes
 
-Role OS incluye 8 contratos de roles probados:
+| Paquete | Roles |
+|------|-------|
+| **Core** (3) | Orquestador, Estratega de Producto, Evaluador Crítico. |
+| **Engineering** (7) | Desarrollador Frontend, Ingeniero Backend, Ingeniero de Pruebas, Ingeniero de Refactorización, Ingeniero de Rendimiento, Auditor de Dependencias, Evaluador de Seguridad. |
+| **Design** (2) | Diseñador de Interfaz de Usuario, Guardián de la Marca. |
+| **Marketing** (1) | Redactor para Lanzamiento. |
+| **Treatment** (7) | Investigador de Repositorios, Traductor de Repositorios, Arquitecto de Documentación, Curador de Metadatos, Auditor de Cobertura, Verificador de Despliegue, Ingeniero de Lanzamiento. |
+| **Product** (4) | Sintetizador de Retroalimentación, Priorizador de la Hoja de Ruta, Redactor de Especificaciones, Arquitecto de la Información. |
+| **Research** (4) | Investigador de Experiencia de Usuario, Analista de la Competencia, Investigador de Tendencias, Sintetizador de Entrevistas con Usuarios. |
+| **Growth** (4) | Estratega de Lanzamiento, Estratega de Contenido, Community Manager, Líder de Soporte. |
 
-| Rol | Tarea |
-|------|-----|
-| **Orchestrator** | Descompone el trabajo en la cadena más pequeña y lógica. |
-| **Product Strategist** | Define el alcance y protege la intención del producto. |
-| **UI Designer** | Diseña la jerarquía, la interacción y la estructura visual. |
-| **Frontend Developer** | Implementa las interfaces de usuario de forma fiel. |
-| **Backend Engineer** | Implementa los contratos de servidor/datos y el comportamiento del sistema. |
-| **Test Engineer** | Verifica el trabajo en función de riesgos reales, no de formalidades. |
-| **Launch Copywriter** | Escribe mensajes precisos basados en el trabajo realizado. |
-| **Critic Reviewer** | Acepta o rechaza según el cumplimiento del contrato. |
+Cada rol tiene un contrato completo: misión, cuándo usar, cuándo no usar, entradas esperadas, salidas requeridas, estándares de calidad y desencadenantes de escalamiento.
 
 ## Cómo empezar
 
 ```bash
-# Copy the starter pack into your repo
-cp -r starter-pack/ your-repo/.claude/
+npx @mcptoolshop/role-os init
 
-# Fill the four context files
-# - context/product-brief.md   (what this product is)
-# - context/repo-map.md        (how the repo works)
-# - context/current-priorities.md (what's happening now)
-# - context/brand-rules.md     (identity law)
-
-# Create your first packet, route it, review it
-# See starter-pack/handbook.md for the full flow
+# Fill context/ files for your project, then:
+roleos packet new feature
+roleos route .claude/packets/my-feature.md
+roleos review .claude/packets/my-feature.md accept
+roleos status
 ```
+
+## Cuándo no usar Role OS
+
+- Correcciones de una sola línea, errores tipográficos o errores obvios.
+- Investigación exploratoria sin una salida definida.
+- Trabajo que se puede realizar en la mente de una persona en 5 minutos.
+- Correcciones urgentes que deben enviarse antes de que se complete una cadena de revisión.
+- Proyectos donde se prioriza la velocidad sobre la estructura.
 
 ## Evidencia
 
@@ -98,6 +102,14 @@ Role OS se ha probado en tres tipos de tareas diferentes en dos repositorios con
 - Misma estructura base, diferentes idioma/dominio/entorno.
 - Se adapta solo con cambios de contexto; no se realizan modificaciones en el contrato principal.
 
+**Tratamiento completo FT-001** (portlight-desktop)
+- Tratamiento con personal en 7 fases con roles del paquete de tratamiento.
+- Verificación de envío probada, sin colisiones de roles.
+
+**Tratamiento completo FT-002** (studioflow)
+- Mismo paquete de tratamiento, repositorio estructuralmente diferente (espacio de trabajo creativo vs. juego).
+- Paquete de tratamiento portátil: no se requieren modificaciones en el contrato.
+
 ## Propiedades fundamentales
 
 Estas son innegociables. Si un cambio debilita alguna de ellas, recházalo.
@@ -113,14 +125,16 @@ Estas son innegociables. Si un cambio debilita alguna de ellas, recházalo.
 ```
 role-os/
   README.md                    ← You are here
+  bin/roleos.mjs               ← CLI entrypoint
+  src/                         ← CLI implementation
   starter-pack/
-    handbook.md                ← How Role OS works (under 500 words)
+    handbook.md                ← How Role OS works
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
-    agents/                    ← 8 role contracts
+    agents/                    ← 32 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
 ```
 
 ## Seguridad
@@ -129,11 +143,13 @@ El sistema operativo del rol opera **únicamente de forma local**. Copia las pla
 
 ## Estado
 
-**v1.0.0 — Lanzado**
+**v1.0.0 — Superficie Amplia, Mismas Reglas**
 
-- v0.1: Operacional — 3 pruebas, 3 aprobaciones, 0 conflictos de roles.
-- v0.2: Adopción — flujo de trabajo predeterminado en el repositorio principal, portable a un segundo repositorio.
-- v0.3: Productización — paquete de inicio, CLI de configuración inicial, documentación de adopción.
+- v0.1: Operacional — 3 pruebas, 3 aprobaciones, 0 colisiones de roles.
+- v0.2: Adopción — flujo de trabajo predeterminado en el repositorio principal, portátil a un segundo repositorio.
+- v0.3: Productización — paquete de inicio, CLI de inicio, superficie de pruebas.
+- v0.4: Paquete de tratamiento — 8 roles de tratamiento/identidad, tratamiento completo con personal, portátil entre 2 repositorios.
+- v1.0.0: 32 roles en 8 paquetes, CLI completa, tratamiento probado, portabilidad multi-repositorio.
 
 ## Licencia
 

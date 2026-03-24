@@ -47,36 +47,40 @@ Il **controllo di qualità (shipcheck)** è il sistema di controllo di 31 elemen
 
 Ordine: controllo di qualità, quindi elaborazione completa. Nessuna versione 1.0.0 senza aver superato i controlli obbligatori.
 
-## La struttura
+## 32 ruoli in 8 pacchetti
 
-Role OS include 8 contratti di ruolo collaudati:
+| Pacchetto | Ruoli |
+|------|-------|
+| **Core** (3) | Orchestratore, Product Strategist, Recensore |
+| **Engineering** (7) | Sviluppatore Frontend, Ingegnere Backend, Ingegnere di Test, Ingegnere di Refactoring, Ingegnere delle Prestazioni, Revisore delle Dipendenze, Revisore di Sicurezza |
+| **Design** (2) | UI Designer, Responsabile del Brand |
+| **Marketing** (1) | Copywriter per il lancio |
+| **Treatment** (7) | Ricercatore di Repository, Traduttore di Repository, Architetto della Documentazione, Curatore dei Metadati, Revisore della Copertura, Verificatore del Deployment, Ingegnere del Rilascio |
+| **Product** (4) | Sintetizzatore di Feedback, Prioritizzatore della Roadmap, Redattore di Specifiche, Architetto dell'Informazione |
+| **Research** (4) | Ricercatore UX, Analista della Concorrenza, Ricercatore di Tendenze, Sintetizzatore di Interviste con gli Utenti |
+| **Growth** (4) | Strategista per il lancio, Strategista dei Contenuti, Community Manager, Responsabile del Supporto |
 
-| Ruolo | Lavoro |
-|------|-----|
-| **Orchestrator** | Decompone il lavoro nella catena più piccola e logica. |
-| **Product Strategist** | Definisce l'ambito e protegge l'intento del prodotto. |
-| **UI Designer** | Progetta la gerarchia, l'interazione e la struttura visiva. |
-| **Frontend Developer** | Implementa le interfacce utente in modo fedele. |
-| **Backend Engineer** | Implementa i contratti e il comportamento del server/dati. |
-| **Test Engineer** | Verifica il lavoro rispetto a rischi reali, non a formalità. |
-| **Launch Copywriter** | Scrive messaggi veritieri basati sul lavoro completato. |
-| **Critic Reviewer** | Accetta o rifiuta in base alla conformità al contratto. |
+Ogni ruolo ha un contratto completo: missione, quando utilizzare, quando non utilizzare, input previsti, output richiesti, standard di qualità e trigger di escalation.
 
 ## Guida rapida
 
 ```bash
-# Copy the starter pack into your repo
-cp -r starter-pack/ your-repo/.claude/
+npx @mcptoolshop/role-os init
 
-# Fill the four context files
-# - context/product-brief.md   (what this product is)
-# - context/repo-map.md        (how the repo works)
-# - context/current-priorities.md (what's happening now)
-# - context/brand-rules.md     (identity law)
-
-# Create your first packet, route it, review it
-# See starter-pack/handbook.md for the full flow
+# Fill context/ files for your project, then:
+roleos packet new feature
+roleos route .claude/packets/my-feature.md
+roleos review .claude/packets/my-feature.md accept
+roleos status
 ```
+
+## Quando non utilizzare Role OS
+
+- Correzioni di una sola riga, errori di battitura o bug evidenti
+- Ricerche esplorative senza un output definito
+- Lavori che possono essere completati nella mente di una persona in 5 minuti
+- Correzioni urgenti che devono essere rilasciate prima che la catena di revisione sia completa
+- Progetti in cui si privilegia la velocità rispetto alla struttura
 
 ## Prove
 
@@ -98,6 +102,14 @@ Role OS è stato testato in tre scenari diversi in due repository strutturalment
 - Stessa struttura di base, ma con linguaggio/ambito/stack diversi.
 - Adattamento solo al contesto, senza modifiche al contratto principale.
 
+**Trattamento completo FT-001** (portlight-desktop)
+- Trattamento con personale dedicato in 7 fasi, con ruoli del pacchetto di trattamento
+- Controllo di spedizione dimostrato, zero conflitti tra ruoli
+
+**Trattamento completo FT-002** (studioflow)
+- Stesso pacchetto di trattamento, repository strutturalmente diverso (spazio di lavoro creativo vs gioco)
+- Pacchetto di trattamento portatile: non sono necessarie modifiche al contratto
+
 ## Proprietà fondamentali
 
 Queste sono non negoziabili. Se una modifica ne indebolisce una, rifiutarla.
@@ -113,14 +125,16 @@ Queste sono non negoziabili. Se una modifica ne indebolisce una, rifiutarla.
 ```
 role-os/
   README.md                    ← You are here
+  bin/roleos.mjs               ← CLI entrypoint
+  src/                         ← CLI implementation
   starter-pack/
-    handbook.md                ← How Role OS works (under 500 words)
+    handbook.md                ← How Role OS works
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
-    agents/                    ← 8 role contracts
+    agents/                    ← 32 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
 ```
 
 ## Sicurezza
@@ -129,11 +143,13 @@ Il sistema operativo del ruolo opera **solo localmente**. Copia i modelli Markdo
 
 ## Stato
 
-**v1.0.0 — Rilasciata**
+**v1.0.0 — Superficie ampia, stesse regole**
 
-- v0.1: Funzionante — 3 prove, 3 accettazioni, 0 conflitti di ruolo.
-- v0.2: Adozione — flusso di lavoro predefinito nel repository principale, portabile a un secondo repository.
-- v0.3: Prodotto — pacchetto di avvio, CLI di bootstrap, documentazione sull'adozione.
+- v0.1: Operativo — 3 prove, 3 accettazioni, 0 conflitti tra ruoli
+- v0.2: Adozione — flusso di lavoro predefinito nel repository principale, portabile in un secondo repository
+- v0.3: Prodotto — pacchetto di avvio, CLI di bootstrap, superficie di prova
+- v0.4: Pacchetto di trattamento — 8 ruoli di trattamento/identità, trattamento completo con personale dedicato, portabile tra 2 repository
+- v1.0.0: 32 ruoli in 8 pacchetti, CLI completa, trattamento dimostrato, portabilità multi-repository
 
 ## Licenza
 

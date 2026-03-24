@@ -12,8 +12,8 @@ import {
 // ── Catalog completeness ──────────────────────────────────────────────────────
 
 describe("ROLE_CATALOG", () => {
-  it("has exactly 32 roles", () => {
-    assert.equal(ROLE_CATALOG.length, 32);
+  it("has exactly 31 roles (Information Architect merged into Docs Architect)", () => {
+    assert.equal(ROLE_CATALOG.length, 31);
   });
 
   it("every role has required fields", () => {
@@ -267,5 +267,79 @@ describe("detectType", () => {
 
   it("reads explicit packet type header", () => {
     assert.equal(detectType("## Packet Type\nintegration\n\nWire things"), "integration");
+  });
+});
+
+// ── Disambiguation pressure tests ─────────────────────────────────────────────
+// Ambiguous packets that must resolve to the RIGHT role, not a near-neighbor.
+
+describe("role disambiguation (Pass 3)", () => {
+  function topRole(content, type = "feature") {
+    const scored = ROLE_CATALOG
+      .filter(r => !r.alwaysInclude)
+      .map(r => ({ name: r.name, ...scoreRole(r, content, type, null) }))
+      .filter(r => r.score >= MIN_SCORE_THRESHOLD)
+      .sort((a, b) => b.score - a.score);
+    return scored[0]?.name || null;
+  }
+
+  it("Product Strategist wins over Spec Writer for scope framing", () => {
+    const top = topRole("We need to frame the product problem and decide scope. Prioritize tradeoffs and user value.");
+    assert.equal(top, "Product Strategist");
+  });
+
+  it("Spec Writer wins over Product Strategist for acceptance criteria", () => {
+    const top = topRole("Write an execution-grade spec with acceptance criteria, edge cases, and non-functional requirements.");
+    assert.equal(top, "Spec Writer");
+  });
+
+  it("Roadmap Prioritizer wins for sequencing/backlog", () => {
+    const top = topRole("Sequence the backlog by leverage and dependency. What should we stop doing?");
+    assert.equal(top, "Roadmap Prioritizer");
+  });
+
+  it("Test Engineer wins over Coverage Auditor for implementation testing", () => {
+    const top = topRole("Write tests for this new API endpoint. Cover edge cases and verify regression defense.");
+    assert.equal(top, "Test Engineer");
+  });
+
+  it("Coverage Auditor wins over Test Engineer for test quality audit", () => {
+    const top = topRole("Assess test coverage truthfully. Find false confidence and untested paths. Identify missing defense.");
+    assert.equal(top, "Coverage Auditor");
+  });
+
+  it("Docs Architect wins for documentation AND information structure", () => {
+    const top = topRole("Restructure the documentation. Fix navigation hierarchy, improve findability, and build a Starlight handbook.");
+    assert.equal(top, "Docs Architect");
+  });
+
+  it("Launch Strategist wins over Launch Copywriter for launch planning", () => {
+    const top = topRole("Plan the launch with channel selection, timing, proof packaging, and success criteria for go-to-market.");
+    assert.equal(top, "Launch Strategist");
+  });
+
+  it("Launch Copywriter wins over Launch Strategist for writing copy", () => {
+    const top = topRole("Write the release notes copy, positioning messaging, and announcement text for the new version.");
+    assert.equal(top, "Launch Copywriter");
+  });
+
+  it("Performance Engineer wins for profiling, not general Backend", () => {
+    const top = topRole("Profile the hot path for latency regression. Run benchmarks and check the performance budget.");
+    assert.equal(top, "Performance Engineer");
+  });
+
+  it("Security Reviewer wins for security, not general Backend", () => {
+    const top = topRole("Security review: check for injection, auth bypass, secrets exposure, and OWASP patterns.");
+    assert.equal(top, "Security Reviewer");
+  });
+
+  it("Brand Guardian wins for identity contamination, not Metadata Curator", () => {
+    const top = topRole("Audit for identity contamination and fork residue. Check terminology consistency and replacement doctrine.");
+    assert.equal(top, "Brand Guardian");
+  });
+
+  it("Metadata Curator wins for package metadata, not Brand Guardian", () => {
+    const top = topRole("Audit the package.json manifest, fix badges, update homepage and registry metadata.");
+    assert.equal(top, "Metadata Curator");
   });
 });
