@@ -33,6 +33,10 @@ Role OS prevents the specific failures that generic AI workflows produce:
 3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role
 4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression
 
+## Org rollout state
+
+Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.
+
 ## Memory and continuity
 
 Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.
