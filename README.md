@@ -4,7 +4,7 @@
   <img src="assets/logo.png" alt="Role OS" width="400">
 </p>
 
-A portable, repo-native operating layer that routes work through role contracts, memory, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.
+A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.
 
 ## What it does
 
@@ -22,22 +22,19 @@ Role OS prevents the specific failures that generic AI workflows produce:
 3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role
 4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression
 
-## Memory
+## Memory and continuity
 
-Memory gives Claude continuity across sessions. Without it, every session restarts from zero.
+Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.
 
-| File | Purpose |
-|------|---------|
-| `memory/repo-facts.md` | Stable truths: stack, entrypoints, seams, constraints |
-| `memory/decisions.md` | Important choices that should not be re-argued |
-| `memory/open-loops.md` | Unresolved items: blockers, deferred work, risks |
-| `memory/treatment-history.md` | Ledger of full treatments with findings and outcomes |
+Role OS integrates with Claude project memory. It does not replace it.
 
-## Full treatment
+## Full treatment and shipcheck
 
-A full treatment is a repo-wide examination, not a narrow packet. It verifies repo truth, reads and updates memory, scans across product/architecture/contamination/testing/CI, decomposes findings by problem shape, and produces prioritized output.
+Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.
 
-A treatment is **not complete** if memory was not read or updated, or if repo truth was not verified.
+**Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.
+
+Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.
 
 ## The spine
 
@@ -112,11 +109,7 @@ role-os/
     agents/                    ← 8 role contracts
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment
-    memory/                    ← Repo-local continuity across sessions
-    packets/                   ← Active and completed work units
-    reviews/                   ← Active and completed verdicts
-    status/                    ← Current repo operating state
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
 ```
 
 ## Security
