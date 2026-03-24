@@ -4,7 +4,7 @@
   <img src="assets/logo.png" alt="Role OS" width="400">
 </p>
 
-A repo-native operating layer where specialized roles execute work through contracts, handoffs, review, and escalation.
+A portable, repo-native operating layer that routes work through role contracts, memory, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.
 
 ## What it does
 
@@ -21,6 +21,23 @@ Role OS prevents the specific failures that generic AI workflows produce:
 2. **Route through a chain** — the smallest set of specialized roles needed
 3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role
 4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression
+
+## Memory
+
+Memory gives Claude continuity across sessions. Without it, every session restarts from zero.
+
+| File | Purpose |
+|------|---------|
+| `memory/repo-facts.md` | Stable truths: stack, entrypoints, seams, constraints |
+| `memory/decisions.md` | Important choices that should not be re-argued |
+| `memory/open-loops.md` | Unresolved items: blockers, deferred work, risks |
+| `memory/treatment-history.md` | Ledger of full treatments with findings and outcomes |
+
+## Full treatment
+
+A full treatment is a repo-wide examination, not a narrow packet. It verifies repo truth, reads and updates memory, scans across product/architecture/contamination/testing/CI, decomposes findings by problem shape, and produces prioritized output.
+
+A treatment is **not complete** if memory was not read or updated, or if repo truth was not verified.
 
 ## The spine
 
@@ -89,13 +106,17 @@ These are non-negotiable. If a change weakens any of them, reject it.
 role-os/
   README.md                    ← You are here
   starter-pack/
-    handbook.md                ← How Role OS works (under 400 words)
+    handbook.md                ← How Role OS works (under 500 words)
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
     agents/                    ← 8 role contracts
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
+    memory/                    ← Repo-local continuity across sessions
+    packets/                   ← Active and completed work units
+    reviews/                   ← Active and completed verdicts
+    status/                    ← Current repo operating state
 ```
 
 ## Security
