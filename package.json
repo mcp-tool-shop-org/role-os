@@ -1,0 +1,42 @@
+{
+  "name": "@mcptoolshop/role-os",
+  "version": "1.0.0",
+  "description": "Role OS — a repo-native operating layer where specialized roles execute work through contracts, handoffs, review, and escalation",
+  "type": "module",
+  "bin": {
+    "roleos": "bin/roleos.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "starter-pack",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "verify": "node bin/roleos.mjs help && echo '✓ verify passed'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "mcp-tool-shop <64996768+mcp-tool-shop@users.noreply.github.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mcp-tool-shop-org/role-os.git"
+  },
+  "keywords": [
+    "role-os",
+    "agents",
+    "contracts",
+    "handoffs",
+    "review",
+    "workflow"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}
