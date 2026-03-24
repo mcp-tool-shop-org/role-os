@@ -54,3 +54,50 @@ Use the smallest number of roles needed to complete the task correctly.
 - Contract validation
 - Quality gate
 - Truthful rejection
+
+## Route to Repo Researcher
+- Repo structure mapping
+- Entrypoint and seam discovery
+- Build/test command verification
+- Dependency verification against live repo truth
+
+## Route to Repo Translator
+- README or docs translation to other languages
+- Cross-audience documentation adaptation
+- Translation verification and degenerate output detection
+
+## Route to Docs Architect
+- Handbook or docs site creation
+- Documentation restructuring
+- Starlight docs setup
+- Information architecture for searchable docs
+
+## Route to Metadata Curator
+- Package manifest audit
+- GitHub repo metadata (description, topics, homepage)
+- Badge verification
+- Registry metadata alignment
+
+## Route to Coverage Auditor
+- Test coverage assessment
+- False confidence detection
+- Missing defense identification
+- CI coverage integration
+
+## Route to Deployment Verifier
+- Post-deploy verification
+- Landing page, handbook, and package live checks
+- Badge resolution verification
+- Translation spot-checks
+
+## Route to Release Engineer
+- Version bump and tagging
+- Changelog updates
+- Package build and publish readiness
+- Staging and release execution
+
+## Route to Brand Guardian
+- Identity contamination audit
+- Terminology and tone consistency
+- Fork/ancestor residue detection
+- Replacement doctrine enforcement

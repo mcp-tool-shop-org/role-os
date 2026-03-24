@@ -24,19 +24,44 @@ Order: `npx @mcptoolshop/shipcheck audit` → exits 0 → then full treatment.
 
 No v1.0.0 bump without passing hard gates A-D.
 
-## How Role OS integrates
+## Role chain per phase
 
-When Role OS routes a full treatment:
+Each treatment phase maps to specific roles:
 
-1. Verify shipcheck passes first
-2. Load the canonical 7-phase protocol from Claude project memory
-3. Route each phase through the appropriate role chain
-4. Claude project memory is the continuity layer — Role OS does not duplicate it
-5. Critic reviews treatment completeness against the canonical protocol, not a local copy
+### Phase 1 — Pre-flight + README + translations
+- **Repo Researcher** — verify repo state, Pages config, package.json
+- **Brand Guardian** — verify logo, README identity, footer
+- **Repo Translator** — hand off and verify translations
+
+### Phase 2 — Scaffold landing page
+- **Docs Architect** — site-theme init, site-config.ts
+- **Frontend Developer** — landing page content and build
+- **Brand Guardian** — verify brand alignment
+
+### Phase 3 — Handbook (Starlight docs)
+- **Docs Architect** — Starlight setup, page structure, content
+- **Repo Translator** — docs translation if applicable
+
+### Phase 4 — Repo metadata + coverage
+- **Metadata Curator** — GitHub metadata, badges, manifest
+- **Coverage Auditor** — test coverage assessment, CI integration
+
+### Phase 5 — Repo Knowledge DB entry
+- **Repo Researcher** — thesis, architecture, relationships
+- **Metadata Curator** — verify entry completeness
+
+### Phase 6 — Commit and deploy
+- **Release Engineer** — staging, version, tag, push
+
+### Phase 7 — Post-deploy verification
+- **Deployment Verifier** — landing page, handbook, package, badges, translations
+
+### Final gate
+- **Critic Reviewer** — accept or reject treatment completeness
 
 ## What Role OS adds
 
-- Role contracts for each phase (who owns what)
+- Explicit role ownership for each treatment phase
 - Structured handoffs between phases
 - Review gate on treatment completeness
 - Routing and escalation law
