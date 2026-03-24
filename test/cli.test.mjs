@@ -2,10 +2,12 @@ import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, rmSync, readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const CLI = join(import.meta.dirname, "..", "bin", "roleos.mjs");
-const TMP = join(import.meta.dirname, "..", ".test-sandbox");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const CLI = join(__dirname, "..", "bin", "roleos.mjs");
+const TMP = join(__dirname, "..", ".test-sandbox");
 
 function run(args, { input, cwd } = {}) {
   const opts = {
