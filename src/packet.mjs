@@ -37,21 +37,25 @@ export async function packetCommand(args) {
   const type = args[1];
 
   if (subcommand !== "new") {
-    console.error(`Usage: roleos packet new <type>`);
-    console.error(`Types: ${TYPES.join(", ")}`);
-    process.exit(1);
+    const err = new Error(`Usage: roleos packet new <type>\nTypes: ${TYPES.join(", ")}`);
+    err.exitCode = 1;
+    err.hint = "Run 'roleos packet new feature' to create a feature packet.";
+    throw err;
   }
 
   if (!type || !TYPES.includes(type)) {
-    console.error(`Unknown packet type: ${type || "(none)"}`);
-    console.error(`Types: ${TYPES.join(", ")}`);
-    process.exit(1);
+    const err = new Error(`Unknown packet type: ${type || "(none)"}\nTypes: ${TYPES.join(", ")}`);
+    err.exitCode = 1;
+    err.hint = `Valid types: ${TYPES.join(", ")}`;
+    throw err;
   }
 
   const claudeDir = join(".", ".claude");
   if (!existsSync(claudeDir)) {
-    console.error("No .claude/ directory found. Run 'roleos init' first.");
-    process.exit(1);
+    const err = new Error("No .claude/ directory found. Run 'roleos init' first.");
+    err.exitCode = 1;
+    err.hint = "Run 'roleos init' to scaffold Role OS.";
+    throw err;
   }
 
   console.log(`\nroleos packet new ${type}\n`);
@@ -132,7 +136,9 @@ ${chain}
     console.log(`\nCreated: .claude/packets/${taskId}.md`);
     console.log(`\nNext: roleos route .claude/packets/${taskId}.md`);
   } else {
-    console.error(`\nPacket already exists: ${filePath}`);
-    process.exit(1);
+    const err = new Error(`Packet already exists: ${filePath}`);
+    err.exitCode = 1;
+    err.hint = "Choose a different title or delete the existing packet.";
+    throw err;
   }
 }

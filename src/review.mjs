@@ -9,21 +9,25 @@ export async function reviewCommand(args) {
   const verdict = args[1];
 
   if (!packetFile || !verdict) {
-    console.error("Usage: roleos review <packet-file> <verdict>");
-    console.error(`Verdicts: ${VERDICTS.join(" | ")}`);
-    process.exit(1);
+    const err = new Error(`Usage: roleos review <packet-file> <verdict>\nVerdicts: ${VERDICTS.join(" | ")}`);
+    err.exitCode = 1;
+    err.hint = "Provide a packet file and a verdict.";
+    throw err;
   }
 
   if (!VERDICTS.includes(verdict)) {
-    console.error(`Unknown verdict: ${verdict}`);
-    console.error(`Verdicts: ${VERDICTS.join(" | ")}`);
-    process.exit(1);
+    const err = new Error(`Unknown verdict: ${verdict}\nVerdicts: ${VERDICTS.join(" | ")}`);
+    err.exitCode = 1;
+    err.hint = `Valid verdicts: ${VERDICTS.join(", ")}`;
+    throw err;
   }
 
   const content = readFileSafe(packetFile);
   if (content === null) {
-    console.error(`Packet not found: ${packetFile}`);
-    process.exit(1);
+    const err = new Error(`Packet not found: ${packetFile}`);
+    err.exitCode = 1;
+    err.hint = "Check the file path and try again.";
+    throw err;
   }
 
   // Extract task ID from the packet

@@ -118,14 +118,18 @@ export async function routeCommand(args) {
   const packetFile = args[0];
 
   if (!packetFile) {
-    console.error("Usage: roleos route <packet-file>");
-    process.exit(1);
+    const err = new Error("Usage: roleos route <packet-file>");
+    err.exitCode = 1;
+    err.hint = "Provide the path to a packet file.";
+    throw err;
   }
 
   const content = readFileSafe(packetFile);
   if (content === null) {
-    console.error(`Packet not found: ${packetFile}`);
-    process.exit(1);
+    const err = new Error(`Packet not found: ${packetFile}`);
+    err.exitCode = 1;
+    err.hint = "Check the file path and try again.";
+    throw err;
   }
 
   const type = detectType(content);

@@ -1,5 +1,9 @@
 # Role OS
 
+<p align="center">
+  <img src="assets/logo.png" alt="Role OS" width="400">
+</p>
+
 A repo-native operating layer where specialized roles execute work through contracts, handoffs, review, and escalation.
 
 ## What it does
@@ -94,13 +98,17 @@ role-os/
     workflows/                 ← Ship feature, fix bug, launch update
 ```
 
+## Security
+
+Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.
+
 ## Status
 
-**v0.3 — Productization**
+**v1.0.0 — Shipped**
 
 - v0.1: Operational — 3 trials, 3 accepts, 0 role collisions
 - v0.2: Adoption — default workflow in anchor repo, portable to second repo
-- v0.3: Productization — starter pack, bootstrap path, adoption docs (current)
+- v0.3: Productization — starter pack, bootstrap CLI, adoption docs
 
 ## License
 
