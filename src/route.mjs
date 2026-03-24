@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { readFileSafe } from "./fs-utils.mjs";
+import { detectConflicts } from "./conflicts.mjs";
 
 // ── Full 32-Role Catalog ─────────────────────────────────────────────────────
 // Every role in the OS is scoreable. Keywords from routing-rules.md + contracts.
@@ -473,6 +474,19 @@ export async function routeCommand(args) {
   }
 
   console.log(`\nNot triggered: ${notTriggered.length} roles with 0 keyword signals`);
+
+  // ── Conflict detection ──
+  const conflicts = detectConflicts(chainRoles);
+  if (conflicts.length > 0) {
+    console.log(`\nConflict detection (${conflicts.length} finding${conflicts.length > 1 ? "s" : ""}):`);
+    for (const f of conflicts) {
+      const icon = f.severity === "error" ? "✗" : "!";
+      console.log(`  ${icon} [${f.type}] ${f.message}`);
+      console.log(`    repair: ${f.repair}`);
+    }
+  } else {
+    console.log(`\nConflict detection: clean — no conflicts found.`);
+  }
 
   if (fileRefs.length > 0) {
     console.log(`\nDependency verification:`);
