@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - "package.json"
+      - "bin/**"
+      - "src/**"
+      - "test/**"
+      - "starter-pack/**"
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "package.json"
+      - "bin/**"
+      - "src/**"
+      - "test/**"
+      - "starter-pack/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm test
+      - run: npm run verify
