@@ -47,36 +47,40 @@ Full treatment is a canonical 7-phase protocol defined in Claude project memory 
 
 Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.
 
-## The spine
+## 32 roles across 8 packs
 
-Role OS ships 8 proven role contracts:
+| Pack | Roles |
+|------|-------|
+| **Core** (3) | Orchestrator, Product Strategist, Critic Reviewer |
+| **Engineering** (7) | Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer |
+| **Design** (2) | UI Designer, Brand Guardian |
+| **Marketing** (1) | Launch Copywriter |
+| **Treatment** (7) | Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer |
+| **Product** (4) | Feedback Synthesizer, Roadmap Prioritizer, Spec Writer, Information Architect |
+| **Research** (4) | UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer |
+| **Growth** (4) | Launch Strategist, Content Strategist, Community Manager, Support Triage Lead |
 
-| Role | Job |
-|------|-----|
-| **Orchestrator** | Decomposes work into the smallest lawful chain |
-| **Product Strategist** | Shapes scope and protects product intent |
-| **UI Designer** | Designs hierarchy, interaction, and visual structure |
-| **Frontend Developer** | Implements user-facing surfaces faithfully |
-| **Backend Engineer** | Implements server/data contracts and system behavior |
-| **Test Engineer** | Verifies work against real risk, not ceremony |
-| **Launch Copywriter** | Writes truthful messaging grounded in shipped work |
-| **Critic Reviewer** | Accepts or rejects based on contract compliance |
+Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers.
 
 ## Quick start
 
 ```bash
-# Copy the starter pack into your repo
-cp -r starter-pack/ your-repo/.claude/
+npx @mcptoolshop/role-os init
 
-# Fill the four context files
-# - context/product-brief.md   (what this product is)
-# - context/repo-map.md        (how the repo works)
-# - context/current-priorities.md (what's happening now)
-# - context/brand-rules.md     (identity law)
-
-# Create your first packet, route it, review it
-# See starter-pack/handbook.md for the full flow
+# Fill context/ files for your project, then:
+roleos packet new feature
+roleos route .claude/packets/my-feature.md
+roleos review .claude/packets/my-feature.md accept
+roleos status
 ```
+
+## When not to use Role OS
+
+- Single-line fixes, typos, or obvious bugs
+- Exploratory research with no defined output
+- Work that fits in one person's head in 5 minutes
+- Emergency hotfixes that need to ship before a review chain completes
+- Projects where you want speed over structure
 
 ## Evidence
 
@@ -98,6 +102,14 @@ Role OS was proven across three trial shapes in two structurally different repos
 - Same spine, different language/domain/stack
 - Adopted with context changes only — no core contract modifications
 
+**Full treatment FT-001** (portlight-desktop)
+- 7-phase staffed treatment with Treatment Pack roles
+- Shipcheck gating proven, zero role collisions
+
+**Full treatment FT-002** (studioflow)
+- Same treatment pack, structurally different repo (creative workspace vs game)
+- Treatment Pack portable — no contract modifications needed
+
 ## Core properties
 
 These are non-negotiable. If a change weakens any of them, reject it.
@@ -113,14 +125,16 @@ These are non-negotiable. If a change weakens any of them, reject it.
 ```
 role-os/
   README.md                    ← You are here
+  bin/roleos.mjs               ← CLI entrypoint
+  src/                         ← CLI implementation
   starter-pack/
-    handbook.md                ← How Role OS works (under 500 words)
+    handbook.md                ← How Role OS works
     context/                   ← Fill these for your repo
     examples/                  ← Feature, integration, identity packets
-    agents/                    ← 8 role contracts
+    agents/                    ← 32 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
     policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment (reference)
+    workflows/                 ← Ship feature, fix bug, launch update, full treatment
 ```
 
 ## Security
@@ -129,11 +143,13 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 
 ## Status
 
-**v1.0.0 — Shipped**
+**v1.0.0 — Broad Surface, Same Laws**
 
 - v0.1: Operational — 3 trials, 3 accepts, 0 role collisions
 - v0.2: Adoption — default workflow in anchor repo, portable to second repo
-- v0.3: Productization — starter pack, bootstrap CLI, adoption docs
+- v0.3: Productization — starter pack, bootstrap CLI, evidence surface
+- v0.4: Treatment Pack — 8 treatment/identity roles, full treatment staffed, portable across 2 repos
+- v1.0.0: 32 roles across 8 packs, full CLI, proven treatment, multi-repo portability
 
 ## License
 
