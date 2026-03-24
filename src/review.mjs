@@ -1,6 +1,7 @@
 import { resolve, dirname, basename } from "node:path";
 import { readFileSafe, writeFileSafe } from "./fs-utils.mjs";
 import { askRequired, askWithDefault, closePrompts } from "./prompts.mjs";
+import { resolveBlocked, resolveRejected, formatEscalation } from "./escalation.mjs";
 
 const VERDICTS = ["accept", "accept-with-notes", "reject", "blocked"];
 
@@ -90,5 +91,16 @@ ${nextOwner}
   const wrote = writeFileSafe(verdictPath, verdictContent, { force: true });
   if (wrote) {
     console.log(`\nVerdict recorded: ${verdictPath}`);
+  }
+
+  // ── Escalation auto-routing for blocked/rejected verdicts ──
+  if (verdict === "blocked") {
+    const escalation = resolveBlocked(reason);
+    console.log(`\nEscalation (auto-routed):`);
+    console.log(formatEscalation(escalation));
+  } else if (verdict === "reject") {
+    const escalation = resolveRejected(reason, reviewer);
+    console.log(`\nEscalation (auto-routed):`);
+    console.log(formatEscalation(escalation));
   }
 }

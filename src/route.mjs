@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { readFileSafe } from "./fs-utils.mjs";
 import { detectConflicts } from "./conflicts.mjs";
+import { resolveConflict, resolveSplit, formatEscalation } from "./escalation.mjs";
 
 // ── Full 32-Role Catalog ─────────────────────────────────────────────────────
 // Every role in the OS is scoreable. Keywords from routing-rules.md + contracts.
@@ -475,7 +476,7 @@ export async function routeCommand(args) {
 
   console.log(`\nNot triggered: ${notTriggered.length} roles with 0 keyword signals`);
 
-  // ── Conflict detection ──
+  // ── Conflict detection + escalation routing ──
   const conflicts = detectConflicts(chainRoles);
   if (conflicts.length > 0) {
     console.log(`\nConflict detection (${conflicts.length} finding${conflicts.length > 1 ? "s" : ""}):`);
@@ -483,6 +484,8 @@ export async function routeCommand(args) {
       const icon = f.severity === "error" ? "✗" : "!";
       console.log(`  ${icon} [${f.type}] ${f.message}`);
       console.log(`    repair: ${f.repair}`);
+      const escalation = resolveConflict(f);
+      console.log(`    escalation: ${escalation.targetRole} (${escalation.recovery}) → ${escalation.requiredArtifact}`);
     }
   } else {
     console.log(`\nConflict detection: clean — no conflicts found.`);
@@ -502,11 +505,15 @@ export async function routeCommand(args) {
     }
   }
 
-  // Stop conditions
-  console.log(`\nStop conditions:`);
-  console.log(`  • If any role produces a "blocked" verdict → escalate to Orchestrator`);
-  console.log(`  • If Critic Reviewer rejects → loop back to the responsible role`);
-  if (chainWarning) console.log(`  • Chain is large — consider decomposing the packet`);
+  // Stop conditions with escalation routing
+  console.log(`\nStop conditions (auto-routed):`);
+  console.log(`  • blocked verdict → auto-routes based on block reason (missing info → Product Strategist, dependency → Orchestrator, etc.)`);
+  console.log(`  • rejected verdict → routes back to producing role or Orchestrator based on rejection type`);
+  if (chainRoles.length > 7) {
+    const splitEsc = resolveSplit(chainRoles.length);
+    console.log(`  • split needed:`);
+    console.log(formatEscalation(splitEsc));
+  }
 
   console.log(`\nNext: assign roles and begin execution, or adjust the chain.`);
 }
