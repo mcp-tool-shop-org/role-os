@@ -3,11 +3,14 @@ import { join, dirname, relative } from "node:path";
 
 /**
  * Recursively copy a directory, skipping files that already exist at the target.
- * Returns { created: string[], skipped: string[] } with relative paths.
+ * With force=true, overwrites existing files (except those matching protectedPaths).
+ * Returns { created: string[], skipped: string[], updated: string[] } with relative paths.
  */
-export function copyDirSafe(srcDir, destDir, baseDir = destDir) {
+export function copyDirSafe(srcDir, destDir, { baseDir, force = false, protectedPaths = [] } = {}) {
+  const root = baseDir || destDir;
   const created = [];
   const skipped = [];
+  const updated = [];
 
   if (!existsSync(srcDir)) {
     throw new Error(`Source directory does not exist: ${srcDir}`);
@@ -18,15 +21,23 @@ export function copyDirSafe(srcDir, destDir, baseDir = destDir) {
   for (const entry of entries) {
     const srcPath = join(srcDir, entry.name);
     const destPath = join(destDir, entry.name);
-    const relPath = relative(baseDir, destPath);
+    const relPath = relative(root, destPath);
 
     if (entry.isDirectory()) {
-      const sub = copyDirSafe(srcPath, destPath, baseDir);
+      const sub = copyDirSafe(srcPath, destPath, { baseDir: root, force, protectedPaths });
       created.push(...sub.created);
       skipped.push(...sub.skipped);
+      updated.push(...sub.updated);
     } else {
       if (existsSync(destPath)) {
-        skipped.push(relPath);
+        const normalizedRel = relPath.replace(/\\/g, "/");
+        if (force && !protectedPaths.some(p => normalizedRel.startsWith(p))) {
+          mkdirSync(dirname(destPath), { recursive: true });
+          copyFileSync(srcPath, destPath);
+          updated.push(relPath);
+        } else {
+          skipped.push(relPath);
+        }
       } else {
         mkdirSync(dirname(destPath), { recursive: true });
         copyFileSync(srcPath, destPath);
@@ -35,7 +46,7 @@ export function copyDirSafe(srcDir, destDir, baseDir = destDir) {
     }
   }
 
-  return { created, skipped };
+  return { created, skipped, updated };
 }
 
 /**

@@ -1,7 +1,7 @@
 import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -32,7 +32,7 @@ describe("roleos CLI", () => {
   describe("help", () => {
     it("prints usage", () => {
       const out = run(["help"]);
-      assert.match(out, /roleos v1\.0\.0/);
+      assert.match(out, /roleos v\d+\.\d+\.\d+/);
       assert.match(out, /roleos init/);
       assert.match(out, /roleos packet new/);
       assert.match(out, /roleos route/);
@@ -41,7 +41,7 @@ describe("roleos CLI", () => {
 
     it("prints version", () => {
       const out = run(["--version"]);
-      assert.match(out, /roleos v1\.0\.0/);
+      assert.match(out, /roleos v\d+\.\d+\.\d+/);
     });
   });
 
@@ -210,6 +210,69 @@ describe("roleos CLI", () => {
       assert.match(out, /Active packets: 0/);
       assert.match(out, /No packets found/);
       rmSync(freshDir, { recursive: true });
+    });
+  });
+
+  describe("regression: no double-nested .claude/", () => {
+    it("init does not create .claude/.claude/", () => {
+      const regDir = join(TMP, "reg-nested");
+      mkdirSync(regDir, { recursive: true });
+      run(["init"], { cwd: regDir });
+      const doubleNested = join(regDir, ".claude", ".claude");
+      assert.ok(!existsSync(doubleNested), ".claude/.claude/ must not exist after init");
+      rmSync(regDir, { recursive: true });
+    });
+
+    it("full-treatment.md lands in workflows/ not .claude/workflows/", () => {
+      const regDir = join(TMP, "reg-ft");
+      mkdirSync(regDir, { recursive: true });
+      run(["init"], { cwd: regDir });
+      const correct = join(regDir, ".claude", "workflows", "full-treatment.md");
+      const wrong = join(regDir, ".claude", ".claude", "workflows", "full-treatment.md");
+      assert.ok(existsSync(correct), "full-treatment.md should be at .claude/workflows/");
+      assert.ok(!existsSync(wrong), "full-treatment.md must NOT be at .claude/.claude/workflows/");
+      rmSync(regDir, { recursive: true });
+    });
+  });
+
+  describe("regression: version from package.json", () => {
+    it("--version matches package.json version", () => {
+      const pkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
+      const out = run(["--version"]);
+      assert.match(out, new RegExp(`roleos v${pkg.version.replace(/\./g, "\\.")}`));
+    });
+  });
+
+  describe("init --force", () => {
+    it("updates canonical files but protects context/", () => {
+      const forceDir = join(TMP, "force-test");
+      mkdirSync(forceDir, { recursive: true });
+
+      // First init
+      run(["init"], { cwd: forceDir });
+
+      // Simulate user-filled context file
+      const contextFile = join(forceDir, ".claude", "context", "product-brief.md");
+      const userContent = "# My custom product brief\nThis is user content.";
+      writeFileSync(contextFile, userContent, "utf-8");
+
+      // Simulate modified canonical file
+      const handbookFile = join(forceDir, ".claude", "handbook.md");
+      writeFileSync(handbookFile, "# Stale handbook", "utf-8");
+
+      // Force re-init
+      const out = run(["init", "--force"], { cwd: forceDir });
+      assert.match(out, /Updated \(\d+\)/);
+
+      // Context file must be preserved (not overwritten)
+      const afterContext = readFileSync(contextFile, "utf-8");
+      assert.equal(afterContext, userContent, "context/ files must be protected during --force");
+
+      // Canonical file should be updated
+      const afterHandbook = readFileSync(handbookFile, "utf-8");
+      assert.notEqual(afterHandbook, "# Stale handbook", "canonical files should be updated by --force");
+
+      rmSync(forceDir, { recursive: true });
     });
   });
 });
