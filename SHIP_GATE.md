@@ -16,8 +16,8 @@
 
 ### Default safety posture
 
-- [x] `[cli|mcp|desktop]` Dangerous actions (kill, delete, restart) require explicit `--allow-*` flag (2026-03-24) — no dangerous actions exist; init uses skip-if-exists, review uses force-write for verdicts only
-- [x] `[cli|mcp|desktop]` File operations constrained to known directories (2026-03-24) — writes only to .claude/ in current directory
+- [x] `[cli|mcp|desktop]` Dangerous actions (kill, delete, restart) require explicit `--allow-*` flag (2026-03-24) — init uses skip-if-exists, no destructive operations
+- [x] `[cli|mcp|desktop]` File operations constrained to known directories (2026-03-24) — writes only to .claude/ under cwd
 - [ ] `[mcp]` SKIP: not an MCP server
 - [ ] `[mcp]` SKIP: not an MCP server
 
@@ -37,19 +37,19 @@
 - [x] `[all]` CHANGELOG.md (Keep a Changelog format) (2026-03-24)
 - [x] `[all]` LICENSE file present and repo states support status (2026-03-24)
 - [x] `[cli]` `--help` output accurate for all commands and flags (2026-03-24)
-- [x] `[cli|mcp|desktop]` Logging levels defined: silent / normal / verbose / debug — secrets redacted at all levels (2026-03-24) — normal by default, --debug for stack traces, no secrets to redact
+- [ ] `[cli|mcp|desktop]` SKIP: no logging levels — CLI outputs structured results or plain text, no log framework
 - [ ] `[mcp]` SKIP: not an MCP server
-- [ ] `[complex]` SKIP: handbook.md exists in starter-pack for adopters; CLI itself is simple
+- [ ] `[complex]` SKIP: not a complex tool with operational surface
 
 ## D. Shipping Hygiene
 
 - [x] `[all]` `verify` script exists (test + build + smoke in one command) (2026-03-24)
-- [x] `[all]` Version in manifest matches git tag (2026-03-24) — v1.0.0
-- [x] `[all]` Dependency scanning runs in CI (ecosystem-appropriate) (2026-03-24) — zero external deps, npm audit clean
-- [x] `[all]` Automated dependency update mechanism exists (2026-03-24) — zero external deps, nothing to update
-- [x] `[npm]` `npm pack --dry-run` includes: dist/, README.md, CHANGELOG.md, LICENSE (2026-03-24) — 38 files, all present
-- [x] `[npm]` `engines.node` set · `[pypi]` `python_requires` set (2026-03-24) — >=18.0.0
-- [x] `[npm]` Lockfile committed · `[pypi]` Clean wheel + sdist build (2026-03-24)
+- [ ] `[all]` Version in manifest matches git tag — tag not yet created, will tag at treatment Phase 6
+- [x] `[all]` Dependency scanning runs in CI (ecosystem-appropriate) (2026-03-24) — zero runtime deps, npm audit in CI
+- [ ] `[all]` SKIP: no runtime dependencies to update — zero-dependency CLI
+- [x] `[npm]` `npm pack --dry-run` includes: dist/, README.md, CHANGELOG.md, LICENSE (2026-03-24) — includes bin/, src/, starter-pack/
+- [x] `[npm]` `engines.node` set (2026-03-24) — >=18.0.0
+- [x] `[npm]` Lockfile committed (2026-03-24)
 - [ ] `[vsix]` SKIP: not a VS Code extension
 - [ ] `[desktop]` SKIP: not a desktop app
 
@@ -58,7 +58,7 @@
 - [x] `[all]` Logo in README header (2026-03-24)
 - [ ] `[all]` Translations (polyglot-mcp, 8 languages)
 - [ ] `[org]` Landing page (@mcptoolshop/site-theme)
-- [x] `[all]` GitHub repo metadata: description, homepage, topics (2026-03-24)
+- [ ] `[all]` GitHub repo metadata: description, homepage, topics
 
 ---
 

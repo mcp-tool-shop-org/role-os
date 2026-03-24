@@ -1,2 +1,5 @@
 .test-sandbox
 node_modules
+site/.astro/
+site/dist/
+site/node_modules/
