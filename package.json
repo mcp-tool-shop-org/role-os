@@ -1,5 +1,5 @@
 {
-  "name": "@mcptoolshop/role-os",
+  "name": "role-os",
   "version": "1.0.0",
   "description": "Role OS — a repo-native operating layer where specialized roles execute work through contracts, handoffs, review, and escalation",
   "type": "module",
@@ -36,7 +36,6 @@
     "workflow"
   ],
   "publishConfig": {
-    "access": "public",
     "registry": "https://registry.npmjs.org"
   }
 }

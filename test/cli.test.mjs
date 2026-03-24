@@ -48,21 +48,26 @@ describe("roleos CLI", () => {
   describe("init", () => {
     it("scaffolds .claude/ with all spine files", () => {
       const out = run(["init"]);
-      assert.match(out, /Created \(52\)/);
+      assert.match(out, /Created \(\d+\)/);
 
+      // Verify key spine files exist (not exact count — survives role additions)
       const claude = join(TMP, ".claude");
       assert.ok(existsSync(join(claude, "handbook.md")));
       assert.ok(existsSync(join(claude, "agents", "core", "orchestrator.md")));
       assert.ok(existsSync(join(claude, "agents", "core", "critic-reviewer.md")));
+      assert.ok(existsSync(join(claude, "agents", "core", "product-strategist.md")));
       assert.ok(existsSync(join(claude, "schemas", "task-packet.md")));
+      assert.ok(existsSync(join(claude, "schemas", "handoff.md")));
       assert.ok(existsSync(join(claude, "policy", "done-definition.md")));
+      assert.ok(existsSync(join(claude, "policy", "routing-rules.md")));
       assert.ok(existsSync(join(claude, "workflows", "ship-feature.md")));
       assert.ok(existsSync(join(claude, "context", "product-brief.md")));
+      assert.ok(existsSync(join(claude, "context", "repo-map.md")));
     });
 
     it("skips existing files on re-run", () => {
       const out = run(["init"]);
-      assert.match(out, /Skipped \(52/);
+      assert.match(out, /Skipped \(\d+/);
       assert.match(out, /already scaffolded/);
     });
   });
