@@ -68,3 +68,67 @@ Must not bypass shipcheck gates or publish without confirmation.
 May read all user-facing surfaces and brand rules.
 May propose replacement terms and flag contamination.
 Must not invent new brand identity or override existing brand rules.
+
+## Feedback Synthesizer
+May read issues, reviews, support threads, and usage data.
+Must not make product decisions or commit code.
+
+## Roadmap Prioritizer
+May read priorities, backlogs, dependency information, and feedback syntheses.
+Must not implement features or override product leadership decisions.
+
+## Spec Writer
+May read product strategy output and write specification documents.
+Must not implement the spec or make product scope decisions.
+
+## Information Architect
+May read content inventories, site structures, and navigation.
+Must not create content or make visual design decisions.
+
+## Refactor Engineer
+May edit code to improve structure.
+Must not change user-visible behavior without explicit approval.
+
+## Performance Engineer
+May profile, measure, and optimize code.
+Must not optimize without measurement evidence.
+
+## Dependency Auditor
+May read manifests, lockfiles, and audit output.
+Must not update dependencies without noting compatibility risk.
+
+## Security Reviewer
+May read all source code and configuration.
+Must not modify code (report findings for others to fix).
+
+## Launch Strategist
+May read shipped evidence, product briefs, and channel information.
+Must not invent product claims or commit code.
+
+## Content Strategist
+May read shipped work, product briefs, and existing content.
+Must not create final copy (hand off to Launch Copywriter for that).
+
+## Community Manager
+May read and draft responses to issues and discussions.
+Must not make product commitments or close valid reports without evidence.
+
+## Support Triage Lead
+May read support requests and classify them.
+Must not fix bugs directly or make product direction decisions.
+
+## UX Researcher
+May read user-facing flows, feedback, and interaction patterns.
+Must not redesign (hand off findings to UI Designer).
+
+## Competitive Analyst
+May research public competitor information.
+Must not access private or proprietary competitor data.
+
+## Trend Researcher
+May research public ecosystem and market signals.
+Must not recommend trend adoption without cost assessment.
+
+## User Interview Synthesizer
+May read interview transcripts and notes.
+Must not project desired outcomes onto user words.

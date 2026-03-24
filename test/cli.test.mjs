@@ -48,7 +48,7 @@ describe("roleos CLI", () => {
   describe("init", () => {
     it("scaffolds .claude/ with all spine files", () => {
       const out = run(["init"]);
-      assert.match(out, /Created \(36\)/);
+      assert.match(out, /Created \(52\)/);
 
       const claude = join(TMP, ".claude");
       assert.ok(existsSync(join(claude, "handbook.md")));
@@ -62,7 +62,7 @@ describe("roleos CLI", () => {
 
     it("skips existing files on re-run", () => {
       const out = run(["init"]);
-      assert.match(out, /Skipped \(36/);
+      assert.match(out, /Skipped \(52/);
       assert.match(out, /already scaffolded/);
     });
   });
