@@ -16,7 +16,7 @@ The Product Strategist decides what information is primary vs noise, rules on op
 ### 2. Contamination/fidelity guard
 If the project has a fork ancestor, legacy codebase, or inherited design language, the packet must include a contamination constraint. Every role checks for residue. The critic rejects work that is functional but fiction-wrong.
 
-**Key pattern:** Name the exact files, imports, and terms that are contaminated. "No maritime language" is vague. "Never import from companions.py; never use silver_display()" is testable.
+**Key pattern:** Name the exact files, imports, and terms that are contaminated. "No legacy language" is vague. "Never import from legacy_models.py; never use old_display()" is testable.
 
 ### 3. Real escalation
 Backend surfaced a missing engine field instead of faking it. Frontend surfaced a session wiring gap instead of hiding it behind a fallback. Both were legitimate escalations that improved the final output.

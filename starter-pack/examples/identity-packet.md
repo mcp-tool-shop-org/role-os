@@ -11,7 +11,7 @@
 ### 1. Replacement doctrine, not just removal
 Removing contaminated terms without defining replacements creates bland output. Product Strategist must define what the correct register is — not just what's banned, but what replaces it and why.
 
-**Key pattern:** Build a replacement table with contaminated term, replacement, and rationale. "No maritime language" becomes "docking clamps not anchors, credits not silver, In Transit not At Sea." Every banned term has a specific replacement.
+**Key pattern:** Build a replacement table with contaminated term, replacement, and rationale. "No legacy language" becomes "specific replacement per term, not blanket removal." Every banned term has a specific replacement.
 
 ### 2. No redesign drift
 The strongest discipline in an identity packet is doing only the purge. Roles will be tempted to "improve" layout, hierarchy, or features while they're in the file. Reject that.

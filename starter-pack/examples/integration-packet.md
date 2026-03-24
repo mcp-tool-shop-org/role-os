@@ -9,7 +9,7 @@
 ## What an integration packet teaches
 
 ### 1. Dependency verification first
-Before any design work, verify every upstream assumption against actual repo truth. "The session provides crew data" might be false — check the actual code, not the docs.
+Before any design work, verify every upstream assumption against actual repo truth. "The session exposes this data" might be false — check the actual code, not the docs.
 
 **Key pattern:** Build a dependency table with file paths, line numbers, and verified/unverified status. Catch false assumptions at Step 1, not Step 5.
 
