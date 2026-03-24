@@ -145,4 +145,66 @@ describe("roleos CLI", () => {
       );
     });
   });
+
+  describe("status", () => {
+    it("shows active and completed packets", () => {
+      const out = run(["status"]);
+      // The test-feature packet got an accept verdict above, so it's completed
+      assert.match(out, /Completed: 1/);
+      assert.match(out, /Total: 1 packet/);
+    });
+
+    it("shows verdicts", () => {
+      const out = run(["status"]);
+      assert.match(out, /Recent verdicts: 1/);
+      assert.match(out, /accept/);
+      assert.match(out, /Critic Reviewer/);
+    });
+
+    it("shows context health", () => {
+      const out = run(["status"]);
+      assert.match(out, /Context:.*4.*present/);
+    });
+
+    it("outputs JSON with --json", () => {
+      const out = run(["status", "--json"]);
+      const data = JSON.parse(out);
+      assert.ok(Array.isArray(data.packets));
+      assert.ok(Array.isArray(data.contextHealth));
+      assert.ok(Array.isArray(data.warnings));
+      assert.equal(data.packets.length, 1);
+      assert.equal(data.packets[0].status, "completed");
+    });
+
+    it("writes status/index.md with --write", () => {
+      run(["status", "--write"]);
+      const indexPath = join(TMP, ".claude", "status", "index.md");
+      assert.ok(existsSync(indexPath));
+      const content = readFileSync(indexPath, "utf-8");
+      assert.match(content, /# Status/);
+      assert.match(content, /Generated:/);
+      assert.match(content, /## Active Packets/);
+      assert.match(content, /## Completed/);
+    });
+
+    it("warns on missing .claude/", () => {
+      const emptyDir = join(TMP, "empty-status");
+      mkdirSync(emptyDir, { recursive: true });
+      assert.throws(
+        () => run(["status"], { cwd: emptyDir }),
+        /Run 'roleos init' first/
+      );
+      rmSync(emptyDir, { recursive: true });
+    });
+
+    it("handles fresh init with no packets", () => {
+      const freshDir = join(TMP, "fresh");
+      mkdirSync(freshDir, { recursive: true });
+      run(["init"], { cwd: freshDir });
+      const out = run(["status"], { cwd: freshDir });
+      assert.match(out, /Active packets: 0/);
+      assert.match(out, /No packets found/);
+      rmSync(freshDir, { recursive: true });
+    });
+  });
 });

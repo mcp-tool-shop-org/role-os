@@ -4,6 +4,7 @@ import { initCommand } from "../src/init.mjs";
 import { packetCommand } from "../src/packet.mjs";
 import { routeCommand } from "../src/route.mjs";
 import { reviewCommand } from "../src/review.mjs";
+import { statusCommand } from "../src/status.mjs";
 
 const VERSION = "1.0.0";
 
@@ -16,6 +17,9 @@ Usage:
   roleos packet new <type>           Create a new packet (feature|integration|identity)
   roleos route <packet-file>         Recommend the smallest valid chain
   roleos review <packet-file> <verdict>  Record a review verdict
+  roleos status                      Show active work, verdicts, and health
+  roleos status --write              Write .claude/status/index.md
+  roleos status --json               Output as JSON
   roleos help                        Show this help
 
 Verdicts: accept | accept-with-notes | reject | blocked
@@ -61,6 +65,9 @@ try {
       break;
     case "review":
       await reviewCommand(args);
+      break;
+    case "status":
+      await statusCommand(args);
       break;
     case "help":
     case "--help":
