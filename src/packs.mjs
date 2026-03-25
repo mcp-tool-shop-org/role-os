@@ -113,28 +113,27 @@ export const TEAM_PACKS = {
 
   // ── Docs / Handbook / Release ─────────────────────────────────────────────
   docs: {
-    name: "Docs / Handbook / Release",
-    description: "Synthesize → structure → write → metadata → release → verify deployment",
+    name: "Docs / Handbook",
+    description: "Triage → synthesize → structure → write → metadata → review",
     roles: [
-      "Feedback Synthesizer",  // upstream gate: synthesize input before structuring
-      "Docs Architect",
-      "Metadata Curator",
-      "Release Engineer",
-      "Deployment Verifier",
+      "Support Triage Lead",   // interpret raw input (triage reports, issue lists, feedback)
+      "Feedback Synthesizer",  // cluster and theme the interpreted input
+      "Docs Architect",        // structure and write the docs
+      "Metadata Curator",      // verify metadata alignment
       "Critic Reviewer",
     ],
-    orchestratorRequired: false, // pipeline is sequential and clear
-    optionalRoles: ["Repo Translator", "Brand Guardian", "Support Triage Lead"],
-    chainOrder: "Feedback Synthesizer → Docs Architect → Metadata Curator → Release Engineer → Deployment Verifier",
-    requiredArtifacts: ["synthesized input", "docs structure", "metadata audit", "release package", "deployment verification", "verdict"],
+    orchestratorRequired: false,
+    optionalRoles: ["Repo Translator", "Brand Guardian", "Release Engineer", "Deployment Verifier"],
+    chainOrder: "Support Triage Lead → Feedback Synthesizer → Docs Architect → Metadata Curator",
+    requiredArtifacts: ["classified input", "synthesized themes", "docs structure", "metadata audit", "verdict"],
     stopConditions: [
-      "Feedback Synthesizer finds input data insufficient → request source material",
+      "Support Triage Lead finds input data ambiguous → request clarification",
+      "Feedback Synthesizer finds insufficient signal → escalate to user",
       "Docs Architect finds product direction unclear → escalate to Product Strategist",
-      "Deployment Verifier finds broken artifacts → loop back to Release Engineer",
     ],
     escalationOwner: "Docs Architect",
     dispatchDefaults: { model: "sonnet", maxTurns: 25, maxBudgetUsd: 4.0 },
-    trialEvidence: "G4 (Docs Architect), G7 (Treatment cluster), I-4 (shipped handbook page). Calibrated: added Feedback Synthesizer upstream gate.",
+    trialEvidence: "G4 (Docs Architect), G7 (Treatment), I-4 (shipped page). Calibrated: Support Triage Lead + Feedback Synthesizer upstream. Release/Deploy moved to optional (overhead for docs-only tasks).",
     mismatchGuards: [
       { notForSignals: ["research", "should we", "competitive", "strategy"], suggestInstead: "research", reason: "This is a research/strategy question — decide before documenting" },
       { notForSignals: ["security", "threat", "vulnerability"], suggestInstead: "security", reason: "This is a security review, not docs work" },

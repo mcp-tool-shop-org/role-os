@@ -180,7 +180,8 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 - v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack
 - v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability
 - v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)
-- **v1.1.0**: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials (30 gold + 5 negative). 212 tests.
+- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.
+- **v1.2.0**: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 230 tests.
 
 ## License
 

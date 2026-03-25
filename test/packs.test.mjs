@@ -240,9 +240,22 @@ describe("research pack calibration (J2)", () => {
 
 // ── Calibration: Docs pack has upstream synthesis ──────────────────────────────
 
-describe("docs pack calibration (J2)", () => {
-  it("docs pack opens with Feedback Synthesizer (upstream gate)", () => {
+describe("docs pack calibration (final fix)", () => {
+  it("docs pack opens with Support Triage Lead (interpret before synthesize)", () => {
     const pack = getPack("docs");
-    assert.equal(pack.roles[0], "Feedback Synthesizer", "Docs should open with synthesis gate");
+    assert.equal(pack.roles[0], "Support Triage Lead", "Docs should open with triage interpretation");
+  });
+
+  it("docs pack has Feedback Synthesizer as second role", () => {
+    const pack = getPack("docs");
+    assert.equal(pack.roles[1], "Feedback Synthesizer", "Synthesis follows triage");
+  });
+
+  it("docs pack moved Release Engineer + Deployment Verifier to optional", () => {
+    const pack = getPack("docs");
+    assert.ok(!pack.roles.includes("Release Engineer"), "Release Engineer should be optional");
+    assert.ok(!pack.roles.includes("Deployment Verifier"), "Deployment Verifier should be optional");
+    assert.ok(pack.optionalRoles.includes("Release Engineer"));
+    assert.ok(pack.optionalRoles.includes("Deployment Verifier"));
   });
 });

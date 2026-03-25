@@ -3,6 +3,7 @@ import { resolve, dirname } from "node:path";
 import { readFileSafe } from "./fs-utils.mjs";
 import { detectConflicts } from "./conflicts.mjs";
 import { resolveConflict, resolveSplit, formatEscalation } from "./escalation.mjs";
+import { suggestPack, getPack, checkPackMismatch, getPackRoles } from "./packs.mjs";
 
 // ── Full 32-Role Catalog ─────────────────────────────────────────────────────
 // Every role in the OS is scoreable. Keywords from routing-rules.md + contracts.
@@ -407,6 +408,8 @@ const HANDOFF_HINTS = {
 
 export async function routeCommand(args) {
   const verbose = args.includes("--verbose");
+  const packFlag = args.find(a => a.startsWith("--pack="));
+  const requestedPack = packFlag ? packFlag.split("=")[1] : null;
   const packetFile = args.find(a => !a.startsWith("--"));
 
   if (!packetFile) {
@@ -454,7 +457,39 @@ export async function routeCommand(args) {
   console.log(`\nroleos route — ${packetFile}\n`);
   console.log(`Detected type: ${type}`);
   if (deliverableType) console.log(`Deliverable type: ${deliverableType}`);
-  console.log(`Routing confidence: ${confidence}`);
+
+  // ── Pack suggestion / selection ──
+  const packSuggestion = suggestPack(content);
+  if (requestedPack) {
+    const pack = getPack(requestedPack);
+    if (!pack) {
+      console.log(`\n⚠ Unknown pack: "${requestedPack}". Falling back to free routing.`);
+    } else {
+      const mismatch = checkPackMismatch(requestedPack, content);
+      if (mismatch) {
+        console.log(`\n⚠ Pack mismatch detected: ${mismatch.reason}`);
+        console.log(`  → Suggested alternative: roleos route --pack=${mismatch.suggestInstead} ${packetFile}`);
+        console.log(`  Falling back to free routing for this task.`);
+      } else {
+        const packRoles = getPackRoles(requestedPack);
+        console.log(`\nUsing pack: ${pack.name} (${packRoles.length} roles)`);
+        console.log(`Chain: ${pack.chainOrder}`);
+        console.log(`Roles: ${packRoles.join(" → ")}`);
+        console.log(`\nPack artifacts: ${pack.requiredArtifacts.join(", ")}`);
+        console.log(`Stop conditions:`);
+        for (const sc of pack.stopConditions) {
+          console.log(`  • ${sc}`);
+        }
+        console.log(`\nNext: assign roles and begin execution.`);
+        return; // Pack selected — skip free routing output
+      }
+    }
+  } else if (packSuggestion && packSuggestion.confidence !== "low") {
+    console.log(`\nSuggested pack: ${packSuggestion.pack} (${packSuggestion.confidence} confidence)`);
+    console.log(`  → Use: roleos route --pack=${packSuggestion.pack} ${packetFile}`);
+  }
+
+  console.log(`\nRouting confidence: ${confidence}`);
 
   if (confidence === "low") {
     console.log(`  ↳ Few strong role signals detected. Consider reviewing the packet for missing context.`);

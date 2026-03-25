@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.2.0
+
+### Added
+- Pack auto-selection in `roleos route` — suggests best pack when confidence is high
+- `roleos route --pack=<name>` — use a specific pack for routing
+- Pack mismatch detection — warns when a pack doesn't fit the task, suggests the correct alternative
+- Pack fallback — mismatched or unknown packs fall back to free routing automatically
+- `checkPackMismatch()` API with 7 guard sets covering all pack×task-type combinations
+- `getPackRoles()` API with conditional Orchestrator support
+
+### Changed
+- Docs pack: Support Triage Lead now opens (was Feedback Synthesizer). Feedback Synthesizer is second. Release Engineer + Deployment Verifier moved to optional (overhead for docs-only tasks).
+- Pack calibration applied from comparison evidence: conditional Orchestrator, Security Reviewer in Treatment, Product Strategist opens Research, mismatch guards on all 7 packs.
+
+### Evidence
+- Pack comparison: calibrated packs now win or tie 6/7 (was 2/7 pre-calibration)
+- Misfit honesty: 0 full bluffs, 0 undetected partial bluffs (was 1 + 3)
+- 230 tests, zero failures
+
 ## 1.1.0
 
 ### Added
