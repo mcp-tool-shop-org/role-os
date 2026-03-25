@@ -1,7 +1,8 @@
 import { describe, it, before, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, rmSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   recordOutcome,
   readOutcomes,
@@ -11,7 +12,8 @@ import {
   formatCalibrationReport,
 } from "../src/calibration.mjs";
 
-const TEST_DIR = join(import.meta.dirname, "..", ".test-calibration");
+const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
+const TEST_DIR = join(__dirname, "..", ".test-calibration");
 
 function cleanup() {
   if (existsSync(TEST_DIR)) rmSync(TEST_DIR, { recursive: true });
