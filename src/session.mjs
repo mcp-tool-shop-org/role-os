@@ -14,6 +14,7 @@
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { writeFileSafe } from "./fs-utils.mjs";
+import { scaffoldHooks, generateHooksConfig } from "./hooks.mjs";
 
 // ── roleos init claude ────────────────────────────────────────────────────────
 
@@ -74,6 +75,34 @@ export function scaffoldClaude(cwd, options = {}) {
     created.push(".claude/commands/roleos-status.md");
   } else {
     skipped.push(".claude/commands/roleos-status.md");
+  }
+
+  // 5. Hook scripts
+  const hookResult = scaffoldHooks(cwd);
+  created.push(...hookResult.created);
+  skipped.push(...hookResult.skipped);
+
+  // 6. Settings.json with hooks config
+  const settingsPath = join(cwd, ".claude", "settings.local.json");
+  if (!existsSync(settingsPath) || options.force) {
+    const hooksConfig = generateHooksConfig();
+    writeFileSync(settingsPath, JSON.stringify(hooksConfig, null, 2));
+    created.push(".claude/settings.local.json");
+  } else {
+    // Check if hooks are already configured
+    try {
+      const existing = JSON.parse(readFileSync(settingsPath, "utf-8"));
+      if (!existing.hooks) {
+        const hooksConfig = generateHooksConfig();
+        existing.hooks = hooksConfig.hooks;
+        writeFileSync(settingsPath, JSON.stringify(existing, null, 2));
+        created.push(".claude/settings.local.json (hooks added)");
+      } else {
+        skipped.push(".claude/settings.local.json (hooks already configured)");
+      }
+    } catch {
+      skipped.push(".claude/settings.local.json (could not parse existing)");
+    }
   }
 
   return { created, skipped };
@@ -161,6 +190,35 @@ export function doctor(cwd) {
     status: existsSync(packetsDir) ? "pass" : "warn",
     detail: existsSync(packetsDir) ? "exists" : "no packets yet — run roleos packet new",
   });
+
+  // Check 7: Hook scripts exist
+  const hooksDir = join(cwd, ".claude", "hooks");
+  const hookFiles = ["session-start.mjs", "prompt-submit.mjs", "pre-tool-use.mjs", "subagent-start.mjs", "stop.mjs"];
+  const existingHooks = hookFiles.filter(f => existsSync(join(hooksDir, f)));
+  if (existingHooks.length === hookFiles.length) {
+    checks.push({ name: "hook scripts", status: "pass", detail: `all ${hookFiles.length} hooks present` });
+  } else if (existingHooks.length > 0) {
+    checks.push({ name: "hook scripts", status: "warn", detail: `${existingHooks.length}/${hookFiles.length} hooks present` });
+  } else {
+    checks.push({ name: "hook scripts", status: "warn", detail: "no hooks — run roleos init claude for runtime enforcement" });
+  }
+
+  // Check 8: Settings has hooks configured
+  const settingsPath = join(cwd, ".claude", "settings.local.json");
+  if (existsSync(settingsPath)) {
+    try {
+      const settings = JSON.parse(readFileSync(settingsPath, "utf-8"));
+      if (settings.hooks) {
+        checks.push({ name: "hooks in settings", status: "pass", detail: "configured" });
+      } else {
+        checks.push({ name: "hooks in settings", status: "warn", detail: "settings.local.json exists but no hooks section" });
+      }
+    } catch {
+      checks.push({ name: "hooks in settings", status: "warn", detail: "settings.local.json exists but could not parse" });
+    }
+  } else {
+    checks.push({ name: "hooks in settings", status: "warn", detail: "no settings.local.json — hooks not active" });
+  }
 
   const healthy = checks.every(c => c.status !== "fail");
 

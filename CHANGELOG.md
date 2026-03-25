@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.5.0
+
+### Added
+
+#### Hook Spine / Runtime Enforcement (Phase R)
+- 5 lifecycle hooks: SessionStart, UserPromptSubmit, PreToolUse, SubagentStart, Stop
+- `scaffoldHooks()` generates all 5 hook scripts in .claude/hooks/
+- `roleos init claude` now scaffolds hooks + settings.local.json with hook config
+- `roleos doctor` now checks for hook scripts (check 7) and settings hooks (check 8)
+
+#### SessionStart hook
+- Establishes session contract on every new session
+- Records session ID, timestamp, initializes state tracking
+- Adds context reminding Claude to use /roleos-route for non-trivial tasks
+
+#### UserPromptSubmit hook
+- Classifies prompts as substantial (>50 chars + action verbs)
+- After 2+ substantial prompts without a route card, adds context reminder
+- Does not block — advisory enforcement
+
+#### PreToolUse hook
+- Records all tool usage in session state
+- Flags write tools (Bash, Write, Edit) used without route card after substantial work
+- Advisory, not blocking — preserves operator control
+
+#### SubagentStart hook
+- Injects active role contract into delegated agents
+- Ensures subagents inherit the Role OS session context
+
+#### Stop hook
+- Warns when substantial sessions end without route card or outcome artifact
+- Advisory — does not block session exit
+- Trivial sessions (< 2 substantial prompts) are exempt
+
+### Evidence
+- 358 tests, zero failures
+- 23 new hook tests covering all 5 lifecycle hooks
+
 ## 1.4.0
 
 ### Added
