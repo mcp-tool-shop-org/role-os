@@ -9,6 +9,7 @@ import { routeCommand } from "../src/route.mjs";
 import { reviewCommand } from "../src/review.mjs";
 import { statusCommand } from "../src/status.mjs";
 import { packsCommand } from "../src/packs-cmd.mjs";
+import { scaffoldClaude, doctor, formatDoctor } from "../src/session.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8")).version;
@@ -29,6 +30,7 @@ Usage:
   roleos packs list                  List all available team packs
   roleos packs suggest <packet-file> Suggest a pack for a packet
   roleos packs show <pack-key>       Show full detail for a named pack
+  roleos doctor                      Verify repo is wired for Role OS sessions
   roleos help                        Show this help
 
 Verdicts: accept | accept-with-notes | reject | blocked
@@ -64,8 +66,28 @@ const args = process.argv.slice(3);
 try {
   switch (command) {
     case "init":
-      await initCommand(args);
+      if (args[0] === "claude") {
+        const force = args.includes("--force");
+        const result = scaffoldClaude(process.cwd(), { force });
+        if (result.created.length > 0) {
+          console.log(`Created:`);
+          result.created.forEach(f => console.log(`  + ${f}`));
+        }
+        if (result.skipped.length > 0) {
+          console.log(`Skipped:`);
+          result.skipped.forEach(f => console.log(`  ~ ${f}`));
+        }
+        console.log(`\nDone. Claude Code will now use Role OS for routing.\nRun: roleos doctor  to verify.`);
+      } else {
+        await initCommand(args);
+      }
       break;
+    case "doctor": {
+      const result = doctor(process.cwd());
+      console.log(formatDoctor(result));
+      if (!result.healthy) process.exit(1);
+      break;
+    }
     case "packet":
       await packetCommand(args);
       break;

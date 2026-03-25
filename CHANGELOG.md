@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.4.0
+
+### Added
+
+#### Session Spine (Phase Q)
+- `roleos init claude` — scaffolds Claude Code integration: CLAUDE.md instructions, /roleos-route + /roleos-review + /roleos-status slash commands
+- `roleos doctor` — verifies repo is correctly wired for Role OS sessions (6 checks: .claude/ dir, CLAUDE.md section, /roleos-route command, context files, role contracts, packets)
+- Route card generation — session header artifact proving Role OS was engaged (task type, pack, confidence, composite status, success artifact)
+- CLAUDE.md template instructs Claude to route through Role OS before non-trivial work
+- /roleos-route command produces structured route cards
+- /roleos-review command guides structured verdict production
+- /roleos-status command shows active work and context health
+- Appends to existing CLAUDE.md without overwriting (detects Role OS section)
+- --force flag overwrites existing command files
+
+### Evidence
+- 335 tests, zero failures
+
 ## 1.3.0
 
 ### Added
