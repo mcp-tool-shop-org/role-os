@@ -29,7 +29,12 @@ Creates a structured packet file. Types: `feature`, `integration`, `identity`. P
 roleos route <packet-file>
 ```
 
-Reads the packet, detects the problem shape, and recommends the smallest valid role chain. Includes dependency verification notes.
+Reads the packet, detects the problem shape, and recommends the smallest valid role chain. Suggests a pack when confidence is high. Detects composite tasks and recommends splitting. Includes dependency verification notes.
+
+Options:
+- `--pack=<name>` — use a specific pack instead of auto-selection
+- `--verbose` — show all scoring details including non-triggered roles
+- `--no-split` — force single-packet routing even if composite task is detected
 
 ### review
 

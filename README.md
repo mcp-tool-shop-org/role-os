@@ -173,7 +173,11 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | **Evidence** | Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds. | ✓ Shipped |
 | **Dispatch** | Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets. | ✓ Shipped |
 | **Trials** | Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete. | ✓ Complete |
-| **Team Packs** | 7 battle-tested packs for common task families. Pack suggestion engine. | ✓ Shipped |
+| **Team Packs** | 7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback. | ✓ Shipped |
+| **Outcome calibration** | Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds. | ✓ Shipped |
+| **Mixed-task decomposition** | Detects composite work, splits into child packets, assigns packs, preserves dependencies. | ✓ Shipped |
+| **Composite execution** | Runs child packets in dependency order with artifact passing, branch recovery, and synthesis. | ✓ Shipped |
+| **Adaptive replanning** | Mid-run scope changes, findings, or new requirements update the plan without restarting. | ✓ Shipped |
 
 ## Status
 
@@ -181,7 +185,8 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 - v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability
 - v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)
 - v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.
-- **v1.2.0**: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 230 tests.
+- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.
+- **Current**: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.
 
 ## License
 

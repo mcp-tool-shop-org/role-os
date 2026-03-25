@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.3.0
+
+### Added
+
+#### Outcome Calibration (Phase M)
+- Run outcome ledger — append-only JSONL recording pack selection, confidence, overrides, escalations, corrections, completion status
+- `computeCalibration()` — pack usage rates, high-confidence accuracy, operator override rates, per-pack performance
+- `computePackBoosts()` — weight tuning from clean completed runs (+0.5/run, capped at 2.0)
+- `computeConfidenceAdjustment()` — raises threshold when high-confidence is often overridden, lowers when medium is often accepted
+- Auto-generated calibration suggestions when metrics drift
+- Safety constraint: calibration never overrides mismatch guards, conflict rules, escalation honesty, or evidence requirements
+
+#### Mixed-Task Decomposition (Phase N)
+- `detectComposite()` — 7 subtask categories (build, bugfix, security, docs, research, launch, treatment) with signal-based detection
+- Structural connector detection ("and then", "after that", "plus", "also")
+- Confidence levels: high (3+ categories or 2+ with connectors), medium, low
+- `decompose()` — generates linked child packets sorted by phase order
+- `createRunPlan()` — dependency-aware parent plan with child tracking
+- Honest fallback: medium/low confidence shows uncertainty warning with `--no-split` override
+
+#### Composite Execution (Phase O)
+- `initExecution()` / `advance()` — dependency-driven child execution with artifact passing
+- 7 artifact contracts defining what each category produces and expects
+- Artifact ledger tracking all cross-packet handoffs
+- `blockChild()` / `recoverChild()` / `failChild()` — branch recovery with transitive cascade
+- `invalidateDownstream()` — resets stale children when upstream changes, removes stale artifacts
+- `synthesize()` — truthful parent-level completion report
+- Independent branches continue unaffected when a sibling fails
+
+#### Adaptive Replanning (Phase P)
+- 6 structured change event types: scope-change, artifact-changed, new-requirement, review-finding, dependency-discovered, priority-change
+- `analyzeImpact()` — identifies valid/stale children, stale artifacts, whether new children or reorder needed
+- `replan()` — selective replanning: invalidates only affected branches, inserts new children, updates dependencies
+- Plan diff: shows what changed, what stayed valid, what reopened, what was inserted
+- Execution resumes from next valid child after replan — no restart required
+
+### Evidence
+- 317 tests, zero failures
+- Calibration, decomposition, composite execution, and replanning each have dedicated test suites
+
 ## 1.2.0
 
 ### Added
