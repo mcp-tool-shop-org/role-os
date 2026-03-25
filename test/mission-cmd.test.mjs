@@ -48,7 +48,7 @@ describe("roleos mission show", () => {
     assert.ok(out.includes("Honest Partial"));
     assert.ok(out.includes("Stop Conditions"));
     assert.ok(out.includes("Dispatch Defaults"));
-    assert.ok(out.includes("Diagnostician"));
+    assert.ok(out.includes("Repo Researcher"));
   });
 
   it("shows trial evidence", () => {

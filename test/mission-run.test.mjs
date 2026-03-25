@@ -58,7 +58,7 @@ describe("startNextStep", () => {
     const run = createRun("bugfix", "test");
     const step = startNextStep(run);
     assert.ok(step);
-    assert.equal(step.role, "Diagnostician");
+    assert.equal(step.role, "Repo Researcher");
     assert.equal(step.status, "active");
     assert.ok(step.startedAt);
     assert.equal(run.status, "running");
@@ -148,9 +148,9 @@ describe("failStep", () => {
 describe("recordEscalation", () => {
   it("records an escalation", () => {
     const run = createRun("bugfix", "test");
-    const esc = recordEscalation(run, "Diagnostician", "Diagnostician", "root cause unclear", "gather more evidence");
-    assert.equal(esc.from, "Diagnostician");
-    assert.equal(esc.to, "Diagnostician");
+    const esc = recordEscalation(run, "Repo Researcher", "Repo Researcher", "root cause unclear", "gather more evidence");
+    assert.equal(esc.from, "Repo Researcher");
+    assert.equal(esc.to, "Repo Researcher");
     assert.ok(esc.timestamp);
     assert.equal(run.escalations.length, 1);
   });
@@ -162,9 +162,9 @@ describe("recordEscalation", () => {
     completeStep(run, "initial diagnosis");
     // Start fix
     startNextStep(run);
-    // Escalate back to Diagnostician
-    recordEscalation(run, "Backend Engineer", "Diagnostician", "diagnosis was wrong", "re-diagnose");
-    const diagStep = run.steps.find(s => s.role === "Diagnostician");
+    // Escalate back to Repo Researcher
+    recordEscalation(run, "Backend Engineer", "Repo Researcher", "diagnosis was wrong", "re-diagnose");
+    const diagStep = run.steps.find(s => s.role === "Repo Researcher");
     assert.equal(diagStep.status, "pending");
     assert.equal(diagStep.artifact, null);
   });
@@ -186,7 +186,7 @@ describe("getRunPosition", () => {
     const run = createRun("bugfix", "test");
     startNextStep(run);
     const pos = getRunPosition(run);
-    assert.equal(pos.currentStep.role, "Diagnostician");
+    assert.equal(pos.currentStep.role, "Repo Researcher");
     assert.equal(pos.progress, "0/4");
   });
 
@@ -216,7 +216,7 @@ describe("getArtifactChain", () => {
     completeStep(run, "change plan");
     const chain = getArtifactChain(run);
     assert.equal(chain.length, 2);
-    assert.equal(chain[0].role, "Diagnostician");
+    assert.equal(chain[0].role, "Repo Researcher");
     assert.equal(chain[0].type, "diagnosis-report");
     assert.equal(chain[1].role, "Backend Engineer");
     assert.equal(chain[1].type, "change-plan");
@@ -295,7 +295,7 @@ describe("formatCompletionReport", () => {
     assert.ok(text.includes("# Mission Report: Docs & Release"));
     assert.ok(text.includes("COMPLETED"));
     assert.ok(text.includes("2/2"));
-    assert.ok(text.includes("[x] Docs Writer"));
+    assert.ok(text.includes("[x] Docs Architect"));
     assert.ok(text.includes("[x] Critic Reviewer"));
   });
 
@@ -307,7 +307,7 @@ describe("formatCompletionReport", () => {
     const text = formatCompletionReport(report);
     assert.ok(text.includes("PARTIAL"));
     assert.ok(text.includes("## Honest Partial"));
-    assert.ok(text.includes("[~] Diagnostician"));
+    assert.ok(text.includes("[~] Repo Researcher"));
   });
 
   it("formats escalations when present", () => {
@@ -337,7 +337,7 @@ describe("full mission lifecycle", () => {
 
     // Step 1: Diagnose
     const diag = startNextStep(run);
-    assert.equal(diag.role, "Diagnostician");
+    assert.equal(diag.role, "Repo Researcher");
     completeStep(run, "Root cause: save() called with null context when session expired");
 
     // Step 2: Fix

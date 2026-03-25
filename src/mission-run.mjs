@@ -163,6 +163,16 @@ export function failStep(run, status, reason) {
   active.note = reason;
   active.completedAt = new Date().toISOString();
 
+  // Block all downstream pending steps (S2-F2)
+  let foundActive = false;
+  for (const step of run.steps) {
+    if (step === active) { foundActive = true; continue; }
+    if (foundActive && step.status === "pending") {
+      step.status = "blocked";
+      step.note = `Blocked: upstream ${active.role} ${status}`;
+    }
+  }
+
   // Mission status follows the worst step
   run.status = status;
   run.completedAt = new Date().toISOString();
@@ -177,7 +187,7 @@ export function failStep(run, status, reason) {
  * @param {string} to - Role receiving
  * @param {string} trigger - What triggered it
  * @param {string} action - What needs to happen
- * @returns {object} The escalation record
+ * @returns {{from: string, to: string, trigger: string, action: string, timestamp: string, reopened: boolean, warning: string|null}}
  */
 export function recordEscalation(run, from, to, trigger, action) {
   const escalation = {
@@ -186,17 +196,37 @@ export function recordEscalation(run, from, to, trigger, action) {
     trigger,
     action,
     timestamp: new Date().toISOString(),
+    reopened: false,
+    warning: null,
   };
   run.escalations.push(escalation);
 
-  // Re-activate the target step if it exists and was completed
-  // (escalation loops back to an earlier role)
-  const targetStep = run.steps.find((s) => s.role === to && s.status === "completed");
+  // S5-F1: Find the LAST matching step for the target role, not the first.
+  // Security-hardening has Security Reviewer twice — escalation should target
+  // the latest occurrence (re-audit), not the initial audit.
+  let targetStep = null;
+  for (let i = run.steps.length - 1; i >= 0; i--) {
+    if (run.steps[i].role === to && run.steps[i].status === "completed") {
+      targetStep = run.steps[i];
+      break;
+    }
+  }
+
   if (targetStep) {
     targetStep.status = "pending";
     targetStep.artifact = null;
     targetStep.note = `Re-opened by escalation: ${trigger}`;
     targetStep.completedAt = null;
+    escalation.reopened = true;
+  } else {
+    // S4-F2: Target role not found in chain (or no completed step to re-open).
+    // Warn the operator instead of silently doing nothing.
+    const inChain = run.steps.some((s) => s.role === to);
+    if (!inChain) {
+      escalation.warning = `Role "${to}" is not in this mission's step chain. Escalation recorded but no step re-opened.`;
+    } else {
+      escalation.warning = `Role "${to}" has no completed step to re-open. Escalation recorded.`;
+    }
   }
 
   return escalation;
@@ -321,7 +351,8 @@ export function formatCompletionReport(report) {
     const icon = step.status === "completed" ? "[x]" :
                  step.status === "active" ? "[>]" :
                  step.status === "partial" ? "[~]" :
-                 step.status === "failed" ? "[!]" : "[ ]";
+                 step.status === "failed" ? "[!]" :
+                 step.status === "blocked" ? "[-]" : "[ ]";
     const artifact = step.hasArtifact ? ` → ${step.produces}` : "";
     const note = step.note ? ` (${step.note})` : "";
     lines.push(`  ${icon} ${step.role}${artifact}${note}`);

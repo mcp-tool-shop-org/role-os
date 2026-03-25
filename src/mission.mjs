@@ -16,6 +16,7 @@
 
 import { TEAM_PACKS } from "./packs.mjs";
 import { ROLE_ARTIFACT_CONTRACTS } from "./artifacts.mjs";
+import { ROLE_CATALOG } from "./route.mjs";
 
 // ── Mission definitions ─────────────────────────────────────────────────────
 
@@ -60,23 +61,23 @@ export const MISSIONS = {
     name: "Bugfix & Diagnosis",
     description: "Diagnose root cause, fix, test, and verify a bug or regression.",
     pack: "bugfix",
-    entryPath: "Diagnostician isolates root cause → Backend Engineer fixes → Test Engineer verifies → Critic reviews",
+    entryPath: "Repo Researcher diagnoses root cause → Backend Engineer fixes → Test Engineer verifies → Critic reviews",
     roleChain: [
-      "Diagnostician",
+      "Repo Researcher",
       "Backend Engineer",
       "Test Engineer",
       "Critic Reviewer",
     ],
     artifactFlow: [
-      { role: "Diagnostician", produces: "diagnosis-report", consumedBy: "Backend Engineer" },
+      { role: "Repo Researcher", produces: "diagnosis-report", consumedBy: "Backend Engineer" },
       { role: "Backend Engineer", produces: "change-plan", consumedBy: "Test Engineer" },
       { role: "Test Engineer", produces: "test-report", consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer", produces: "review-verdict", consumedBy: null },
     ],
     escalationBranches: [
-      { trigger: "root cause unclear", from: "Diagnostician", to: "Diagnostician", action: "gather more evidence, add reproduction steps" },
+      { trigger: "root cause unclear", from: "Repo Researcher", to: "Repo Researcher", action: "gather more evidence, add reproduction steps" },
       { trigger: "fix introduces regression", from: "Test Engineer", to: "Backend Engineer", action: "revise fix approach" },
-      { trigger: "diagnosis was wrong", from: "Backend Engineer", to: "Diagnostician", action: "re-diagnose with new evidence from attempted fix" },
+      { trigger: "diagnosis was wrong", from: "Backend Engineer", to: "Repo Researcher", action: "re-diagnose with new evidence from attempted fix" },
     ],
     honestPartial: "Root cause identified and documented but fix is non-trivial. Diagnosis report artifact is complete. Handoff includes attempted approaches and why they failed.",
     stopConditions: [
@@ -93,22 +94,22 @@ export const MISSIONS = {
     name: "Treatment (Repo Polish)",
     description: "Full treatment: shipcheck gates, polish, docs, translations, version bump, publish.",
     pack: "treatment",
-    entryPath: "Security Reviewer audits → Docs Writer updates → DevOps Engineer verifies CI → Critic reviews",
+    entryPath: "Shipcheck gates first → Security Reviewer audits → Docs Architect updates → Deployment Verifier verifies CI → Critic reviews",
     roleChain: [
       "Security Reviewer",
-      "Docs Writer",
-      "DevOps Engineer",
+      "Docs Architect",
+      "Deployment Verifier",
       "Critic Reviewer",
     ],
     artifactFlow: [
-      { role: "Security Reviewer", produces: "security-audit", consumedBy: "Docs Writer" },
-      { role: "Docs Writer", produces: "docs-update", consumedBy: "DevOps Engineer" },
-      { role: "DevOps Engineer", produces: "ci-verification", consumedBy: "Critic Reviewer" },
+      { role: "Security Reviewer", produces: "security-audit", consumedBy: "Docs Architect" },
+      { role: "Docs Architect", produces: "docs-update", consumedBy: "Deployment Verifier" },
+      { role: "Deployment Verifier", produces: "ci-verification", consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer", produces: "review-verdict", consumedBy: null },
     ],
     escalationBranches: [
       { trigger: "security gate fails", from: "Security Reviewer", to: "Backend Engineer", action: "fix security issue before treatment continues" },
-      { trigger: "CI fails after changes", from: "DevOps Engineer", to: "Backend Engineer", action: "fix CI, re-verify" },
+      { trigger: "CI fails after changes", from: "Deployment Verifier", to: "Backend Engineer", action: "fix CI, re-verify" },
       { trigger: "shipcheck hard gate blocks", from: "Critic Reviewer", to: "Security Reviewer", action: "address blocking gate, restart treatment" },
     ],
     honestPartial: "Shipcheck passed but polish incomplete. Security and docs artifacts exist. Remaining items documented in handoff.",
@@ -126,18 +127,18 @@ export const MISSIONS = {
     name: "Docs & Release",
     description: "Write or update documentation, prepare release notes, publish.",
     pack: "docs",
-    entryPath: "Docs Writer synthesizes upstream → writes docs → Critic reviews completeness",
+    entryPath: "Docs Architect synthesizes upstream → writes docs → Critic reviews completeness",
     roleChain: [
-      "Docs Writer",
+      "Docs Architect",
       "Critic Reviewer",
     ],
     artifactFlow: [
-      { role: "Docs Writer", produces: "docs-update", consumedBy: "Critic Reviewer" },
+      { role: "Docs Architect", produces: "docs-update", consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer", produces: "review-verdict", consumedBy: null },
     ],
     escalationBranches: [
-      { trigger: "upstream source missing", from: "Docs Writer", to: "Product Strategist", action: "clarify what changed and why" },
-      { trigger: "docs conflict with code", from: "Critic Reviewer", to: "Docs Writer", action: "reconcile docs with actual implementation" },
+      { trigger: "upstream source missing", from: "Docs Architect", to: "Product Strategist", action: "clarify what changed and why" },
+      { trigger: "docs conflict with code", from: "Critic Reviewer", to: "Docs Architect", action: "reconcile docs with actual implementation" },
     ],
     honestPartial: "Core docs updated but supplementary pages (handbook, translations) pending. Main artifact complete.",
     stopConditions: [
@@ -187,22 +188,22 @@ export const MISSIONS = {
     name: "Research → Framing → Launch",
     description: "Investigate a question, frame findings into a decision, prepare launch artifacts.",
     pack: "research",
-    entryPath: "Product Strategist frames question → Research Analyst investigates → findings → launch decision",
+    entryPath: "Product Strategist frames question → Competitive Analyst investigates → findings → launch decision",
     roleChain: [
       "Product Strategist",
-      "Research Analyst",
-      "Docs Writer",
+      "Competitive Analyst",
+      "Docs Architect",
       "Critic Reviewer",
     ],
     artifactFlow: [
-      { role: "Product Strategist", produces: "strategy-brief", consumedBy: "Research Analyst" },
-      { role: "Research Analyst", produces: "research-findings", consumedBy: "Product Strategist" },
-      { role: "Docs Writer", produces: "docs-update", consumedBy: "Critic Reviewer" },
+      { role: "Product Strategist", produces: "strategy-brief", consumedBy: "Competitive Analyst" },
+      { role: "Competitive Analyst", produces: "research-findings", consumedBy: "Product Strategist" },
+      { role: "Docs Architect", produces: "docs-update", consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer", produces: "review-verdict", consumedBy: null },
     ],
     escalationBranches: [
-      { trigger: "research inconclusive", from: "Research Analyst", to: "Product Strategist", action: "narrow the question or accept uncertainty" },
-      { trigger: "findings contradict assumption", from: "Research Analyst", to: "Product Strategist", action: "reframe strategy based on evidence" },
+      { trigger: "research inconclusive", from: "Competitive Analyst", to: "Product Strategist", action: "narrow the question or accept uncertainty" },
+      { trigger: "findings contradict assumption", from: "Competitive Analyst", to: "Product Strategist", action: "reframe strategy based on evidence" },
       { trigger: "launch blocked by findings", from: "Critic Reviewer", to: "Product Strategist", action: "decide: proceed with caveats or pivot" },
     ],
     honestPartial: "Research complete with findings documented. Launch decision pending stakeholder input. Research artifact is self-contained.",
@@ -251,7 +252,7 @@ export function suggestMission(taskDescription) {
 
   const MISSION_SIGNALS = {
     "feature-ship": {
-      signals: ["add feature", "implement", "build", "create", "new command", "ship feature", "develop"],
+      signals: ["add feature", "implement", "build", "create", "new command", "ship feature", "develop", "add command", "new feature", "add support"],
       weight: 1,
     },
     "bugfix": {
@@ -319,6 +320,19 @@ export function validateMission(key) {
   // Check pack exists
   if (!TEAM_PACKS[mission.pack]) {
     issues.push(`Pack "${mission.pack}" not found in TEAM_PACKS`);
+  }
+
+  // S6-F1: Check all role names exist in ROLE_CATALOG
+  const catalogNames = new Set(ROLE_CATALOG.map((r) => r.name));
+  for (const roleName of mission.roleChain) {
+    if (!catalogNames.has(roleName)) {
+      issues.push(`Role "${roleName}" in roleChain not found in ROLE_CATALOG`);
+    }
+  }
+  for (const step of mission.artifactFlow) {
+    if (!catalogNames.has(step.role)) {
+      issues.push(`Role "${step.role}" in artifactFlow not found in ROLE_CATALOG`);
+    }
   }
 
   // Check artifact contracts exist for producing roles
