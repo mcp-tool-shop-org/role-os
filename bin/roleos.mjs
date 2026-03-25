@@ -10,6 +10,7 @@ import { reviewCommand } from "../src/review.mjs";
 import { statusCommand } from "../src/status.mjs";
 import { packsCommand } from "../src/packs-cmd.mjs";
 import { scaffoldClaude, doctor, formatDoctor } from "../src/session.mjs";
+import { artifactsCommand } from "../src/artifacts-cmd.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8")).version;
@@ -30,6 +31,10 @@ Usage:
   roleos packs list                  List all available team packs
   roleos packs suggest <packet-file> Suggest a pack for a packet
   roleos packs show <pack-key>       Show full detail for a named pack
+  roleos artifacts                   List all role artifact contracts
+  roleos artifacts show <role>       Show artifact contract for a role
+  roleos artifacts validate <role> <file>  Validate a file against a contract
+  roleos artifacts chain <pack>      Show pack handoff flow
   roleos doctor                      Verify repo is wired for Role OS sessions
   roleos help                        Show this help
 
@@ -102,6 +107,9 @@ try {
       break;
     case "packs":
       await packsCommand(args);
+      break;
+    case "artifacts":
+      await artifactsCommand(args);
       break;
     case "help":
     case "--help":
