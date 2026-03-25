@@ -1,10 +1,59 @@
 # Changelog
 
-## 1.0.3
+## 1.1.0
 
 ### Added
-- Handbook: Team Packs page documenting the 5 available packs (Docs Architect, Metadata Curator, Release Engineer, Deployment Verifier, Critic Reviewer) with roles, artifacts, stop conditions, and `roleos route --pack <name>` usage
-- Reference page sidebar order bumped to 4 to accommodate Team Packs at order 3
+
+#### Routing
+- Full 31-role catalog — all roles scored by keyword, trigger phrase, packet type bias, and deliverable affinity
+- Dynamic chain builder — phase-ordered assembly replacing static templates
+- Routing confidence assessment (high/medium/low)
+- `excludeWhen` enforcement — roles suppressed when exclusion patterns match packet content
+- `detectType` false-positive prevention — "integration testing" no longer triggers integration type
+- `--verbose` flag for `roleos route` — hides scoring noise by default
+
+#### Conflict Detection
+- 4-pass conflict engine: hard conflicts, sequence, redundancy, coverage gaps
+- Per-role constraint registry: lateOnly, requiresBeforePacks
+- Overlap pair detection
+- Repair suggestions on every finding
+
+#### Escalation Auto-Routing
+- Blocked/rejected/conflict/split work auto-routes to named resolver
+- Every escalation includes: target role, recovery type, required artifact, handoff context
+
+#### Structured Evidence
+- 12 evidence kinds, 4 statuses, closed 4-verdict enum (accept/accept-with-notes/reject/blocked)
+- Role-aware evidence requirements for 15 roles
+- Sufficiency checks with contradiction detection
+
+#### Runtime Dispatch
+- Execution manifests for multi-claude with per-role tool profiles and budgets
+- 8 execution states with auto-advance
+- Escalation packet generation for blocked/rejected steps
+
+#### Proven Team Packs
+- 7 battle-tested packs: feature, bugfix, security, docs, launch, research, treatment
+- `roleos packs list` — show all packs with role counts
+- `roleos packs suggest <packet>` — suggest best pack for a packet
+- `roleos packs show <name>` — show pack details (roles, artifacts, stop conditions)
+- Pack suggestion engine with confidence levels
+
+#### Trials
+- Full roster proven: 30/30 gold-task trials + 5/5 negative (wrong-task honesty) trials
+- 7 pack execution trials — all packs ran full chains with honest Critic verdicts
+- Trial framework: buildClusterTrials, evaluateTrialOutput, formatTrialReport
+
+### Changed
+- 32 → 31 roles: Information Architect merged into Docs Architect
+- Verdict vocabulary unified: evidence.mjs now uses accept/reject/blocked (matching review.mjs)
+- "worker" terminology replaced with "role" in dispatch.mjs
+
+### Fixed
+- `excludeWhen` was declared on 14 roles but never enforced — now active in scoreRole
+- `detectType` false-positived on "integration testing" — now uses word-boundary regex
+- "Not triggered: N roles" noise hidden by default (shown with --verbose)
+- Handbook: Team Packs page added, reference sidebar reordered
 
 ## 1.0.2
 

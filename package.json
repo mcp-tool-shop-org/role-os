@@ -1,7 +1,11 @@
 {
   "name": "role-os",
-  "version": "1.0.2",
-  "description": "Role OS — a repo-native operating layer where specialized roles execute work through contracts, handoffs, review, and escalation",
+  "version": "1.1.0",
+  "description": "Role OS — a multi-Claude operating system where 31 specialized roles execute work through contracts, conflict detection, escalation, and structured evidence. 7 proven team packs for common task families.",
+  "homepage": "https://mcp-tool-shop-org.github.io/role-os/",
+  "bugs": {
+    "url": "https://github.com/mcp-tool-shop-org/role-os/issues"
+  },
   "type": "module",
   "bin": {
     "roleos": "bin/roleos.mjs"
@@ -33,7 +37,13 @@
     "contracts",
     "handoffs",
     "review",
-    "workflow"
+    "workflow",
+    "multi-agent",
+    "ai-workflow",
+    "developer-tools",
+    "role-contracts",
+    "claude",
+    "multi-claude"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

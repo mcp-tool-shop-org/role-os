@@ -172,14 +172,15 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact | ✓ Shipped |
 | **Evidence** | Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds. | ✓ Shipped |
 | **Dispatch** | Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets. | ✓ Shipped |
-| **Trials** | Execution trial framework. Product + Engineering clusters proven (6/6 pass). | ✓ In progress |
+| **Trials** | Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete. | ✓ Complete |
+| **Team Packs** | 7 battle-tested packs for common task families. Pack suggestion engine. | ✓ Shipped |
 
 ## Status
 
 - v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack
 - v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability
 - v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)
-- **Current**: 31 roles (Information Architect merged into Docs Architect), full routing spine, conflict detection, escalation, evidence, dispatch. 162 tests.
+- **v1.1.0**: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials (30 gold + 5 negative). 212 tests.
 
 ## License
 
