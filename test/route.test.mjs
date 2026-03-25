@@ -343,3 +343,39 @@ describe("role disambiguation (Pass 3)", () => {
     assert.equal(top, "Metadata Curator");
   });
 });
+
+// ── Calibration tests (from trial findings) ───────────────────────────────────
+
+describe("excludeWhen enforcement", () => {
+  it("UI Designer is excluded when packet says 'no user interface' or 'cli only'", () => {
+    const uiDesigner = ROLE_CATALOG.find(r => r.name === "UI Designer");
+    const result = scoreRole(uiDesigner, "Build a backend API with no user interface. CLI only tool.", "feature", null);
+    assert.equal(result.score, 0, "UI Designer should be excluded by 'no user interface'");
+  });
+
+  it("Backend Engineer is excluded when packet says 'frontend only'", () => {
+    const be = ROLE_CATALOG.find(r => r.name === "Backend Engineer");
+    const result = scoreRole(be, "This is a frontend only task. Update the React components and CSS.", "feature", null);
+    assert.equal(result.score, 0, "Backend Engineer should be excluded by 'frontend only'");
+  });
+
+  it("excludeWhen does not fire when exclusion pattern is absent", () => {
+    const uiDesigner = ROLE_CATALOG.find(r => r.name === "UI Designer");
+    const result = scoreRole(uiDesigner, "Design the screen layout and interaction flow for the dashboard UI.", "feature", null);
+    assert.ok(result.score > 0, "UI Designer should score when exclusion patterns are absent");
+  });
+});
+
+describe("detectType false positive prevention", () => {
+  it("'integration testing' does not trigger integration type", () => {
+    assert.equal(detectType("Run integration testing on the API endpoints"), "feature");
+  });
+
+  it("'system integration' does not trigger integration type", () => {
+    assert.equal(detectType("Discuss system integration test strategy"), "feature");
+  });
+
+  it("real integration packet still detects correctly", () => {
+    assert.equal(detectType("Wire the bridge between auth service and the API integration layer"), "integration");
+  });
+});

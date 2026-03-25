@@ -25,11 +25,11 @@ describe("evidence schema", () => {
     assert.ok(EVIDENCE_STATUSES.includes("contradicts"));
   });
 
-  it("has at least 5 verdict types", () => {
-    assert.ok(VERDICT_TYPES.length >= 5);
-    assert.ok(VERDICT_TYPES.includes("approve"));
+  it("has exactly 4 verdict types (closed enum)", () => {
+    assert.equal(VERDICT_TYPES.length, 4);
+    assert.ok(VERDICT_TYPES.includes("accept"));
     assert.ok(VERDICT_TYPES.includes("reject"));
-    assert.ok(VERDICT_TYPES.includes("block"));
+    assert.ok(VERDICT_TYPES.includes("blocked"));
   });
 });
 
@@ -137,7 +137,7 @@ describe("validateEvidenceItem", () => {
 describe("checkSufficiency", () => {
   it("sufficient when all required evidence kinds present", () => {
     const result = checkSufficiency({
-      verdict: "approve",
+      verdict: "accept",
       reviewerRole: "Test Engineer",
       summary: "All tests pass",
       evidence: [
@@ -154,7 +154,7 @@ describe("checkSufficiency", () => {
 
   it("insufficient when required evidence kind missing", () => {
     const result = checkSufficiency({
-      verdict: "approve",
+      verdict: "accept",
       reviewerRole: "Test Engineer",
       summary: "Looks good",
       evidence: [
@@ -171,7 +171,7 @@ describe("checkSufficiency", () => {
 
   it("warns on contradictions in approve verdict", () => {
     const result = checkSufficiency({
-      verdict: "approve",
+      verdict: "accept",
       reviewerRole: "Backend Engineer",
       summary: "Approved despite concern",
       evidence: [
@@ -188,7 +188,7 @@ describe("checkSufficiency", () => {
 
   it("warns on approve with missing evidence items", () => {
     const result = checkSufficiency({
-      verdict: "approve",
+      verdict: "accept",
       reviewerRole: "Critic Reviewer",
       summary: "Approved",
       evidence: [
@@ -221,7 +221,7 @@ describe("checkSufficiency", () => {
 
   it("warns on low-confidence approve", () => {
     const result = checkSufficiency({
-      verdict: "approve",
+      verdict: "accept",
       reviewerRole: "Critic Reviewer",
       summary: "Probably fine",
       evidence: [
@@ -262,7 +262,7 @@ describe("checkSufficiency", () => {
 describe("formatSufficiency", () => {
   it("shows sufficient for complete evidence", () => {
     const result = checkSufficiency({
-      verdict: "approve",
+      verdict: "accept",
       reviewerRole: "Test Engineer",
       summary: "Pass",
       evidence: [
@@ -280,7 +280,7 @@ describe("formatSufficiency", () => {
 
   it("shows insufficient with missing items", () => {
     const result = checkSufficiency({
-      verdict: "approve",
+      verdict: "accept",
       reviewerRole: "Test Engineer",
       summary: "Pass",
       evidence: [

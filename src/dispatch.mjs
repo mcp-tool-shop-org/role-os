@@ -6,7 +6,7 @@
  * multi-claude owns execution.
  *
  * This module:
- * 1. Maps roles → worker configs (tool profiles, system prompts, budgets)
+ * 1. Maps roles → role configs (tool profiles, system prompts, budgets)
  * 2. Tracks execution state (queued → running → completed/failed/blocked)
  * 3. Collects outputs back into the packet system
  * 4. Generates escalation packets for blocked/rejected work
@@ -67,7 +67,7 @@ const TOOL_PROFILES = {
   "User Interview Synthesizer": ["Read", "Glob", "Grep"],
 };
 
-// ── Default worker config ─────────────────────────────────────────────────────
+// ── Default role config ─────────────────────────────────────────────────────
 
 const DEFAULTS = {
   model: "sonnet",
@@ -80,7 +80,7 @@ const DEFAULTS = {
 
 export const EXEC_STATES = [
   "queued",         // in chain, not yet launched
-  "running",        // worker session active
+  "running",        // role session active
   "waiting",        // waiting for upstream handoff
   "blocked",        // hit a block condition
   "needs-review",   // completed work, awaiting verdict
@@ -102,8 +102,8 @@ ${packetContent}
 
 ## Chain Context
 You are step ${chainContext.stepNumber} of ${chainContext.totalSteps} in this chain.
-${chainContext.previousRole ? `Previous role: ${chainContext.previousRole} (${chainContext.previousStatus})` : "You are the first worker in this chain."}
-${chainContext.nextRole ? `Next role: ${chainContext.nextRole}` : "You are the last worker before Critic review."}
+${chainContext.previousRole ? `Previous role: ${chainContext.previousRole} (${chainContext.previousStatus})` : "You are the first role in this chain."}
+${chainContext.nextRole ? `Next role: ${chainContext.nextRole}` : "You are the last role before Critic review."}
 
 ## Handoff Requirements
 When you finish, produce a structured handoff:

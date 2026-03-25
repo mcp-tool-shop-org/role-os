@@ -284,6 +284,15 @@ function scoreRole(role, content, packetType, deliverableType) {
     matched.push(`[deliverable] ${deliverableType}`);
   }
 
+  // excludeWhen enforcement — suppress role if exclusion patterns match
+  if (score > 0 && role.excludeWhen) {
+    for (const exclusion of role.excludeWhen) {
+      if (lower.includes(exclusion)) {
+        return { score: 0, reasons: [`excluded: "${exclusion}"`], matched: [] };
+      }
+    }
+  }
+
   return { score, reasons: matched.length > 0 ? matched : [], matched };
 }
 
@@ -299,7 +308,8 @@ function detectType(content) {
   if (lower.includes("contamination") || lower.includes("residue") || lower.includes("purge")) {
     return "identity";
   }
-  if (lower.includes("wiring") || lower.includes("bridge") || lower.includes("integration") || lower.includes("seam")) {
+  // Use word-boundary-aware matching to avoid false positives like "integration testing"
+  if (lower.includes("wiring") || lower.includes("bridge") || /\bintegration\b(?!\s+test)/.test(lower) || lower.includes("seam")) {
     return "integration";
   }
   return "feature";

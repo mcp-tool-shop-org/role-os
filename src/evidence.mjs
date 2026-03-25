@@ -31,12 +31,10 @@ export const EVIDENCE_STATUSES = [
 ];
 
 export const VERDICT_TYPES = [
-  "approve",        // work meets bar, move forward
-  "approve-with-notes", // work meets bar with documented caveats
-  "revise",         // work needs specific changes, send back
-  "reject",         // work does not meet bar, fundamental problems
-  "block",          // cannot proceed — external dependency or ambiguity
-  "escalate",       // needs higher authority or different role
+  "accept",             // work meets bar, move forward
+  "accept-with-notes",  // work meets bar with documented caveats
+  "reject",             // work does not meet bar, fundamental problems
+  "blocked",            // cannot proceed — external dependency or ambiguity
 ];
 
 export const CONFIDENCE_LEVELS = ["high", "medium", "low"];
@@ -183,25 +181,25 @@ export function checkSufficiency(verdict) {
     .filter(e => e.status === "contradicts")
     .map(e => `${e.kind}: ${e.claim} (${e.reference})`);
 
-  if (contradictions.length > 0 && verdict.verdict === "approve") {
+  if (contradictions.length > 0 && verdict.verdict === "accept") {
     warnings.push("Verdict is 'approve' but evidence contains contradictions — review carefully");
   }
 
   // Check for missing evidence items on non-approve verdicts
   const missingItems = verdict.evidence.filter(e => e.status === "missing");
-  if (missingItems.length > 0 && verdict.verdict === "approve") {
+  if (missingItems.length > 0 && verdict.verdict === "accept") {
     warnings.push("Verdict is 'approve' but some evidence items are marked 'missing'");
   }
 
   // Non-approve verdicts should have gaps or requiredNextArtifact
-  if (verdict.verdict !== "approve" && verdict.verdict !== "approve-with-notes") {
+  if (verdict.verdict !== "approve" && verdict.verdict !== "accept-with-notes") {
     if (verdict.gaps.length === 0 && !verdict.requiredNextArtifact) {
       warnings.push("Non-approve verdict should specify gaps or requiredNextArtifact for recovery");
     }
   }
 
   // Low confidence + approve is suspicious
-  if (verdict.confidence === "low" && verdict.verdict === "approve") {
+  if (verdict.confidence === "low" && verdict.verdict === "accept") {
     warnings.push("Low confidence approve — consider whether evidence is actually sufficient");
   }
 

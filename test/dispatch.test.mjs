@@ -131,7 +131,7 @@ describe("buildDispatchManifest", () => {
     assert.ok(manifest.steps[1].systemPrompt.includes("Backend Engineer"));
     assert.ok(manifest.steps[1].systemPrompt.includes("Previous role: Orchestrator"));
     assert.ok(manifest.steps[2].systemPrompt.includes("Critic Reviewer"));
-    assert.ok(manifest.steps[2].systemPrompt.includes("last worker"));
+    assert.ok(manifest.steps[2].systemPrompt.includes("last role"));
   });
 
   it("respects per-role overrides", () => {
