@@ -11,6 +11,7 @@ import { statusCommand } from "../src/status.mjs";
 import { packsCommand } from "../src/packs-cmd.mjs";
 import { scaffoldClaude, doctor, formatDoctor } from "../src/session.mjs";
 import { artifactsCommand } from "../src/artifacts-cmd.mjs";
+import { missionCommand } from "../src/mission-cmd.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8")).version;
@@ -35,6 +36,10 @@ Usage:
   roleos artifacts show <role>       Show artifact contract for a role
   roleos artifacts validate <role> <file>  Validate a file against a contract
   roleos artifacts chain <pack>      Show pack handoff flow
+  roleos mission list                List all missions
+  roleos mission show <key>          Show full mission detail
+  roleos mission suggest <text>      Suggest a mission for a task
+  roleos mission validate [key]      Validate mission wiring
   roleos doctor                      Verify repo is wired for Role OS sessions
   roleos help                        Show this help
 
@@ -110,6 +115,9 @@ try {
       break;
     case "artifacts":
       await artifactsCommand(args);
+      break;
+    case "mission":
+      await missionCommand(args);
       break;
     case "help":
     case "--help":

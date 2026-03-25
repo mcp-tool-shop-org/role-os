@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.8.0
+
+### Added
+
+#### Mission Library (Phase S — Mission Hardening)
+- 6 named, repeatable mission types: feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch
+- Each mission declares: pack, role chain, artifact flow, escalation branches, honest-partial definition, stop conditions, dispatch defaults, trial evidence
+- Mission runner: create → step through → complete/fail → generate completion report
+- Completion proof reporter with honest-partial and formatted text output
+- `roleos mission list` — list all missions
+- `roleos mission show <key>` — full mission detail
+- `roleos mission suggest <text>` — signal-based mission suggestion
+- `roleos mission validate [key]` — validate mission wiring against packs/roles
+
+#### Mission Runner Engine
+- `createRun()` — instantiate a mission with tracked steps
+- `startNextStep()` / `completeStep()` / `failStep()` — step lifecycle
+- `recordEscalation()` — re-opens completed steps on escalation loops
+- `getRunPosition()` / `getArtifactChain()` — run introspection
+- `generateCompletionReport()` / `formatCompletionReport()` — honest outcome reporting
+
+### Evidence
+- 465 tests, zero failures (67 new)
+- All 6 missions validate against live pack/role catalog
+- Full lifecycle tests: end-to-end runs, escalation loops, partial completions, failure reporting
+
 ## 1.7.0
 
 ### Added
