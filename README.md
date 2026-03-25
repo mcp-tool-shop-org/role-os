@@ -192,7 +192,8 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 - v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.
 - v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.
 - v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.
-- **v1.6.0**: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation, chain completeness checks. 385 tests.
+- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.
+- **v1.7.0**: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.
 
 ## License
 

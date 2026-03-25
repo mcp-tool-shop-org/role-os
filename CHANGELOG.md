@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.7.0
+
+### Added
+
+#### Completion Proof (Phase R)
+- `roleos artifacts` CLI command: list, show, validate, chain subcommands
+- 13 new CLI integration tests for artifact inspection
+- Real task completion missions through the full stack
+
+#### Completion Proof Evidence
+- R1-1 Feature mission: `roleos artifacts` command shipped through feature pack
+  - Pack: feature (high confidence, correct)
+  - Chain: 5 roles, 0 escalations, 1 minor correction
+  - Artifact contracts: all 4 used and valid
+- R1-2 Bugfix mission: README.zh.md npm anomaly
+  - Diagnosed correctly: npm auto-includes README* regardless of files field
+  - Escalated honestly: fix requires structural decision (translation file organization)
+  - Not force-closed: deferred to treatment pass
+
+### Evidence
+- 398 tests, zero failures
+- 3 missions run through the full stack
+- Completion metrics recorded per mission
+
 ## 1.6.0
 
 ### Added
