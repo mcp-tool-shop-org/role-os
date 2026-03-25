@@ -8,6 +8,7 @@ import { packetCommand } from "../src/packet.mjs";
 import { routeCommand } from "../src/route.mjs";
 import { reviewCommand } from "../src/review.mjs";
 import { statusCommand } from "../src/status.mjs";
+import { packsCommand } from "../src/packs-cmd.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8")).version;
@@ -20,11 +21,14 @@ Usage:
   roleos init                        Scaffold Role OS into .claude/
   roleos init --force                Update canonical files (protects context/)
   roleos packet new <type>           Create a new packet (feature|integration|identity)
-  roleos route <packet-file>         Recommend the smallest valid chain
+  roleos route <packet-file> [--verbose]  Recommend the smallest valid chain
   roleos review <packet-file> <verdict>  Record a review verdict
   roleos status                      Show active work, verdicts, and health
   roleos status --write              Write .claude/status/index.md
   roleos status --json               Output as JSON
+  roleos packs list                  List all available team packs
+  roleos packs suggest <packet-file> Suggest a pack for a packet
+  roleos packs show <pack-key>       Show full detail for a named pack
   roleos help                        Show this help
 
 Verdicts: accept | accept-with-notes | reject | blocked
@@ -73,6 +77,9 @@ try {
       break;
     case "status":
       await statusCommand(args);
+      break;
+    case "packs":
+      await packsCommand(args);
       break;
     case "help":
     case "--help":

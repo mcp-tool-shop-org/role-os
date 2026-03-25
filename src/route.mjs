@@ -406,7 +406,8 @@ const HANDOFF_HINTS = {
 // ── Main route command ────────────────────────────────────────────────────────
 
 export async function routeCommand(args) {
-  const packetFile = args[0];
+  const verbose = args.includes("--verbose");
+  const packetFile = args.find(a => !a.startsWith("--"));
 
   if (!packetFile) {
     const err = new Error("Usage: roleos route <packet-file>");
@@ -477,7 +478,9 @@ export async function routeCommand(args) {
     }
   }
 
-  console.log(`\nNot triggered: ${notTriggered.length} roles with 0 keyword signals`);
+  if (verbose) {
+    console.log(`\nNot triggered: ${notTriggered.length} roles with 0 keyword signals`);
+  }
 
   // ── Conflict detection + escalation routing ──
   const conflicts = detectConflicts(chainRoles);

@@ -120,6 +120,44 @@ describe("roleos CLI", () => {
         /not found/
       );
     });
+
+    it("does not show 'Not triggered' line by default", () => {
+      const packetsDir = join(TMP, ".claude", "packets");
+      const packetFiles = readdirSync(packetsDir);
+      const packetFile = packetFiles.find(f => f.includes("test-feature") && !f.includes("verdict"));
+      const packetPath = join(".claude", "packets", packetFile);
+      const out = run(["route", packetPath]);
+      assert.doesNotMatch(out, /Not triggered/);
+    });
+
+    it("default output still shows Recommended chain and Conflict detection", () => {
+      const packetsDir = join(TMP, ".claude", "packets");
+      const packetFiles = readdirSync(packetsDir);
+      const packetFile = packetFiles.find(f => f.includes("test-feature") && !f.includes("verdict"));
+      const packetPath = join(".claude", "packets", packetFile);
+      const out = run(["route", packetPath]);
+      assert.match(out, /Recommended chain/);
+      assert.match(out, /Conflict detection/);
+    });
+
+    it("shows 'Not triggered' line with --verbose flag", () => {
+      const packetsDir = join(TMP, ".claude", "packets");
+      const packetFiles = readdirSync(packetsDir);
+      const packetFile = packetFiles.find(f => f.includes("test-feature") && !f.includes("verdict"));
+      const packetPath = join(".claude", "packets", packetFile);
+      const out = run(["route", packetPath, "--verbose"]);
+      assert.match(out, /Not triggered: \d+ roles with 0 keyword signals/);
+    });
+
+    it("--verbose flag works when placed before the packet file", () => {
+      const packetsDir = join(TMP, ".claude", "packets");
+      const packetFiles = readdirSync(packetsDir);
+      const packetFile = packetFiles.find(f => f.includes("test-feature") && !f.includes("verdict"));
+      const packetPath = join(".claude", "packets", packetFile);
+      const out = run(["route", "--verbose", packetPath]);
+      assert.match(out, /Not triggered: \d+ roles with 0 keyword signals/);
+      assert.match(out, /Detected type: feature/);
+    });
   });
 
   describe("review", () => {

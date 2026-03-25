@@ -2,7 +2,7 @@
 title: Reference
 description: CLI commands, schemas, and policies.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 ## CLI commands

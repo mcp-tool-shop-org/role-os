@@ -11,6 +11,7 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 
 - **[Getting Started](/role-os/handbook/getting-started/)** — Install and run your first packet in 10 minutes
 - **[Role Spine](/role-os/handbook/role-spine/)** — 31 specialist roles across 8 packs and their contracts
+- **[Team Packs](/role-os/handbook/team-packs/)** — Pre-assembled role chains for docs, metadata, releases, deploys, and review
 - **[Reference](/role-os/handbook/reference/)** — CLI commands, schemas, policies, and the operating system layers
 
 ## What is Role OS?

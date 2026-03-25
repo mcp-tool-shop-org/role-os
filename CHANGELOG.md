@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+### Added
+- Handbook: Team Packs page documenting the 5 available packs (Docs Architect, Metadata Curator, Release Engineer, Deployment Verifier, Critic Reviewer) with roles, artifacts, stop conditions, and `roleos route --pack <name>` usage
+- Reference page sidebar order bumped to 4 to accommodate Team Packs at order 3
+
 ## 1.0.2
 
 ### Fixed
