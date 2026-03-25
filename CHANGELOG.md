@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.0.0
+
+### Added
+
+#### Operator Friction Pass (Phase U)
+- `roleos run "<task>"` — one command from task description to active execution
+- Persistent disk-backed runs in `.claude/runs/` — survives session interruptions
+- Entry level auto-selection: mission, pack, or free routing with force overrides (`--mission=`, `--pack=`)
+- Step-local operator guidance at every step: role, artifact, required sections, completion rule, stop conditions
+- `roleos resume [id]` — continue interrupted runs from disk
+- `roleos next` — start the next step or show what's active
+- `roleos explain [id]` — full run state with guidance, escalations, interventions
+- `roleos complete <artifact> [note]` — complete the active step with artifact reference
+- `roleos fail <partial|failed> <reason>` — fail with honest downstream blocking
+- `roleos run list` — list all runs with status icons
+- `roleos run show <id>` — full run detail
+
+#### Intervention Shortcuts
+- `roleos retry <step>` — retry a failed/partial step, unblock downstream
+- `roleos reroute <step> <role> <reason>` — swap a step to a different role
+- `roleos escalate <from> <to> <trigger> <action>` — escalate between roles with step re-opening
+- `roleos block <step> <reason>` — manually block a step
+- `roleos reopen <step> <reason>` — reopen a completed step for re-execution
+
+#### Friction Measurement
+- `roleos report [id]` — generate completion report with honest-partial
+- `roleos friction [id]` — measure operator touches: interventions, escalations, manual steps
+- Friction score: low/medium/high based on touch count vs step count
+
+### Evidence
+- 613 tests, zero failures (86 new)
+- 6 friction trials validated: clean run, reroute, retry, pack-level, free-routing, disk resume
+- All entry levels produce low/medium friction scores
+- Disk round-trip verified: create → pause → load → resume → complete
+
 ## 1.9.0
 
 ### Added

@@ -51,6 +51,35 @@ roleos start "something completely novel"
 
 The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.
 
+**One command to active execution:**
+
+```bash
+roleos run "fix the crash in save handler"
+# → Created run: run-1234
+# → Entry: MISSION (bugfix)
+# → Started step 0: Repo Researcher → diagnosis-report
+# → Guidance: Required sections: entrypoints, module-map, build-test-commands
+
+roleos next                    # Start the next step
+roleos complete diagnosis.md   # Complete the active step with artifact
+roleos explain                 # Show full run state and guidance
+roleos resume                  # Continue an interrupted run
+roleos report                  # Generate completion report
+roleos friction                # Measure operator touches
+```
+
+**Interventions when things go wrong:**
+
+```bash
+roleos retry 0                 # Retry a failed step
+roleos reroute 1 "Frontend Developer" "UI bug"  # Swap a role
+roleos escalate "Test Engineer" "Repo Researcher" "missed edge case" "re-diagnose"
+roleos block 2 "waiting for API spec"
+roleos reopen 0 "found issue in review"
+```
+
+Runs persist to disk (`.claude/runs/`), so interrupted sessions resume cleanly. Every step includes operator guidance: what to produce, required sections, and stop conditions.
+
 **Once routed:**
 
 1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role
@@ -96,19 +125,24 @@ Every role has a full contract: mission, use when, do not use when, expected inp
 npx role-os init
 
 # Describe what you need — Role OS picks the right level:
-roleos start "fix the crash in save handler"
+roleos run "fix the crash in save handler"
+# → Creates run, picks bugfix mission, starts first step with guidance
+
+# Step through:
+roleos next                    # Start next step
+roleos complete artifact.md    # Complete with artifact
+roleos explain                 # Show full state
+roleos report                  # Completion report
 
 # Or go manual:
+roleos start "fix the crash"   # Entry decision only (no run)
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 roleos review .claude/packets/my-feature.md accept
-roleos status
 
 # Explore missions and packs:
 roleos mission list
-roleos mission show bugfix
 roleos packs list
-roleos packs show feature
 ```
 
 ## When not to use Role OS
@@ -165,6 +199,8 @@ role-os/
   src/
     entry.mjs                  ← Unified entry: mission → pack → free routing
     entry-cmd.mjs              ← `roleos start` CLI command
+    run.mjs                    ← Persistent run engine: create → step → pause → resume → report
+    run-cmd.mjs                ← `roleos run/resume/next/explain/complete/fail` + interventions
     mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
     mission-run.mjs            ← Mission runner: create → step → complete → report
     mission-cmd.mjs            ← `roleos mission` CLI commands
@@ -181,7 +217,7 @@ role-os/
     calibration.mjs            ← Outcome recording + weight tuning
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
     session.mjs                ← Session scaffolding + doctor
-  test/                        ← 527 tests across 20 test files
+  test/                        ← 613 tests across 25 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
@@ -211,6 +247,7 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | **Mission library** | 6 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 6 trial-run and hardened. | ✓ Shipped |
 | **Mission runner** | Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening. | ✓ Shipped |
 | **Unified entry** | `roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection. | ✓ Shipped |
+| **Persistent runs** | `roleos run` creates disk-backed runs. `resume`, `next`, `explain`, `complete`, `fail`. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance. Friction measurement. | ✓ Shipped |
 
 ## 6 missions
 
@@ -238,7 +275,8 @@ Each mission includes honest-partial definitions — when work stalls, the syste
 - v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.
 - v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.
 - v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.
-- **v1.9.0**: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.
+- v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.
+- **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.
 
 ## License
 

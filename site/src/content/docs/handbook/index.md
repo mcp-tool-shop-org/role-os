@@ -34,6 +34,7 @@ The system provides three entry levels and nine operating layers:
 | Layer | What it does |
 |-------|-------------|
 | **Unified entry** | Decides mission vs pack vs free routing with confidence scores and alternatives |
+| **Persistent runs** | `roleos run` creates disk-backed runs with resume, interventions, step guidance, and friction measurement |
 | **Mission runner** | Tracked steps, artifact chain, escalation loops, completion reports |
 | **Routing** | Scores all 31 roles against packet content with weighted keywords, triggers, and confidence levels |
 | **Chain builder** | Assembles phase-ordered chains from scored roles — not frozen templates |
@@ -61,6 +62,7 @@ These are non-negotiable. If a change weakens any of them, reject it.
 - **7 pack comparison trials** — mission vs pack vs free routing measured
 - **6 mission trials** — all 6 missions run through the runner, 5 real-friction findings fixed
 - **Entry path trials** — unified entry tested against 20+ real task descriptions
-- **527 tests**, zero failures
+- **6 friction trials** — persistent runs measured for operator touches across all entry levels
+- **613 tests**, zero failures
 
 [Back to landing page](/role-os/)

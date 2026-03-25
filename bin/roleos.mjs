@@ -13,6 +13,12 @@ import { scaffoldClaude, doctor, formatDoctor } from "../src/session.mjs";
 import { artifactsCommand } from "../src/artifacts-cmd.mjs";
 import { missionCommand } from "../src/mission-cmd.mjs";
 import { startCommand } from "../src/entry-cmd.mjs";
+import {
+  runCommand, resumeCommand, nextCommand, explainCommand,
+  completeCommand, failCommand, retryCommand, rerouteCommand,
+  escalateCommand, blockCommand, reopenCommand, reportCommand,
+  frictionCommand,
+} from "../src/run-cmd.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8")).version;
@@ -23,6 +29,21 @@ roleos v${VERSION} — Role OS bootstrap CLI
 
 Usage:
   roleos start <task>                 Decide entry path: mission, pack, or free routing
+  roleos run "<task>"                Create and start a persistent run
+  roleos run list                    List all runs
+  roleos run show <id>               Show run detail
+  roleos resume [id]                 Resume an interrupted run
+  roleos next                        Start the next step (or show what's next)
+  roleos explain [id]                Explain current run state
+  roleos complete <artifact> [note]  Complete the active step
+  roleos fail <partial|failed> <reason>  Fail the active step
+  roleos retry <step-index>          Retry a failed step
+  roleos reroute <step> <role> <reason>  Reroute a step to a different role
+  roleos escalate <from> <to> <trigger> <action>  Escalate between roles
+  roleos block <step-index> <reason> Block a step
+  roleos reopen <step-index> <reason> Reopen a completed step
+  roleos report [id]                 Generate completion report
+  roleos friction [id]               Measure operator friction
   roleos init                        Scaffold Role OS into .claude/
   roleos init --force                Update canonical files (protects context/)
   roleos packet new <type>           Create a new packet (feature|integration|identity)
@@ -120,6 +141,45 @@ try {
       break;
     case "artifacts":
       await artifactsCommand(args);
+      break;
+    case "run":
+      await runCommand(args);
+      break;
+    case "resume":
+      await resumeCommand(args);
+      break;
+    case "next":
+      await nextCommand(args);
+      break;
+    case "explain":
+      await explainCommand(args);
+      break;
+    case "complete":
+      await completeCommand(args);
+      break;
+    case "fail":
+      await failCommand(args);
+      break;
+    case "retry":
+      await retryCommand(args);
+      break;
+    case "reroute":
+      await rerouteCommand(args);
+      break;
+    case "escalate":
+      await escalateCommand(args);
+      break;
+    case "block":
+      await blockCommand(args);
+      break;
+    case "reopen":
+      await reopenCommand(args);
+      break;
+    case "report":
+      await reportCommand(args);
+      break;
+    case "friction":
+      await frictionCommand(args);
       break;
     case "mission":
       await missionCommand(args);

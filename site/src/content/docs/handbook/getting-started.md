@@ -40,18 +40,38 @@ Fill the four context files for your project:
 
 Each file includes inline prompts to guide you.
 
-### 3. Start a task (1 min)
+### 3. Run a task (1 min)
 
-Describe what you need and let Role OS decide the right level:
+One command from task description to active execution:
 
 ```bash
-roleos start "fix the crash in save handler"
-# → MISSION: Bugfix & Diagnosis — Repo Researcher → Backend Engineer → Test Engineer → Critic Reviewer
+roleos run "fix the crash in save handler"
+# → Created run (bugfix mission)
+# → Started step 0: Repo Researcher → diagnosis-report
+# → Guidance: Required sections: entrypoints, module-map, build-test-commands
+```
+
+### 4. Step through the run
+
+```bash
+roleos complete diagnosis.md "Root cause found"  # Complete step with artifact
+roleos next                                       # Start next step
+roleos explain                                    # See full run state
+```
+
+If something goes wrong:
+
+```bash
+roleos fail partial "Cannot reproduce"            # Mark step as partial
+roleos retry 0                                    # Retry a failed step
+roleos reroute 1 "Frontend Developer" "UI bug"   # Swap a role
+roleos resume                                     # Resume after interruption
 ```
 
 Or go manual with packets:
 
 ```bash
+roleos start "fix the crash"   # Entry decision only (no run)
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 ```

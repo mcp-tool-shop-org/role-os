@@ -10,16 +10,16 @@
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/role-os/actions"><img src="https://github.com/mcp-tool-shop-org/role-os/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://www.npmjs.com/package/@mcptoolshop/role-os"><img src="https://img.shields.io/npm/v/@mcptoolshop/role-os" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/role-os"><img src="https://img.shields.io/npm/v/role-os" alt="npm"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-Uma camada de sistema operacional portátil e nativa do repositório que direciona o trabalho através de contratos de função, pacotes estruturados, revisões e escalonamento, para que as equipes possam realizar trabalhos de funcionalidade, integração, correção de identidade e tratamento completo do repositório, sem desvios, conclusão falsa ou alegações de progresso baseadas em impressões.
+Um sistema operacional multi-Claude que aloca, direciona, valida e executa tarefas por meio de 31 contratos de funções especializadas. Cria pacotes de tarefas, monta a equipe certa com base em correspondência de funções, detecta problemas antes da execução, direciona automaticamente a recuperação quando o trabalho é bloqueado ou rejeitado e exige evidências estruturadas em cada decisão.
 
 ## O que ele faz
 
-O Role OS previne as falhas específicas que os fluxos de trabalho de IA genéricos produzem:
+Role OS é a maneira profissional de usar o multi-Claude. Ele evita as falhas específicas que os fluxos de trabalho de IA genéricos produzem:
 
 - **Desvio (Drift)** — as funções permanecem em seu domínio. O produto não é redesenhado. A interface não redefine o escopo. O backend não inventa a direção do produto.
 - **Conclusão falsa** — a definição de "concluído" é concreta. O trabalho que esconde lacunas, ignora a verificação ou resolve um problema diferente é rejeitado.
@@ -28,10 +28,39 @@ O Role OS previne as falhas específicas que os fluxos de trabalho de IA genéri
 
 ## Como funciona
 
-1. **Crie um pacote** — defina o que deve existir quando o trabalho estiver concluído.
-2. **Direcione através de uma cadeia** — o menor conjunto de funções especializadas necessárias.
-3. **Cada função produz uma transferência** — uma saída estruturada que reduz a ambiguidade para a próxima função.
-4. **O revisor avalia em relação ao contrato** — aceita, rejeita ou bloqueia com base em evidências, não em impressões.
+Descreva sua tarefa. O Role OS decide automaticamente o nível de orquestração adequado.
+
+```bash
+roleos start "fix the crash in save handler"
+# → MISSION: Bugfix & Diagnosis (70% confidence)
+#   Chain: Repo Researcher → Backend Engineer → Test Engineer → Critic Reviewer
+
+roleos start "add a new export command"
+# → PACK: Feature Build (50% confidence)
+#   Roles: Orchestrator, Product Strategist, Spec Writer, Backend Engineer, Test Engineer, Critic Reviewer
+
+roleos start "something completely novel"
+# → FREE-ROUTING (10% confidence)
+#   Hint: Create a packet and run `roleos route` for role-level routing
+```
+
+**A hierarquia de fallback:**
+
+1. **Missão:** quando a tarefa corresponde a um fluxo de trabalho recorrente comprovado (correção de bugs, tratamento, lançamento de recursos, documentação, segurança, pesquisa). Cadeia de funções conhecida, fluxo de artefatos, ramificações de escalonamento e definições parciais claras.
+2. **Pacote:** quando a tarefa é uma família conhecida, mas não se encaixa em um formato de missão completo. 7 pacotes de equipe calibrados com seleção automática e proteções contra incompatibilidades.
+3. **Direcionamento livre:** quando a tarefa é nova, mista ou incerta. Avalia todas as 31 funções com base no conteúdo do pacote e monta uma cadeia dinâmica.
+
+O sistema nunca força o trabalho a passar pela camada de abstração incorreta. Ele explica por que escolheu cada nível e oferece alternativas.
+
+**Depois de direcionado:**
+
+1. **Cada função produz uma transferência:** saída estruturada com itens de evidência que reduzem a ambiguidade para a próxima função.
+2. **O revisor avalia em relação ao contrato:** aceita, rejeita ou bloqueia com base em evidências estruturadas, e não em impressões.
+3. **A recuperação é direcionada automaticamente:** o trabalho bloqueado ou rejeitado é direcionado ao resolvedor correto, com um motivo, tipo de recuperação e artefato necessário.
+
+## Estado de implantação na organização
+
+O estado de implantação em toda a organização (fila, decisões, registros de auditoria, pacotes de bloqueio por repositório) reside em um repositório privado separado: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Este repositório é o produto; aquele repositório é o estado operacional.
 
 ## Memória e continuidade
 
@@ -56,22 +85,31 @@ Ordem: Verificação de envio primeiro, depois tratamento completo. Não há v1.
 | **Design** (2) | Designer de Interface, Guardião da Marca |
 | **Marketing** (1) | Redator para Lançamento |
 | **Treatment** (7) | Pesquisador de Repositórios, Tradutor de Repositórios, Arquiteto de Documentação, Curador de Metadados, Auditor de Cobertura, Verificador de Implantação, Engenheiro de Lançamento |
-| **Product** (4) | Sintetizador de Feedback, Priorizador de Roteiro, Redator de Especificações, Arquiteto de Informação |
+| **Product** (3) | Sintetizador de feedback, Priorizador de roteiro, Redator de especificações. |
 | **Research** (4) | Pesquisador de Experiência do Usuário, Analista da Concorrência, Pesquisador de Tendências, Sintetizador de Entrevistas com Usuários |
 | **Growth** (4) | Estrategista de Lançamento, Estrategista de Conteúdo, Gerente de Comunidade, Líder de Triagem de Suporte |
 
-Cada função possui um contrato completo: missão, quando usar, quando não usar, entradas esperadas, saídas necessárias, padrão de qualidade e gatilhos de escalonamento.
+Cada função tem um contrato completo: missão, quando usar, quando não usar, entradas esperadas, saídas necessárias, padrão de qualidade e gatilhos de escalonamento. Cada função pode ser direcionada — `roleos route` pode recomendar qualquer uma delas com base no conteúdo do pacote.
 
 ## Como começar
 
 ```bash
-npx @mcptoolshop/role-os init
+npx role-os init
 
-# Fill context/ files for your project, then:
+# Describe what you need — Role OS picks the right level:
+roleos start "fix the crash in save handler"
+
+# Or go manual:
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 roleos review .claude/packets/my-feature.md accept
 roleos status
+
+# Explore missions and packs:
+roleos mission list
+roleos mission show bugfix
+roleos packs list
+roleos packs show feature
 ```
 
 ## Quando não usar o Role OS
@@ -124,32 +162,84 @@ Estas são inegociáveis. Se uma alteração enfraquecer qualquer uma delas, rej
 
 ```
 role-os/
-  README.md                    ← You are here
   bin/roleos.mjs               ← CLI entrypoint
-  src/                         ← CLI implementation
-  starter-pack/
-    handbook.md                ← How Role OS works
-    context/                   ← Fill these for your repo
-    examples/                  ← Feature, integration, identity packets
-    agents/                    ← 32 role contracts across 8 packs
-    schemas/                   ← Packet, handoff, verdict formats
-    policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment
+  src/
+    entry.mjs                  ← Unified entry: mission → pack → free routing
+    entry-cmd.mjs              ← `roleos start` CLI command
+    mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
+    mission-run.mjs            ← Mission runner: create → step → complete → report
+    mission-cmd.mjs            ← `roleos mission` CLI commands
+    route.mjs                  ← 31-role routing + dynamic chain builder
+    packs.mjs                  ← 7 calibrated team packs + auto-selection
+    conflicts.mjs              ← 4-pass conflict detection
+    escalation.mjs             ← Auto-routing for blocked/rejected/split
+    evidence.mjs               ← Structured evidence + role-aware requirements
+    dispatch.mjs               ← Runtime dispatch manifests for multi-claude
+    artifacts.mjs              ← 20 per-role artifact contracts + 7 pack handoffs
+    decompose.mjs              ← Composite task detection + splitting
+    composite.mjs              ← Dependency-ordered execution + recovery
+    replan.mjs                 ← Mid-run adaptive replanning
+    calibration.mjs            ← Outcome recording + weight tuning
+    hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
+    session.mjs                ← Session scaffolding + doctor
+  test/                        ← 527 tests across 20 test files
+  starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Segurança
 
 O sistema "Role OS" opera **apenas localmente**. Ele copia modelos em formato Markdown e escreve arquivos de pacotes/resultados no diretório `.claude/` do seu repositório. Ele não acessa a rede, não lida com informações confidenciais e não coleta dados de telemetria. Não há operações perigosas — todas as operações de escrita de arquivos usam a opção "skip-if-exists" por padrão. Consulte o arquivo [SECURITY.md](SECURITY.md) para a política completa.
 
+## O sistema operacional
+
+| Camada. | O que ele faz | Status |
+|-------|-------------|--------|
+| **Routing** | Avalia todas as 31 funções com base no conteúdo do pacote, explica as recomendações, avalia a confiança. | ✓ Implementado. |
+| **Chain builder** | Monta cadeias ordenadas por fase a partir de funções classificadas, com viés para o tipo de pacote, mas não bloqueadas por modelos. | ✓ Implementado. |
+| **Conflict detection** | Validação em 4 etapas: conflitos graves, sequência, redundância, lacunas de cobertura. Sugestões de correção. | ✓ Implementado. |
+| **Escalation** | Direciona automaticamente o trabalho bloqueado/rejeitado/dividido para o resolvedor correto, com motivo + artefato necessário. | ✓ Implementado. |
+| **Evidence** | Evidências estruturadas em decisões, específicas para cada função. Verificações de suficiência. 12 tipos de evidência. | ✓ Implementado. |
+| **Dispatch** | Gera manifestos de execução para multi-claude. Perfis de ferramentas por função, prompts do sistema, orçamentos. | ✓ Implementado. |
+| **Trials** | Conjunto completo comprovado: 30/30 tarefas de sucesso + 5/5 testes negativos. 7 testes de pacote concluídos. | ✓ Completo. |
+| **Team Packs** | 7 pacotes calibrados com seleção automática, proteções contra incompatibilidades e fallback de direcionamento livre. | ✓ Implementado. |
+| **Outcome calibration** | Registra os resultados da execução, ajusta os pesos dos pacotes/funções com base nos resultados e ajusta os limites de confiança. | ✓ Implementado. |
+| **Mixed-task decomposition** | Detecta trabalhos compostos, divide em pacotes filhos, atribui pacotes, preserva dependências. | ✓ Implementado. |
+| **Composite execution** | Executa pacotes filhos na ordem de dependência, com passagem de artefatos, recuperação de ramificação e síntese. | ✓ Implementado. |
+| **Adaptive replanning** | Alterações de escopo, descobertas ou novos requisitos durante a execução atualizam o plano sem reinicialização. | ✓ Implementado. |
+| **Session spine** | `roleos init claude` cria os arquivos CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifica as conexões. Os cartões de roteamento comprovam o engajamento. | ✓ Implementado. |
+| **Hook spine** | 5 ganchos de ciclo de vida (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Aplicação de políticas: lembretes de roteamento, controle de acesso a ferramentas, injeção de papéis de subagente, auditoria de conclusão. | ✓ Implementado. |
+| **Artifact spine** | 20 contratos de artefatos por papel. 7 contratos de transferência de pacotes. Validação estrutural. Verificações de integridade da cadeia. Os papéis subsequentes nunca adivinham o que receberam. | ✓ Implementado. |
+| **Mission library** | 6 missões nomeadas (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Cada uma define pacote, cadeia de papéis, fluxo de artefatos, ramificações de escalonamento, definição honesta e parcial. Todas as 6 foram testadas e aprimoradas. | ✓ Implementado. |
+| **Mission runner** | Criação de execuções, acompanhamento passo a passo com estado rastreado, conclusão/falha com relatórios precisos. Propagação de etapas bloqueadas, avisos de escalonamento fora da cadeia, reabertura da última etapa. | ✓ Implementado. |
+| **Unified entry** | `roleos start` decide automaticamente entre missão, pacote ou roteamento livre. Sistema de fallback com pontuações de confiança, alternativas e detecção composta. | ✓ Implementado. |
+
+## 6 missões
+
+| Missão | Pacote | Funções | Quando usar |
+|---------|------|-------|-------------|
+| `feature-ship` | Funcionalidade (feature) | 5 | Entrega completa da funcionalidade: escopo → especificação → implementação → teste → revisão |
+| `bugfix` | Correção de bug (bugfix) | 4 | Diagnosticar a causa raiz, corrigir, testar, verificar |
+| `treatment` | Tratamento | 4 | Verificação + polimento + documentação + verificação CI + revisão |
+| `docs-release` | Documentação | 2 | Escrever/atualizar documentação, notas de lançamento |
+| `security-hardening` | Segurança | 4 | Modelo de ameaças, auditoria, correção de vulnerabilidades, re-auditoria, verificação |
+| `research-launch` | Pesquisa | 4 | Formular a pergunta, pesquisar, documentar os resultados, decidir |
+
+Cada missão inclui definições honestas e parciais — quando o trabalho é interrompido, o sistema documenta o que foi concluído e o que resta, em vez de apresentar uma conclusão falsa.
+
 ## Status
 
-**v1.0.0 — Superfície Ampla, Mesmas Regras**
-
-- v0.1: Operacional — 3 testes, 3 aprovações, 0 colisões de funções
-- v0.2: Adoção — fluxo de trabalho padrão no repositório principal, portátil para o segundo repositório
-- v0.3: Produto — pacote inicial, CLI de inicialização, superfície de evidências
-- v0.4: Pacote de Tratamento — 8 funções de tratamento/identidade, tratamento completo com equipe, portátil entre 2 repositórios
-- v1.0.0: 32 funções em 8 pacotes, CLI completa, tratamento comprovado, portabilidade multi-repositório
+- v0.1–v0.4: Fundação — testes, adoção, pacote de tratamento, pacote inicial
+- v1.0.0: 32 papéis, CLI completa, tratamento comprovado, portabilidade multi-repositório
+- v1.0.2: Bloqueio do sistema de papéis (correções de inicialização da verdade, init --force)
+- v1.1.0: 31 papéis, espinha dorsal de roteamento completa, detecção de conflitos, escalonamento, evidências, despacho, 7 pacotes de equipe comprovados. 35 execuções de teste. 212 testes.
+- v1.2.0: Pacotes calibrados promovidos à entrada padrão. Seleção automática, detecção de incompatibilidades, sugestão de alternativas, fallback de roteamento livre. 246 testes.
+- v1.3.0: Calibração de resultados, decomposição de tarefas mistas, execução composta, replanejamento adaptativo. 317 testes.
+- v1.4.0: Espinha dorsal da sessão — `roleos init claude`, `roleos doctor`, cartões de roteamento, comandos /roleos-route + /roleos-review + /roleos-status. 335 testes.
+- v1.5.0: Espinha dorsal de ganchos — 5 ganchos de ciclo de vida para aplicação de políticas em tempo de execução. 358 testes.
+- v1.6.0: Espinha dorsal de artefatos — 20 contratos de artefatos por papel, 7 contratos de transferência de pacotes, validação estrutural. 385 testes.
+- v1.7.0: Prova de conclusão — tarefas reais executadas em toda a pilha. CLI `roleos artifacts`. Escalonamento honesto para correções estruturais. 398 testes.
+- v1.8.0: Biblioteca de missões (Fase S) — 6 missões nomeadas, motor de execução, relatórios de conclusão. Aprimorado a partir de 6 execuções de teste reais. 481 testes.
+- **v1.9.0**: Caminho de entrada unificado (Fase T) — `roleos start` decide automaticamente entre missão, pacote ou roteamento livre. Sistema de fallback, detecção composta, testes de comparação de caminho de entrada. 527 testes.
 
 ## Licença
 

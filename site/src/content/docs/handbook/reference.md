@@ -16,6 +16,82 @@ roleos start --json <task description>
 
 Decides the best entry path for a task: mission, pack, or free routing. Explains why it chose each level and offers alternatives. Use `--json` for machine-readable output.
 
+### run
+
+```bash
+roleos run "<task description>"         # Create and start a persistent run
+roleos run --mission=bugfix "<task>"    # Force a specific mission
+roleos run --pack=security "<task>"     # Force a specific pack
+roleos run list                         # List all runs
+roleos run show <id>                    # Show run detail
+```
+
+Creates a disk-backed run from a task description. Auto-decides entry level (mission/pack/free routing), builds steps with guidance, starts the first step, and persists to `.claude/runs/`.
+
+### resume
+
+```bash
+roleos resume [id]                      # Resume the active or named run
+```
+
+Continues an interrupted run. If a step was active when paused, it resumes there. Otherwise starts the next pending step.
+
+### next
+
+```bash
+roleos next                             # Start the next step or show what's active
+```
+
+If a step is currently active, shows it with guidance. If no step is active, starts the next pending step.
+
+### explain
+
+```bash
+roleos explain [id]                     # Full run state with guidance
+```
+
+Shows: task, entry level, status, all steps with status icons, current step guidance, escalations, and interventions.
+
+### complete
+
+```bash
+roleos complete <artifact> [note]       # Complete the active step
+```
+
+Marks the active step completed with the given artifact reference. Advances to the next step.
+
+### fail
+
+```bash
+roleos fail <partial|failed> <reason>   # Fail the active step
+```
+
+Marks the active step as partial or failed. Blocks all downstream pending steps.
+
+### Interventions
+
+```bash
+roleos retry <step-index>               # Retry a failed/partial step
+roleos reroute <step> <role> <reason>   # Swap a step's role
+roleos escalate <from> <to> <trigger> <action>  # Escalate between roles
+roleos block <step-index> <reason>      # Block a step
+roleos reopen <step-index> <reason>     # Reopen a completed step
+```
+
+### report
+
+```bash
+roleos report [id]                      # Generate completion report
+```
+
+### friction
+
+```bash
+roleos friction [id]                    # Measure operator friction
+```
+
+Counts total touches (interventions, escalations, manual steps) and produces a friction score (low/medium/high).
+
 ### mission
 
 ```bash

@@ -2709,6 +2709,1602 @@
       "timestamp": 1774332676563,
       "source": "- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions\n- v0.2: Adoption — default workflow in anchor repo, portable to second repo\n- v0.3: Productization — starter pack, bootstrap CLI, evidence surface\n- v0.4: Treatment Pack — 8 treatment/identity roles, full treatment staffed, portable across 2 repos\n- v1.0.0: 32 roles across 8 packs, full CLI, proven treatment, multi-repo portability",
       "targetLang": "pt"
+    },
+    "e23b10ef87b48068": {
+      "translation": "マルチ・クロード環境を効率的に運用するためのシステムで、31種類の専門的な役割に分担し、タスクを割り当て、検証し、実行します。タスクをまとめた「タスクパケット」を作成し、役割のマッチングに基づいて最適なチームを編成し、実行前に問題点を検出し、タスクが中断または拒否された場合に自動的にリカバリー処理を実行し、すべての判断において構造化された証拠を必要とします。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "A multi-Claude operating system that staffs, routes, validates, and runs work through 31 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.",
+      "targetLang": "ja"
+    },
+    "4094d148b0e94a04": {
+      "translation": "Role OSは、マルチ・クロード環境をプロフェッショナルに活用するための方法です。一般的なAIワークフローで発生する特定の問題を回避します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "ja"
+    },
+    "e5c9c3fda50ef417": {
+      "translation": "タスクの内容を記述してください。Role OSが、最適な連携レベルを自動的に決定します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Describe your task. Role OS decides the right level of orchestration automatically.",
+      "targetLang": "ja"
+    },
+    "ae383541010b35e4": {
+      "translation": "**段階的な解決策:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "**The fallback ladder:**",
+      "targetLang": "ja"
+    },
+    "06838c095d3a596c": {
+      "translation": "1. **ミッション:** 確立された繰り返し作業（バグ修正、改善、新機能追加、ドキュメント作成、セキュリティ対策、研究など）にタスクが該当する場合。役割の連鎖、成果物の流れ、エスカレーションの経路、および部分的な定義が明確になっています。\n2. **パック:** タスクが既知のカテゴリに属するが、完全なミッションとは異なる場合。7つの調整済みのチームパックがあり、自動選択機能と、役割の不一致を検知する機能があります。\n3. **自由ルーティング:** タスクが新規、複合的、または不明確な場合。31のすべての役割をタスクの内容に基づいて評価し、動的な連鎖を構築します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.\n2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.\n3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.",
+      "targetLang": "ja"
+    },
+    "7abde7060188e258": {
+      "translation": "このシステムは、常に適切な抽象レベルでタスクを実行させます。各レベルを選択した理由を説明し、代替案も提示します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.",
+      "targetLang": "ja"
+    },
+    "9c02a3d4ac600700": {
+      "translation": "**ルーティング後:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "**Once routed:**",
+      "targetLang": "ja"
+    },
+    "5ddd24dd66d5e160": {
+      "translation": "1. **各役割は成果物を生成:** 構造化された出力で、次の役割が理解しやすいように、証拠となる情報が含まれています。\n2. **レビュー担当者が契約に基づいて評価:** 構造化された証拠に基づいて、受け入れ、拒否、または中断のいずれかの判断を行います。主観的な判断は排除されます。\n3. **中断または拒否されたタスクは自動的にリカバリー:** 問題が発生したタスクは、理由、リカバリーの種類、および必要な成果物とともに、適切な担当者にルーティングされます。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role\n2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression\n3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact",
+      "targetLang": "ja"
+    },
+    "179174e4c41d9830": {
+      "translation": "組織全体の展開状況",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Org rollout state",
+      "targetLang": "ja"
+    },
+    "a1d9079419b6fa3b": {
+      "translation": "組織全体の展開状況（キュー、意思決定、監査記録、リポジトリごとのロックパケット）は、別のプライベートリポジトリに保存されています：[`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout)。このリポジトリは製品であり、別のリポジトリは運用状況を管理します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.",
+      "targetLang": "ja"
+    },
+    "32512cf159929c10": {
+      "translation": "フィードバック合成ツール、ロードマップ優先順位付けツール、仕様書作成ツール",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "ja"
+    },
+    "daf821b160cb2956": {
+      "translation": "各役割には、詳細な契約書があります。内容は、ミッション、使用するタイミング、使用しないタイミング、必要な入力、必要な出力、品質基準、およびエスカレーションのトリガーなどです。すべての役割はルーティング可能であり、`roleos route`コマンドを使用すると、タスクの内容に基づいて、最適な役割を推奨することができます。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.",
+      "targetLang": "ja"
+    },
+    "be35089d27257578": {
+      "translation": "このオペレーティングシステム",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "The operating system",
+      "targetLang": "ja"
+    },
+    "31a4ee265257ccb8": {
+      "translation": "レイヤー",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Layer",
+      "targetLang": "ja"
+    },
+    "dfb3361625513902": {
+      "translation": "タスクの内容に基づいて、31のすべての役割を評価し、推奨事項を説明し、信頼度を評価します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Scores all 31 roles against packet content, explains recommendations, assesses confidence",
+      "targetLang": "ja"
+    },
+    "019e35a7b1d84da5": {
+      "translation": "✓ 完了",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "✓ Shipped",
+      "targetLang": "ja"
+    },
+    "91bc67fef651adc4": {
+      "translation": "役割を段階的に組み合わせて連鎖を構築します。タスクの種類に最適化されており、テンプレートに依存しません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Assembles phase-ordered chains from scored roles, packet-type biased not template-locked",
+      "targetLang": "ja"
+    },
+    "7b7e2cb59a95ba9f": {
+      "translation": "4段階の検証：競合、順序、冗長性、網羅性の欠落。修正案の提案。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions.",
+      "targetLang": "ja"
+    },
+    "815003eb5d70b1c0": {
+      "translation": "中断、拒否、または分割されたタスクを、理由と必要な成果物とともに、適切な担当者に自動的にルーティングします。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact",
+      "targetLang": "ja"
+    },
+    "1b5df9e42f9013f8": {
+      "translation": "判断において、役割を意識した構造化された証拠を使用します。十分性のチェックを行います。12種類の証拠があります。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds.",
+      "targetLang": "ja"
+    },
+    "340546bf156de90f": {
+      "translation": "マルチ・クロード環境での実行に必要な情報を生成します。各役割で使用するツール、システムプロンプト、予算などを定義します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets.",
+      "targetLang": "ja"
+    },
+    "df0be25bf10e4dc8": {
+      "translation": "すべての役割について、テストが完了しています。30種類のタスクと、5種類のネガティブテストが成功しました。7つのチームパックのテストも完了しています。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete.",
+      "targetLang": "ja"
+    },
+    "7094c98d2420a6e0": {
+      "translation": "✓ 完了",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "✓ Complete",
+      "targetLang": "ja"
+    },
+    "cd013327bb9cc952": {
+      "translation": "自動選択機能、役割の不一致を検知する機能、および自由ルーティングによるフォールバックを備えた、7つの調整済みのチームパック。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback.",
+      "targetLang": "ja"
+    },
+    "38ea052c72f5c1e3": {
+      "translation": "実行結果を記録し、結果に基づいてチームパックまたは役割の重みを調整し、信頼度の閾値を調整します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds.",
+      "targetLang": "ja"
+    },
+    "3e0a15d840e4a7f9": {
+      "translation": "複合タスクを検出し、子タスクに分割し、チームパックを割り当て、依存関係を維持します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Detects composite work, splits into child packets, assigns packs, preserves dependencies.",
+      "targetLang": "ja"
+    },
+    "a53bb18b70049034": {
+      "translation": "依存関係の順序で子タスクを実行し、成果物を引き継ぎ、リカバリー処理を行い、統合します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Runs child packets in dependency order with artifact passing, branch recovery, and synthesis.",
+      "targetLang": "ja"
+    },
+    "80edaa6c4f76dc20": {
+      "translation": "実行中にスコープの変更、発見事項、または新しい要件が発生した場合でも、計画を再起動せずに更新できます。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Mid-run scope changes, findings, or new requirements update the plan without restarting.",
+      "targetLang": "ja"
+    },
+    "afa0ea690f43f357": {
+      "translation": "`roleos init claude`コマンドを使用すると、CLAUDE.md、/roleos-route、/roleos-review、/roleos-statusファイルが作成されます。`roleos doctor`コマンドを使用すると、設定が正しく行われているかを確認できます。ルーティングカードは、タスクへの関与を証明します。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "`roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement.",
+      "targetLang": "ja"
+    },
+    "1ea04c1d95dec194": {
+      "translation": "5つのライフサイクルフック（SessionStart、PromptSubmit、PreToolUse、SubagentStart、Stop）。コンプライアンスの強制：ルートカードのリマインダー、ツールの利用制限、サブエージェントの役割の注入、完了状況の監査。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit.",
+      "targetLang": "ja"
+    },
+    "3fee38b40a7423cf": {
+      "translation": "ロールごとに20件の成果物契約。7件のパッケージ引き継ぎ契約。構造検証。チェーンの完全性チェック。下位のロールは、受け取った内容を推測することはありません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "20 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received.",
+      "targetLang": "ja"
+    },
+    "281e729c9bb9b478": {
+      "translation": "6つの名前付きミッション（新機能追加、バグ修正、改善、ドキュメントのリリース、セキュリティ強化、研究開発）。それぞれが、パッケージ、ロールチェーン、成果物の流れ、エスカレーションのブランチ、正直で部分的な定義を宣言します。6つすべてが試行錯誤され、強化されています。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "6 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 6 trial-run and hardened.",
+      "targetLang": "ja"
+    },
+    "530bab468967466c": {
+      "translation": "実行を開始し、追跡された状態とともにステップを進め、正直なレポートで完了または失敗。ブロックされたステップの伝播、チェーンからの逸脱に関する警告、最後のステップの再開。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening.",
+      "targetLang": "ja"
+    },
+    "2cbb57e465e03d30": {
+      "translation": "`roleos start`は、ミッション、パッケージ、または自由ルーティングを自動的に決定します。信頼度スコア、代替案、および複合検出を備えたフォールバックシステム。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "`roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection.",
+      "targetLang": "ja"
+    },
+    "36037f85af67bead": {
+      "translation": "6つのミッション",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "6 missions",
+      "targetLang": "ja"
+    },
+    "beff7d1d0f73399e": {
+      "translation": "ミッション",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Mission",
+      "targetLang": "ja"
+    },
+    "80efdef41ffb4c81": {
+      "translation": "使用するタイミング",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "When to use",
+      "targetLang": "ja"
+    },
+    "50dcf9e3c995c757": {
+      "translation": "新機能",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "feature",
+      "targetLang": "ja"
+    },
+    "f6f32ac33a7fbf69": {
+      "translation": "完全な新機能の提供：範囲 → 仕様 → 実装 → テスト → レビュー",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Full feature delivery: scope → spec → implement → test → review",
+      "targetLang": "ja"
+    },
+    "29c87a6905bdeb59": {
+      "translation": "バグ修正",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "bugfix",
+      "targetLang": "ja"
+    },
+    "45898c8a100aa547": {
+      "translation": "根本原因の特定、修正、テスト、検証",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Diagnose root cause, fix, test, verify",
+      "targetLang": "ja"
+    },
+    "b813a09a303ed21e": {
+      "translation": "改善",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "treatment",
+      "targetLang": "ja"
+    },
+    "96623df5ba44edc6": {
+      "translation": "品質チェック + 調整 + ドキュメント + CIによる検証 + レビュー",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Shipcheck + polish + docs + CI verify + review",
+      "targetLang": "ja"
+    },
+    "5d7e6cd768e03ca2": {
+      "translation": "ドキュメント",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "docs",
+      "targetLang": "ja"
+    },
+    "64ab4dd6f4a6fdb0": {
+      "translation": "ドキュメントの作成/更新、リリースノート",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Write/update documentation, release notes",
+      "targetLang": "ja"
+    },
+    "7682a923bc1c3f25": {
+      "translation": "脅威モデルの作成、監査、脆弱性の修正、再監査、検証",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Threat model, audit, fix vulnerabilities, re-audit, verify",
+      "targetLang": "ja"
+    },
+    "d46da88bba9472b8": {
+      "translation": "研究",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "research",
+      "targetLang": "ja"
+    },
+    "5674f0c450c70318": {
+      "translation": "問題の定義、調査、結果の文書化、決定",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Frame question, research, document findings, decide",
+      "targetLang": "ja"
+    },
+    "90b74ff6c9c50b04": {
+      "translation": "各ミッションには、正直で部分的な定義が含まれています。作業が停滞した場合、システムは完了した内容と残りの内容を記録し、進捗を偽装することはありません。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.",
+      "targetLang": "ja"
+    },
+    "eba07c33d2b3c524": {
+      "translation": "- v0.1–v0.4: 基礎 - 試行、導入、改善パッケージ、スターターパッケージ\n- v1.0.0: 32のロール、完全なCLI、実績のある改善、マルチリポジトリの移植性\n- v1.0.2: ロールOSのロックダウン（ブートストラップの真実性の修正、init --force）\n- v1.1.0: 31のロール、完全なルーティング機能、競合検出、エスカレーション、証拠、ディスパッチ、7つの実績のあるチームパッケージ。35回の実行テスト。212件のテスト。\n- v1.2.0: デフォルトとして推奨されるパッケージ。自動選択、不整合の検出、代替案の提案、自由ルーティングのフォールバック。246件のテスト。\n- v1.3.0: 結果の調整、タスクの細分化、複合実行、適応的な再計画。317件のテスト。\n- v1.4.0: セッションの基盤 - `roleos init claude`、`roleos doctor`、ルートカード、/roleos-route + /roleos-review + /roleos-status コマンド。335件のテスト。\n- v1.5.0: フックの基盤 - 実行時の強制のための5つのライフサイクルフック。358件のテスト。\n- v1.6.0: 成果物の基盤 - ロールごとの20件の成果物契約、7件のパッケージ引き継ぎ契約、構造検証。385件のテスト。\n- v1.7.0: 完了の証明 - 実際のタスクをフルスタックで実行。`roleos artifacts` CLI。構造的な修正に関する正直なエスカレーション。398件のテスト。\n- v1.8.0: ミッションライブラリ（Phase S）- 6つの名前付きミッション、ランナーエンジン、完了レポート。6回の実際の試行錯誤で強化されています。481件のテスト。\n- **v1.9.0**: 統合されたエントリパス（Phase T）- `roleos start`は、ミッション、パッケージ、または自由ルーティングを自動的に決定します。フォールバックシステム、複合検出、エントリパスの比較テスト。527件のテスト。",
+      "model": "translategemma:12b",
+      "timestamp": 1774411889598,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\n- **v1.9.0**: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.",
+      "targetLang": "ja"
+    },
+    "8400e239a0a5d693": {
+      "translation": "Un système d'exploitation multi-Claude qui affecte du personnel, gère les flux de travail, valide et exécute les tâches à travers 31 contrats de rôles spécialisés. Il crée des ensembles de tâches, assemble l'équipe appropriée en fonction de la compatibilité des rôles, détecte les problèmes potentiels avant l'exécution, redirige automatiquement la reprise en cas de blocage ou de rejet des tâches, et exige des preuves structurées pour chaque décision.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "A multi-Claude operating system that staffs, routes, validates, and runs work through 31 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.",
+      "targetLang": "fr"
+    },
+    "2f7ca2b7b893665d": {
+      "translation": "Role OS est la manière professionnelle d'utiliser multi-Claude. Il évite les échecs spécifiques que produisent les flux de travail d'IA génériques :",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "fr"
+    },
+    "591149a21e0ceb6c": {
+      "translation": "Décrivez votre tâche. Role OS détermine automatiquement le niveau d'orchestration approprié.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Describe your task. Role OS decides the right level of orchestration automatically.",
+      "targetLang": "fr"
+    },
+    "11cda6a5393082c3": {
+      "translation": "**L'échelle de secours :**",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "**The fallback ladder:**",
+      "targetLang": "fr"
+    },
+    "4c7bb2e8e21aff7e": {
+      "translation": "1. **Mission** — lorsque la tâche correspond à un flux de travail récurrent éprouvé (correction de bugs, traitement, déploiement de fonctionnalités, documentation, sécurité, recherche). Chaîne de rôles connue, flux d'artefacts, branches d'escalade et définitions partielles claires.\n2. **Pack** — lorsque la tâche appartient à une famille connue, mais ne correspond pas à une mission complète. 7 ensembles d'équipe calibrés avec sélection automatique et mécanismes de prévention des incompatibilités.\n3. **Routage libre** — lorsque la tâche est nouvelle, complexe ou incertaine. Évalue les 31 rôles en fonction du contenu de la tâche et assemble une chaîne dynamique.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.\n2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.\n3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.",
+      "targetLang": "fr"
+    },
+    "507fb44c7840730a": {
+      "translation": "Le système ne force jamais une tâche à travers le mauvais niveau d'abstraction. Il explique pourquoi il a choisi chaque niveau et propose des alternatives.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.",
+      "targetLang": "fr"
+    },
+    "f80e870818b93099": {
+      "translation": "**Une fois routée :**",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "**Once routed:**",
+      "targetLang": "fr"
+    },
+    "70f3b856e1a719ab": {
+      "translation": "1. **Chaque rôle produit une transmission** — sortie structurée avec des éléments de preuve qui réduisent l'ambiguïté pour le rôle suivant.\n2. **Le critique effectue une revue par rapport au contrat** — accepte, rejette ou bloque en fonction de preuves structurées, et non d'impressions.\n3. **La reprise est gérée automatiquement** — les tâches bloquées ou rejetées sont redirigées vers le responsable approprié, avec une raison, un type de reprise et les artefacts requis.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role\n2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression\n3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact",
+      "targetLang": "fr"
+    },
+    "1c004e2012265276": {
+      "translation": "État de déploiement au sein de l'organisation",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Org rollout state",
+      "targetLang": "fr"
+    },
+    "6f666813885ac9ec": {
+      "translation": "L'état de déploiement au niveau de l'organisation (file d'attente, décisions, enregistrements d'audit, ensembles de verrouillage par dépôt) se trouve dans un dépôt privé distinct : [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Ce dépôt est le produit ; ce dernier est l'état opérationnel.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.",
+      "targetLang": "fr"
+    },
+    "223bcdde5be4d231": {
+      "translation": "31 rôles répartis dans 8 ensembles",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "31 roles across 8 packs",
+      "targetLang": "fr"
+    },
+    "139d5932e7b2587d": {
+      "translation": "Ensemble",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Pack",
+      "targetLang": "fr"
+    },
+    "e7965bca2059e4a5": {
+      "translation": "Rôles",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Roles",
+      "targetLang": "fr"
+    },
+    "a03b439cc2eb9195": {
+      "translation": "Orchestrateur, Stratège Produit, Critique",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Orchestrator, Product Strategist, Critic Reviewer",
+      "targetLang": "fr"
+    },
+    "3b9df4001cc4de7b": {
+      "translation": "Développeur Frontend, Ingénieur Backend, Ingénieur Tests, Ingénieur Refactoring, Ingénieur Performance, Auditeur de Dépendances, Expert en Sécurité",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer",
+      "targetLang": "fr"
+    },
+    "9a9890090f74b9f9": {
+      "translation": "Concepteur UI, Gardien de la Marque",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "UI Designer, Brand Guardian",
+      "targetLang": "fr"
+    },
+    "74e5f5237b37619f": {
+      "translation": "Rédacteur de Contenu de Lancement",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Launch Copywriter",
+      "targetLang": "fr"
+    },
+    "dbb57ca5200309c8": {
+      "translation": "Chercheur de Dépôts, Traducteur de Dépôts, Architecte de Documentation, Conservateur de Métadonnées, Auditeur de Couverture, Vérificateur de Déploiement, Ingénieur de Release",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer",
+      "targetLang": "fr"
+    },
+    "972390b41bd6f3d8": {
+      "translation": "Synthétiseur de Commentaires, Priorisateur de Feuille de Route, Rédacteur de Spécifications",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "fr"
+    },
+    "d8a722254eb45bb7": {
+      "translation": "Chercheur UX, Analyste Concurrentiel, Chercheur de Tendances, Synthétiseur d'Entretiens Utilisateurs",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer",
+      "targetLang": "fr"
+    },
+    "dd81730712172031": {
+      "translation": "Stratège de Lancement, Stratège de Contenu, Community Manager, Responsable de Tri des Demandes d'Assistance",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Launch Strategist, Content Strategist, Community Manager, Support Triage Lead",
+      "targetLang": "fr"
+    },
+    "0fa04243037a5a96": {
+      "translation": "Chaque rôle a un contrat complet : mission, conditions d'utilisation, conditions de non-utilisation, entrées attendues, sorties requises, niveau de qualité et déclencheurs d'escalade. Chaque rôle peut être routé — `roleos route` peut recommander n'importe lequel d'entre eux en fonction du contenu de la tâche.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.",
+      "targetLang": "fr"
+    },
+    "d99b271bafb73fce": {
+      "translation": "Quand ne pas utiliser Role OS",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "When not to use Role OS",
+      "targetLang": "fr"
+    },
+    "b6a07aa4f8da0528": {
+      "translation": "- Corrections de ligne unique, fautes de frappe ou bugs évidents\n- Recherche exploratoire sans résultat défini\n- Tâches qui peuvent être comprises par une seule personne en 5 minutes\n- Corrections urgentes qui doivent être déployées avant qu'une chaîne de revue ne soit terminée\n- Projets où la rapidité est privilégiée par rapport à la structure",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "- Single-line fixes, typos, or obvious bugs\n- Exploratory research with no defined output\n- Work that fits in one person's head in 5 minutes\n- Emergency hotfixes that need to ship before a review chain completes\n- Projects where you want speed over structure",
+      "targetLang": "fr"
+    },
+    "3689e0406c3490c4": {
+      "translation": "**Traitement complet FT-001** (portlight-desktop)\n- Traitement en 7 phases avec rôles du \"Traitement Pack\"\n- Vérification de déploiement prouvée, absence de conflits de rôles",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "**Full treatment FT-001** (portlight-desktop)\n- 7-phase staffed treatment with Treatment Pack roles\n- Shipcheck gating proven, zero role collisions",
+      "targetLang": "fr"
+    },
+    "882c393f1b38c478": {
+      "translation": "**Traitement complet FT-002** (studioflow)\n- Même ensemble de traitement, dépôt structurellement différent (espace de travail créatif vs jeu)\n- Ensemble de traitement portable — aucune modification de contrat n'est nécessaire",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "**Full treatment FT-002** (studioflow)\n- Same treatment pack, structurally different repo (creative workspace vs game)\n- Treatment Pack portable — no contract modifications needed",
+      "targetLang": "fr"
+    },
+    "15e86f9e0301fe45": {
+      "translation": "Le système d'exploitation",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "The operating system",
+      "targetLang": "fr"
+    },
+    "8b67d46da732af40": {
+      "translation": "Couche",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Layer",
+      "targetLang": "fr"
+    },
+    "a79faafb03506fe1": {
+      "translation": "Évalue les 31 rôles en fonction du contenu de la tâche, explique les recommandations, évalue la confiance",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Scores all 31 roles against packet content, explains recommendations, assesses confidence",
+      "targetLang": "fr"
+    },
+    "b2face8904c365f7": {
+      "translation": "✓ Déployé",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "✓ Shipped",
+      "targetLang": "fr"
+    },
+    "839ad733c23aff10": {
+      "translation": "Assemble des chaînes ordonnées en fonction des rôles, avec une préférence pour certains types de paquets, sans être verrouillée à un modèle spécifique.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Assembles phase-ordered chains from scored roles, packet-type biased not template-locked",
+      "targetLang": "fr"
+    },
+    "9bad5fa8f76a3ddf": {
+      "translation": "Validation en 4 étapes : conflits majeurs, séquences, redondances, lacunes de couverture. Suggestions de correction.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions.",
+      "targetLang": "fr"
+    },
+    "a7d60b6405737bd4": {
+      "translation": "Redirection automatique des tâches bloquées, rejetées ou divisées vers le module de résolution approprié, avec indication de la raison et des artefacts requis.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact",
+      "targetLang": "fr"
+    },
+    "1592ae933200a778": {
+      "translation": "Preuves structurées et adaptées aux rôles dans les verdicts. Vérifications de suffisance. 12 types de preuves.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds.",
+      "targetLang": "fr"
+    },
+    "332bd269096f629a": {
+      "translation": "Génération de manifestes d'exécution pour les environnements multi-Claude. Profils d'outils par rôle, instructions système, budgets.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets.",
+      "targetLang": "fr"
+    },
+    "89acc0b8ae781ceb": {
+      "translation": "Ensemble complet validé : 30 tâches réussies sur 30 + 5 essais négatifs réussis sur 5. 7 ensembles de tests terminés.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete.",
+      "targetLang": "fr"
+    },
+    "0dc7e7590a703c89": {
+      "translation": "✓ Terminé",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "✓ Complete",
+      "targetLang": "fr"
+    },
+    "e1e1feb36dd04426": {
+      "translation": "7 ensembles calibrés avec sélection automatique, protections contre les erreurs et mécanisme de repli en cas de problème.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback.",
+      "targetLang": "fr"
+    },
+    "ee349d7f2194573f": {
+      "translation": "Enregistrement des résultats des exécutions, ajustement des poids des ensembles/rôles en fonction des résultats, modification des seuils de confiance.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds.",
+      "targetLang": "fr"
+    },
+    "b26e60e52ef6c05f": {
+      "translation": "Détection des tâches complexes, division en paquets secondaires, attribution des ensembles, préservation des dépendances.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Detects composite work, splits into child packets, assigns packs, preserves dependencies.",
+      "targetLang": "fr"
+    },
+    "018bdaf1b513690d": {
+      "translation": "Exécution des paquets secondaires dans l'ordre des dépendances, avec transmission des artefacts, reprise en cas de branchement et synthèse.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Runs child packets in dependency order with artifact passing, branch recovery, and synthesis.",
+      "targetLang": "fr"
+    },
+    "4c50e0a5e4b308f8": {
+      "translation": "Les modifications de la portée, les résultats ou les nouvelles exigences pendant l'exécution mettent à jour le plan sans redémarrage.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Mid-run scope changes, findings, or new requirements update the plan without restarting.",
+      "targetLang": "fr"
+    },
+    "7d7569f8c8ee615a": {
+      "translation": "`roleos init claude` crée les fichiers CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` vérifie la configuration. Les cartes de routage prouvent l'engagement.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "`roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement.",
+      "targetLang": "fr"
+    },
+    "fe5cdfff3952d555": {
+      "translation": "5 points d'accroche du cycle de vie (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Application des règles : rappels sur les cartes de routage, contrôle de l'utilisation des outils, injection de rôle des sous-agents, audit de la finalisation.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit.",
+      "targetLang": "fr"
+    },
+    "fccc54d5ed07fa8d": {
+      "translation": "20 contrats d'artefacts par rôle. 7 contrats de transmission d'ensembles. Validation structurelle. Vérifications de l'intégrité des chaînes. Les rôles suivants ne peuvent jamais deviner ce qu'ils ont reçu.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "20 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received.",
+      "targetLang": "fr"
+    },
+    "37ad552c162a32ca": {
+      "translation": "6 missions nommées (développement de fonctionnalité, correction de bug, amélioration, publication de documentation, renforcement de la sécurité, lancement de recherche). Chaque mission définit l'ensemble, la chaîne de rôles, le flux d'artefacts, les branches de relance et une définition partielle et honnête. Les 6 missions ont été testées et optimisées.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "6 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 6 trial-run and hardened.",
+      "targetLang": "fr"
+    },
+    "c1f49597c18b7460": {
+      "translation": "Création d'exécutions, suivi de l'état, finalisation ou échec avec un rapport précis. Propagation des étapes bloquées, avertissements de relance en dehors de la chaîne, réouverture de la dernière étape.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening.",
+      "targetLang": "fr"
+    },
+    "f52da2ec54729b94": {
+      "translation": "`roleos start` détermine automatiquement si l'exécution est une mission, un ensemble ou un routage libre. Mécanisme de repli avec scores de confiance, alternatives et détection des tâches complexes.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "`roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection.",
+      "targetLang": "fr"
+    },
+    "309001559fadd1e1": {
+      "translation": "6 missions",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "6 missions",
+      "targetLang": "fr"
+    },
+    "1b24050dcb544d2d": {
+      "translation": "Mission",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Mission",
+      "targetLang": "fr"
+    },
+    "ffb80514ab13457b": {
+      "translation": "Quand utiliser",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "When to use",
+      "targetLang": "fr"
+    },
+    "c609c3610ed8aaf6": {
+      "translation": "Fonctionnalité",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "feature",
+      "targetLang": "fr"
+    },
+    "7cd034550f123ab2": {
+      "translation": "Livraison complète d'une fonctionnalité : définition de la portée → spécifications → implémentation → test → revue",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Full feature delivery: scope → spec → implement → test → review",
+      "targetLang": "fr"
+    },
+    "e6e2631f05a9d356": {
+      "translation": "Correction de bug",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "bugfix",
+      "targetLang": "fr"
+    },
+    "77983df8f8750da5": {
+      "translation": "Diagnostic de la cause profonde, correction, test, vérification",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Diagnose root cause, fix, test, verify",
+      "targetLang": "fr"
+    },
+    "9621b37d257130af": {
+      "translation": "Amélioration",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "treatment",
+      "targetLang": "fr"
+    },
+    "c5357eb79ddf70af": {
+      "translation": "Vérification + peaufinage + documentation + vérification CI + revue",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Shipcheck + polish + docs + CI verify + review",
+      "targetLang": "fr"
+    },
+    "622b7d884b6a5297": {
+      "translation": "Documentation",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "docs",
+      "targetLang": "fr"
+    },
+    "d88265160e9d9180": {
+      "translation": "Rédaction/mise à jour de la documentation, notes de publication",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Write/update documentation, release notes",
+      "targetLang": "fr"
+    },
+    "48b3f0f10e85e8b5": {
+      "translation": "Analyse des menaces, audit, correction des vulnérabilités, nouvel audit, vérification",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Threat model, audit, fix vulnerabilities, re-audit, verify",
+      "targetLang": "fr"
+    },
+    "fe41b4d69ad0c366": {
+      "translation": "Recherche",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "research",
+      "targetLang": "fr"
+    },
+    "ab6e6313eabac2cb": {
+      "translation": "Définition de la question, recherche, documentation des résultats, prise de décision",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Frame question, research, document findings, decide",
+      "targetLang": "fr"
+    },
+    "bb3beb0b0fe331a0": {
+      "translation": "Chaque mission inclut des définitions partielles et honnêtes : lorsque le travail est bloqué, le système documente ce qui a été réalisé et ce qui reste, au lieu de prétendre que le travail est terminé.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.",
+      "targetLang": "fr"
+    },
+    "1cb3900ee34abcfa": {
+      "translation": "- v0.1–v0.4 : Bases – essais, adoption (du produit), ensemble de traitement, ensemble de démarrage.\n- v1.0.0 : 32 rôles, interface en ligne de commande complète, traitement éprouvé, portabilité multi-dépôts.\n- v1.0.2 : Blocage des rôles au niveau du système d'exploitation (corrections de la configuration initiale, `init --force`).\n- v1.1.0 : 31 rôles, architecture de routage complète, détection des conflits, escalade, preuves, répartition, 7 ensembles d'outils éprouvés. 35 essais d'exécution. 212 tests.\n- v1.2.0 : Les ensembles calibrés sont promus au mode par défaut. Sélection automatique, détection des incompatibilités, suggestion d'alternatives, basculement vers un routage libre. 246 tests.\n- v1.3.0 : Calibrage des résultats, décomposition des tâches complexes, exécution composite, replanification adaptative. 317 tests.\n- v1.4.0 : Architecture de session – `roleos init claude`, `roleos doctor`, cartes de routage, commandes `/roleos-route`, `/roleos-review` et `/roleos-status`. 335 tests.\n- v1.5.0 : Architecture de connexion – 5 points d'accroche pour l'application des règles au moment de l'exécution. 358 tests.\n- v1.6.0 : Architecture des artefacts – 20 contrats d'artefacts par rôle, 7 contrats de transfert d'ensembles, validation structurelle. 385 tests.\n- v1.7.0 : Preuve de complétion – tâches réelles exécutées sur l'ensemble de la pile. Interface en ligne de commande `roleos artifacts`. Escalade transparente pour les corrections structurelles. 398 tests.\n- v1.8.0 : Bibliothèque de missions (Phase S) – 6 missions nommées, moteur d'exécution, rapports de complétion. Durcissement basé sur 6 essais réels. 481 tests.\n- **v1.9.0** : Chemin d'accès unifié (Phase T) – `roleos start` détermine automatiquement si l'on utilise une mission, un ensemble d'outils ou un routage libre. Système de basculement, détection composite, essais de comparaison des chemins d'accès. 527 tests.",
+      "model": "translategemma:12b",
+      "timestamp": 1774411969724,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\n- **v1.9.0**: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.",
+      "targetLang": "fr"
+    },
+    "39d8119cb226bf0c": {
+      "translation": "एक मल्टी-क्लाउड ऑपरेटिंग सिस्टम जो 31 विशिष्ट भूमिकाओं के साथ काम को संचालित करता है, रूट करता है, सत्यापित करता है और निष्पादित करता है। यह कार्य पैकेट बनाता है, स्कोरिंग के आधार पर सही टीम को इकट्ठा करता है, निष्पादन से पहले संभावित समस्याओं का पता लगाता है, यदि काम अवरुद्ध या अस्वीकृत होता है तो स्वचालित रूप से पुनर्निर्देशन करता है, और प्रत्येक निर्णय में संरचित प्रमाण की आवश्यकता होती है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "A multi-Claude operating system that staffs, routes, validates, and runs work through 31 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.",
+      "targetLang": "hi"
+    },
+    "8da5431d9cec5656": {
+      "translation": "रोल ओएस, मल्टी-क्लाउड का उपयोग करने का एक पेशेवर तरीका है। यह उन विशिष्ट विफलताओं को रोकता है जो सामान्य एआई वर्कफ़्लो उत्पन्न करते हैं:",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "hi"
+    },
+    "3e7bffd5f97948af": {
+      "translation": "अपने कार्य का वर्णन करें। रोल ओएस स्वचालित रूप से उचित स्तर का समन्वय निर्धारित करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Describe your task. Role OS decides the right level of orchestration automatically.",
+      "targetLang": "hi"
+    },
+    "aeeba4fa2a448fd1": {
+      "translation": "**बैकअप प्रणाली:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "**The fallback ladder:**",
+      "targetLang": "hi"
+    },
+    "3306347a1f75a629": {
+      "translation": "1. **मिशन:** जब कार्य एक सिद्ध, दोहराए जाने वाले वर्कफ़्लो से मेल खाता है (जैसे, बग फिक्स, सुधार, नई सुविधा का लॉन्च, दस्तावेज़, सुरक्षा, अनुसंधान)। इसमें ज्ञात भूमिका श्रृंखला, कलाकृतियों का प्रवाह, समस्या निवारण शाखाएं और स्पष्ट परिभाषाएं शामिल हैं।\n2. **पैक:** जब कार्य एक ज्ञात श्रेणी का होता है लेकिन पूर्ण मिशन आकार का नहीं होता है। इसमें 7 कैलिब्रेटेड टीम पैक होते हैं जिनमें स्वचालित चयन और विसंगति सुरक्षा होती है।\n3. **मुक्त रूटिंग:** जब कार्य नया, मिश्रित या अनिश्चित होता है। यह सभी 31 भूमिकाओं को पैकेट सामग्री के विरुद्ध स्कोर करता है और एक गतिशील श्रृंखला बनाता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.\n2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.\n3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.",
+      "targetLang": "hi"
+    },
+    "503052b7f6c7bfd9": {
+      "translation": "यह सिस्टम कभी भी किसी गलत स्तर पर काम को लागू नहीं करता है। यह बताता है कि इसने प्रत्येक स्तर को क्यों चुना और वैकल्पिक विकल्प भी प्रदान करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.",
+      "targetLang": "hi"
+    },
+    "b6a89eeb593c298a": {
+      "translation": "**एक बार रूट होने के बाद:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "**Once routed:**",
+      "targetLang": "hi"
+    },
+    "db99ec8766941de1": {
+      "translation": "1. **प्रत्येक भूमिका एक हैंडऑफ़ उत्पन्न करती है:** संरचित आउटपुट जिसमें ऐसे प्रमाण शामिल होते हैं जो अगले भूमिका के लिए अस्पष्टता को कम करते हैं।\n2. **क्रिटिक समीक्षा अनुबंध के अनुसार:** यह संरचित प्रमाणों के आधार पर स्वीकार, अस्वीकार या अवरुद्ध करता है, न कि केवल धारणा के आधार पर।\n3. **पुनर्निर्देशन स्वचालित रूप से होता है:** अवरुद्ध या अस्वीकृत काम को उचित समस्या निवारक को एक कारण, पुनर्प्राप्ति प्रकार और आवश्यक कलाकृतियों के साथ भेजा जाता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role\n2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression\n3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact",
+      "targetLang": "hi"
+    },
+    "9276a75e95ec05f3": {
+      "translation": "संगठन में रोलआउट की स्थिति",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Org rollout state",
+      "targetLang": "hi"
+    },
+    "d7a15645fddbaa18": {
+      "translation": "संगठन-व्यापी रोलआउट की स्थिति (क्यू, निर्णय, ऑडिट रिकॉर्ड, प्रति-रिपॉजिटरी लॉक पैकेट) एक अलग निजी रिपॉजिटरी में मौजूद है: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout)। यह रिपॉजिटरी उत्पाद है; वह रिपॉजिटरी परिचालन स्थिति है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.",
+      "targetLang": "hi"
+    },
+    "50b948699262fb48": {
+      "translation": "8 पैकों में 31 भूमिकाएं",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "31 roles across 8 packs",
+      "targetLang": "hi"
+    },
+    "f0f697f9f389eeb7": {
+      "translation": "पैक",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Pack",
+      "targetLang": "hi"
+    },
+    "ba025199aea1694a": {
+      "translation": "भूमिकाएं",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Roles",
+      "targetLang": "hi"
+    },
+    "a212ed121c212a8e": {
+      "translation": "ऑर्केस्ट्रेटर, उत्पाद रणनीतिकार, क्रिटिक समीक्षक",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Orchestrator, Product Strategist, Critic Reviewer",
+      "targetLang": "hi"
+    },
+    "a61451ecda464db0": {
+      "translation": "फ्रंटएंड डेवलपर, बैकएंड इंजीनियर, टेस्ट इंजीनियर, रिफैक्टर इंजीनियर, परफॉर्मेंस इंजीनियर, डिपेंडेंसी ऑडिटर, सुरक्षा समीक्षक",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer",
+      "targetLang": "hi"
+    },
+    "271edf479638e9ce": {
+      "translation": "यूआई डिजाइनर, ब्रांड गार्डियन",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "UI Designer, Brand Guardian",
+      "targetLang": "hi"
+    },
+    "5e3d5bac642e9fbb": {
+      "translation": "लॉन्च कॉपीराइटर",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Launch Copywriter",
+      "targetLang": "hi"
+    },
+    "de76aa4b1918e807": {
+      "translation": "रिपॉजिटरी शोधकर्ता, रिपॉजिटरी अनुवादक, डॉक्स आर्किटेक्ट, मेटाडेटा क्यूरेटर, कवरेज ऑडिटर, डिप्लॉयमेंट सत्यापनकर्ता, रिलीज़ इंजीनियर",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer",
+      "targetLang": "hi"
+    },
+    "3db9173fc0141b61": {
+      "translation": "फीडबैक सिंथेसाइज़र, रोडमैप प्राथमिकता देने वाला, स्पेसिफिकेशन लेखक",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "hi"
+    },
+    "f065788315267a15": {
+      "translation": "यूएक्स शोधकर्ता, प्रतिस्पर्धी विश्लेषक, ट्रेंड शोधकर्ता, यूजर इंटरव्यू सिंथेसाइज़र",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer",
+      "targetLang": "hi"
+    },
+    "fc3f3cd172988639": {
+      "translation": "लॉन्च रणनीतिकार, कंटेंट रणनीतिकार, कम्युनिटी मैनेजर, सपोर्ट ट्राइएज लीड",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Launch Strategist, Content Strategist, Community Manager, Support Triage Lead",
+      "targetLang": "hi"
+    },
+    "f3f36a8b62c66ae5": {
+      "translation": "प्रत्येक भूमिका के लिए एक पूर्ण अनुबंध है: मिशन, उपयोग कब करें, उपयोग कब न करें, अपेक्षित इनपुट, आवश्यक आउटपुट, गुणवत्ता मानक और समस्या निवारण ट्रिगर। प्रत्येक भूमिका को रूट किया जा सकता है - `roleos route` पैकेट सामग्री के आधार पर इनमें से किसी भी भूमिका की सिफारिश कर सकता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.",
+      "targetLang": "hi"
+    },
+    "96ea2698515f4b28": {
+      "translation": "रोल ओएस का उपयोग कब नहीं करना चाहिए",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "When not to use Role OS",
+      "targetLang": "hi"
+    },
+    "09a2cecc8b7fe4c2": {
+      "translation": "- सिंगल-लाइन सुधार, टाइपो या स्पष्ट बग\n- कोई परिभाषित आउटपुट नहीं होने वाला अन्वेषी अनुसंधान\n- ऐसा कार्य जो 5 मिनट में एक व्यक्ति के दिमाग में आ जाए\n- आपातकालीन सुधार जो समीक्षा श्रृंखला पूरी होने से पहले जारी करने की आवश्यकता होती है\n- ऐसे प्रोजेक्ट जहां आप संरचना से अधिक गति को प्राथमिकता देते हैं",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "- Single-line fixes, typos, or obvious bugs\n- Exploratory research with no defined output\n- Work that fits in one person's head in 5 minutes\n- Emergency hotfixes that need to ship before a review chain completes\n- Projects where you want speed over structure",
+      "targetLang": "hi"
+    },
+    "5fcdf946568c2156": {
+      "translation": "**पूर्ण उपचार FT-001** (portlight-desktop)\n- उपचार पैक भूमिकाओं के साथ 7-चरण वाला स्टाफ उपचार\n- शिपचेक गेटिंग सिद्ध, कोई भूमिका टकराव नहीं",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "**Full treatment FT-001** (portlight-desktop)\n- 7-phase staffed treatment with Treatment Pack roles\n- Shipcheck gating proven, zero role collisions",
+      "targetLang": "hi"
+    },
+    "af53034a09518c6d": {
+      "translation": "**पूर्ण उपचार FT-002** (studioflow)\n- समान उपचार पैक, संरचनात्मक रूप से अलग रिपॉजिटरी (रचनात्मक कार्यक्षेत्र बनाम गेम)\n- उपचार पैक पोर्टेबल - किसी अनुबंध संशोधन की आवश्यकता नहीं",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "**Full treatment FT-002** (studioflow)\n- Same treatment pack, structurally different repo (creative workspace vs game)\n- Treatment Pack portable — no contract modifications needed",
+      "targetLang": "hi"
+    },
+    "b70912a7f387f681": {
+      "translation": "ऑपरेटिंग सिस्टम",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "The operating system",
+      "targetLang": "hi"
+    },
+    "240f402370bda2a4": {
+      "translation": "लेयर",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Layer",
+      "targetLang": "hi"
+    },
+    "a3685d4a3f007f4c": {
+      "translation": "यह सभी 31 भूमिकाओं को पैकेट सामग्री के विरुद्ध स्कोर करता है, सिफारिशों को समझाता है, और आत्मविश्वास का आकलन करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Scores all 31 roles against packet content, explains recommendations, assesses confidence",
+      "targetLang": "hi"
+    },
+    "2f03a5cdd3eb10c3": {
+      "translation": "✓ जारी किया गया",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "✓ Shipped",
+      "targetLang": "hi"
+    },
+    "bbeab5485f139859": {
+      "translation": "क्रमिक रूप से व्यवस्थित श्रृंखलाएँ, जो स्कोर किए गए कार्यों पर आधारित हैं, लेकिन किसी टेम्पलेट से बंधी नहीं हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Assembles phase-ordered chains from scored roles, packet-type biased not template-locked",
+      "targetLang": "hi"
+    },
+    "ef433241b42c50dd": {
+      "translation": "4-स्तरीय सत्यापन: गंभीर विरोधाभास, क्रम, अतिरेक, और कवरेज में अंतराल। सुधार के सुझाव।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions.",
+      "targetLang": "hi"
+    },
+    "7e2917e9d012eadb": {
+      "translation": "अवरुद्ध/अस्वीकृत/विभाजित कार्यों को स्वचालित रूप से उचित समाधानकर्ता को भेजा जाता है, साथ में कारण और आवश्यक जानकारी।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact",
+      "targetLang": "hi"
+    },
+    "06db139bf7be5458": {
+      "translation": "निर्णयों में भूमिका-जागरूक संरचित प्रमाण। पर्याप्तता जांच। 12 प्रकार के प्रमाण।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds.",
+      "targetLang": "hi"
+    },
+    "01b0f7ef019c4799": {
+      "translation": "मल्टी-क्लाउड के लिए निष्पादन योजनाएँ उत्पन्न करता है। प्रत्येक भूमिका के लिए उपकरण प्रोफाइल, सिस्टम संकेत, और बजट।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets.",
+      "targetLang": "hi"
+    },
+    "84b8d446f074cdee": {
+      "translation": "पूर्ण सूची सत्यापित: 30/30 स्वर्ण-कार्य + 5/5 नकारात्मक परीक्षण। 7 पैकेट परीक्षण पूरे।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete.",
+      "targetLang": "hi"
+    },
+    "680e111cbca4b212": {
+      "translation": "✓ पूर्ण",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "✓ Complete",
+      "targetLang": "hi"
+    },
+    "10e4cf589885820d": {
+      "translation": "7 कैलिब्रेटेड पैकेट, स्वचालित चयन, बेमेल सुरक्षा, और स्वतंत्र रूटिंग विकल्प।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback.",
+      "targetLang": "hi"
+    },
+    "cef5d0d2db71d057": {
+      "translation": "निष्पादन परिणामों को रिकॉर्ड करता है, परिणामों के आधार पर पैकेट/भूमिका भार को समायोजित करता है, और आत्मविश्वास थ्रेसहोल्ड को समायोजित करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds.",
+      "targetLang": "hi"
+    },
+    "080513074927321e": {
+      "translation": "संयुक्त कार्यों का पता लगाता है, उन्हें चाइल्ड पैकेट में विभाजित करता है, पैकेट आवंटित करता है, और निर्भरताओं को बनाए रखता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Detects composite work, splits into child packets, assigns packs, preserves dependencies.",
+      "targetLang": "hi"
+    },
+    "e98df692c06ca6d2": {
+      "translation": "निर्भरता क्रम में चाइल्ड पैकेट चलाता है, जानकारी पास करता है, शाखा पुनर्प्राप्ति करता है, और संश्लेषण करता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Runs child packets in dependency order with artifact passing, branch recovery, and synthesis.",
+      "targetLang": "hi"
+    },
+    "6cd599f51f2c573a": {
+      "translation": "निष्पादन के दौरान होने वाले परिवर्तनों, निष्कर्षों, या नई आवश्यकताओं को योजना को पुनरारंभ किए बिना अपडेट किया जा सकता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "Mid-run scope changes, findings, or new requirements update the plan without restarting.",
+      "targetLang": "hi"
+    },
+    "2d11b6be82bd8879": {
+      "translation": "`roleos init claude` कमांड `CLAUDE.md`, `/roleos-route`, `/roleos-review`, और `/roleos-status` फ़ाइलों को बनाता है। `roleos doctor` कमांड कनेक्शन की जांच करता है। रूट कार्ड, भागीदारी को प्रमाणित करते हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "`roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement.",
+      "targetLang": "hi"
+    },
+    "fa64fbd1042acfa3": {
+      "translation": "5 लाइफसाइकिल हुक (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop)। सलाहकार प्रवर्तन: रूट कार्ड अनुस्मारक, टूल उपयोग प्रतिबंध, सबएजेंट भूमिका इंजेक्शन, और पूर्णता ऑडिट।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit.",
+      "targetLang": "hi"
+    },
+    "23d2ff6f927230eb": {
+      "translation": "20 भूमिका-विशिष्ट कलाकृतियों के अनुबंध। 7 पैकेट हैंडऑफ़ अनुबंध। संरचनात्मक सत्यापन। श्रृंखला पूर्णता जांच। डाउनस्ट्रीम भूमिकाएँ कभी भी यह अनुमान नहीं लगाती हैं कि उन्हें क्या प्राप्त हुआ है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "20 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received.",
+      "targetLang": "hi"
+    },
+    "d3647b80fcfd425d": {
+      "translation": "6 नामित मिशन (फ़ीचर-शिप, बगफिक्स, ट्रीटमेंट, डॉक्स-रिलीज़, सुरक्षा-हार्डनिंग, रिसर्च-लॉन्च)। प्रत्येक मिशन में पैकेट, भूमिका श्रृंखला, कलाकृति प्रवाह, एस्केलेशन शाखाएँ, और आंशिक परिभाषा शामिल है। सभी 6 मिशनों का परीक्षण किया गया है और उन्हें बेहतर बनाया गया है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050511,
+      "source": "6 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 6 trial-run and hardened.",
+      "targetLang": "hi"
+    },
+    "3d6cc0a707454b90": {
+      "translation": "रन बनाएं, ट्रैक की गई स्थिति के साथ चरणों से गुजरें, ईमानदारी से रिपोर्टिंग के साथ पूरा करें/विफल करें। अवरुद्ध चरणों का प्रसार, श्रृंखला से बाहर एस्केलेशन चेतावनियाँ, और अंतिम चरण को फिर से खोलने की सुविधा।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening.",
+      "targetLang": "hi"
+    },
+    "8fa1fa373a9ca6ed": {
+      "translation": "`roleos start` कमांड स्वचालित रूप से मिशन, पैकेट, या स्वतंत्र रूटिंग का चयन करता है। आत्मविश्वास स्कोर, विकल्पों, और संयुक्त पहचान के साथ एक वैकल्पिक प्रणाली।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "`roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection.",
+      "targetLang": "hi"
+    },
+    "adfeb65dc8d04b1f": {
+      "translation": "6 मिशन",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "6 missions",
+      "targetLang": "hi"
+    },
+    "60ed762c281a7fc0": {
+      "translation": "मिशन",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Mission",
+      "targetLang": "hi"
+    },
+    "c93c8cd30ae5d286": {
+      "translation": "कब उपयोग करें",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "When to use",
+      "targetLang": "hi"
+    },
+    "32cdb03d4323a7b0": {
+      "translation": "फ़ीचर",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "feature",
+      "targetLang": "hi"
+    },
+    "dada3d1eb53970ed": {
+      "translation": "पूर्ण फ़ीचर डिलीवरी: दायरा → विनिर्देश → कार्यान्वयन → परीक्षण → समीक्षा",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Full feature delivery: scope → spec → implement → test → review",
+      "targetLang": "hi"
+    },
+    "48dc80d62f7ee48b": {
+      "translation": "बगफिक्स",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "bugfix",
+      "targetLang": "hi"
+    },
+    "889d2fb33bd8547b": {
+      "translation": "मूल कारण का निदान, सुधार, परीक्षण, सत्यापन",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Diagnose root cause, fix, test, verify",
+      "targetLang": "hi"
+    },
+    "d5299fb141e4ca3e": {
+      "translation": "ट्रीटमेंट",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "treatment",
+      "targetLang": "hi"
+    },
+    "97b8235f59d82f4f": {
+      "translation": "शिपचेक + पॉलिश + दस्तावेज़ + CI सत्यापन + समीक्षा",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Shipcheck + polish + docs + CI verify + review",
+      "targetLang": "hi"
+    },
+    "7ccff9069b1c058d": {
+      "translation": "दस्तावेज़",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "docs",
+      "targetLang": "hi"
+    },
+    "713c06e90396f4b6": {
+      "translation": "दस्तावेज़ लिखें/अपडेट करें, रिलीज़ नोट्स",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Write/update documentation, release notes",
+      "targetLang": "hi"
+    },
+    "f9dacc77759277a7": {
+      "translation": "खतरे का मॉडल, ऑडिट, कमजोरियों को ठीक करें, फिर से ऑडिट करें, सत्यापन",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Threat model, audit, fix vulnerabilities, re-audit, verify",
+      "targetLang": "hi"
+    },
+    "d31240bbe8131769": {
+      "translation": "अनुसंधान",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "research",
+      "targetLang": "hi"
+    },
+    "fcf8f4dfdf35af09": {
+      "translation": "प्रश्न तैयार करें, अनुसंधान करें, निष्कर्षों को दस्तावेज़ करें, निर्णय लें",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Frame question, research, document findings, decide",
+      "targetLang": "hi"
+    },
+    "4581b3305ba2e7e7": {
+      "translation": "प्रत्येक मिशन में ईमानदार-आंशिक परिभाषाएँ शामिल हैं - जब कोई कार्य रुक जाता है, तो सिस्टम यह दस्तावेज़ करता है कि क्या पूरा हो गया है और क्या शेष है, बजाय इसके कि वह झूठा दावा करे कि कार्य पूरा हो गया है।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.",
+      "targetLang": "hi"
+    },
+    "4ae43dac745cd902": {
+      "translation": "- v0.1–v0.4: आधार – परीक्षण, अपनाना, उपचार पैकेज, शुरुआती पैकेज।\n- v1.0.0: 32 भूमिकाएँ, पूर्ण कमांड-लाइन इंटरफेस, सिद्ध उपचार, मल्टी-रिपो पोर्टेबिलिटी।\n- v1.0.2: भूमिका ऑपरेटिंग सिस्टम लॉकिंग (बूटस्ट्रैप सत्य सुधार, init --force)।\n- v1.1.0: 31 भूमिकाएँ, पूर्ण रूटिंग स्पाइन, संघर्ष का पता लगाना, वृद्धि, प्रमाण, डिस्पैच, 7 सिद्ध टीम पैकेज। 35 निष्पादन परीक्षण। 212 परीक्षण।\n- v1.2.0: कैलिब्रेटेड पैकेज डिफ़ॉल्ट विकल्प के रूप में प्रचारित। स्वचालित चयन, विसंगति का पता लगाना, वैकल्पिक सुझाव, फ्री-रूटिंग बैकअप। 246 परीक्षण।\n- v1.3.0: परिणाम कैलिब्रेशन, मिश्रित-कार्य विघटन, समग्र निष्पादन, अनुकूलन योजना। 317 परीक्षण।\n- v1.4.0: सेशन स्पाइन – `roleos init claude`, `roleos doctor`, रूट कार्ड, /roleos-route + /roleos-review + /roleos-status कमांड। 335 परीक्षण।\n- v1.5.0: हुक स्पाइन – रनटाइम प्रवर्तन के लिए 5 लाइफसाइकिल हुक। 358 परीक्षण।\n- v1.6.0: आर्टिफैक्ट स्पाइन – 20 प्रति-भूमिका आर्टिफैक्ट अनुबंध, 7 पैकेज हैंडऑफ अनुबंध, संरचनात्मक सत्यापन। 385 परीक्षण।\n- v1.7.0: पूर्णता का प्रमाण – वास्तविक कार्य पूरे स्टैक के माध्यम से चलाए जाते हैं। `roleos artifacts` कमांड-लाइन इंटरफेस। संरचनात्मक सुधारों पर ईमानदार वृद्धि। 398 परीक्षण।\n- v1.8.0: मिशन लाइब्रेरी (फेज एस) – 6 नामित मिशन, रनर इंजन, पूर्णता रिपोर्ट। 6 वास्तविक परीक्षण रनों से सुरक्षित किया गया। 481 परीक्षण।\n- **v1.9.0**: एकीकृत प्रवेश पथ (फेज टी) – `roleos start` स्वचालित रूप से मिशन, पैकेज या फ्री रूटिंग का निर्णय लेता है। बैकअप प्रणाली, समग्र पता लगाना, प्रवेश-पथ तुलना परीक्षण। 527 परीक्षण।",
+      "model": "translategemma:12b",
+      "timestamp": 1774412050512,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\n- **v1.9.0**: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.",
+      "targetLang": "hi"
+    },
+    "9e0cac5b9831091a": {
+      "translation": "Um sistema operacional multi-Claude que aloca, direciona, valida e executa tarefas por meio de 31 contratos de funções especializadas. Cria pacotes de tarefas, monta a equipe certa com base em correspondência de funções, detecta problemas antes da execução, direciona automaticamente a recuperação quando o trabalho é bloqueado ou rejeitado e exige evidências estruturadas em cada decisão.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "A multi-Claude operating system that staffs, routes, validates, and runs work through 31 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.",
+      "targetLang": "pt"
+    },
+    "dce1319e8e7c45d9": {
+      "translation": "Role OS é a maneira profissional de usar o multi-Claude. Ele evita as falhas específicas que os fluxos de trabalho de IA genéricos produzem:",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:",
+      "targetLang": "pt"
+    },
+    "a0f4ac553e8efd73": {
+      "translation": "Descreva sua tarefa. O Role OS decide automaticamente o nível de orquestração adequado.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Describe your task. Role OS decides the right level of orchestration automatically.",
+      "targetLang": "pt"
+    },
+    "6742f0ced9080c0a": {
+      "translation": "**A hierarquia de fallback:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "**The fallback ladder:**",
+      "targetLang": "pt"
+    },
+    "273fd3f882cc6d9f": {
+      "translation": "1. **Missão:** quando a tarefa corresponde a um fluxo de trabalho recorrente comprovado (correção de bugs, tratamento, lançamento de recursos, documentação, segurança, pesquisa). Cadeia de funções conhecida, fluxo de artefatos, ramificações de escalonamento e definições parciais claras.\n2. **Pacote:** quando a tarefa é uma família conhecida, mas não se encaixa em um formato de missão completo. 7 pacotes de equipe calibrados com seleção automática e proteções contra incompatibilidades.\n3. **Direcionamento livre:** quando a tarefa é nova, mista ou incerta. Avalia todas as 31 funções com base no conteúdo do pacote e monta uma cadeia dinâmica.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.\n2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.\n3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.",
+      "targetLang": "pt"
+    },
+    "9cfa0df5517b2386": {
+      "translation": "O sistema nunca força o trabalho a passar pela camada de abstração incorreta. Ele explica por que escolheu cada nível e oferece alternativas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.",
+      "targetLang": "pt"
+    },
+    "e629388b04730898": {
+      "translation": "**Depois de direcionado:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "**Once routed:**",
+      "targetLang": "pt"
+    },
+    "73697fe399828bfa": {
+      "translation": "1. **Cada função produz uma transferência:** saída estruturada com itens de evidência que reduzem a ambiguidade para a próxima função.\n2. **O revisor avalia em relação ao contrato:** aceita, rejeita ou bloqueia com base em evidências estruturadas, e não em impressões.\n3. **A recuperação é direcionada automaticamente:** o trabalho bloqueado ou rejeitado é direcionado ao resolvedor correto, com um motivo, tipo de recuperação e artefato necessário.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role\n2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression\n3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact",
+      "targetLang": "pt"
+    },
+    "b7b339b15da54681": {
+      "translation": "Estado de implantação na organização",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Org rollout state",
+      "targetLang": "pt"
+    },
+    "5b69950bdfcbc3e5": {
+      "translation": "O estado de implantação em toda a organização (fila, decisões, registros de auditoria, pacotes de bloqueio por repositório) reside em um repositório privado separado: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Este repositório é o produto; aquele repositório é o estado operacional.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.",
+      "targetLang": "pt"
+    },
+    "afa4b701dc727484": {
+      "translation": "Sintetizador de feedback, Priorizador de roteiro, Redator de especificações.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "pt"
+    },
+    "691e97819ac7f4fb": {
+      "translation": "Cada função tem um contrato completo: missão, quando usar, quando não usar, entradas esperadas, saídas necessárias, padrão de qualidade e gatilhos de escalonamento. Cada função pode ser direcionada — `roleos route` pode recomendar qualquer uma delas com base no conteúdo do pacote.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.",
+      "targetLang": "pt"
+    },
+    "5bdae0e7164e8858": {
+      "translation": "O sistema operacional.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "The operating system",
+      "targetLang": "pt"
+    },
+    "f863f1efc00c8e84": {
+      "translation": "Camada.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Layer",
+      "targetLang": "pt"
+    },
+    "19aab57d08da380a": {
+      "translation": "Avalia todas as 31 funções com base no conteúdo do pacote, explica as recomendações, avalia a confiança.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Scores all 31 roles against packet content, explains recommendations, assesses confidence",
+      "targetLang": "pt"
+    },
+    "d71810b1cb64eca0": {
+      "translation": "✓ Implementado.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "✓ Shipped",
+      "targetLang": "pt"
+    },
+    "04dd6ad42f36b8e6": {
+      "translation": "Monta cadeias ordenadas por fase a partir de funções classificadas, com viés para o tipo de pacote, mas não bloqueadas por modelos.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Assembles phase-ordered chains from scored roles, packet-type biased not template-locked",
+      "targetLang": "pt"
+    },
+    "46e69574418884c0": {
+      "translation": "Validação em 4 etapas: conflitos graves, sequência, redundância, lacunas de cobertura. Sugestões de correção.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions.",
+      "targetLang": "pt"
+    },
+    "38d7c32af0ce3f24": {
+      "translation": "Direciona automaticamente o trabalho bloqueado/rejeitado/dividido para o resolvedor correto, com motivo + artefato necessário.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact",
+      "targetLang": "pt"
+    },
+    "56a3e0da1e332811": {
+      "translation": "Evidências estruturadas em decisões, específicas para cada função. Verificações de suficiência. 12 tipos de evidência.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds.",
+      "targetLang": "pt"
+    },
+    "d740a43c364ddadd": {
+      "translation": "Gera manifestos de execução para multi-claude. Perfis de ferramentas por função, prompts do sistema, orçamentos.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets.",
+      "targetLang": "pt"
+    },
+    "38c93accab99a9ea": {
+      "translation": "Conjunto completo comprovado: 30/30 tarefas de sucesso + 5/5 testes negativos. 7 testes de pacote concluídos.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete.",
+      "targetLang": "pt"
+    },
+    "fe8107a40c9054e9": {
+      "translation": "✓ Completo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "✓ Complete",
+      "targetLang": "pt"
+    },
+    "6babd0ad52498151": {
+      "translation": "7 pacotes calibrados com seleção automática, proteções contra incompatibilidades e fallback de direcionamento livre.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback.",
+      "targetLang": "pt"
+    },
+    "13a86c75b220772e": {
+      "translation": "Registra os resultados da execução, ajusta os pesos dos pacotes/funções com base nos resultados e ajusta os limites de confiança.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds.",
+      "targetLang": "pt"
+    },
+    "652ec0742d802168": {
+      "translation": "Detecta trabalhos compostos, divide em pacotes filhos, atribui pacotes, preserva dependências.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Detects composite work, splits into child packets, assigns packs, preserves dependencies.",
+      "targetLang": "pt"
+    },
+    "5fb993b03c538181": {
+      "translation": "Executa pacotes filhos na ordem de dependência, com passagem de artefatos, recuperação de ramificação e síntese.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Runs child packets in dependency order with artifact passing, branch recovery, and synthesis.",
+      "targetLang": "pt"
+    },
+    "9d16dab212870222": {
+      "translation": "Alterações de escopo, descobertas ou novos requisitos durante a execução atualizam o plano sem reinicialização.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Mid-run scope changes, findings, or new requirements update the plan without restarting.",
+      "targetLang": "pt"
+    },
+    "53419c93dfdb2c33": {
+      "translation": "`roleos init claude` cria os arquivos CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifica as conexões. Os cartões de roteamento comprovam o engajamento.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "`roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement.",
+      "targetLang": "pt"
+    },
+    "4355985bfdbed529": {
+      "translation": "5 ganchos de ciclo de vida (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Aplicação de políticas: lembretes de roteamento, controle de acesso a ferramentas, injeção de papéis de subagente, auditoria de conclusão.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit.",
+      "targetLang": "pt"
+    },
+    "0ad0ea87e062f907": {
+      "translation": "20 contratos de artefatos por papel. 7 contratos de transferência de pacotes. Validação estrutural. Verificações de integridade da cadeia. Os papéis subsequentes nunca adivinham o que receberam.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "20 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received.",
+      "targetLang": "pt"
+    },
+    "9a03337344e7f7e4": {
+      "translation": "6 missões nomeadas (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Cada uma define pacote, cadeia de papéis, fluxo de artefatos, ramificações de escalonamento, definição honesta e parcial. Todas as 6 foram testadas e aprimoradas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "6 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 6 trial-run and hardened.",
+      "targetLang": "pt"
+    },
+    "17cc3a3c04f1bfcc": {
+      "translation": "Criação de execuções, acompanhamento passo a passo com estado rastreado, conclusão/falha com relatórios precisos. Propagação de etapas bloqueadas, avisos de escalonamento fora da cadeia, reabertura da última etapa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening.",
+      "targetLang": "pt"
+    },
+    "83caaf5f3dc98800": {
+      "translation": "`roleos start` decide automaticamente entre missão, pacote ou roteamento livre. Sistema de fallback com pontuações de confiança, alternativas e detecção composta.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "`roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection.",
+      "targetLang": "pt"
+    },
+    "172db31815409c59": {
+      "translation": "6 missões",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "6 missions",
+      "targetLang": "pt"
+    },
+    "43dc6b22494a7f43": {
+      "translation": "Missão",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Mission",
+      "targetLang": "pt"
+    },
+    "40a1668056e051e0": {
+      "translation": "Quando usar",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "When to use",
+      "targetLang": "pt"
+    },
+    "c8d70b34a0c7875e": {
+      "translation": "Funcionalidade (feature)",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "feature",
+      "targetLang": "pt"
+    },
+    "925ff2429c7c7828": {
+      "translation": "Entrega completa da funcionalidade: escopo → especificação → implementação → teste → revisão",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Full feature delivery: scope → spec → implement → test → review",
+      "targetLang": "pt"
+    },
+    "44ada76401b30ac7": {
+      "translation": "Correção de bug (bugfix)",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "bugfix",
+      "targetLang": "pt"
+    },
+    "52d41b685f04d5fd": {
+      "translation": "Diagnosticar a causa raiz, corrigir, testar, verificar",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Diagnose root cause, fix, test, verify",
+      "targetLang": "pt"
+    },
+    "5534e34dee555da7": {
+      "translation": "Tratamento",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "treatment",
+      "targetLang": "pt"
+    },
+    "9ae611607eae10d0": {
+      "translation": "Verificação + polimento + documentação + verificação CI + revisão",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Shipcheck + polish + docs + CI verify + review",
+      "targetLang": "pt"
+    },
+    "6a6358e68109d217": {
+      "translation": "Documentação",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "docs",
+      "targetLang": "pt"
+    },
+    "7b314fe916db3102": {
+      "translation": "Escrever/atualizar documentação, notas de lançamento",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Write/update documentation, release notes",
+      "targetLang": "pt"
+    },
+    "e109135cf73e3b74": {
+      "translation": "Modelo de ameaças, auditoria, correção de vulnerabilidades, re-auditoria, verificação",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Threat model, audit, fix vulnerabilities, re-audit, verify",
+      "targetLang": "pt"
+    },
+    "23d560e6d05d235e": {
+      "translation": "Pesquisa",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "research",
+      "targetLang": "pt"
+    },
+    "95236c74bf7ace10": {
+      "translation": "Formular a pergunta, pesquisar, documentar os resultados, decidir",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Frame question, research, document findings, decide",
+      "targetLang": "pt"
+    },
+    "b89df7731ad511c6": {
+      "translation": "Cada missão inclui definições honestas e parciais — quando o trabalho é interrompido, o sistema documenta o que foi concluído e o que resta, em vez de apresentar uma conclusão falsa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.",
+      "targetLang": "pt"
+    },
+    "f356ab3f32c08a78": {
+      "translation": "- v0.1–v0.4: Fundação — testes, adoção, pacote de tratamento, pacote inicial\n- v1.0.0: 32 papéis, CLI completa, tratamento comprovado, portabilidade multi-repositório\n- v1.0.2: Bloqueio do sistema de papéis (correções de inicialização da verdade, init --force)\n- v1.1.0: 31 papéis, espinha dorsal de roteamento completa, detecção de conflitos, escalonamento, evidências, despacho, 7 pacotes de equipe comprovados. 35 execuções de teste. 212 testes.\n- v1.2.0: Pacotes calibrados promovidos à entrada padrão. Seleção automática, detecção de incompatibilidades, sugestão de alternativas, fallback de roteamento livre. 246 testes.\n- v1.3.0: Calibração de resultados, decomposição de tarefas mistas, execução composta, replanejamento adaptativo. 317 testes.\n- v1.4.0: Espinha dorsal da sessão — `roleos init claude`, `roleos doctor`, cartões de roteamento, comandos /roleos-route + /roleos-review + /roleos-status. 335 testes.\n- v1.5.0: Espinha dorsal de ganchos — 5 ganchos de ciclo de vida para aplicação de políticas em tempo de execução. 358 testes.\n- v1.6.0: Espinha dorsal de artefatos — 20 contratos de artefatos por papel, 7 contratos de transferência de pacotes, validação estrutural. 385 testes.\n- v1.7.0: Prova de conclusão — tarefas reais executadas em toda a pilha. CLI `roleos artifacts`. Escalonamento honesto para correções estruturais. 398 testes.\n- v1.8.0: Biblioteca de missões (Fase S) — 6 missões nomeadas, motor de execução, relatórios de conclusão. Aprimorado a partir de 6 execuções de teste reais. 481 testes.\n- **v1.9.0**: Caminho de entrada unificado (Fase T) — `roleos start` decide automaticamente entre missão, pacote ou roteamento livre. Sistema de fallback, detecção composta, testes de comparação de caminho de entrada. 527 testes.",
+      "model": "translategemma:12b",
+      "timestamp": 1774412103524,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\n- **v1.9.0**: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.",
+      "targetLang": "pt"
     }
   }
 }

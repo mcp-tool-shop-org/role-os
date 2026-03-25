@@ -10,16 +10,16 @@
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/role-os/actions"><img src="https://github.com/mcp-tool-shop-org/role-os/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://www.npmjs.com/package/@mcptoolshop/role-os"><img src="https://img.shields.io/npm/v/@mcptoolshop/role-os" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/role-os"><img src="https://img.shields.io/npm/v/role-os" alt="npm"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-Une couche d'abstraction portable et native du référentiel qui dirige le travail à travers des contrats de rôle, des paquets structurés, des revues et des escalades, afin que les équipes puissent réaliser des fonctionnalités, des intégrations, des corrections d'identité et des traitements complets du référentiel, sans dérive, sans fausses déclarations de complétion, ni progrès basés sur des impressions subjectives.
+Un système d'exploitation multi-Claude qui affecte du personnel, gère les flux de travail, valide et exécute les tâches à travers 31 contrats de rôles spécialisés. Il crée des ensembles de tâches, assemble l'équipe appropriée en fonction de la compatibilité des rôles, détecte les problèmes potentiels avant l'exécution, redirige automatiquement la reprise en cas de blocage ou de rejet des tâches, et exige des preuves structurées pour chaque décision.
 
 ## Ce que cela fait
 
-Role OS empêche les échecs spécifiques que produisent les flux de travail d'IA génériques :
+Role OS est la manière professionnelle d'utiliser multi-Claude. Il évite les échecs spécifiques que produisent les flux de travail d'IA génériques :
 
 - **Dérive** : les rôles restent dans leur domaine. Le produit ne subit pas de refonte. L'interface utilisateur ne redéfinit pas la portée. Le backend n'invente pas la direction du produit.
 - **Fausse complétion** : la définition de "terminé" est concrète. Le travail qui masque des lacunes, saute des vérifications ou résout un problème différent est rejeté.
@@ -28,10 +28,39 @@ Role OS empêche les échecs spécifiques que produisent les flux de travail d'I
 
 ## Comment cela fonctionne
 
-1. **Créer un paquet** : définir ce qui doit exister lorsque le travail est terminé.
-2. **Diriger à travers une chaîne** : l'ensemble le plus petit de rôles spécialisés nécessaires.
-3. **Chaque rôle produit une transmission** : une sortie structurée qui réduit l'ambiguïté pour le rôle suivant.
-4. **Le critique examine par rapport au contrat** : accepte, rejette ou bloque en fonction des preuves, et non des impressions.
+Décrivez votre tâche. Role OS détermine automatiquement le niveau d'orchestration approprié.
+
+```bash
+roleos start "fix the crash in save handler"
+# → MISSION: Bugfix & Diagnosis (70% confidence)
+#   Chain: Repo Researcher → Backend Engineer → Test Engineer → Critic Reviewer
+
+roleos start "add a new export command"
+# → PACK: Feature Build (50% confidence)
+#   Roles: Orchestrator, Product Strategist, Spec Writer, Backend Engineer, Test Engineer, Critic Reviewer
+
+roleos start "something completely novel"
+# → FREE-ROUTING (10% confidence)
+#   Hint: Create a packet and run `roleos route` for role-level routing
+```
+
+**L'échelle de secours :**
+
+1. **Mission** — lorsque la tâche correspond à un flux de travail récurrent éprouvé (correction de bugs, traitement, déploiement de fonctionnalités, documentation, sécurité, recherche). Chaîne de rôles connue, flux d'artefacts, branches d'escalade et définitions partielles claires.
+2. **Pack** — lorsque la tâche appartient à une famille connue, mais ne correspond pas à une mission complète. 7 ensembles d'équipe calibrés avec sélection automatique et mécanismes de prévention des incompatibilités.
+3. **Routage libre** — lorsque la tâche est nouvelle, complexe ou incertaine. Évalue les 31 rôles en fonction du contenu de la tâche et assemble une chaîne dynamique.
+
+Le système ne force jamais une tâche à travers le mauvais niveau d'abstraction. Il explique pourquoi il a choisi chaque niveau et propose des alternatives.
+
+**Une fois routée :**
+
+1. **Chaque rôle produit une transmission** — sortie structurée avec des éléments de preuve qui réduisent l'ambiguïté pour le rôle suivant.
+2. **Le critique effectue une revue par rapport au contrat** — accepte, rejette ou bloque en fonction de preuves structurées, et non d'impressions.
+3. **La reprise est gérée automatiquement** — les tâches bloquées ou rejetées sont redirigées vers le responsable approprié, avec une raison, un type de reprise et les artefacts requis.
+
+## État de déploiement au sein de l'organisation
+
+L'état de déploiement au niveau de l'organisation (file d'attente, décisions, enregistrements d'audit, ensembles de verrouillage par dépôt) se trouve dans un dépôt privé distinct : [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Ce dépôt est le produit ; ce dernier est l'état opérationnel.
 
 ## Mémoire et continuité
 
@@ -47,39 +76,48 @@ La **vérification de la livraison** est la porte de qualité de 31 éléments q
 
 Ordre : Vérification de la livraison, puis traitement complet. Aucune version 1.0.0 sans validation des portes obligatoires.
 
-## 32 rôles répartis dans 8 ensembles
+## 31 rôles répartis dans 8 ensembles
 
 | Ensemble | Rôles |
 |------|-------|
-| **Core** (3) | Orchestrateur, Stratège produit, Rédacteur de critiques |
-| **Engineering** (7) | Développeur frontend, Ingénieur backend, Ingénieur de tests, Ingénieur de refactoring, Ingénieur des performances, Auditeur de dépendances, Rédacteur de revues de sécurité |
-| **Design** (2) | Concepteur d'interface utilisateur, Gardien de la marque |
-| **Marketing** (1) | Rédacteur de contenu pour le lancement |
-| **Treatment** (7) | Chercheur de référentiels, Traducteur de référentiels, Architecte de documentation, Conservateur de métadonnées, Auditeur de couverture, Vérificateur de déploiement, Ingénieur de publication |
-| **Product** (4) | Synthétiseur de retours, Priorisateur de feuille de route, Rédacteur de spécifications, Architecte de l'information |
-| **Research** (4) | Chercheur UX, Analyste concurrentiel, Chercheur de tendances, Synthétiseur d'entretiens utilisateurs |
-| **Growth** (4) | Stratège de lancement, Stratège de contenu, Responsable de la communauté, Responsable du triage du support |
+| **Core** (3) | Orchestrateur, Stratège Produit, Critique |
+| **Engineering** (7) | Développeur Frontend, Ingénieur Backend, Ingénieur Tests, Ingénieur Refactoring, Ingénieur Performance, Auditeur de Dépendances, Expert en Sécurité |
+| **Design** (2) | Concepteur UI, Gardien de la Marque |
+| **Marketing** (1) | Rédacteur de Contenu de Lancement |
+| **Treatment** (7) | Chercheur de Dépôts, Traducteur de Dépôts, Architecte de Documentation, Conservateur de Métadonnées, Auditeur de Couverture, Vérificateur de Déploiement, Ingénieur de Release |
+| **Product** (3) | Synthétiseur de Commentaires, Priorisateur de Feuille de Route, Rédacteur de Spécifications |
+| **Research** (4) | Chercheur UX, Analyste Concurrentiel, Chercheur de Tendances, Synthétiseur d'Entretiens Utilisateurs |
+| **Growth** (4) | Stratège de Lancement, Stratège de Contenu, Community Manager, Responsable de Tri des Demandes d'Assistance |
 
-Chaque rôle possède un contrat complet : mission, utilisation appropriée, non-utilisation, entrées attendues, sorties requises, critères de qualité et déclencheurs d'escalade.
+Chaque rôle a un contrat complet : mission, conditions d'utilisation, conditions de non-utilisation, entrées attendues, sorties requises, niveau de qualité et déclencheurs d'escalade. Chaque rôle peut être routé — `roleos route` peut recommander n'importe lequel d'entre eux en fonction du contenu de la tâche.
 
 ## Démarrage rapide
 
 ```bash
-npx @mcptoolshop/role-os init
+npx role-os init
 
-# Fill context/ files for your project, then:
+# Describe what you need — Role OS picks the right level:
+roleos start "fix the crash in save handler"
+
+# Or go manual:
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 roleos review .claude/packets/my-feature.md accept
 roleos status
+
+# Explore missions and packs:
+roleos mission list
+roleos mission show bugfix
+roleos packs list
+roleos packs show feature
 ```
 
 ## Quand ne pas utiliser Role OS
 
-- Corrections ponctuelles, fautes de frappe ou bogues évidents
-- Recherches exploratoires sans résultat défini
-- Travaux qui tiennent dans la tête d'une seule personne en 5 minutes
-- Corrections urgentes qui doivent être déployées avant la fin du processus de revue
+- Corrections de ligne unique, fautes de frappe ou bugs évidents
+- Recherche exploratoire sans résultat défini
+- Tâches qui peuvent être comprises par une seule personne en 5 minutes
+- Corrections urgentes qui doivent être déployées avant qu'une chaîne de revue ne soit terminée
 - Projets où la rapidité est privilégiée par rapport à la structure
 
 ## Preuves
@@ -103,12 +141,12 @@ Role OS a été testé sur trois types de tâches différents dans deux référe
 - adoption (du produit) avec modification du contexte uniquement – aucune modification du contrat principal.
 
 **Traitement complet FT-001** (portlight-desktop)
-- Traitement complet avec personnel affecté, utilisant les rôles de l'ensemble de traitement
-- Contrôle de qualité avant déploiement prouvé, aucune collision de rôles.
+- Traitement en 7 phases avec rôles du "Traitement Pack"
+- Vérification de déploiement prouvée, absence de conflits de rôles
 
 **Traitement complet FT-002** (studioflow)
-- Même ensemble de traitement, référentiel structurellement différent (espace de travail créatif vs jeu)
-- Ensemble de traitement portable – aucune modification de contrat nécessaire.
+- Même ensemble de traitement, dépôt structurellement différent (espace de travail créatif vs jeu)
+- Ensemble de traitement portable — aucune modification de contrat n'est nécessaire
 
 ## Propriétés essentielles
 
@@ -124,32 +162,84 @@ Ce sont des éléments non négociables. Si une modification affaiblit l'un de c
 
 ```
 role-os/
-  README.md                    ← You are here
   bin/roleos.mjs               ← CLI entrypoint
-  src/                         ← CLI implementation
-  starter-pack/
-    handbook.md                ← How Role OS works
-    context/                   ← Fill these for your repo
-    examples/                  ← Feature, integration, identity packets
-    agents/                    ← 32 role contracts across 8 packs
-    schemas/                   ← Packet, handoff, verdict formats
-    policy/                    ← Routing, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment
+  src/
+    entry.mjs                  ← Unified entry: mission → pack → free routing
+    entry-cmd.mjs              ← `roleos start` CLI command
+    mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
+    mission-run.mjs            ← Mission runner: create → step → complete → report
+    mission-cmd.mjs            ← `roleos mission` CLI commands
+    route.mjs                  ← 31-role routing + dynamic chain builder
+    packs.mjs                  ← 7 calibrated team packs + auto-selection
+    conflicts.mjs              ← 4-pass conflict detection
+    escalation.mjs             ← Auto-routing for blocked/rejected/split
+    evidence.mjs               ← Structured evidence + role-aware requirements
+    dispatch.mjs               ← Runtime dispatch manifests for multi-claude
+    artifacts.mjs              ← 20 per-role artifact contracts + 7 pack handoffs
+    decompose.mjs              ← Composite task detection + splitting
+    composite.mjs              ← Dependency-ordered execution + recovery
+    replan.mjs                 ← Mid-run adaptive replanning
+    calibration.mjs            ← Outcome recording + weight tuning
+    hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
+    session.mjs                ← Session scaffolding + doctor
+  test/                        ← 527 tests across 20 test files
+  starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Sécurité
 
 Le rôle OS fonctionne **uniquement localement**. Il copie les modèles Markdown et écrit les fichiers de paquets/de verdicts dans le répertoire `.claude/` de votre dépôt. Il n'accède pas au réseau, ne gère pas les secrets et ne collecte pas de données télémétriques. Aucune opération dangereuse n'est effectuée : toutes les écritures de fichiers utilisent par défaut la fonction "skip-if-exists". Consultez le fichier [SECURITY.md](SECURITY.md) pour connaître la politique complète.
 
+## Le système d'exploitation
+
+| Couche | Ce que cela fait | Statut |
+|-------|-------------|--------|
+| **Routing** | Évalue les 31 rôles en fonction du contenu de la tâche, explique les recommandations, évalue la confiance | ✓ Déployé |
+| **Chain builder** | Assemble des chaînes ordonnées en fonction des rôles, avec une préférence pour certains types de paquets, sans être verrouillée à un modèle spécifique. | ✓ Déployé |
+| **Conflict detection** | Validation en 4 étapes : conflits majeurs, séquences, redondances, lacunes de couverture. Suggestions de correction. | ✓ Déployé |
+| **Escalation** | Redirection automatique des tâches bloquées, rejetées ou divisées vers le module de résolution approprié, avec indication de la raison et des artefacts requis. | ✓ Déployé |
+| **Evidence** | Preuves structurées et adaptées aux rôles dans les verdicts. Vérifications de suffisance. 12 types de preuves. | ✓ Déployé |
+| **Dispatch** | Génération de manifestes d'exécution pour les environnements multi-Claude. Profils d'outils par rôle, instructions système, budgets. | ✓ Déployé |
+| **Trials** | Ensemble complet validé : 30 tâches réussies sur 30 + 5 essais négatifs réussis sur 5. 7 ensembles de tests terminés. | ✓ Terminé |
+| **Team Packs** | 7 ensembles calibrés avec sélection automatique, protections contre les erreurs et mécanisme de repli en cas de problème. | ✓ Déployé |
+| **Outcome calibration** | Enregistrement des résultats des exécutions, ajustement des poids des ensembles/rôles en fonction des résultats, modification des seuils de confiance. | ✓ Déployé |
+| **Mixed-task decomposition** | Détection des tâches complexes, division en paquets secondaires, attribution des ensembles, préservation des dépendances. | ✓ Déployé |
+| **Composite execution** | Exécution des paquets secondaires dans l'ordre des dépendances, avec transmission des artefacts, reprise en cas de branchement et synthèse. | ✓ Déployé |
+| **Adaptive replanning** | Les modifications de la portée, les résultats ou les nouvelles exigences pendant l'exécution mettent à jour le plan sans redémarrage. | ✓ Déployé |
+| **Session spine** | `roleos init claude` crée les fichiers CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` vérifie la configuration. Les cartes de routage prouvent l'engagement. | ✓ Déployé |
+| **Hook spine** | 5 points d'accroche du cycle de vie (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Application des règles : rappels sur les cartes de routage, contrôle de l'utilisation des outils, injection de rôle des sous-agents, audit de la finalisation. | ✓ Déployé |
+| **Artifact spine** | 20 contrats d'artefacts par rôle. 7 contrats de transmission d'ensembles. Validation structurelle. Vérifications de l'intégrité des chaînes. Les rôles suivants ne peuvent jamais deviner ce qu'ils ont reçu. | ✓ Déployé |
+| **Mission library** | 6 missions nommées (développement de fonctionnalité, correction de bug, amélioration, publication de documentation, renforcement de la sécurité, lancement de recherche). Chaque mission définit l'ensemble, la chaîne de rôles, le flux d'artefacts, les branches de relance et une définition partielle et honnête. Les 6 missions ont été testées et optimisées. | ✓ Déployé |
+| **Mission runner** | Création d'exécutions, suivi de l'état, finalisation ou échec avec un rapport précis. Propagation des étapes bloquées, avertissements de relance en dehors de la chaîne, réouverture de la dernière étape. | ✓ Déployé |
+| **Unified entry** | `roleos start` détermine automatiquement si l'exécution est une mission, un ensemble ou un routage libre. Mécanisme de repli avec scores de confiance, alternatives et détection des tâches complexes. | ✓ Déployé |
+
+## 6 missions
+
+| Mission | Ensemble | Rôles | Quand utiliser |
+|---------|------|-------|-------------|
+| `feature-ship` | Fonctionnalité | 5 | Livraison complète d'une fonctionnalité : définition de la portée → spécifications → implémentation → test → revue |
+| `bugfix` | Correction de bug | 4 | Diagnostic de la cause profonde, correction, test, vérification |
+| `treatment` | Amélioration | 4 | Vérification + peaufinage + documentation + vérification CI + revue |
+| `docs-release` | Documentation | 2 | Rédaction/mise à jour de la documentation, notes de publication |
+| `security-hardening` | Sécurité | 4 | Analyse des menaces, audit, correction des vulnérabilités, nouvel audit, vérification |
+| `research-launch` | Recherche | 4 | Définition de la question, recherche, documentation des résultats, prise de décision |
+
+Chaque mission inclut des définitions partielles et honnêtes : lorsque le travail est bloqué, le système documente ce qui a été réalisé et ce qui reste, au lieu de prétendre que le travail est terminé.
+
 ## Statut
 
-**v1.0.0 — Surface large, mêmes règles**
-
-- v0.1 : Opérationnel – 3 essais, 3 acceptations, 0 collision de rôles
-- v0.2 : adoption (du produit) – flux de travail par défaut dans le référentiel principal, portable vers un deuxième référentiel
-- v0.3 : Productivité – ensemble de démarrage, CLI de démarrage, surface de démonstration
-- v0.4 : Ensemble de traitement – 8 rôles de traitement/identité, traitement complet avec personnel affecté, portable entre 2 référentiels
-- v1.0.0 : 32 rôles répartis dans 8 ensembles, CLI complète, traitement prouvé, portabilité multi-référentiels.
+- v0.1–v0.4 : Bases – essais, adoption (du produit), ensemble de traitement, ensemble de démarrage.
+- v1.0.0 : 32 rôles, interface en ligne de commande complète, traitement éprouvé, portabilité multi-dépôts.
+- v1.0.2 : Blocage des rôles au niveau du système d'exploitation (corrections de la configuration initiale, `init --force`).
+- v1.1.0 : 31 rôles, architecture de routage complète, détection des conflits, escalade, preuves, répartition, 7 ensembles d'outils éprouvés. 35 essais d'exécution. 212 tests.
+- v1.2.0 : Les ensembles calibrés sont promus au mode par défaut. Sélection automatique, détection des incompatibilités, suggestion d'alternatives, basculement vers un routage libre. 246 tests.
+- v1.3.0 : Calibrage des résultats, décomposition des tâches complexes, exécution composite, replanification adaptative. 317 tests.
+- v1.4.0 : Architecture de session – `roleos init claude`, `roleos doctor`, cartes de routage, commandes `/roleos-route`, `/roleos-review` et `/roleos-status`. 335 tests.
+- v1.5.0 : Architecture de connexion – 5 points d'accroche pour l'application des règles au moment de l'exécution. 358 tests.
+- v1.6.0 : Architecture des artefacts – 20 contrats d'artefacts par rôle, 7 contrats de transfert d'ensembles, validation structurelle. 385 tests.
+- v1.7.0 : Preuve de complétion – tâches réelles exécutées sur l'ensemble de la pile. Interface en ligne de commande `roleos artifacts`. Escalade transparente pour les corrections structurelles. 398 tests.
+- v1.8.0 : Bibliothèque de missions (Phase S) – 6 missions nommées, moteur d'exécution, rapports de complétion. Durcissement basé sur 6 essais réels. 481 tests.
+- **v1.9.0** : Chemin d'accès unifié (Phase T) – `roleos start` détermine automatiquement si l'on utilise une mission, un ensemble d'outils ou un routage libre. Système de basculement, détection composite, essais de comparaison des chemins d'accès. 527 tests.
 
 ## Licence
 
