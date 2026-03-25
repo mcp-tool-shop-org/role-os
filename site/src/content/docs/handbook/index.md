@@ -9,7 +9,8 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 
 ## What's inside
 
-- **[Getting Started](/role-os/handbook/getting-started/)** — Install and run your first packet in 10 minutes
+- **[Getting Started](/role-os/handbook/getting-started/)** — Install and run your first task in 5 minutes
+- **[Missions](/role-os/handbook/missions/)** — 6 proven recurring workflows with tracked steps and honest-partial reporting
 - **[Role Spine](/role-os/handbook/role-spine/)** — 31 specialist roles across 8 packs and their contracts
 - **[Team Packs](/role-os/handbook/team-packs/)** — Pre-assembled role chains for docs, metadata, releases, deploys, and review
 - **[Reference](/role-os/handbook/reference/)** — CLI commands, schemas, policies, and the operating system layers
@@ -18,16 +19,29 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 
 Role OS is a multi-Claude operating system. It staffs work through 31 specialized role contracts, assembles task-specific chains, validates teams before execution, auto-routes recovery when work is blocked, and requires structured evidence in every verdict.
 
-The system provides six operating layers:
+The system provides three entry levels and nine operating layers:
+
+**Entry levels** — `roleos start` picks the right one:
+
+| Level | When | What happens |
+|-------|------|-------------|
+| **Mission** | Task matches a proven recurring workflow | Known role chain, artifact flow, escalation branches, honest-partial definition |
+| **Pack** | Task is a known family but not a full mission | Pre-assembled team with mismatch detection |
+| **Free routing** | Task is novel, mixed, or uncertain | All 31 roles scored, dynamic chain assembled |
+
+**Operating layers:**
 
 | Layer | What it does |
 |-------|-------------|
+| **Unified entry** | Decides mission vs pack vs free routing with confidence scores and alternatives |
+| **Mission runner** | Tracked steps, artifact chain, escalation loops, completion reports |
 | **Routing** | Scores all 31 roles against packet content with weighted keywords, triggers, and confidence levels |
 | **Chain builder** | Assembles phase-ordered chains from scored roles — not frozen templates |
 | **Conflict detection** | 4-pass validation catches hard conflicts, sequence errors, redundancy, and coverage gaps |
 | **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason and required artifact |
 | **Evidence** | Role-aware structured evidence in verdicts with sufficiency checks |
 | **Dispatch** | Generates execution manifests for multi-claude with per-role tool profiles and budgets |
+| **Artifacts** | 20 per-role contracts, 7 pack handoff contracts, structural validation |
 
 ## Core properties
 
@@ -42,10 +56,11 @@ These are non-negotiable. If a change weakens any of them, reject it.
 
 ## Proven in execution
 
-Role OS roles have been tested in live execution trials against real MCP development tasks:
-
-- **Product cluster** (Strategist, Spec Writer, Roadmap Prioritizer) — 3/3 pass, distinct non-overlapping outputs
-- **Engineering cluster** (Backend Engineer, Test Engineer, Performance Engineer) — 3/3 pass, each read actual codebases and produced role-specific deliverables
-- **Launch and Docs clusters** — in progress
+- **35 role trials** (30 gold + 5 negative) — full roster proven
+- **7 pack trials** — all executed end-to-end, 3 shipped real code
+- **7 pack comparison trials** — mission vs pack vs free routing measured
+- **6 mission trials** — all 6 missions run through the runner, 5 real-friction findings fixed
+- **Entry path trials** — unified entry tested against 20+ real task descriptions
+- **527 tests**, zero failures
 
 [Back to landing page](/role-os/)

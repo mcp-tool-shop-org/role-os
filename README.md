@@ -28,12 +28,35 @@ Role OS is the professional way to use multi-Claude. It prevents the specific fa
 
 ## How it works
 
-1. **Create a packet** — define what needs to exist when the work is done
-2. **Route through a chain** — `roleos route` scores all 31 roles against the packet content, assembles a dynamic chain ordered by work phase, and explains why each role was chosen
-3. **Validate the team** — 4-pass conflict detection catches hard conflicts, sequence errors, redundancy, and coverage gaps before execution starts
-4. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role
-5. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression
-6. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact
+Describe your task. Role OS decides the right level of orchestration automatically.
+
+```bash
+roleos start "fix the crash in save handler"
+# → MISSION: Bugfix & Diagnosis (70% confidence)
+#   Chain: Repo Researcher → Backend Engineer → Test Engineer → Critic Reviewer
+
+roleos start "add a new export command"
+# → PACK: Feature Build (50% confidence)
+#   Roles: Orchestrator, Product Strategist, Spec Writer, Backend Engineer, Test Engineer, Critic Reviewer
+
+roleos start "something completely novel"
+# → FREE-ROUTING (10% confidence)
+#   Hint: Create a packet and run `roleos route` for role-level routing
+```
+
+**The fallback ladder:**
+
+1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.
+2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.
+3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.
+
+The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.
+
+**Once routed:**
+
+1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role
+2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression
+3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact
 
 ## Org rollout state
 
@@ -73,11 +96,20 @@ Every role has a full contract: mission, use when, do not use when, expected inp
 ```bash
 npx role-os init
 
-# Fill context/ files for your project, then:
+# Describe what you need — Role OS picks the right level:
+roleos start "fix the crash in save handler"
+
+# Or go manual:
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 roleos review .claude/packets/my-feature.md accept
 roleos status
+
+# Explore missions and packs:
+roleos mission list
+roleos mission show bugfix
+roleos packs list
+roleos packs show feature
 ```
 
 ## When not to use Role OS
@@ -132,30 +164,26 @@ These are non-negotiable. If a change weakens any of them, reject it.
 role-os/
   bin/roleos.mjs               ← CLI entrypoint
   src/
+    entry.mjs                  ← Unified entry: mission → pack → free routing
+    entry-cmd.mjs              ← `roleos start` CLI command
+    mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
+    mission-run.mjs            ← Mission runner: create → step → complete → report
+    mission-cmd.mjs            ← `roleos mission` CLI commands
     route.mjs                  ← 31-role routing + dynamic chain builder
+    packs.mjs                  ← 7 calibrated team packs + auto-selection
     conflicts.mjs              ← 4-pass conflict detection
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
     dispatch.mjs               ← Runtime dispatch manifests for multi-claude
-    trial.mjs                  ← Role execution trial framework
-    packet.mjs                 ← Packet creation
-    review.mjs                 ← Verdict recording + escalation integration
-    status.mjs                 ← Active packet + verdict status
-  test/
-    route.test.mjs             ← 49 tests (routing + disambiguation)
-    conflicts.test.mjs         ← 13 tests (4 conflict types)
-    escalation.test.mjs        ← 22 tests (blocked/rejected/conflict/split)
-    evidence.test.mjs          ← 23 tests (schema + sufficiency)
-    dispatch.test.mjs          ← 21 tests (manifests + state + escalation packets)
-    trial.test.mjs             ← 12 tests (trial framework)
-    cli.test.mjs               ← 22 tests (CLI integration)
-  .claude/
-    agents/                    ← 31 role contracts across 8 packs
-    schemas/                   ← Packet, handoff, verdict formats
-    policy/                    ← Routing rules, permissions, escalation, done
-    workflows/                 ← Ship feature, fix bug, launch update, full treatment
-    context/                   ← Fill these for your repo
-    trials/                    ← Execution trial packets + results
+    artifacts.mjs              ← 20 per-role artifact contracts + 7 pack handoffs
+    decompose.mjs              ← Composite task detection + splitting
+    composite.mjs              ← Dependency-ordered execution + recovery
+    replan.mjs                 ← Mid-run adaptive replanning
+    calibration.mjs            ← Outcome recording + weight tuning
+    hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
+    session.mjs                ← Session scaffolding + doctor
+  test/                        ← 527 tests across 20 test files
+  starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Security
@@ -181,6 +209,22 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | **Session spine** | `roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement. | ✓ Shipped |
 | **Hook spine** | 5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit. | ✓ Shipped |
 | **Artifact spine** | 20 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received. | ✓ Shipped |
+| **Mission library** | 6 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 6 trial-run and hardened. | ✓ Shipped |
+| **Mission runner** | Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening. | ✓ Shipped |
+| **Unified entry** | `roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection. | ✓ Shipped |
+
+## 6 missions
+
+| Mission | Pack | Roles | When to use |
+|---------|------|-------|-------------|
+| `feature-ship` | feature | 5 | Full feature delivery: scope → spec → implement → test → review |
+| `bugfix` | bugfix | 4 | Diagnose root cause, fix, test, verify |
+| `treatment` | treatment | 4 | Shipcheck + polish + docs + CI verify + review |
+| `docs-release` | docs | 2 | Write/update documentation, release notes |
+| `security-hardening` | security | 4 | Threat model, audit, fix vulnerabilities, re-audit, verify |
+| `research-launch` | research | 4 | Frame question, research, document findings, decide |
+
+Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.
 
 ## Status
 
@@ -193,7 +237,9 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 - v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.
 - v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.
 - v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.
-- **v1.7.0**: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.
+- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.
+- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.
+- **v1.9.0**: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.
 
 ## License
 

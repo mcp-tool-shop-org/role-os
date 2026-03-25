@@ -12,6 +12,7 @@ import { packsCommand } from "../src/packs-cmd.mjs";
 import { scaffoldClaude, doctor, formatDoctor } from "../src/session.mjs";
 import { artifactsCommand } from "../src/artifacts-cmd.mjs";
 import { missionCommand } from "../src/mission-cmd.mjs";
+import { startCommand } from "../src/entry-cmd.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8")).version;
@@ -21,6 +22,7 @@ function printHelp() {
 roleos v${VERSION} — Role OS bootstrap CLI
 
 Usage:
+  roleos start <task>                 Decide entry path: mission, pack, or free routing
   roleos init                        Scaffold Role OS into .claude/
   roleos init --force                Update canonical files (protects context/)
   roleos packet new <type>           Create a new packet (feature|integration|identity)
@@ -75,6 +77,9 @@ const args = process.argv.slice(3);
 
 try {
   switch (command) {
+    case "start":
+      await startCommand(args);
+      break;
     case "init":
       if (args[0] === "claude") {
         const force = args.includes("--force");

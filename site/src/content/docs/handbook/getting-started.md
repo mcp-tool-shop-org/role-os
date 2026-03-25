@@ -40,21 +40,21 @@ Fill the four context files for your project:
 
 Each file includes inline prompts to guide you.
 
-### 3. Create a packet (2 min)
+### 3. Start a task (1 min)
+
+Describe what you need and let Role OS decide the right level:
+
+```bash
+roleos start "fix the crash in save handler"
+# → MISSION: Bugfix & Diagnosis — Repo Researcher → Backend Engineer → Test Engineer → Critic Reviewer
+```
+
+Or go manual with packets:
 
 ```bash
 roleos packet new feature
-```
-
-Answer the prompts: title, requested outcome, scope, non-goals, constraints, and key inputs. The CLI writes a structured packet file.
-
-### 4. Route it (1 min)
-
-```bash
 roleos route .claude/packets/my-feature.md
 ```
-
-Role OS recommends the smallest valid chain of roles and verifies dependencies.
 
 ### 5. Work through the chain
 

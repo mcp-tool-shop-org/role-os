@@ -1,6 +1,6 @@
 {
   "name": "role-os",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Role OS — a multi-Claude operating system where 31 specialized roles execute work through contracts, conflict detection, escalation, and structured evidence. 7 proven team packs for common task families.",
   "homepage": "https://mcp-tool-shop-org.github.io/role-os/",
   "bugs": {

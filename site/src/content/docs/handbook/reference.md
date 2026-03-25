@@ -7,6 +7,26 @@ sidebar:
 
 ## CLI commands
 
+### start
+
+```bash
+roleos start <task description>
+roleos start --json <task description>
+```
+
+Decides the best entry path for a task: mission, pack, or free routing. Explains why it chose each level and offers alternatives. Use `--json` for machine-readable output.
+
+### mission
+
+```bash
+roleos mission list                    # List all 6 missions
+roleos mission show <key>              # Full detail for a mission
+roleos mission suggest <text>          # Suggest a mission for a task
+roleos mission validate [key]          # Validate mission wiring
+```
+
+Inspect and validate the mission library. Available missions: `feature-ship`, `bugfix`, `treatment`, `docs-release`, `security-hardening`, `research-launch`.
+
 ### init
 
 ```bash
@@ -43,6 +63,37 @@ roleos review <packet-file> <verdict>
 ```
 
 Records a review verdict. Verdicts: `accept`, `accept-with-notes`, `reject`, `blocked`. Prompts for reviewer role, reason, contract checks, and next owner.
+
+### packs
+
+```bash
+roleos packs list                      # List all 7 team packs
+roleos packs suggest <packet-file>     # Suggest a pack for a packet
+roleos packs show <pack-key>           # Show full pack detail
+```
+
+### artifacts
+
+```bash
+roleos artifacts                       # List all role artifact contracts
+roleos artifacts show <role>           # Show contract for a role
+roleos artifacts validate <role> <file> # Validate a file against a contract
+roleos artifacts chain <pack>          # Show pack handoff flow
+```
+
+### status
+
+```bash
+roleos status                          # Show active work and health
+roleos status --write                  # Write .claude/status/index.md
+roleos status --json                   # Output as JSON
+```
+
+### doctor
+
+```bash
+roleos doctor                          # Verify repo is wired for Role OS
+```
 
 ### help
 

@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.9.0
+
+### Added
+
+#### Unified Entry Path (Phase T)
+- `roleos start <task>` — auto-decides mission vs pack vs free routing
+- Three-level fallback ladder with confidence scores and alternatives
+- Composite task detection warns when a task should be decomposed
+- `--json` flag for machine-readable entry decisions
+- 46 new tests: entry engine, comparison trials, CLI integration
+
+#### Handbook Updates
+- New Missions handbook page with full mission documentation
+- Updated Getting Started to lead with `roleos start`
+- Updated Reference with all CLI commands (start, mission, packs, artifacts, status, doctor)
+- Updated handbook index with entry levels and 9 operating layers
+
+#### README Overhaul
+- "How it works" section leads with `roleos start` examples
+- Quick Start updated with mission and start commands
+- Added 6 Missions table
+- Updated project structure with all 18 source modules
+- Updated status history through v1.9.0
+
+### Evidence
+- 527 tests, zero failures (46 new)
+- Entry path trials validated against 20+ real task descriptions
+- Fallback ladder tested: mission, pack, free-routing, composite, empty input
+
 ## 1.8.0
 
 ### Added
