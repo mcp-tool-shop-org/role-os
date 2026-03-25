@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { TEAM_PACKS, suggestPack, getPack, listPacks } from "../src/packs.mjs";
+import { TEAM_PACKS, suggestPack, getPack, listPacks, checkPackMismatch, getPackRoles } from "../src/packs.mjs";
 import { ROLE_CATALOG } from "../src/route.mjs";
 
 // ── Pack structure ────────────────────────────────────────────────────────────
@@ -35,10 +35,13 @@ describe("TEAM_PACKS", () => {
     }
   });
 
-  it("every pack includes Orchestrator and Critic Reviewer", () => {
+  it("every pack includes Critic Reviewer (Orchestrator is conditional)", () => {
     for (const [key, pack] of Object.entries(TEAM_PACKS)) {
-      assert.ok(pack.roles.includes("Orchestrator"), `${key} missing Orchestrator`);
       assert.ok(pack.roles.includes("Critic Reviewer"), `${key} missing Critic Reviewer`);
+      // Orchestrator is now conditional — only required packs include it
+      if (pack.orchestratorRequired) {
+        assert.ok(pack.roles.includes("Orchestrator"), `${key} declares orchestratorRequired but missing Orchestrator`);
+      }
     }
   });
 
@@ -132,5 +135,114 @@ describe("listPacks", () => {
       assert.ok(p.description);
       assert.ok(p.roleCount >= 3);
     }
+  });
+});
+
+// ── Calibration: mismatch detection ───────────────────────────────────────────
+
+describe("checkPackMismatch (J1 calibration)", () => {
+  it("feature pack detects security task as mismatch", () => {
+    const result = checkPackMismatch("feature", "Security review the dispatch engine for injection vulnerabilities and threat model.");
+    assert.ok(result);
+    assert.equal(result.suggestInstead, "security");
+  });
+
+  it("bugfix pack detects launch task as mismatch", () => {
+    const result = checkPackMismatch("bugfix", "Plan and write the v1.2.0 launch announcement with release notes and social messaging.");
+    assert.ok(result);
+    assert.equal(result.suggestInstead, "launch");
+  });
+
+  it("security pack detects docs task as mismatch", () => {
+    const result = checkPackMismatch("security", "Restructure the handbook documentation and add a navigation page.");
+    assert.ok(result);
+    assert.equal(result.suggestInstead, "docs");
+  });
+
+  it("docs pack detects research task as mismatch", () => {
+    const result = checkPackMismatch("docs", "Research whether we should add GPT-4 support. Assess the competitive strategy.");
+    assert.ok(result);
+    assert.equal(result.suggestInstead, "research");
+  });
+
+  it("launch pack detects bugfix as mismatch", () => {
+    const result = checkPackMismatch("launch", "Fix the crash that happens when the error handler encounters a broken file.");
+    assert.ok(result);
+    assert.equal(result.suggestInstead, "bugfix");
+  });
+
+  it("research pack detects implementation task as mismatch", () => {
+    const result = checkPackMismatch("research", "Implement the roleos execute command and build the CLI handler.");
+    assert.ok(result);
+    assert.equal(result.suggestInstead, "feature");
+  });
+
+  it("treatment pack detects launch task as mismatch", () => {
+    const result = checkPackMismatch("treatment", "Write the v1.1.0 social media announcement and release notes messaging.");
+    assert.ok(result);
+    assert.equal(result.suggestInstead, "launch");
+  });
+
+  it("returns null when pack matches the task", () => {
+    const result = checkPackMismatch("feature", "Build a new CLI command to show pack details and role lineups.");
+    assert.equal(result, null);
+  });
+});
+
+// ── Calibration: conditional Orchestrator ──────────────────────────────────────
+
+describe("getPackRoles (conditional Orchestrator)", () => {
+  it("feature pack includes Orchestrator (required)", () => {
+    const roles = getPackRoles("feature");
+    assert.ok(roles.includes("Orchestrator"));
+  });
+
+  it("bugfix pack excludes Orchestrator by default", () => {
+    const roles = getPackRoles("bugfix");
+    assert.ok(!roles.includes("Orchestrator"), "Bugfix should not include Orchestrator by default");
+  });
+
+  it("security pack excludes Orchestrator by default", () => {
+    const roles = getPackRoles("security");
+    assert.ok(!roles.includes("Orchestrator"));
+  });
+
+  it("launch pack excludes Orchestrator by default", () => {
+    const roles = getPackRoles("launch");
+    assert.ok(!roles.includes("Orchestrator"));
+  });
+
+  it("forceOrchestrator adds it to any pack", () => {
+    const roles = getPackRoles("bugfix", true);
+    assert.ok(roles.includes("Orchestrator"));
+  });
+});
+
+// ── Calibration: Treatment includes Security Reviewer ─────────────────────────
+
+describe("treatment pack calibration (J2)", () => {
+  it("treatment pack includes Security Reviewer by default", () => {
+    const pack = getPack("treatment");
+    assert.ok(pack.roles.includes("Security Reviewer"), "Treatment must include Security Reviewer");
+  });
+});
+
+// ── Calibration: Research pack reordered ───────────────────────────────────────
+
+describe("research pack calibration (J2)", () => {
+  it("research pack opens with Product Strategist (framing first)", () => {
+    const pack = getPack("research");
+    // First non-Orchestrator role should be Product Strategist
+    const firstRole = pack.roles[0];
+    assert.equal(firstRole, "Product Strategist", "Research pack should open with Product Strategist");
+  });
+});
+
+// ── Calibration: Docs pack has upstream synthesis ──────────────────────────────
+
+describe("docs pack calibration (J2)", () => {
+  it("docs pack opens with Feedback Synthesizer (upstream gate)", () => {
+    const pack = getPack("docs");
+    assert.equal(pack.roles[0], "Feedback Synthesizer", "Docs should open with synthesis gate");
   });
 });

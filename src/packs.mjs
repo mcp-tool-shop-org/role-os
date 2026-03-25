@@ -1,12 +1,28 @@
 /**
- * Proven Team Packs.
+ * Proven Team Packs — Calibrated.
  *
  * Battle-tested role combinations for common task families.
- * Each pack was proven through execution trials (G1–G10).
- * Packs outperform raw routing on their task family by starting
- * from a validated lineup instead of building from scratch.
+ * Each pack was proven through execution trials (G1–G10) and
+ * calibrated by pack comparison trials (PACK-COMPARISON.md).
+ *
+ * Calibration findings applied:
+ * - Orchestrator is conditional (only when task is multi-role + ambiguous)
+ * - Every pack has mismatch detection + alternative suggestion
+ * - Treatment includes Security Reviewer by default
+ * - Research opens with Product Strategist (framing before research)
+ * - Docs has upstream-synthesis gate
  *
  * Usage: `roleos route --pack feature` or auto-detected from packet content.
+ */
+
+// ── Mismatch detection ────────────────────────────────────────────────────────
+// Each pack declares what it is NOT for, and which pack IS right.
+
+/**
+ * @typedef {Object} MismatchGuard
+ * @property {string[]} notForSignals - Content patterns that indicate this pack is wrong
+ * @property {string} suggestInstead - Which pack to suggest instead
+ * @property {string} reason - Why this pack is wrong for that signal
  */
 
 // ── Pack definitions ──────────────────────────────────────────────────────────
@@ -24,6 +40,7 @@ export const TEAM_PACKS = {
       "Test Engineer",
       "Critic Reviewer",
     ],
+    orchestratorRequired: true, // multi-role, cross-functional — Orchestrator adds value
     optionalRoles: ["UI Designer", "Frontend Developer", "Security Reviewer"],
     chainOrder: "Product Strategist → Spec Writer → Backend Engineer → Test Engineer",
     requiredArtifacts: ["scope doc", "spec", "implementation", "test results", "verdict"],
@@ -34,7 +51,11 @@ export const TEAM_PACKS = {
     ],
     escalationOwner: "Orchestrator",
     dispatchDefaults: { model: "sonnet", maxTurns: 30, maxBudgetUsd: 5.0 },
-    trialEvidence: "G1 (Product), G2 (Engineering) — 6/6 gold-task passes",
+    trialEvidence: "G1 (Product), G2 (Engineering) — 6/6 gold-task passes. Pack comparison: wins vs free routing.",
+    mismatchGuards: [
+      { notForSignals: ["security review", "threat model", "vulnerability", "injection"], suggestInstead: "security", reason: "This is a security review, not a feature build" },
+      { notForSignals: ["launch", "announce", "release notes", "messaging"], suggestInstead: "launch", reason: "This is launch/messaging work, not feature implementation" },
+    ],
   },
 
   // ── Bugfix / Repair ───────────────────────────────────────────────────────
@@ -42,22 +63,26 @@ export const TEAM_PACKS = {
     name: "Bugfix / Repair",
     description: "Diagnose → fix → verify → review. Minimal chain, fast turnaround.",
     roles: [
-      "Orchestrator",
       "Repo Researcher",
       "Backend Engineer",
       "Test Engineer",
       "Critic Reviewer",
     ],
+    orchestratorRequired: false, // clear scope, single-domain — Orchestrator is overhead
     optionalRoles: ["Frontend Developer", "Performance Engineer"],
     chainOrder: "Repo Researcher → Backend Engineer → Test Engineer",
     requiredArtifacts: ["repo map / diagnosis", "fix implementation", "regression tests", "verdict"],
     stopConditions: [
-      "Repo Researcher cannot reproduce → escalate to Orchestrator",
+      "Repo Researcher cannot reproduce → escalate to user",
       "Fix introduces new failures → loop back to Backend Engineer",
     ],
-    escalationOwner: "Orchestrator",
+    escalationOwner: "Critic Reviewer",
     dispatchDefaults: { model: "sonnet", maxTurns: 20, maxBudgetUsd: 3.0 },
-    trialEvidence: "G2 (Engineering), G7 (Repo Researcher) — roles proven",
+    trialEvidence: "G2 (Engineering), G7 (Repo Researcher), I-2 (shipped real fix). Pack comparison: free routing wins (Orchestrator overhead).",
+    mismatchGuards: [
+      { notForSignals: ["launch", "announce", "release notes"], suggestInstead: "launch", reason: "This is launch work, not a bugfix" },
+      { notForSignals: ["research", "should we", "tradeoff", "strategy"], suggestInstead: "research", reason: "This is a research/strategy question, not a bug to fix" },
+    ],
   },
 
   // ── Security Review ───────────────────────────────────────────────────────
@@ -65,57 +90,67 @@ export const TEAM_PACKS = {
     name: "Security Review",
     description: "Threat model → code review → dependency audit → verdict",
     roles: [
-      "Orchestrator",
       "Security Reviewer",
       "Dependency Auditor",
       "Critic Reviewer",
     ],
+    orchestratorRequired: false, // single-domain, clear scope
     optionalRoles: ["Backend Engineer", "Test Engineer"],
     chainOrder: "Security Reviewer → Dependency Auditor",
     requiredArtifacts: ["threat model", "code review findings", "dependency audit", "verdict"],
     stopConditions: [
-      "Critical vulnerability found → immediate escalation to Orchestrator",
+      "Critical vulnerability found → immediate escalation to user",
       "Dependency with known CVE → flag for Engineering",
     ],
-    escalationOwner: "Orchestrator",
+    escalationOwner: "Security Reviewer",
     dispatchDefaults: { model: "sonnet", maxTurns: 25, maxBudgetUsd: 4.0 },
-    trialEvidence: "G6 (Security Reviewer, Dependency Auditor) — 2/2 gold-task passes",
+    trialEvidence: "G6 (Security Reviewer, Dependency Auditor) — 2/2 gold-task passes. I-3 Critic found 3 gaps prior roles missed.",
+    mismatchGuards: [
+      { notForSignals: ["documentation", "handbook", "restructure", "navigation"], suggestInstead: "docs", reason: "This is docs/structure work, not a security review" },
+      { notForSignals: ["feature", "implement", "build", "add command"], suggestInstead: "feature", reason: "This is feature work, not a security review" },
+    ],
   },
 
   // ── Docs / Handbook / Release ─────────────────────────────────────────────
   docs: {
     name: "Docs / Handbook / Release",
-    description: "Structure → write → metadata → release → verify deployment",
+    description: "Synthesize → structure → write → metadata → release → verify deployment",
     roles: [
-      "Orchestrator",
+      "Feedback Synthesizer",  // upstream gate: synthesize input before structuring
       "Docs Architect",
       "Metadata Curator",
       "Release Engineer",
       "Deployment Verifier",
       "Critic Reviewer",
     ],
-    optionalRoles: ["Repo Translator", "Brand Guardian"],
-    chainOrder: "Docs Architect → Metadata Curator → Release Engineer → Deployment Verifier",
-    requiredArtifacts: ["docs structure", "metadata audit", "release package", "deployment verification", "verdict"],
+    orchestratorRequired: false, // pipeline is sequential and clear
+    optionalRoles: ["Repo Translator", "Brand Guardian", "Support Triage Lead"],
+    chainOrder: "Feedback Synthesizer → Docs Architect → Metadata Curator → Release Engineer → Deployment Verifier",
+    requiredArtifacts: ["synthesized input", "docs structure", "metadata audit", "release package", "deployment verification", "verdict"],
     stopConditions: [
+      "Feedback Synthesizer finds input data insufficient → request source material",
       "Docs Architect finds product direction unclear → escalate to Product Strategist",
       "Deployment Verifier finds broken artifacts → loop back to Release Engineer",
     ],
-    escalationOwner: "Orchestrator",
+    escalationOwner: "Docs Architect",
     dispatchDefaults: { model: "sonnet", maxTurns: 25, maxBudgetUsd: 4.0 },
-    trialEvidence: "G4 (Docs Architect), G7 (Treatment cluster) — 5/5 gold-task passes",
+    trialEvidence: "G4 (Docs Architect), G7 (Treatment cluster), I-4 (shipped handbook page). Calibrated: added Feedback Synthesizer upstream gate.",
+    mismatchGuards: [
+      { notForSignals: ["research", "should we", "competitive", "strategy"], suggestInstead: "research", reason: "This is a research/strategy question — decide before documenting" },
+      { notForSignals: ["security", "threat", "vulnerability"], suggestInstead: "security", reason: "This is a security review, not docs work" },
+    ],
   },
 
   // ── Launch / Messaging ────────────────────────────────────────────────────
   launch: {
     name: "Launch / Messaging",
-    description: "Plan launch → write copy → content strategy. Hard pipeline: Strategist → Copywriter.",
+    description: "Plan launch → write copy. Hard pipeline: Strategist → Copywriter.",
     roles: [
-      "Orchestrator",
       "Launch Strategist",
       "Launch Copywriter",
       "Critic Reviewer",
     ],
+    orchestratorRequired: false, // smallest pack, hard pipeline, no decomposition needed
     optionalRoles: ["Content Strategist", "Community Manager"],
     chainOrder: "Launch Strategist → Launch Copywriter",
     requiredArtifacts: ["launch plan", "release copy", "verdict"],
@@ -123,42 +158,51 @@ export const TEAM_PACKS = {
       "Launch Strategist finds no proof assets → delay launch",
       "Launch Copywriter finds product claims unverifiable → escalate to Product Strategist",
     ],
-    escalationOwner: "Orchestrator",
+    escalationOwner: "Launch Strategist",
     dispatchDefaults: { model: "sonnet", maxTurns: 20, maxBudgetUsd: 3.0 },
-    trialEvidence: "G3 (Launch Strategist, Launch Copywriter) — 2/2 gold-task passes, pipeline proven",
+    trialEvidence: "G3 (pipeline proven), I-5 (v1.1.0 launch, Accept). Pack comparison: tie/marginal win. TRUE DEFAULT.",
+    mismatchGuards: [
+      { notForSignals: ["bug", "fix", "crash", "broken", "error"], suggestInstead: "bugfix", reason: "This is a bug to fix, not a launch to plan" },
+      { notForSignals: ["implement", "build", "add command", "new feature"], suggestInstead: "feature", reason: "This is feature work — build first, launch second" },
+    ],
   },
 
   // ── Research / Strategy ───────────────────────────────────────────────────
   research: {
     name: "Research / Strategy",
-    description: "UX research → competitive analysis → trend assessment → user synthesis → product strategy",
+    description: "Frame decision → gather evidence → synthesize → recommend",
     roles: [
-      "Orchestrator",
+      "Product Strategist",   // REORDERED: framing first, then research
       "UX Researcher",
       "Competitive Analyst",
       "Feedback Synthesizer",
-      "Product Strategist",
       "Critic Reviewer",
     ],
+    orchestratorRequired: false, // clear pipeline, Product Strategist frames
     optionalRoles: ["Trend Researcher", "User Interview Synthesizer"],
-    chainOrder: "UX Researcher → Competitive Analyst → Feedback Synthesizer → Product Strategist",
-    requiredArtifacts: ["friction inventory", "competitive landscape", "signal synthesis", "product recommendations", "verdict"],
+    chainOrder: "Product Strategist → UX Researcher → Competitive Analyst → Feedback Synthesizer",
+    requiredArtifacts: ["decision frame", "friction inventory", "competitive landscape", "signal synthesis", "verdict"],
     stopConditions: [
-      "UX Researcher finds insufficient user data → escalate to Orchestrator",
+      "Product Strategist finds the question too vague → request clarification",
+      "UX Researcher finds insufficient user data → escalate to Product Strategist",
       "Competitive Analyst finds no comparable products → narrow scope",
     ],
-    escalationOwner: "Orchestrator",
+    escalationOwner: "Product Strategist",
     dispatchDefaults: { model: "sonnet", maxTurns: 25, maxBudgetUsd: 4.0 },
-    trialEvidence: "G8 (Research cluster), G9 (Growth/Product) — 8/8 gold-task passes",
+    trialEvidence: "G8 (Research cluster), G9 (Growth/Product), I-6 (game dev decision). Calibrated: Product Strategist now opens (framing before research).",
+    mismatchGuards: [
+      { notForSignals: ["implement", "build", "add command", "write code"], suggestInstead: "feature", reason: "This is implementation work, not research" },
+      { notForSignals: ["bug", "fix", "crash", "broken"], suggestInstead: "bugfix", reason: "This is a bugfix, not a research question" },
+    ],
   },
 
   // ── Treatment (repo polish) ───────────────────────────────────────────────
   treatment: {
     name: "Treatment (Repo Polish)",
-    description: "Full repo treatment: research → audit → docs → metadata → release → deploy → verify",
+    description: "Full repo treatment: research → security → audit → docs → metadata → release → deploy → verify",
     roles: [
-      "Orchestrator",
       "Repo Researcher",
+      "Security Reviewer",      // ADDED: was optional, now default (pack comparison finding)
       "Coverage Auditor",
       "Docs Architect",
       "Metadata Curator",
@@ -166,16 +210,22 @@ export const TEAM_PACKS = {
       "Deployment Verifier",
       "Critic Reviewer",
     ],
-    optionalRoles: ["Brand Guardian", "Repo Translator", "Security Reviewer"],
-    chainOrder: "Repo Researcher → Coverage Auditor → Docs Architect → Metadata Curator → Release Engineer → Deployment Verifier",
-    requiredArtifacts: ["repo map", "coverage audit", "docs", "metadata audit", "release", "deployment verification", "verdict"],
+    orchestratorRequired: false, // long but sequential — each role has a clear handoff
+    optionalRoles: ["Brand Guardian", "Repo Translator", "Dependency Auditor"],
+    chainOrder: "Repo Researcher → Security Reviewer → Coverage Auditor → Docs Architect → Metadata Curator → Release Engineer → Deployment Verifier",
+    requiredArtifacts: ["repo map", "security findings", "coverage audit", "docs", "metadata audit", "release", "deployment verification", "verdict"],
     stopConditions: [
+      "Security Reviewer finds critical vulnerability → block release until resolved",
       "Coverage Auditor finds false confidence → flag for Test Engineer",
       "Deployment Verifier finds broken live artifacts → loop back to Release Engineer",
     ],
-    escalationOwner: "Orchestrator",
+    escalationOwner: "Repo Researcher",
     dispatchDefaults: { model: "sonnet", maxTurns: 30, maxBudgetUsd: 5.0 },
-    trialEvidence: "G6 (Coverage Auditor), G7 (Treatment cluster) — roles proven across multiple trials",
+    trialEvidence: "G6-G7 (roles proven), I-7 (full chain, Accept-with-notes). Calibrated: Security Reviewer now default (was optional — pack comparison loss).",
+    mismatchGuards: [
+      { notForSignals: ["launch", "announce", "release notes", "social", "messaging"], suggestInstead: "launch", reason: "This is launch/messaging work — Treatment audits repos, it doesn't write announcements" },
+      { notForSignals: ["research", "should we", "competitive", "strategy"], suggestInstead: "research", reason: "This is a research/strategy question, not a repo treatment" },
+    ],
   },
 };
 
@@ -193,9 +243,6 @@ const PACK_KEYWORDS = {
 
 /**
  * Suggest the best pack for a packet based on content analysis.
- *
- * @param {string} content - Packet markdown content
- * @returns {{ pack: string, confidence: string, scores: Record<string, number> } | null}
  */
 export function suggestPack(content) {
   const lower = content.toLowerCase();
@@ -219,10 +266,52 @@ export function suggestPack(content) {
 }
 
 /**
- * Get a pack by name.
+ * Check if a pack is a mismatch for the given content.
+ * Returns null if no mismatch, or the suggested alternative if mismatch detected.
  *
- * @param {string} name
- * @returns {object | null}
+ * @param {string} packName
+ * @param {string} content - Packet content
+ * @returns {{ suggestInstead: string, reason: string } | null}
+ */
+export function checkPackMismatch(packName, content) {
+  const pack = TEAM_PACKS[packName];
+  if (!pack || !pack.mismatchGuards) return null;
+
+  const lower = content.toLowerCase();
+  for (const guard of pack.mismatchGuards) {
+    const triggered = guard.notForSignals.some(signal => lower.includes(signal));
+    if (triggered) {
+      return { suggestInstead: guard.suggestInstead, reason: guard.reason };
+    }
+  }
+  return null;
+}
+
+/**
+ * Get a pack's effective roles (with conditional Orchestrator).
+ *
+ * @param {string} packName
+ * @param {boolean} [forceOrchestrator=false]
+ * @returns {string[] | null}
+ */
+export function getPackRoles(packName, forceOrchestrator = false) {
+  const pack = TEAM_PACKS[packName];
+  if (!pack) return null;
+
+  const roles = [...pack.roles];
+  // Add Orchestrator only if the pack requires it or forced
+  if ((pack.orchestratorRequired || forceOrchestrator) && !roles.includes("Orchestrator")) {
+    roles.unshift("Orchestrator");
+  }
+  // Remove Orchestrator if pack doesn't require it and not forced
+  if (!pack.orchestratorRequired && !forceOrchestrator && roles[0] === "Orchestrator") {
+    roles.shift();
+  }
+  return roles;
+}
+
+/**
+ * Get a pack by name.
  */
 export function getPack(name) {
   return TEAM_PACKS[name] || null;
@@ -230,8 +319,6 @@ export function getPack(name) {
 
 /**
  * List all available packs.
- *
- * @returns {Array<{name: string, description: string, roleCount: number}>}
  */
 export function listPacks() {
   return Object.entries(TEAM_PACKS).map(([key, pack]) => ({
@@ -240,5 +327,6 @@ export function listPacks() {
     description: pack.description,
     roleCount: pack.roles.length,
     optionalCount: pack.optionalRoles.length,
+    orchestratorRequired: pack.orchestratorRequired,
   }));
 }

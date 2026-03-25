@@ -105,7 +105,7 @@ describe("roleos packs", () => {
     it("T9: bugfix pack shows correct name and role count", () => {
       const out = run(["packs", "show", "bugfix"]);
       assert.match(out, /Bugfix \/ Repair/);
-      assert.match(out, /Roles \(5\)/);
+      assert.match(out, /Roles \(4\)/);
     });
 
     it("T10: treatment pack has 8 roles", () => {
