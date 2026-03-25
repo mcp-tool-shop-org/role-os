@@ -180,6 +180,7 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | **Adaptive replanning** | Mid-run scope changes, findings, or new requirements update the plan without restarting. | ✓ Shipped |
 | **Session spine** | `roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement. | ✓ Shipped |
 | **Hook spine** | 5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit. | ✓ Shipped |
+| **Artifact spine** | 20 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received. | ✓ Shipped |
 
 ## Status
 
@@ -190,7 +191,8 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 - v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.
 - v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.
 - v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.
-- **v1.5.0**: Hook spine — 5 lifecycle hooks for runtime enforcement. Advisory route card reminders, write-tool gating, subagent role injection, completion audit. 358 tests.
+- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.
+- **v1.6.0**: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation, chain completeness checks. 385 tests.
 
 ## License
 

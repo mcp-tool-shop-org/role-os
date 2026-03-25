@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.6.0
+
+### Added
+
+#### Artifact Spine (Phase Q)
+- 20 per-role artifact contracts: each defines artifact type, required sections, evidence references, downstream consumers, and completion rules
+- `validateArtifact(role, content)` — structural validation against role contracts (missing sections, evidence references, content depth)
+- 7 pack-level handoff contracts: define the expected artifact flow between steps for each pack (e.g., strategy-brief → implementation-spec → change-plan → test-package → verdict)
+- `validatePackChain(pack, artifacts)` — validates an entire pack's artifact chain for completeness
+- `getArtifactContract(role)` / `getHandoffContract(pack)` — lookup APIs
+- `formatArtifactValidation()` / `formatPackChain()` — display formatters
+
+#### Artifact contract coverage
+- Product Strategist → strategy-brief (problem-framing, scope, non-goals, tradeoffs)
+- Spec Writer → implementation-spec (acceptance-criteria, edge-cases, interface-spec)
+- Backend/Frontend Engineer → change-plan (files-to-change, implementation-approach, risk-notes)
+- Test Engineer → test-package (test-plan, test-cases, false-confidence-assessment)
+- Security Reviewer → security-findings (findings, severity-assessment, recommendations)
+- Critic Reviewer → verdict (verdict, evidence, required-corrections)
+- And 14 more roles with full contracts
+
+### Evidence
+- 385 tests, zero failures
+- 27 new artifact tests
+
 ## 1.5.0
 
 ### Added
