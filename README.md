@@ -15,11 +15,11 @@
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-A portable, repo-native operating layer that routes work through role contracts, structured packets, review, and escalation so teams can do feature work, integration work, identity repair, and full repo treatment without drift, false completion, or vibes-based progress claims.
+A multi-Claude operating system that staffs, routes, validates, and runs work through 31 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.
 
 ## What it does
 
-Role OS prevents the specific failures that generic AI workflows produce:
+Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:
 
 - **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.
 - **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.
@@ -29,9 +29,11 @@ Role OS prevents the specific failures that generic AI workflows produce:
 ## How it works
 
 1. **Create a packet** — define what needs to exist when the work is done
-2. **Route through a chain** — the smallest set of specialized roles needed
-3. **Each role produces a handoff** — structured output that reduces ambiguity for the next role
-4. **Critic reviews against contract** — accepts, rejects, or blocks based on evidence, not impression
+2. **Route through a chain** — `roleos route` scores all 31 roles against the packet content, assembles a dynamic chain ordered by work phase, and explains why each role was chosen
+3. **Validate the team** — 4-pass conflict detection catches hard conflicts, sequence errors, redundancy, and coverage gaps before execution starts
+4. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role
+5. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression
+6. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact
 
 ## Org rollout state
 
@@ -51,7 +53,7 @@ Full treatment is a canonical 7-phase protocol defined in Claude project memory 
 
 Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.
 
-## 32 roles across 8 packs
+## 31 roles across 8 packs
 
 | Pack | Roles |
 |------|-------|
@@ -60,11 +62,11 @@ Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gate
 | **Design** (2) | UI Designer, Brand Guardian |
 | **Marketing** (1) | Launch Copywriter |
 | **Treatment** (7) | Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer |
-| **Product** (4) | Feedback Synthesizer, Roadmap Prioritizer, Spec Writer, Information Architect |
+| **Product** (3) | Feedback Synthesizer, Roadmap Prioritizer, Spec Writer |
 | **Research** (4) | UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer |
 | **Growth** (4) | Launch Strategist, Content Strategist, Community Manager, Support Triage Lead |
 
-Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers.
+Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.
 
 ## Quick start
 
@@ -128,32 +130,56 @@ These are non-negotiable. If a change weakens any of them, reject it.
 
 ```
 role-os/
-  README.md                    ← You are here
   bin/roleos.mjs               ← CLI entrypoint
-  src/                         ← CLI implementation
-  starter-pack/
-    handbook.md                ← How Role OS works
-    context/                   ← Fill these for your repo
-    examples/                  ← Feature, integration, identity packets
-    agents/                    ← 32 role contracts across 8 packs
+  src/
+    route.mjs                  ← 31-role routing + dynamic chain builder
+    conflicts.mjs              ← 4-pass conflict detection
+    escalation.mjs             ← Auto-routing for blocked/rejected/split
+    evidence.mjs               ← Structured evidence + role-aware requirements
+    dispatch.mjs               ← Runtime dispatch manifests for multi-claude
+    trial.mjs                  ← Role execution trial framework
+    packet.mjs                 ← Packet creation
+    review.mjs                 ← Verdict recording + escalation integration
+    status.mjs                 ← Active packet + verdict status
+  test/
+    route.test.mjs             ← 49 tests (routing + disambiguation)
+    conflicts.test.mjs         ← 13 tests (4 conflict types)
+    escalation.test.mjs        ← 22 tests (blocked/rejected/conflict/split)
+    evidence.test.mjs          ← 23 tests (schema + sufficiency)
+    dispatch.test.mjs          ← 21 tests (manifests + state + escalation packets)
+    trial.test.mjs             ← 12 tests (trial framework)
+    cli.test.mjs               ← 22 tests (CLI integration)
+  .claude/
+    agents/                    ← 31 role contracts across 8 packs
     schemas/                   ← Packet, handoff, verdict formats
-    policy/                    ← Routing, permissions, escalation, done
+    policy/                    ← Routing rules, permissions, escalation, done
     workflows/                 ← Ship feature, fix bug, launch update, full treatment
+    context/                   ← Fill these for your repo
+    trials/                    ← Execution trial packets + results
 ```
 
 ## Security
 
 Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.
 
+## The operating system
+
+| Layer | What it does | Status |
+|-------|-------------|--------|
+| **Routing** | Scores all 31 roles against packet content, explains recommendations, assesses confidence | ✓ Shipped |
+| **Chain builder** | Assembles phase-ordered chains from scored roles, packet-type biased not template-locked | ✓ Shipped |
+| **Conflict detection** | 4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions. | ✓ Shipped |
+| **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact | ✓ Shipped |
+| **Evidence** | Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds. | ✓ Shipped |
+| **Dispatch** | Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets. | ✓ Shipped |
+| **Trials** | Execution trial framework. Product + Engineering clusters proven (6/6 pass). | ✓ In progress |
+
 ## Status
 
-**v1.0.0 — Broad Surface, Same Laws**
-
-- v0.1: Operational — 3 trials, 3 accepts, 0 role collisions
-- v0.2: Adoption — default workflow in anchor repo, portable to second repo
-- v0.3: Productization — starter pack, bootstrap CLI, evidence surface
-- v0.4: Treatment Pack — 8 treatment/identity roles, full treatment staffed, portable across 2 repos
-- v1.0.0: 32 roles across 8 packs, full CLI, proven treatment, multi-repo portability
+- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack
+- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability
+- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)
+- **Current**: 31 roles (Information Architect merged into Docs Architect), full routing spine, conflict detection, escalation, evidence, dispatch. 162 tests.
 
 ## License
 
