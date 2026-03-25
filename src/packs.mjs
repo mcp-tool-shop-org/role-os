@@ -55,6 +55,10 @@ export const TEAM_PACKS = {
     mismatchGuards: [
       { notForSignals: ["security review", "threat model", "vulnerability", "injection"], suggestInstead: "security", reason: "This is a security review, not a feature build" },
       { notForSignals: ["launch", "announce", "release notes", "messaging"], suggestInstead: "launch", reason: "This is launch/messaging work, not feature implementation" },
+      { notForSignals: ["bug", "fix", "crash", "broken", "regression"], suggestInstead: "bugfix", reason: "This is a bug to fix, not a feature to build" },
+      { notForSignals: ["handbook", "documentation", "restructure docs"], suggestInstead: "docs", reason: "This is docs work, not feature implementation" },
+      { notForSignals: ["research", "should we", "competitive", "trend"], suggestInstead: "research", reason: "This is a research/strategy question, not a feature build" },
+      { notForSignals: ["treatment", "repo audit", "shipcheck", "full treatment", "polish"], suggestInstead: "treatment", reason: "This is repo treatment work, not feature implementation" },
     ],
   },
 
@@ -68,7 +72,7 @@ export const TEAM_PACKS = {
       "Test Engineer",
       "Critic Reviewer",
     ],
-    orchestratorRequired: false, // clear scope, single-domain — Orchestrator is overhead
+    orchestratorRequired: false,
     optionalRoles: ["Frontend Developer", "Performance Engineer"],
     chainOrder: "Repo Researcher → Backend Engineer → Test Engineer",
     requiredArtifacts: ["repo map / diagnosis", "fix implementation", "regression tests", "verdict"],
@@ -78,10 +82,14 @@ export const TEAM_PACKS = {
     ],
     escalationOwner: "Critic Reviewer",
     dispatchDefaults: { model: "sonnet", maxTurns: 20, maxBudgetUsd: 3.0 },
-    trialEvidence: "G2 (Engineering), G7 (Repo Researcher), I-2 (shipped real fix). Pack comparison: free routing wins (Orchestrator overhead).",
+    trialEvidence: "G2 (Engineering), G7 (Repo Researcher), I-2 (shipped real fix).",
     mismatchGuards: [
-      { notForSignals: ["launch", "announce", "release notes"], suggestInstead: "launch", reason: "This is launch work, not a bugfix" },
+      { notForSignals: ["launch", "announce", "release notes", "messaging"], suggestInstead: "launch", reason: "This is launch work, not a bugfix" },
       { notForSignals: ["research", "should we", "tradeoff", "strategy"], suggestInstead: "research", reason: "This is a research/strategy question, not a bug to fix" },
+      { notForSignals: ["feature", "new command", "add", "create", "implement"], suggestInstead: "feature", reason: "This is a new feature, not a bug to fix" },
+      { notForSignals: ["handbook", "documentation", "restructure docs", "starlight"], suggestInstead: "docs", reason: "This is docs work, not a bugfix" },
+      { notForSignals: ["security review", "threat model", "vulnerability"], suggestInstead: "security", reason: "This is a security review, not a bugfix" },
+      { notForSignals: ["treatment", "repo audit", "shipcheck", "polish"], suggestInstead: "treatment", reason: "This is repo treatment, not a bugfix" },
     ],
   },
 
@@ -108,10 +116,14 @@ export const TEAM_PACKS = {
     mismatchGuards: [
       { notForSignals: ["documentation", "handbook", "restructure", "navigation"], suggestInstead: "docs", reason: "This is docs/structure work, not a security review" },
       { notForSignals: ["feature", "implement", "build", "add command"], suggestInstead: "feature", reason: "This is feature work, not a security review" },
+      { notForSignals: ["bug", "fix", "crash", "broken", "regression"], suggestInstead: "bugfix", reason: "This is a bug to fix, not a security review" },
+      { notForSignals: ["launch", "announce", "release notes", "messaging"], suggestInstead: "launch", reason: "This is launch work, not a security review" },
+      { notForSignals: ["research", "should we", "competitive", "strategy"], suggestInstead: "research", reason: "This is a research question, not a security review" },
+      { notForSignals: ["treatment", "repo audit", "shipcheck", "polish"], suggestInstead: "treatment", reason: "This is repo treatment, not a security review" },
     ],
   },
 
-  // ── Docs / Handbook / Release ─────────────────────────────────────────────
+  // ── Docs / Handbook ─────────────────────────────────────────────────
   docs: {
     name: "Docs / Handbook",
     description: "Triage → synthesize → structure → write → metadata → review",
@@ -136,7 +148,11 @@ export const TEAM_PACKS = {
     trialEvidence: "G4 (Docs Architect), G7 (Treatment), I-4 (shipped page). Calibrated: Support Triage Lead + Feedback Synthesizer upstream. Release/Deploy moved to optional (overhead for docs-only tasks).",
     mismatchGuards: [
       { notForSignals: ["research", "should we", "competitive", "strategy"], suggestInstead: "research", reason: "This is a research/strategy question — decide before documenting" },
-      { notForSignals: ["security", "threat", "vulnerability"], suggestInstead: "security", reason: "This is a security review, not docs work" },
+      { notForSignals: ["security review", "threat", "vulnerability", "injection"], suggestInstead: "security", reason: "This is a security review, not docs work" },
+      { notForSignals: ["feature", "implement", "build", "add command"], suggestInstead: "feature", reason: "This is feature work, not docs" },
+      { notForSignals: ["bug", "fix", "crash", "broken"], suggestInstead: "bugfix", reason: "This is a bugfix, not docs work" },
+      { notForSignals: ["launch", "announce", "go-to-market", "messaging"], suggestInstead: "launch", reason: "This is launch work, not docs" },
+      { notForSignals: ["treatment", "repo audit", "shipcheck", "full treatment"], suggestInstead: "treatment", reason: "This is repo treatment, not docs only" },
     ],
   },
 
@@ -163,6 +179,10 @@ export const TEAM_PACKS = {
     mismatchGuards: [
       { notForSignals: ["bug", "fix", "crash", "broken", "error"], suggestInstead: "bugfix", reason: "This is a bug to fix, not a launch to plan" },
       { notForSignals: ["implement", "build", "add command", "new feature"], suggestInstead: "feature", reason: "This is feature work — build first, launch second" },
+      { notForSignals: ["security review", "threat", "vulnerability", "injection"], suggestInstead: "security", reason: "This is a security review, not launch work" },
+      { notForSignals: ["handbook", "documentation", "restructure docs"], suggestInstead: "docs", reason: "This is docs work, not launch messaging" },
+      { notForSignals: ["research", "should we", "competitive", "trend"], suggestInstead: "research", reason: "This is research, not launch messaging" },
+      { notForSignals: ["treatment", "repo audit", "shipcheck", "polish"], suggestInstead: "treatment", reason: "This is repo treatment, not launch" },
     ],
   },
 
@@ -192,6 +212,10 @@ export const TEAM_PACKS = {
     mismatchGuards: [
       { notForSignals: ["implement", "build", "add command", "write code"], suggestInstead: "feature", reason: "This is implementation work, not research" },
       { notForSignals: ["bug", "fix", "crash", "broken"], suggestInstead: "bugfix", reason: "This is a bugfix, not a research question" },
+      { notForSignals: ["security review", "threat", "vulnerability", "injection"], suggestInstead: "security", reason: "This is a security review, not research" },
+      { notForSignals: ["handbook", "documentation", "restructure docs"], suggestInstead: "docs", reason: "This is docs work, not research" },
+      { notForSignals: ["launch", "announce", "release notes", "messaging"], suggestInstead: "launch", reason: "This is launch work, not research" },
+      { notForSignals: ["treatment", "repo audit", "shipcheck", "polish"], suggestInstead: "treatment", reason: "This is repo treatment, not research" },
     ],
   },
 
@@ -224,6 +248,10 @@ export const TEAM_PACKS = {
     mismatchGuards: [
       { notForSignals: ["launch", "announce", "release notes", "social", "messaging"], suggestInstead: "launch", reason: "This is launch/messaging work — Treatment audits repos, it doesn't write announcements" },
       { notForSignals: ["research", "should we", "competitive", "strategy"], suggestInstead: "research", reason: "This is a research/strategy question, not a repo treatment" },
+      { notForSignals: ["feature", "new command", "implement", "add", "create"], suggestInstead: "feature", reason: "This is feature work, not repo treatment" },
+      { notForSignals: ["bug", "fix", "crash", "broken"], suggestInstead: "bugfix", reason: "This is a bugfix, not a full treatment" },
+      { notForSignals: ["security review", "threat model", "injection"], suggestInstead: "security", reason: "This is a security review — treatment includes security but this task is security-only" },
+      { notForSignals: ["handbook", "documentation", "restructure docs"], suggestInstead: "docs", reason: "This is docs-only work, not a full treatment" },
     ],
   },
 };
