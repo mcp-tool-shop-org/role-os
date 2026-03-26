@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.1
+
+### Added
+
+- 4 version consistency tests (semver, >= 1.0.0, CHANGELOG, help output)
+
 ## 2.0.0
 
 ### Added
