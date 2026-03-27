@@ -215,6 +215,59 @@ export const MISSIONS = {
     dispatchDefaults: { model: "sonnet", maxTurns: 20, maxBudgetUsd: 3.0 },
     trialEvidence: "Research pack opens with Product Strategist (framing before research). Validated in pack comparison.",
   },
+
+  // ── Brainstorm (Structured Inquiry) ────────────────────────────────────────
+  "brainstorm": {
+    name: "Brainstorm (Structured Inquiry)",
+    description: "Specialized roles under law, with traceable disagreement and verdict-bearing output. Each analyst emits a role-native schema; cross-exam produces a dispute graph; synthesis consumes truth, never prose. Both truth and rendered layers are always available.",
+    pack: "brainstorm",
+    entryPath: "Frame → 4 Analysts (parallel, role-native) → Normalize (provenance atoms) → Cross-Examine (directed challenges) → Rebut (defend/narrow/retract) → Synthesize (dispute-informed) → Expand → Judge → Render (opt-in) → Return",
+    roleChain: [
+      "Context Analyst",
+      "User Value Analyst",
+      "Mechanics Analyst",
+      "Positioning Analyst",
+      "Normalizer",
+      "Contrarian Analyst",
+      "Synthesizer",
+      "Product Expander",
+      "Judge",
+    ],
+    artifactFlow: [
+      // Layer 1: Truth — role-native schemas, provenance atoms, dispute graph
+      { role: "Context Analyst",     produces: "context-map",          consumedBy: "Normalizer" },
+      { role: "User Value Analyst",  produces: "user-value-map",       consumedBy: "Normalizer" },
+      { role: "Mechanics Analyst",   produces: "mechanics-map",        consumedBy: "Normalizer" },
+      { role: "Positioning Analyst", produces: "positioning-map",      consumedBy: "Normalizer" },
+      { role: "Normalizer",          produces: "provenance-atoms",     consumedBy: "Contrarian Analyst" },
+      { role: "Contrarian Analyst",  produces: "challenge-set",        consumedBy: "Normalizer" },
+      // Rebut: original analysts respond to challenges (defend/narrow/retract)
+      { role: "Normalizer",          produces: "rebuttal-set",         consumedBy: "Synthesizer" },
+      // Synthesis consumes truth layer: atoms + challenge edges + rebuttal edges
+      { role: "Synthesizer",         produces: "synthesis-report",     consumedBy: "Product Expander" },
+      { role: "Product Expander",    produces: "expanded-concept",     consumedBy: "Judge" },
+      { role: "Judge",               produces: "judge-report",         consumedBy: null },
+      // Layer 2: Render — human-legible presentation of truth artifacts (opt-in)
+      // Rendered artifacts: Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript
+      // Debate transcript: readable exchange generated from challenge/rebuttal graph
+      // Trace links: every rendered sentence maps to a truth-layer atom
+    ],
+    escalationBranches: [
+      { trigger: "judge_revise_expand",     from: "Judge", to: "Product Expander", action: "re-expand targeted directions with revision guidance" },
+      { trigger: "judge_revise_synthesize", from: "Judge", to: "Synthesizer",      action: "reselect directions with judge feedback, then re-expand and re-judge" },
+      { trigger: "boundary_violation",      from: "Normalizer", to: "Context Analyst", action: "re-analyze with out-of-lens claims rejected" },
+      { trigger: "challenge_rejected",      from: "Normalizer", to: "Contrarian Analyst", action: "re-challenge with filtered targets (cross-exam matrix enforced)" },
+    ],
+    honestPartial: "Brainstorm explored multiple dimensions. Truth artifacts up to the blocking phase are intact, inspectable, and traceable. Dispute graph partial if stalled during cross-examine/rebut. Rendered artifacts only available for completed truth artifacts.",
+    stopConditions: [
+      "Judge accepts with disposition 'accept' — both layers assembled, trace links verified",
+      "Judge rejects — mission returns honest partial with truth artifacts intact",
+      "Loop budget exhausted (3 revision loops) — Judge forced to accept or reject",
+      "Frame fails to resolve objective — mission aborts with guidance",
+    ],
+    dispatchDefaults: { model: "sonnet", maxTurns: 40, maxBudgetUsd: 6.0 },
+    trialEvidence: "v0.4 golden run — 894 tests green. Full chain of custody proven: truth artifacts, provenance atoms, dispute graph (4 challenges, 3 narrowed, 1 unresolved), rendered artifacts in 5 formats, debate transcript, 16+ trace links from rendered → truth. Architecture frozen 2026-03-27.",
+  },
 };
 
 // ── Mission catalog ─────────────────────────────────────────────────────────
@@ -274,6 +327,10 @@ export function suggestMission(taskDescription) {
     "research-launch": {
       signals: ["research", "investigate", "should we", "evaluate", "competitive", "launch plan", "strategy"],
       weight: 1,
+    },
+    "brainstorm": {
+      signals: ["brainstorm", "explore ideas", "explore directions", "opportunity map", "creative directions", "concept exploration", "what could we build", "divergent thinking", "ideate"],
+      weight: 1.1,
     },
   };
 

@@ -41,8 +41,8 @@ describe("createRun", () => {
     }
   });
 
-  it("creates runs for all 6 missions", () => {
-    const keys = ["feature-ship", "bugfix", "treatment", "docs-release", "security-hardening", "research-launch"];
+  it("creates runs for all 7 missions", () => {
+    const keys = ["feature-ship", "bugfix", "treatment", "docs-release", "security-hardening", "research-launch", "brainstorm"];
     for (const key of keys) {
       const run = createRun(key, `Test ${key}`);
       assert.ok(run.id.startsWith(`${key}-`));

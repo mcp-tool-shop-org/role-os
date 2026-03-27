@@ -178,6 +178,84 @@ export const ROLE_ARTIFACT_CONTRACTS = {
     consumedBy: ["Feedback Synthesizer", "Docs Architect"],
     completionRule: "Each item classified. Priority assigned. Route to owner named.",
   },
+
+  // ── Brainstorm mission roles (v0.4) ─────────────────────────────────────────
+  //
+  // Layer 1: Truth — role-native schemas, provenance atoms, dispute graph
+  // Layer 2: Render — human-legible presentation (opt-in, never consumed by synthesis)
+  //
+  "Context Analyst": {
+    artifactType: "context-map",
+    requiredSections: ["terms", "category-map", "lineage-claims", "boundary-claims"],
+    optionalSections: [],
+    requiredEvidence: ["brainstorm-frame"],
+    consumedBy: ["Normalizer"],
+    completionRule: "3+ terms with adjacency. 2+ categories with examples. 1+ lineage claims with precedent. 1+ boundary claims. No forbidden phrases (blindspot enforced). Rendered as Boundary Memo (taxonomist voice).",
+  },
+  "User Value Analyst": {
+    artifactType: "user-value-map",
+    requiredSections: ["jobs", "frictions", "unmet-desires", "willingness-signals"],
+    optionalSections: [],
+    requiredEvidence: ["brainstorm-frame"],
+    consumedBy: ["Normalizer"],
+    completionRule: "2+ jobs (actor/situation/outcome). 2+ frictions with severity. 1+ unmet desires. 1+ willingness signals. No forbidden phrases (blindspot enforced). Rendered as Field Notes (ethnographer voice).",
+  },
+  "Mechanics Analyst": {
+    artifactType: "mechanics-map",
+    requiredSections: ["loops", "dependencies", "failure-points", "irreducible-mechanisms"],
+    optionalSections: [],
+    requiredEvidence: ["brainstorm-frame"],
+    consumedBy: ["Normalizer"],
+    completionRule: "1+ named loops (input/transform/output). 1+ dependencies. 1+ failure points. 1+ irreducible mechanisms. No forbidden phrases (blindspot enforced). Rendered as System Sketch (whiteboard voice).",
+  },
+  "Positioning Analyst": {
+    artifactType: "positioning-map",
+    requiredSections: ["substitutes", "wedge-candidates", "category-frame"],
+    optionalSections: ["forbidden-claims"],
+    requiredEvidence: ["brainstorm-frame"],
+    consumedBy: ["Normalizer"],
+    completionRule: "1+ substitutes (name/overlap/gap). 1+ wedge candidates (claim/timing/risk). Category frame as single declarative sentence. No forbidden phrases (blindspot enforced). Rendered as Claim Brief (strategist voice).",
+  },
+  "Contrarian Analyst": {
+    artifactType: "challenge-set",
+    requiredSections: ["challenges"],
+    optionalSections: [],
+    requiredEvidence: ["provenance-atoms"],
+    consumedBy: ["Normalizer"],
+    completionRule: "1+ challenges targeting specific atom IDs. Each has challenge_type, argument, evidence_grade, confidence. Only challenges permitted by cross-exam matrix accepted. Rendered as Cross-Exam Transcript (litigator voice).",
+  },
+  "Normalizer": {
+    artifactType: "provenance-atoms",
+    requiredSections: ["atoms", "conflicts", "stats"],
+    optionalSections: ["unsupported-high-confidence-flags", "rebuttal-set"],
+    requiredEvidence: ["context-map", "user-value-map", "mechanics-map", "positioning-map"],
+    consumedBy: ["Contrarian Analyst", "Synthesizer"],
+    completionRule: "Every atom carries source_role, source_artifact_type, claim_kind, allowed_challengers. No claim kinds overlap between roles. Rebuttal set: each original analyst defends/narrows/retracts challenged claims.",
+  },
+  "Synthesizer": {
+    artifactType: "synthesis-report",
+    requiredSections: ["topic-model", "major-themes", "advancing-directions", "archived-directions"],
+    optionalSections: ["tensions", "incubation-directions"],
+    requiredEvidence: ["provenance-atoms", "challenge-set", "rebuttal-set"],
+    consumedBy: ["Product Expander"],
+    completionRule: "Exactly breadth advancing directions. Each cites >= 2 truth-layer atoms (never rendered prose). Tensions reference dispute graph outcomes. Archived directions have reasons.",
+  },
+  "Product Expander": {
+    artifactType: "expanded-concept",
+    requiredSections: ["product-shape"],
+    optionalSections: ["scenarios", "moat"],
+    requiredEvidence: ["synthesis-report"],
+    consumedBy: ["Judge"],
+    completionRule: "Product shape has target_user, core_mechanism, features, core_loop, smallest_proof. Each concept maps to a synthesis direction.",
+  },
+  "Judge": {
+    artifactType: "judge-report",
+    requiredSections: ["disposition", "per-direction", "reasons"],
+    optionalSections: ["revision-targets", "revision-guidance"],
+    requiredEvidence: ["expanded-concept", "synthesis-report", "brainstorm-frame"],
+    consumedBy: [],
+    completionRule: "Disposition is accept/revise_expand/revise_synthesize/reject. Verdicts: ready_to_advance/needs_incubation/not_active_now. Actions: build_now/hold_for_followon/archive_but_retain. Revise requires targets.",
+  },
 };
 
 // ── Artifact validation ───────────────────────────────────────────────────────
@@ -295,6 +373,17 @@ export const PACK_HANDOFF_CONTRACTS = {
       { role: "Competitive Analyst", produces: "landscape-analysis", consumedBy: "Feedback Synthesizer" },
       { role: "Feedback Synthesizer", produces: "signal-synthesis", consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer", produces: "verdict", consumedBy: null },
+    ],
+  },
+  brainstorm: {
+    flow: [
+      { role: "Context Scout",       produces: "scout-finding",          consumedBy: "Normalizer" },
+      { role: "User Value Scout",    produces: "scout-finding",          consumedBy: "Normalizer" },
+      { role: "Creative Leap Scout", produces: "scout-finding",          consumedBy: "Normalizer" },
+      { role: "Normalizer",          produces: "normalized-finding-set", consumedBy: "Synthesizer" },
+      { role: "Synthesizer",         produces: "synthesis-report",       consumedBy: "Product Expander" },
+      { role: "Product Expander",    produces: "expanded-concept",       consumedBy: "Judge" },
+      { role: "Judge",               produces: "judge-report",           consumedBy: null },
     ],
   },
   treatment: {

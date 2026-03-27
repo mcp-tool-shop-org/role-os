@@ -2,10 +2,8 @@
   <a href="README.ja.md">日本語</a> | <a href="README.zh.md">中文</a> | <a href="README.es.md">Español</a> | <a href="README.fr.md">Français</a> | <a href="README.md">English</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (BR)</a>
 </p>
 
-# रोल ओएस
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/role-os/readme.png" alt="Role OS" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/role-os/readme.png" alt="Role OS" width="600">
 </p>
 
 <p align="center">
@@ -52,6 +50,35 @@ roleos start "something completely novel"
 
 यह सिस्टम कभी भी किसी गलत स्तर पर काम को लागू नहीं करता है। यह बताता है कि इसने प्रत्येक स्तर को क्यों चुना और वैकल्पिक विकल्प भी प्रदान करता है।
 
+**एक कमांड से सक्रिय निष्पादन:**
+
+```bash
+roleos run "fix the crash in save handler"
+# → Created run: run-1234
+# → Entry: MISSION (bugfix)
+# → Started step 0: Repo Researcher → diagnosis-report
+# → Guidance: Required sections: entrypoints, module-map, build-test-commands
+
+roleos next                    # Start the next step
+roleos complete diagnosis.md   # Complete the active step with artifact
+roleos explain                 # Show full run state and guidance
+roleos resume                  # Continue an interrupted run
+roleos report                  # Generate completion report
+roleos friction                # Measure operator touches
+```
+
+**जब चीजें गलत हो जाती हैं तो हस्तक्षेप:**
+
+```bash
+roleos retry 0                 # Retry a failed step
+roleos reroute 1 "Frontend Developer" "UI bug"  # Swap a role
+roleos escalate "Test Engineer" "Repo Researcher" "missed edge case" "re-diagnose"
+roleos block 2 "waiting for API spec"
+roleos reopen 0 "found issue in review"
+```
+
+यह सिस्टम डिस्क पर डेटा संग्रहीत करता है (`.claude/runs/`), इसलिए बाधित सत्र बिना किसी समस्या के फिर से शुरू हो जाते हैं। प्रत्येक चरण में ऑपरेटर के मार्गदर्शन शामिल हैं: क्या उत्पन्न करना है, आवश्यक अनुभाग और समाप्ति की शर्तें।
+
 **एक बार रूट होने के बाद:**
 
 1. **प्रत्येक भूमिका एक हैंडऑफ़ उत्पन्न करती है:** संरचित आउटपुट जिसमें ऐसे प्रमाण शामिल होते हैं जो अगले भूमिका के लिए अस्पष्टता को कम करते हैं।
@@ -97,19 +124,24 @@ roleos start "something completely novel"
 npx role-os init
 
 # Describe what you need — Role OS picks the right level:
-roleos start "fix the crash in save handler"
+roleos run "fix the crash in save handler"
+# → Creates run, picks bugfix mission, starts first step with guidance
+
+# Step through:
+roleos next                    # Start next step
+roleos complete artifact.md    # Complete with artifact
+roleos explain                 # Show full state
+roleos report                  # Completion report
 
 # Or go manual:
+roleos start "fix the crash"   # Entry decision only (no run)
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 roleos review .claude/packets/my-feature.md accept
-roleos status
 
 # Explore missions and packs:
 roleos mission list
-roleos mission show bugfix
 roleos packs list
-roleos packs show feature
 ```
 
 ## रोल ओएस का उपयोग कब नहीं करना चाहिए
@@ -148,6 +180,12 @@ roleos packs show feature
 - समान उपचार पैक, संरचनात्मक रूप से अलग रिपॉजिटरी (रचनात्मक कार्यक्षेत्र बनाम गेम)
 - उपचार पैक पोर्टेबल - किसी अनुबंध संशोधन की आवश्यकता नहीं
 
+**"गोल्डन रन" पर विचार-मंथन** (एमसीपी सर्वर मार्केटप्लेस विषय)
+- 9 भूमिकाओं की श्रृंखला, 4 विश्लेषक समानांतर में, क्रॉस-परीक्षा + विवाद ग्राफ का खंडन
+- 4 चुनौतियां जारी की गईं, 3 दावों को संकुचित किया गया, 1 अनसुलझा — स्वस्थ दबाव, कोई गतिरोध नहीं
+- प्रस्तुत कलाकृतियों से 16+ ट्रेस लिंक "ट्रूथ-लेयर" परमाणुओं तक
+- पूरी श्रृंखला की प्रामाणिकता सिद्ध: सत्य → परमाणु → विवाद → संश्लेषण → विस्तार → न्यायाधीश → प्रस्तुत करना → ट्रेस
+
 ## मुख्य विशेषताएं
 
 ये अपरिवर्तनीय हैं। यदि कोई बदलाव इनमें से किसी भी विशेषता को कमजोर करता है, तो उसे अस्वीकार कर दें।
@@ -166,7 +204,9 @@ role-os/
   src/
     entry.mjs                  ← Unified entry: mission → pack → free routing
     entry-cmd.mjs              ← `roleos start` CLI command
-    mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
+    run.mjs                    ← Persistent run engine: create → step → pause → resume → report
+    run-cmd.mjs                ← `roleos run/resume/next/explain/complete/fail` + interventions
+    mission.mjs                ← 7 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm)
     mission-run.mjs            ← Mission runner: create → step → complete → report
     mission-cmd.mjs            ← `roleos mission` CLI commands
     route.mjs                  ← 31-role routing + dynamic chain builder
@@ -175,14 +215,17 @@ role-os/
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
     dispatch.mjs               ← Runtime dispatch manifests for multi-claude
-    artifacts.mjs              ← 20 per-role artifact contracts + 7 pack handoffs
+    artifacts.mjs              ← 30 per-role artifact contracts + 7 pack handoffs
     decompose.mjs              ← Composite task detection + splitting
     composite.mjs              ← Dependency-ordered execution + recovery
     replan.mjs                 ← Mid-run adaptive replanning
     calibration.mjs            ← Outcome recording + weight tuning
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
     session.mjs                ← Session scaffolding + doctor
-  test/                        ← 527 tests across 20 test files
+    brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
+    brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
+    brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
+  test/                        ← 894 tests across 30 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
@@ -212,6 +255,8 @@ role-os/
 | **Mission library** | 6 नामित मिशन (फ़ीचर-शिप, बगफिक्स, ट्रीटमेंट, डॉक्स-रिलीज़, सुरक्षा-हार्डनिंग, रिसर्च-लॉन्च)। प्रत्येक मिशन में पैकेट, भूमिका श्रृंखला, कलाकृति प्रवाह, एस्केलेशन शाखाएँ, और आंशिक परिभाषा शामिल है। सभी 6 मिशनों का परीक्षण किया गया है और उन्हें बेहतर बनाया गया है। | ✓ जारी किया गया |
 | **Mission runner** | रन बनाएं, ट्रैक की गई स्थिति के साथ चरणों से गुजरें, ईमानदारी से रिपोर्टिंग के साथ पूरा करें/विफल करें। अवरुद्ध चरणों का प्रसार, श्रृंखला से बाहर एस्केलेशन चेतावनियाँ, और अंतिम चरण को फिर से खोलने की सुविधा। | ✓ जारी किया गया |
 | **Unified entry** | `roleos start` कमांड स्वचालित रूप से मिशन, पैकेट, या स्वतंत्र रूटिंग का चयन करता है। आत्मविश्वास स्कोर, विकल्पों, और संयुक्त पहचान के साथ एक वैकल्पिक प्रणाली। | ✓ जारी किया गया |
+| **Persistent runs** | `roleos run` डिस्क-आधारित निष्पादन बनाता है। `resume`, `next`, `explain`, `complete`, `fail`। हस्तक्षेप: पुनर्निर्देशित करें, बढ़ाएं, पुनः प्रयास करें, अवरुद्ध करें, फिर से खोलें। चरण-स्तरीय मार्गदर्शन। घर्षण माप। | ✓ जारी किया गया |
+| **Brainstorm** | दो-स्तरीय आर्किटेक्चर: सत्य (भूमिका-आधारित स्कीमा, उत्पत्ति परमाणु, क्रॉस-परीक्षा विवाद ग्राफ) + प्रस्तुत करना (5 अलग-अलग आवाजें, शब्द संबंधी प्रतिबंध, बहस का प्रतिलेख)। ट्रेस लिंक साबित करते हैं कि प्रत्येक प्रस्तुत दावा एक "ट्रूथ" परमाणु से मेल खाता है। "गोल्डन रन": 894 परीक्षण। | ✓ जारी किया गया |
 
 ## 6 मिशन
 
@@ -223,23 +268,47 @@ role-os/
 | `docs-release` | दस्तावेज़ | 2 | दस्तावेज़ लिखें/अपडेट करें, रिलीज़ नोट्स |
 | `security-hardening` | सुरक्षा | 4 | खतरे का मॉडल, ऑडिट, कमजोरियों को ठीक करें, फिर से ऑडिट करें, सत्यापन |
 | `research-launch` | अनुसंधान | 4 | प्रश्न तैयार करें, अनुसंधान करें, निष्कर्षों को दस्तावेज़ करें, निर्णय लें |
+| `brainstorm` | विचार-मंथन | 9 | ट्रेस करने योग्य असहमति और निर्णय के साथ संरचित बहु-दृष्टिकोण जांच। |
 
 प्रत्येक मिशन में ईमानदार-आंशिक परिभाषाएँ शामिल हैं - जब कोई कार्य रुक जाता है, तो सिस्टम यह दस्तावेज़ करता है कि क्या पूरा हो गया है और क्या शेष है, बजाय इसके कि वह झूठा दावा करे कि कार्य पूरा हो गया है।
 
+### विचार-मंथन मिशन
+
+यह "एआई विचार-मंथन" नहीं है। विचार-मंथन मिशन **कानून के तहत विशिष्ट भूमिकाएं हैं, जिसमें ट्रेस करने योग्य असहमति और निर्णय-आधारित आउटपुट होता है।**
+
+```bash
+roleos run "explore product directions for a developer tool discovery platform"
+# → MISSION: Brainstorm (Structured Inquiry)
+#   Chain: 4 Analysts (parallel) → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge
+```
+
+**यह क्या अलग बनाता है:**
+
+- **लेयर 1 (सत्य):** चार विश्लेषक भूमिका-आधारित स्कीमा (संदर्भ मानचित्र, उपयोगकर्ता मूल्य मानचित्र, यांत्रिकी मानचित्र, स्थिति मानचित्र) उत्पन्न करते हैं — कोई साझा पाठ नहीं। प्रत्येक भूमिका पर "ब्लाइंडस्पॉट" लागू किया जाता है: प्रतिबंधित वाक्यांश, प्रतिबंधित दावे के प्रकार, फ़िल्टर किए गए इनपुट विभाजन। परमाणु उत्पत्ति जानकारी रखते हैं। एक निर्देशित क्रॉस-परीक्षा ग्राफ लक्षित चुनौतियां उत्पन्न करता है। मूल विश्लेषक दबाव में बचाव करते हैं, संकुचित करते हैं या वापस लेते हैं।
+
+- **लेयर 2 (प्रस्तुत करना):** पांच अलग-अलग मानवीय आवाजें (सीमा ज्ञापन, क्षेत्र नोट्स, सिस्टम स्केच, दावा संक्षिप्त, क्रॉस-परीक्षा प्रतिलेख) हैं, जिनमें शब्द संबंधी प्रतिबंध हैं जो आवाजों के एक होने से रोकते हैं। संश्लेषण "सत्य" का उपयोग करता है, कभी भी प्रस्तुत पाठ का नहीं। दोनों परतें हमेशा उपलब्ध होती हैं।
+
+- **श्रृंखला की प्रामाणिकता:** प्रत्येक प्रस्तुत वाक्य एक "ट्रूथ-लेयर" परमाणु से जुड़ा होता है। संश्लेषण निर्देशों में परमाणुओं का उल्लेख होता है। क्रॉस-परीक्षा वास्तविक दावा आईडी को लक्षित करती है। विवाद ग्राफ उत्पाद है, पाठ नहीं।
+
+**सिद्ध:** v0.4 "गोल्डन रन" — 894 परीक्षण, पूरी श्रृंखला की प्रामाणिकता सत्यापित। पूर्ण कलाकृति श्रृंखला के लिए [`examples/golden-run.md`](examples/golden-run.md) देखें।
+
 ## स्थिति
 
-- v0.1–v0.4: आधार – परीक्षण, अपनाना, उपचार पैकेज, शुरुआती पैकेज।
-- v1.0.0: 32 भूमिकाएँ, पूर्ण कमांड-लाइन इंटरफेस, सिद्ध उपचार, मल्टी-रिपो पोर्टेबिलिटी।
-- v1.0.2: भूमिका ऑपरेटिंग सिस्टम लॉकिंग (बूटस्ट्रैप सत्य सुधार, init --force)।
+- v0.1–v0.4: आधार — परीक्षण, अपनाना, उपचार पैकेज, शुरुआती पैकेज।
+- v1.0.0: 32 भूमिकाएँ, पूर्ण कमांड-लाइन इंटरफ़ेस (CLI), सिद्ध उपचार, मल्टी-रिपो पोर्टेबिलिटी।
+- v1.0.2: भूमिका ऑपरेटिंग सिस्टम (OS) लॉकिंग (बूटस्ट्रैप सत्य सुधार, init --force)।
 - v1.1.0: 31 भूमिकाएँ, पूर्ण रूटिंग स्पाइन, संघर्ष का पता लगाना, वृद्धि, प्रमाण, डिस्पैच, 7 सिद्ध टीम पैकेज। 35 निष्पादन परीक्षण। 212 परीक्षण।
-- v1.2.0: कैलिब्रेटेड पैकेज डिफ़ॉल्ट विकल्प के रूप में प्रचारित। स्वचालित चयन, विसंगति का पता लगाना, वैकल्पिक सुझाव, फ्री-रूटिंग बैकअप। 246 परीक्षण।
-- v1.3.0: परिणाम कैलिब्रेशन, मिश्रित-कार्य विघटन, समग्र निष्पादन, अनुकूलन योजना। 317 परीक्षण।
-- v1.4.0: सेशन स्पाइन – `roleos init claude`, `roleos doctor`, रूट कार्ड, /roleos-route + /roleos-review + /roleos-status कमांड। 335 परीक्षण।
-- v1.5.0: हुक स्पाइन – रनटाइम प्रवर्तन के लिए 5 लाइफसाइकिल हुक। 358 परीक्षण।
-- v1.6.0: आर्टिफैक्ट स्पाइन – 20 प्रति-भूमिका आर्टिफैक्ट अनुबंध, 7 पैकेज हैंडऑफ अनुबंध, संरचनात्मक सत्यापन। 385 परीक्षण।
-- v1.7.0: पूर्णता का प्रमाण – वास्तविक कार्य पूरे स्टैक के माध्यम से चलाए जाते हैं। `roleos artifacts` कमांड-लाइन इंटरफेस। संरचनात्मक सुधारों पर ईमानदार वृद्धि। 398 परीक्षण।
-- v1.8.0: मिशन लाइब्रेरी (फेज एस) – 6 नामित मिशन, रनर इंजन, पूर्णता रिपोर्ट। 6 वास्तविक परीक्षण रनों से सुरक्षित किया गया। 481 परीक्षण।
-- **v1.9.0**: एकीकृत प्रवेश पथ (फेज टी) – `roleos start` स्वचालित रूप से मिशन, पैकेज या फ्री रूटिंग का निर्णय लेता है। बैकअप प्रणाली, समग्र पता लगाना, प्रवेश-पथ तुलना परीक्षण। 527 परीक्षण।
+- v1.2.0: कैलिब्रेटेड पैकेज डिफ़ॉल्ट विकल्प के रूप में। स्वचालित चयन, बेमेल का पता लगाना, वैकल्पिक सुझाव, फ्री-रूटिंग फ़ॉलबैक। 246 परीक्षण।
+- v1.3.0: परिणाम कैलिब्रेशन, मिश्रित-कार्य अपघटन, समग्र निष्पादन, अनुकूली पुनर्योजना। 317 परीक्षण।
+- v1.4.0: सेशन स्पाइन — `roleos init claude`, `roleos doctor`, रूट कार्ड, /roleos-route + /roleos-review + /roleos-status कमांड। 335 परीक्षण।
+- v1.5.0: हुक स्पाइन — रनटाइम प्रवर्तन के लिए 5 लाइफसाइकिल हुक। 358 परीक्षण।
+- v1.6.0: आर्टिफैक्ट स्पाइन — 20 प्रति-भूमिका आर्टिफैक्ट अनुबंध, 7 पैकेज हैंडऑफ़ अनुबंध, संरचनात्मक सत्यापन। 385 परीक्षण।
+- v1.7.0: पूर्णता का प्रमाण — वास्तविक कार्य पूरे स्टैक के माध्यम से चलाए जाते हैं। `roleos artifacts` CLI। संरचनात्मक सुधारों पर ईमानदार वृद्धि। 398 परीक्षण।
+- v1.8.0: मिशन लाइब्रेरी (फेज S) — 6 नामित मिशन, रनर इंजन, पूर्णता रिपोर्ट। 6 वास्तविक परीक्षण रनों से सुरक्षित किया गया। 481 परीक्षण।
+- v1.9.0: एकीकृत प्रवेश पथ (फेज T) — `roleos start` स्वचालित रूप से मिशन बनाम पैकेज बनाम फ्री रूटिंग का निर्णय लेता है। फ़ॉलबैक सीढ़ी, समग्र पता लगाना, प्रवेश-पथ तुलना परीक्षण। 527 परीक्षण।
+- **v2.0.0**: ऑपरेटर घर्षण सुधार (फेज U) — `roleos run` स्थायी डिस्क-समर्थित रन बनाता है। फिर से शुरू करें, अगला, समझाएं, पूरा करें, विफल। हस्तक्षेप: पुनर्निर्देशित करें, बढ़ाएं, पुनः प्रयास करें, अवरुद्ध करें, पुनः खोलें। प्रत्येक चरण में चरण-स्थानीय मार्गदर्शन। घर्षण माप। 6 घर्षण परीक्षण। 613 परीक्षण।
+- **v2.0.1**: हैंडबुक ऑडिट, शुरुआती दस्तावेज़, परीक्षण गणना सुधार। 617 परीक्षण।
+- **v2.1.0**: ब्रेनस्टॉर्म मिशन (v0.4) — कानून के तहत विशिष्ट भूमिकाएँ, पता लगाने योग्य असहमति, निर्णय-वाहक आउटपुट। दो-स्तरीय आर्किटेक्चर (सत्य + रेंडर), क्रॉस-परीक्षा अनुमति मैट्रिक्स, विवाद ग्राफ, गोल्डन रन प्रमाण। 7 मिशन, 50 भूमिकाएँ, 8 पैकेज। 894 परीक्षण।
 
 ## लाइसेंस
 

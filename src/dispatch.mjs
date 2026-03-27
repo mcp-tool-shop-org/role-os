@@ -65,6 +65,29 @@ const TOOL_PROFILES = {
   "Competitive Analyst":  ["Read", "Glob", "Grep"],
   "Trend Researcher":     ["Read", "Glob", "Grep"],
   "User Interview Synthesizer": ["Read", "Glob", "Grep"],
+
+  // Brainstorm
+  "Context Scout":        ["Read", "Glob", "Grep"],
+  "User Value Scout":     ["Read", "Glob", "Grep"],
+  "Creative Leap Scout":  ["Read", "Glob", "Grep"],
+  "Normalizer":           ["Read", "Glob", "Grep"],
+  "Synthesizer":          ["Read", "Glob", "Grep", "Write"],
+  "Product Expander":     ["Read", "Glob", "Grep", "Write"],
+  "Judge":                ["Read", "Glob", "Grep"],
+  "Mechanics Scout":      ["Read", "Glob", "Grep"],
+  "Market Scout":         ["Read", "Glob", "Grep"],
+  "Contrarian Scout":     ["Read", "Glob", "Grep"],
+  "Feasibility Scout":    ["Read", "Glob", "Grep"],
+  "Quality Bar Scout":    ["Read", "Glob", "Grep"],
+  "Scenario Expander":    ["Read", "Glob", "Grep", "Write"],
+  "Moat Expander":        ["Read", "Glob", "Grep", "Write"],
+
+  // Brainstorm v0.3 analysts
+  "Context Analyst":      ["Read", "Glob", "Grep"],
+  "User Value Analyst":   ["Read", "Glob", "Grep"],
+  "Mechanics Analyst":    ["Read", "Glob", "Grep"],
+  "Positioning Analyst":  ["Read", "Glob", "Grep"],
+  "Contrarian Analyst":   ["Read", "Glob", "Grep"],
 };
 
 // ── Default role config ─────────────────────────────────────────────────────

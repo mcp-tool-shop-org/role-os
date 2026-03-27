@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.1.0
+
+### Added
+
+#### Brainstorm Mission (v0.4) — Structured Inquiry with Traceable Disagreement
+
+- **Brainstorm mission** — 7th mission in the library, 9-role chain with two-layer architecture
+- **Layer 1 (truth):** 4 analyst roles emit role-native schemas (ContextMap, UserValueMap, MechanicsMap, PositioningMap), not shared prose. Blindspot enforcement: forbidden phrases, forbidden claim kinds, filtered input partitions per role. Provenance-preserving atoms carry source_role, claim_kind, allowed_challengers. Cross-examination permission matrix (directed graph). Rebut phase: original analysts defend, narrow, or retract under pressure.
+- **Layer 2 (render):** 5 distinct voices — Boundary Memo (taxonomist), Field Notes (ethnographer), System Sketch (whiteboard), Claim Brief (strategist), Cross-Exam Transcript (litigator). Lexical bans prevent voice convergence. Debate transcript generator. Both layers always available.
+- **Trace links:** Every rendered sentence maps to a truth-layer atom. Synthesis cites atoms, never prose.
+- **Golden run proof:** Full artifact chain for MCP server marketplace topic — truth artifacts, dispute graph (4 challenges, 3 narrowed, 1 unresolved), rendered artifacts, trace map (16+ links). Published as `examples/golden-run.md`.
+- **Result formatter:** `formatBrainstormResult()` produces saveable markdown with verdict, directions, dispute, tensions, rendered artifacts (opt-in), and evidence trail. Layer parameter controls truth-only vs both.
+- **Artifact contracts:** 9 brainstorm role contracts (replacing 3 v0.1 scout contracts) with completion rules, required evidence, and consumer mapping.
+- **Pack update:** Brainstorm pack updated from v0.1 scouts to v0.3/v0.4 analysts with correct chain order and required artifacts.
+
+### Changed
+
+- Mission count: 6 → 7
+- Role count: 31 → 50 (brainstorm analysts, contrarian, plus existing)
+- Artifact contract count: 20 → 30
+- Test count: 617 → 905
+
 ## 2.0.1
 
 ### Added

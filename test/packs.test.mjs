@@ -6,8 +6,8 @@ import { ROLE_CATALOG } from "../src/route.mjs";
 // ── Pack structure ────────────────────────────────────────────────────────────
 
 describe("TEAM_PACKS", () => {
-  it("has 7 packs", () => {
-    assert.equal(Object.keys(TEAM_PACKS).length, 7);
+  it("has 8 packs", () => {
+    assert.equal(Object.keys(TEAM_PACKS).length, 8);
   });
 
   it("every pack has required fields", () => {
@@ -35,9 +35,9 @@ describe("TEAM_PACKS", () => {
     }
   });
 
-  it("every pack includes Critic Reviewer (Orchestrator is conditional)", () => {
+  it("every pack includes Critic Reviewer or Judge (Orchestrator is conditional)", () => {
     for (const [key, pack] of Object.entries(TEAM_PACKS)) {
-      assert.ok(pack.roles.includes("Critic Reviewer"), `${key} missing Critic Reviewer`);
+      assert.ok(pack.roles.includes("Critic Reviewer") || pack.roles.includes("Judge"), `${key} missing Critic Reviewer or Judge`);
       // Orchestrator is now conditional — only required packs include it
       if (pack.orchestratorRequired) {
         assert.ok(pack.roles.includes("Orchestrator"), `${key} declares orchestratorRequired but missing Orchestrator`);
@@ -126,9 +126,9 @@ describe("getPack", () => {
 // ── Pack listing ──────────────────────────────────────────────────────────────
 
 describe("listPacks", () => {
-  it("returns all 7 packs with summary info", () => {
+  it("returns all 8 packs with summary info", () => {
     const packs = listPacks();
-    assert.equal(packs.length, 7);
+    assert.equal(packs.length, 8);
     for (const p of packs) {
       assert.ok(p.key);
       assert.ok(p.name);

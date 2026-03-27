@@ -2,10 +2,8 @@
   <a href="README.ja.md">日本語</a> | <a href="README.zh.md">中文</a> | <a href="README.es.md">Español</a> | <a href="README.md">English</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (BR)</a>
 </p>
 
-# Role OS
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/role-os/readme.png" alt="Role OS" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/role-os/readme.png" alt="Role OS" width="600">
 </p>
 
 <p align="center">
@@ -52,6 +50,35 @@ roleos start "something completely novel"
 
 Le système ne force jamais une tâche à travers le mauvais niveau d'abstraction. Il explique pourquoi il a choisi chaque niveau et propose des alternatives.
 
+**Une seule commande pour activer l'exécution :**
+
+```bash
+roleos run "fix the crash in save handler"
+# → Created run: run-1234
+# → Entry: MISSION (bugfix)
+# → Started step 0: Repo Researcher → diagnosis-report
+# → Guidance: Required sections: entrypoints, module-map, build-test-commands
+
+roleos next                    # Start the next step
+roleos complete diagnosis.md   # Complete the active step with artifact
+roleos explain                 # Show full run state and guidance
+roleos resume                  # Continue an interrupted run
+roleos report                  # Generate completion report
+roleos friction                # Measure operator touches
+```
+
+**Interventions en cas de problème :**
+
+```bash
+roleos retry 0                 # Retry a failed step
+roleos reroute 1 "Frontend Developer" "UI bug"  # Swap a role
+roleos escalate "Test Engineer" "Repo Researcher" "missed edge case" "re-diagnose"
+roleos block 2 "waiting for API spec"
+roleos reopen 0 "found issue in review"
+```
+
+Les exécutions sont enregistrées sur le disque (dans le dossier `.claude/runs/`), ce qui permet de reprendre les sessions interrompues sans problème. Chaque étape comprend des instructions pour l'utilisateur : ce qu'il faut produire, les sections requises et les conditions d'arrêt.
+
 **Une fois routée :**
 
 1. **Chaque rôle produit une transmission** — sortie structurée avec des éléments de preuve qui réduisent l'ambiguïté pour le rôle suivant.
@@ -97,19 +124,24 @@ Chaque rôle a un contrat complet : mission, conditions d'utilisation, condition
 npx role-os init
 
 # Describe what you need — Role OS picks the right level:
-roleos start "fix the crash in save handler"
+roleos run "fix the crash in save handler"
+# → Creates run, picks bugfix mission, starts first step with guidance
+
+# Step through:
+roleos next                    # Start next step
+roleos complete artifact.md    # Complete with artifact
+roleos explain                 # Show full state
+roleos report                  # Completion report
 
 # Or go manual:
+roleos start "fix the crash"   # Entry decision only (no run)
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 roleos review .claude/packets/my-feature.md accept
-roleos status
 
 # Explore missions and packs:
 roleos mission list
-roleos mission show bugfix
 roleos packs list
-roleos packs show feature
 ```
 
 ## Quand ne pas utiliser Role OS
@@ -148,6 +180,12 @@ Role OS a été testé sur trois types de tâches différents dans deux référe
 - Même ensemble de traitement, dépôt structurellement différent (espace de travail créatif vs jeu)
 - Ensemble de traitement portable — aucune modification de contrat n'est nécessaire
 
+**Brainstorming pour une exécution optimale** (sujet du marché de serveurs MCP)
+- Chaîne de 9 rôles, 4 analystes en parallèle, examen croisé + réfutation, graphe de désaccord.
+- 4 défis lancés, 3 affirmations affinées, 1 non résolue – pression saine, pas de blocage.
+- Plus de 16 liens de traçabilité des artefacts générés vers les éléments de base de la couche de vérité.
+- Chaîne de traçabilité complète prouvée : vérité → éléments de base → désaccord → synthèse → expansion → jugement → rendu → traçabilité.
+
 ## Propriétés essentielles
 
 Ce sont des éléments non négociables. Si une modification affaiblit l'un de ces éléments, elle doit être rejetée.
@@ -166,7 +204,9 @@ role-os/
   src/
     entry.mjs                  ← Unified entry: mission → pack → free routing
     entry-cmd.mjs              ← `roleos start` CLI command
-    mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
+    run.mjs                    ← Persistent run engine: create → step → pause → resume → report
+    run-cmd.mjs                ← `roleos run/resume/next/explain/complete/fail` + interventions
+    mission.mjs                ← 7 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm)
     mission-run.mjs            ← Mission runner: create → step → complete → report
     mission-cmd.mjs            ← `roleos mission` CLI commands
     route.mjs                  ← 31-role routing + dynamic chain builder
@@ -175,14 +215,17 @@ role-os/
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
     dispatch.mjs               ← Runtime dispatch manifests for multi-claude
-    artifacts.mjs              ← 20 per-role artifact contracts + 7 pack handoffs
+    artifacts.mjs              ← 30 per-role artifact contracts + 7 pack handoffs
     decompose.mjs              ← Composite task detection + splitting
     composite.mjs              ← Dependency-ordered execution + recovery
     replan.mjs                 ← Mid-run adaptive replanning
     calibration.mjs            ← Outcome recording + weight tuning
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
     session.mjs                ← Session scaffolding + doctor
-  test/                        ← 527 tests across 20 test files
+    brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
+    brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
+    brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
+  test/                        ← 894 tests across 30 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
@@ -212,6 +255,8 @@ Le rôle OS fonctionne **uniquement localement**. Il copie les modèles Markdown
 | **Mission library** | 6 missions nommées (développement de fonctionnalité, correction de bug, amélioration, publication de documentation, renforcement de la sécurité, lancement de recherche). Chaque mission définit l'ensemble, la chaîne de rôles, le flux d'artefacts, les branches de relance et une définition partielle et honnête. Les 6 missions ont été testées et optimisées. | ✓ Déployé |
 | **Mission runner** | Création d'exécutions, suivi de l'état, finalisation ou échec avec un rapport précis. Propagation des étapes bloquées, avertissements de relance en dehors de la chaîne, réouverture de la dernière étape. | ✓ Déployé |
 | **Unified entry** | `roleos start` détermine automatiquement si l'exécution est une mission, un ensemble ou un routage libre. Mécanisme de repli avec scores de confiance, alternatives et détection des tâches complexes. | ✓ Déployé |
+| **Persistent runs** | `roleos run` crée des exécutions enregistrées sur le disque. Commandes : `resume` (reprendre), `next` (suivant), `explain` (expliquer), `complete` (terminer), `fail` (échec). Interventions : `reroute` (rediriger), `escalate` (escalader), `retry` (réessayer), `block` (bloquer), `reopen` (réouvrir). Instructions spécifiques à chaque étape. Mesure du niveau de friction. | ✓ Déployé |
+| **Brainstorm** | Architecture à deux niveaux : vérité (schémas natifs des rôles, éléments de base de provenance, graphe de désaccord) + rendu (5 voix distinctes, interdictions lexicales, transcription du débat). Les liens de traçabilité prouvent que chaque affirmation rendue correspond à un élément de base de la couche de vérité. Exécution optimale : 894 tests. | ✓ Déployé |
 
 ## 6 missions
 
@@ -223,23 +268,47 @@ Le rôle OS fonctionne **uniquement localement**. Il copie les modèles Markdown
 | `docs-release` | Documentation | 2 | Rédaction/mise à jour de la documentation, notes de publication |
 | `security-hardening` | Sécurité | 4 | Analyse des menaces, audit, correction des vulnérabilités, nouvel audit, vérification |
 | `research-launch` | Recherche | 4 | Définition de la question, recherche, documentation des résultats, prise de décision |
+| `brainstorm` | brainstorming | 9 | Enquête structurée avec plusieurs perspectives, désaccord traçable et verdict. |
 
 Chaque mission inclut des définitions partielles et honnêtes : lorsque le travail est bloqué, le système documente ce qui a été réalisé et ce qui reste, au lieu de prétendre que le travail est terminé.
+
+### Mission de brainstorming
+
+Ce n'est pas un "brainstorming par IA". La mission de brainstorming est **l'attribution de rôles spécialisés dans le domaine juridique, avec un désaccord traçable et une production de résultats justifiés.**
+
+```bash
+roleos run "explore product directions for a developer tool discovery platform"
+# → MISSION: Brainstorm (Structured Inquiry)
+#   Chain: 4 Analysts (parallel) → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge
+```
+
+**Ce qui le différencie :**
+
+- **Couche 1 (vérité) :** Quatre analystes produisent des schémas spécifiques à chaque rôle (ContextMap, UserValueMap, MechanicsMap, PositioningMap) – pas de prose partagée. Chaque rôle est soumis à des contraintes pour éviter les biais : phrases interdites, types d'affirmations interdits, partitions d'entrée filtrées. Les éléments de base contiennent des informations de provenance. Un graphe d'examen croisé dirigé génère des défis ciblés. Les analystes originaux défendent, affinent ou retirent leurs affirmations sous pression.
+
+- **Couche 2 (rendu) :** Cinq voix humaines distinctes (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) avec des interdictions lexicales pour éviter la convergence des voix. La synthèse utilise la couche de vérité, et non la prose rendue. Les deux couches sont toujours disponibles.
+
+- **Chaîne de traçabilité :** Chaque phrase rendue est traçable jusqu'à un élément de base de la couche de vérité. Les instructions de synthèse citent les éléments de base. Les cibles de l'examen croisé sont des identifiants d'affirmations réels. Le graphe de désaccord est le résultat, et non la prose.
+
+**Prouvé :** Exécution optimale v0.4 – 894 tests, chaîne de traçabilité complète vérifiée. Consultez [`examples/golden-run.md`](examples/golden-run.md) pour la chaîne complète des artefacts.
 
 ## Statut
 
 - v0.1–v0.4 : Bases – essais, adoption (du produit), ensemble de traitement, ensemble de démarrage.
-- v1.0.0 : 32 rôles, interface en ligne de commande complète, traitement éprouvé, portabilité multi-dépôts.
-- v1.0.2 : Blocage des rôles au niveau du système d'exploitation (corrections de la configuration initiale, `init --force`).
-- v1.1.0 : 31 rôles, architecture de routage complète, détection des conflits, escalade, preuves, répartition, 7 ensembles d'outils éprouvés. 35 essais d'exécution. 212 tests.
-- v1.2.0 : Les ensembles calibrés sont promus au mode par défaut. Sélection automatique, détection des incompatibilités, suggestion d'alternatives, basculement vers un routage libre. 246 tests.
-- v1.3.0 : Calibrage des résultats, décomposition des tâches complexes, exécution composite, replanification adaptative. 317 tests.
-- v1.4.0 : Architecture de session – `roleos init claude`, `roleos doctor`, cartes de routage, commandes `/roleos-route`, `/roleos-review` et `/roleos-status`. 335 tests.
-- v1.5.0 : Architecture de connexion – 5 points d'accroche pour l'application des règles au moment de l'exécution. 358 tests.
-- v1.6.0 : Architecture des artefacts – 20 contrats d'artefacts par rôle, 7 contrats de transfert d'ensembles, validation structurelle. 385 tests.
-- v1.7.0 : Preuve de complétion – tâches réelles exécutées sur l'ensemble de la pile. Interface en ligne de commande `roleos artifacts`. Escalade transparente pour les corrections structurelles. 398 tests.
-- v1.8.0 : Bibliothèque de missions (Phase S) – 6 missions nommées, moteur d'exécution, rapports de complétion. Durcissement basé sur 6 essais réels. 481 tests.
-- **v1.9.0** : Chemin d'accès unifié (Phase T) – `roleos start` détermine automatiquement si l'on utilise une mission, un ensemble d'outils ou un routage libre. Système de basculement, détection composite, essais de comparaison des chemins d'accès. 527 tests.
+- v1.0.0 : 32 rôles, CLI complète, traitement éprouvé, portabilité multi-dépôts.
+- v1.0.2 : Blocage du système d'exploitation par rôle (corrections de la "vérité" de l'initialisation, `init --force`).
+- v1.1.0 : 31 rôles, infrastructure de routage complète, détection de conflits, escalade, preuves, répartition, 7 ensembles d'équipe éprouvés. 35 essais d'exécution. 212 tests.
+- v1.2.0 : Ensembles calibrés promus au point d'entrée par défaut. Sélection automatique, détection de discordances, suggestion alternative, repli sur le routage libre. 246 tests.
+- v1.3.0 : Calibrage des résultats, décomposition de tâches complexes, exécution composite, replanification adaptative. 317 tests.
+- v1.4.0 : Infrastructure de session – `roleos init claude`, `roleos doctor`, cartes de routage, commandes `/roleos-route`, `/roleos-review` et `/roleos-status`. 335 tests.
+- v1.5.0 : Infrastructure de "hooks" – 5 "hooks" de cycle de vie pour l'application en temps réel. 358 tests.
+- v1.6.0 : Infrastructure des artefacts – 20 contrats d'artefacts par rôle, 7 contrats de transmission d'ensembles, validation structurelle. 385 tests.
+- v1.7.0 : Preuve de complétion – tâches réelles exécutées sur toute la pile. CLI `roleos artifacts`. Escalade honnête pour les corrections structurelles. 398 tests.
+- v1.8.0 : Bibliothèque de missions (Phase S) – 6 missions nommées, moteur d'exécution, rapports de complétion. Durcissement basé sur 6 exécutions réelles. 481 tests.
+- v1.9.0 : Chemin d'entrée unifié (Phase T) – `roleos start` décide automatiquement entre mission, ensemble et routage libre. Système de repli, détection composite, essais de comparaison du chemin d'entrée. 527 tests.
+- **v2.0.0** : Optimisation de l'expérience utilisateur (Phase U) – `roleos run` crée des exécutions persistantes avec sauvegarde sur disque. Reprise, suivant, explication, complétion, échec. Interventions : réacheminement, escalade, nouvelle tentative, blocage, réouverture. Assistance spécifique à chaque étape. Mesure du niveau de difficulté. 6 essais de difficulté. 613 tests.
+- **v2.0.1** : Audit du manuel, documentation pour débutants, corrections du nombre de tests. 617 tests.
+- **v2.1.0** : Mission de brainstorming (v0.4) – rôles spécialisés dans le domaine juridique, désaccord traçable, résultat avec verdict. Architecture à deux niveaux (vérité + rendu), matrice de permissions de contre-interrogatoire, graphe de litiges, preuve d'exécution optimale. 7 missions, 50 rôles, 8 ensembles. 894 tests.
 
 ## Licence
 
