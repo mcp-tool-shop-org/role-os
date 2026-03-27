@@ -4305,6 +4305,1609 @@
       "timestamp": 1774412103524,
       "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\n- **v1.9.0**: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.",
       "targetLang": "pt"
+    },
+    "ef6f6b88e22197cf": {
+      "translation": "一个多 Claude 操作系统，它通过 50 个专业角色合同来配置、分配、验证并执行工作。该系统可以创建任务包，根据角色匹配评分组建合适的团队，在执行前检测潜在问题，并在工作被阻塞或拒绝时自动进行恢复，并且要求在每个决策中提供结构化的证据。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "A multi-Claude operating system that staffs, routes, validates, and runs work through 50 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.\r",
+      "targetLang": "zh"
+    },
+    "8f70cc73b842de3d": {
+      "translation": "Role OS 是一种专业的方式来使用多实例的 Claude 模型。它能够避免通用人工智能工作流程中可能出现的特定问题。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:\r",
+      "targetLang": "zh"
+    },
+    "267298f114dacb31": {
+      "translation": "描述您的任务。系统会自动根据任务的角色，选择合适的自动化级别。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Describe your task. Role OS decides the right level of orchestration automatically.\r",
+      "targetLang": "zh"
+    },
+    "939b6b467e83c8ad": {
+      "translation": "备用梯子：",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "**The fallback ladder:**\r",
+      "targetLang": "zh"
+    },
+    "a67b087d1024a8d4": {
+      "translation": "1. **任务 (Mission)**：当任务符合已验证的、可重复的工作流程时（例如：bug修复、问题处理、功能发布、文档编写、安全相关、研究）。已知的工作流程链、artifact（成果物）流程、升级流程分支，以及明确但可能不全面的定义。\n2. **打包 (Pack)**：当任务属于已知的任务类型，但不是完整的任务流程时。有7个经过校准的团队套餐，具有自动选择功能和防止不匹配的机制。\n3. **自由路由 (Free routing)**：当任务是全新的、混合型的或不确定的任务时。系统会根据任务内容，对所有31个角色进行评估，并动态构建工作流程。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.\r\n2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.\r\n3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.\r",
+      "targetLang": "zh"
+    },
+    "b53b67e951958999": {
+      "translation": "该系统不会强行使用错误的抽象层级进行操作。它会解释为什么选择每个层级，并提供替代方案。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.\r",
+      "targetLang": "zh"
+    },
+    "1562dbd43c1cab31": {
+      "translation": "**一个命令即可启动执行：**",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "**One command to active execution:**\r",
+      "targetLang": "zh"
+    },
+    "9e6b8630fc8307f0": {
+      "translation": "**当出现问题时的应对措施：**",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "**Interventions when things go wrong:**\r",
+      "targetLang": "zh"
+    },
+    "50cb9dafb1d08ac2": {
+      "translation": "运行记录会保存到磁盘上的 `.claude/runs/` 目录下，因此即使会话中断，也可以顺利恢复。每个步骤都包含操作指导，说明需要生成的内容、必填部分以及停止条件。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Runs persist to disk (`.claude/runs/`), so interrupted sessions resume cleanly. Every step includes operator guidance: what to produce, required sections, and stop conditions.\r",
+      "targetLang": "zh"
+    },
+    "f40e4b6501327d62": {
+      "translation": "**一旦已确定路线：**",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "**Once routed:**\r",
+      "targetLang": "zh"
+    },
+    "5014cef93fc846af": {
+      "translation": "1. **每个环节都会产生交接结果**——这是一种结构化的输出，包含佐证材料，旨在减少后续环节中的歧义。\n2. **审核人员根据合同进行审查**——他们会根据结构化的证据来接受、拒绝或阻止，而不是基于主观印象。\n3. **自动进行问题解决流程**——被阻止或拒绝的工作会自动分配给合适的处理人员，并附带原因、问题类型以及所需的资料。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role\r\n2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression\r\n3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact\r",
+      "targetLang": "zh"
+    },
+    "2675f0b9936cb7c6": {
+      "translation": "组织部署状态。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Org rollout state",
+      "targetLang": "zh"
+    },
+    "7dae498219783699": {
+      "translation": "整个组织范围内的部署状态（包括队列、决策、审计记录以及每个仓库的锁定信息）存储在一个独立的私有仓库中：[`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout)。这个仓库是产品本身，而该仓库中的内容则代表了实际的运行状态。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.\r",
+      "targetLang": "zh"
+    },
+    "00159e6e10954a8d": {
+      "translation": "共计50个角色，分布在8个不同的内容包中。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "50 roles across 8 packs",
+      "targetLang": "zh"
+    },
+    "f89cb9fa4dd72319": {
+      "translation": "包装；打包；一包；一盒；一套。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Pack",
+      "targetLang": "zh"
+    },
+    "7a35b6f6903ead06": {
+      "translation": "角色。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Roles",
+      "targetLang": "zh"
+    },
+    "81742f225a301af1": {
+      "translation": "协调员、产品战略师、评论员。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Orchestrator, Product Strategist, Critic Reviewer",
+      "targetLang": "zh"
+    },
+    "82b3b3a46a7d7afc": {
+      "translation": "前端开发工程师、后端工程师、测试工程师、代码重构工程师、性能工程师、依赖项审计员、安全审查员。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer",
+      "targetLang": "zh"
+    },
+    "25afd3502723f8be": {
+      "translation": "用户界面设计师，品牌守护者。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "UI Designer, Brand Guardian",
+      "targetLang": "zh"
+    },
+    "d0e3d7947b2c83b4": {
+      "translation": "产品发布文案撰写员。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Launch Copywriter",
+      "targetLang": "zh"
+    },
+    "c9177bfbde3aae72": {
+      "translation": "代码仓库研究员、代码仓库翻译员、文档架构师、元数据管理员、内容审核员、部署验证员、发布工程师。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer",
+      "targetLang": "zh"
+    },
+    "18b82fba38a796a1": {
+      "translation": "反馈整合工具、产品路线图优先级排序工具、需求文档编写人员。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "zh"
+    },
+    "e06c46544129aba9": {
+      "translation": "用户体验研究员、竞争分析师、趋势研究员、用户访谈分析师。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer",
+      "targetLang": "zh"
+    },
+    "bcdcc284b4ee43f3": {
+      "translation": "*   **产品发布策略师** (Launch Strategist)\n*   **内容策略师** (Content Strategist)\n*   **社区运营经理** (Community Manager)\n*   **客户支持问题分级负责人** (Support Triage Lead)",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Launch Strategist, Content Strategist, Community Manager, Support Triage Lead",
+      "targetLang": "zh"
+    },
+    "2637e73280d040fc": {
+      "translation": "每个角色都有完整的定义，包括：任务内容、使用时机、不使用时机、预期输入、所需输出、质量标准以及升级触发条件。每个角色都可以被路由，`roleos route` 命令可以根据数据包的内容推荐合适的角色。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.\r",
+      "targetLang": "zh"
+    },
+    "7ca93ae2348cf0e1": {
+      "translation": "何时不应使用 Role OS。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "When not to use Role OS",
+      "targetLang": "zh"
+    },
+    "c2e6ddcf8552701a": {
+      "translation": "- 简单的修复、拼写错误或明显的bug。\n- 探索性研究，但没有明确的成果。\n- 可以在一个人5分钟内完成的工作。\n- 紧急的补丁，需要在代码审查流程完成之前发布。\n- 那些更注重速度而非结构的项目。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "- Single-line fixes, typos, or obvious bugs\r\n- Exploratory research with no defined output\r\n- Work that fits in one person's head in 5 minutes\r\n- Emergency hotfixes that need to ship before a review chain completes\r\n- Projects where you want speed over structure\r",
+      "targetLang": "zh"
+    },
+    "243ecf05fefdfe4f": {
+      "translation": "**完整型 FT-001 方案** (适用于桌面环境)\n- 采用 7 个阶段的人工干预流程，并配备相应的角色设置。\n- 经过验证的“船舶检查”流程，确保无角色冲突。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "**Full treatment FT-001** (portlight-desktop)\r\n- 7-phase staffed treatment with Treatment Pack roles\r\n- Shipcheck gating proven, zero role collisions\r",
+      "targetLang": "zh"
+    },
+    "71e534f6278d1584": {
+      "translation": "**FT-002 完整方案** (studioflow)\n- 相同的方案包，但结构上不同的代码仓库（创意工作区与游戏）。\n- 方案包可移植，无需修改任何合同。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "**Full treatment FT-002** (studioflow)\r\n- Same treatment pack, structurally different repo (creative workspace vs game)\r\n- Treatment Pack portable — no contract modifications needed\r",
+      "targetLang": "zh"
+    },
+    "05ab50321a71a7c3": {
+      "translation": "**头脑风暴黄金流程** (MCP 服务器市场主题)\n- 9 个角色链，4 个分析师并行工作，进行交叉询问 + 驳斥争议图。\n- 提出了 4 个挑战，缩小了 3 个主张，1 个未解决——保持健康的压力，避免僵局。\n- 从渲染的成果物追溯到 16 多个“真相”原子。\n- 完整地证明了溯源链：真相 → 原子 → 争议 → 综合 → 扩展 → 评估 → 渲染 → 追溯。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "**Brainstorm golden run** (MCP server marketplace topic)\r\n- 9-role chain, 4 analysts in parallel, cross-examine + rebut dispute graph\r\n- 4 challenges issued, 3 claims narrowed, 1 unresolved — healthy pressure, not deadlock\r\n- 16+ trace links from rendered artifacts back to truth-layer atoms\r\n- Full chain of custody proven: truth → atoms → dispute → synthesis → expand → judge → render → trace\r",
+      "targetLang": "zh"
+    },
+    "3de9c191bd0f5242": {
+      "translation": "操作系统",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "The operating system",
+      "targetLang": "zh"
+    },
+    "4041d1400e3923ec": {
+      "translation": "层",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Layer",
+      "targetLang": "zh"
+    },
+    "9947ba5733a72bd9": {
+      "translation": "根据数据包内容对所有 31 个角色进行评分，解释建议，评估置信度。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Scores all 31 roles against packet content, explains recommendations, assesses confidence",
+      "targetLang": "zh"
+    },
+    "ac85924f4937eca4": {
+      "translation": "✓ 已发布",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "✓ Shipped",
+      "targetLang": "zh"
+    },
+    "8628cf9bf7e188d2": {
+      "translation": "从评分的角色中组装出按阶段顺序排列的链，偏向于数据包类型，但不受模板限制。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Assembles phase-ordered chains from scored roles, packet-type biased not template-locked",
+      "targetLang": "zh"
+    },
+    "dac2a6cbe5eaffcb": {
+      "translation": "进行 4 次验证：检查冲突、顺序、冗余、覆盖范围。提供修复建议。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions.",
+      "targetLang": "zh"
+    },
+    "8a95e6e34ff64fc4": {
+      "translation": "自动将受阻/拒绝/拆分的工作路由到正确的处理程序，并提供原因和所需的成果物。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact",
+      "targetLang": "zh"
+    },
+    "89268eab354919d1": {
+      "translation": "在判决中提供结构化的、与角色相关的证据。进行充分性检查。有 12 种证据类型。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds.",
+      "targetLang": "zh"
+    },
+    "ec05878cce2fafd0": {
+      "translation": "为多 Claude 生成执行清单。每个角色的工具配置文件、系统提示、预算。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets.",
+      "targetLang": "zh"
+    },
+    "69571b95795833a3": {
+      "translation": "完整地证明了：30/30 个黄金任务 + 5/5 个负面测试。7 个方案包测试已完成。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete.",
+      "targetLang": "zh"
+    },
+    "a8b3bc77a2e76d03": {
+      "translation": "✓ 已完成",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "✓ Complete",
+      "targetLang": "zh"
+    },
+    "61a456ae621e5b11": {
+      "translation": "7 个经过校准的方案包，具有自动选择、不匹配保护和自由路由回退功能。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback.",
+      "targetLang": "zh"
+    },
+    "8b5cae769e3f4dfb": {
+      "translation": "记录运行结果，根据结果调整方案包/角色的权重，调整置信度阈值。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds.",
+      "targetLang": "zh"
+    },
+    "61f6a349359052d4": {
+      "translation": "检测复合工作，将其拆分为子数据包，分配方案包，并保留依赖关系。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Detects composite work, splits into child packets, assigns packs, preserves dependencies.",
+      "targetLang": "zh"
+    },
+    "b3de6cb1157c1d06": {
+      "translation": "按照依赖顺序运行子数据包，传递成果物，进行分支恢复和综合。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Runs child packets in dependency order with artifact passing, branch recovery, and synthesis.",
+      "targetLang": "zh"
+    },
+    "17492cbf7cbf80df": {
+      "translation": "在运行过程中，对范围、发现或新需求进行更改，无需重新启动即可更新计划。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "Mid-run scope changes, findings, or new requirements update the plan without restarting.",
+      "targetLang": "zh"
+    },
+    "9fd047a4d174900d": {
+      "translation": "`roleos init claude` 创建 CLAUDE.md、/roleos-route、/roleos-review、/roleos-status。 `roleos doctor` 验证连接。 路由卡证明了参与。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "`roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement.",
+      "targetLang": "zh"
+    },
+    "bd47eb9ff2dc9d9e": {
+      "translation": "5 个生命周期钩子（SessionStart、PromptSubmit、PreToolUse、SubagentStart、Stop）。 强制执行建议：路由卡提醒、工具使用限制、子代理角色注入、完成审计。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit.",
+      "targetLang": "zh"
+    },
+    "3c0e162e525c5d41": {
+      "translation": "30 个与角色相关的成果物合同。7 个方案包交付合同。进行结构验证。检查链的完整性。下游角色永远不知道他们收到了什么。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "30 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received.",
+      "targetLang": "zh"
+    },
+    "27b476376ec26424": {
+      "translation": "7 个命名任务（功能发布、错误修复、方案、文档发布、安全加固、研究发布、头脑风暴）。 每个任务都声明方案包、角色链、成果物流程、升级分支、诚实且部分定义的描述。 所有 7 个任务都经过试验验证。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977450,
+      "source": "7 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 7 trial-proven.",
+      "targetLang": "zh"
+    },
+    "6ddcd62a4ce1c4f0": {
+      "translation": "创建运行，逐步跟踪状态，完成/失败并提供诚实报告。 传播受阻步骤，发出链外升级警告，重新打开最后一步。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening.",
+      "targetLang": "zh"
+    },
+    "952b8b340c0a4eab": {
+      "translation": "`roleos start` 自动决定任务、方案包或自由路由。 具有置信度得分、备选方案和复合检测的后备层级。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "`roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection.",
+      "targetLang": "zh"
+    },
+    "df56ab68161ccf56": {
+      "translation": "`roleos run` 创建磁盘支持的运行。 `resume`（恢复）、`next`（下一步）、`explain`（解释）、`complete`（完成）、`fail`（失败）。 干预：重新路由、升级、重试、阻止、重新打开。 提供步骤级别的指导。 测量摩擦力。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "`roleos run` creates disk-backed runs. `resume`, `next`, `explain`, `complete`, `fail`. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance. Friction measurement.",
+      "targetLang": "zh"
+    },
+    "0a007983b31b641a": {
+      "translation": "双层架构：真相（角色原生模式、溯源原子、交叉询问争议图）+ 渲染（5 种不同的声音、词汇限制、辩论记录）。 追溯链接证明每个渲染的声明都映射到一个“真相”原子。 黄金流程：894 个测试。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Two-layer architecture: truth (role-native schemas, provenance atoms, cross-exam dispute graph) + render (5 distinct voices, lexical bans, debate transcript). Trace links prove every rendered claim maps to a truth atom. Golden run: 894 tests.",
+      "targetLang": "zh"
+    },
+    "20fd1cb7418d6bd2": {
+      "translation": "7 个任务",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "7 missions",
+      "targetLang": "zh"
+    },
+    "724d784a3165c194": {
+      "translation": "任务",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Mission",
+      "targetLang": "zh"
+    },
+    "a6ad2bd517628215": {
+      "translation": "使用时机",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "When to use",
+      "targetLang": "zh"
+    },
+    "50997c4036a8ef67": {
+      "translation": "特性",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "feature",
+      "targetLang": "zh"
+    },
+    "2d7e126bbba50ba3": {
+      "translation": "完整特性交付：范围 → 规范 → 实现 → 测试 → 审查",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Full feature delivery: scope → spec → implement → test → review",
+      "targetLang": "zh"
+    },
+    "84c3204974982039": {
+      "translation": "错误修复",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "bugfix",
+      "targetLang": "zh"
+    },
+    "0d20d1714a3357d9": {
+      "translation": "诊断根本原因，修复，测试，验证",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Diagnose root cause, fix, test, verify",
+      "targetLang": "zh"
+    },
+    "3aaf958234552a4a": {
+      "translation": "方案",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "treatment",
+      "targetLang": "zh"
+    },
+    "3a4e3843c5508f31": {
+      "translation": "代码检查 + 优化 + 文档 + CI 验证 + 审查",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Shipcheck + polish + docs + CI verify + review",
+      "targetLang": "zh"
+    },
+    "caaf66afd44bfbf8": {
+      "translation": "文档",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "docs",
+      "targetLang": "zh"
+    },
+    "29dd7a7ce57fa1da": {
+      "translation": "编写/更新文档，发布说明",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Write/update documentation, release notes",
+      "targetLang": "zh"
+    },
+    "a55986de72f4131f": {
+      "translation": "威胁模型分析，安全审计，修复漏洞，重新审计，验证",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Threat model, audit, fix vulnerabilities, re-audit, verify",
+      "targetLang": "zh"
+    },
+    "57e991897be630e9": {
+      "translation": "研究",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "research",
+      "targetLang": "zh"
+    },
+    "fc85b0113137d1b4": {
+      "translation": "提出问题，进行研究，记录发现，做出决定",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Frame question, research, document findings, decide",
+      "targetLang": "zh"
+    },
+    "eba16f9f0ec83fb2": {
+      "translation": "头脑风暴",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "brainstorm",
+      "targetLang": "zh"
+    },
+    "c94f4abdaa1f4621": {
+      "translation": "结构化的、多角度的讨论，具有可追溯的异议和结论。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Structured multi-perspective inquiry with traceable disagreement and verdict",
+      "targetLang": "zh"
+    },
+    "800e63238c20b7e2": {
+      "translation": "每个任务都包含诚实且全面的定义——当工作停滞时，系统会记录已完成的内容和未完成的内容，而不是虚报完成情况。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.\r",
+      "targetLang": "zh"
+    },
+    "2a820ad209a4a94e": {
+      "translation": "头脑风暴任务",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Brainstorm mission",
+      "targetLang": "zh"
+    },
+    "d6da83a08d91f00e": {
+      "translation": "这**不是**“人工智能头脑风暴”。 头脑风暴任务是**具有特定角色的、在法律框架下的活动，具有可追溯的异议和结论性输出。**",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "Not \"AI brainstorming.\" The brainstorm mission is **specialized roles under law, with traceable disagreement and verdict-bearing output.**\r",
+      "targetLang": "zh"
+    },
+    "70377c0d9c817e46": {
+      "translation": "**它与众不同之处：**",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "**What makes it different:**\r",
+      "targetLang": "zh"
+    },
+    "267c6e441ba6f94f": {
+      "translation": "- **第一层（真相）：** 四位分析师使用各自的角色专属的模式（情境地图、用户价值地图、机制地图、定位地图），而不是共享的文字。 每个角色都受到“盲点”的限制：禁止使用的词语，禁止提出的主张类型，以及过滤后的输入内容。 每个元素都带有来源信息。 一个有向的交叉询问图会产生针对性的挑战。 原始分析师在压力下会辩护、缩小范围或撤回观点。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "- **Layer 1 (truth):** Four analysts emit role-native schemas (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — not shared prose. Each role is blindspot-enforced: forbidden phrases, forbidden claim kinds, filtered input partitions. Atoms carry provenance. A directed cross-examination graph produces targeted challenges. Original analysts defend, narrow, or retract under pressure.\r",
+      "targetLang": "zh"
+    },
+    "12f8e2708bde7903": {
+      "translation": "- **第二层（呈现）：** 五种不同的声音（边界备忘录、现场笔记、系统草图、主张简报、交叉询问记录），通过词汇限制防止声音的融合。 综合分析会消耗“真相”，而不会生成原始的文字。 两层内容始终可用。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "- **Layer 2 (render):** Five distinct human voices (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) with lexical bans preventing voice convergence. Synthesis consumes truth, never rendered prose. Both layers always available.\r",
+      "targetLang": "zh"
+    },
+    "59ec3d50e53cbc58": {
+      "translation": "- **完整追溯：** 每一句话都可追溯到“真相”层的元素。 综合分析的说明会引用这些元素。 交叉询问的目标是真实的主张ID。 争议图是结果，而不是文字本身。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "- **Chain of custody:** Every rendered sentence traces back to a truth-layer atom. Synthesis directions cite atoms. Cross-exam targets real claim IDs. The dispute graph is the product, not the prose.\r",
+      "targetLang": "zh"
+    },
+    "bdfc98813ae58199": {
+      "translation": "**已验证：** v0.4 版本，通过了 894 个测试，完整追溯链已验证。 详情请参见 [`examples/golden-run.md`](examples/golden-run.md)，其中包含完整的流程记录。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "**Proven:** v0.4 golden run — 894 tests, full chain of custody verified. See [`examples/golden-run.md`](examples/golden-run.md) for the complete artifact chain.\r",
+      "targetLang": "zh"
+    },
+    "c2c442e503a11fba": {
+      "translation": "- v0.1–v0.4: 基础版本 — 试验、采用、治疗方案包、入门包。\n- v1.0.0: 32个角色，完整的命令行界面，经过验证的治疗方案，多仓库兼容性。\n- v1.0.2: 角色操作系统锁定（修复引导启动问题，使用`--force`参数）。\n- v1.1.0: 31个角色，完整的路由核心，冲突检测，升级，证据，调度，7个经过验证的团队包。35次执行试验。212个测试。\n- v1.2.0: 校准后的包被设置为默认选项。自动选择，不匹配检测，替代方案建议，自由路由回退。246个测试。\n- v1.3.0: 结果校准，混合任务分解，组合执行，自适应重新规划。317个测试。\n- v1.4.0: 会话核心 — `roleos init claude`，`roleos doctor`，路由卡片，`/roleos-route` + `/roleos-review` + `/roleos-status` 命令。335个测试。\n- v1.5.0: 钩子核心 — 5个生命周期钩子，用于运行时强制执行。358个测试。\n- v1.6.0: 构件核心 — 20个角色相关的构件合约，7个包交付合约，结构验证。385个测试。\n- v1.7.0: 完成证明 — 真实任务通过整个堆栈运行。`roleos artifacts` 命令行界面。对结构性问题的诚实反馈。398个测试。\n- v1.8.0: 任务库（阶段S） — 6个命名任务，运行引擎，完成报告。经过6次真实试验的强化。481个测试。\n- v1.9.0: 统一入口路径（阶段T） — `roleos start` 自动决定是任务、包还是自由路由。回退机制，组合检测，入口路径比较试验。527个测试。\n- **v2.0.0**: 优化用户体验（阶段U） — `roleos run` 创建持久的基于磁盘的运行。恢复，下一步，解释，完成，失败。干预措施：重新路由，升级，重试，阻止，重新打开。在每个步骤都提供本地指导。摩擦力测量。6次摩擦力试验。613个测试。\n- **v2.0.1**: 手册审核，初学者文档，测试数量修正。617个测试。\n- **v2.1.0**: 构思任务（v0.4） — 法律下的专业角色，可追溯的意见不一致，带有判决结果的输出。两层架构（真值 + 渲染），交叉询问权限矩阵，争议图，黄金运行证明。7个任务，50个角色，8个包。894个测试。",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\r\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\r\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\r\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\r\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\r\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\r\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\r\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\r\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\r\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\r\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\r\n- v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.\r\n- **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.\r\n- **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.\r\n- **v2.1.0**: Brainstorm mission (v0.4) — specialized roles under law, traceable disagreement, verdict-bearing output. Two-layer architecture (truth + render), cross-exam permission matrix, dispute graph, golden run proof. 7 missions, 50 roles, 8 packs. 894 tests.\r",
+      "targetLang": "zh"
+    },
+    "6325e155e3ad88d6": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774638977451,
+      "source": "MIT\r",
+      "targetLang": "zh"
+    },
+    "696d8c6c3625204b": {
+      "translation": "Un sistema operativo multi-Claude que asigna personal, dirige, valida y ejecuta tareas a través de 50 contratos de roles especializados. Crea paquetes de tareas, ensambla el equipo adecuado mediante la coincidencia de roles, detecta problemas antes de la ejecución, redirige automáticamente la recuperación cuando una tarea se bloquea o se rechaza, y requiere evidencia estructurada en cada decisión.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "A multi-Claude operating system that staffs, routes, validates, and runs work through 50 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.\r",
+      "targetLang": "es"
+    },
+    "0ba5744d3605f93f": {
+      "translation": "Role OS es la forma profesional de utilizar multi-Claude. Evita los fallos específicos que producen los flujos de trabajo de IA genéricos:",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:\r",
+      "targetLang": "es"
+    },
+    "8d0411e8e39f785c": {
+      "translation": "Describa su tarea. Role OS decide automáticamente el nivel de orquestación adecuado.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "Describe your task. Role OS decides the right level of orchestration automatically.\r",
+      "targetLang": "es"
+    },
+    "4a7fe923a0d1d93e": {
+      "translation": "**La jerarquía de respaldo:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "**The fallback ladder:**\r",
+      "targetLang": "es"
+    },
+    "d8252c1196059e2a": {
+      "translation": "1. **Misión:** cuando la tarea coincide con un flujo de trabajo recurrente probado (corrección de errores, tratamiento, lanzamiento de funciones, documentación, seguridad, investigación). Cadena de roles conocida, flujo de artefactos, ramas de escalamiento y definiciones parciales.\n2. **Paquete:** cuando la tarea es una familia conocida pero no una misión completa. 7 paquetes de equipo calibrados con selección automática y protecciones contra errores.\n3. **Enrutamiento libre:** cuando la tarea es novedosa, mixta o incierta. Asigna una puntuación a los 31 roles en función del contenido del paquete y ensambla una cadena dinámica.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.\r\n2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.\r\n3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.\r",
+      "targetLang": "es"
+    },
+    "bab3b40c77f22434": {
+      "translation": "El sistema nunca fuerza una tarea a través de una abstracción incorrecta. Explica por qué eligió cada nivel y ofrece alternativas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.\r",
+      "targetLang": "es"
+    },
+    "134d0457399baf56": {
+      "translation": "**Un comando para iniciar la ejecución:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "**One command to active execution:**\r",
+      "targetLang": "es"
+    },
+    "f9b79a1256a4de79": {
+      "translation": "**Intervenciones cuando algo sale mal:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "**Interventions when things go wrong:**\r",
+      "targetLang": "es"
+    },
+    "d96d547d7b53cf9e": {
+      "translation": "Las ejecuciones se guardan en disco (`.claude/runs/`), por lo que las sesiones interrumpidas se reanudan correctamente. Cada paso incluye orientación para el operador: qué producir, secciones requeridas y condiciones de parada.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "Runs persist to disk (`.claude/runs/`), so interrupted sessions resume cleanly. Every step includes operator guidance: what to produce, required sections, and stop conditions.\r",
+      "targetLang": "es"
+    },
+    "54e342e8ba523f26": {
+      "translation": "**Una vez enrutada:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "**Once routed:**\r",
+      "targetLang": "es"
+    },
+    "b2408d00b22b4a0f": {
+      "translation": "1. **Cada rol produce una transferencia:** salida estructurada con elementos de evidencia que reducen la ambigüedad para el siguiente rol.\n2. **El revisor evalúa según el contrato:** acepta, rechaza o bloquea en función de la evidencia estructurada, no de la impresión.\n3. **La recuperación se redirige automáticamente:** las tareas bloqueadas o rechazadas se redirigen al solucionador adecuado, junto con la razón, el tipo de recuperación y el artefacto requerido.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role\r\n2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression\r\n3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact\r",
+      "targetLang": "es"
+    },
+    "c49ff5f9a1bba349": {
+      "translation": "Estado de implementación en la organización",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "Org rollout state",
+      "targetLang": "es"
+    },
+    "492ecb6de62fcff4": {
+      "translation": "El estado de implementación en toda la organización (cola, decisiones, registros de auditoría, paquetes de bloqueo por repositorio) se encuentra en un repositorio privado separado: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Este repositorio es el producto; ese repositorio es el estado operativo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.\r",
+      "targetLang": "es"
+    },
+    "ccdec4d1678363fd": {
+      "translation": "Generador de comentarios, Priorizador de hoja de ruta, Redactor de especificaciones.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "es"
+    },
+    "ac47134fb5d5497e": {
+      "translation": "Cada rol tiene un contrato completo: misión, cuándo usar, cuándo no usar, entradas requeridas, salidas requeridas, nivel de calidad y desencadenantes de escalamiento. Cada rol se puede enrutar; `roleos route` puede recomendar cualquiera de ellos en función del contenido del paquete.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.\r",
+      "targetLang": "es"
+    },
+    "d66e4cd3e9fd70ad": {
+      "translation": "**Ejecución de prueba ideal** (tema del mercado de servidores MCP)\n- Cadena de 9 roles, 4 analistas en paralelo, examen cruzado + gráfico de refutación de disputas.\n- Se plantearon 4 desafíos, se redujeron 3 afirmaciones, 1 sin resolver: presión saludable, no un punto muerto.\n- Más de 16 enlaces de trazado desde los artefactos renderizados hasta los átomos de la capa de verdad.\n- Cadena de custodia completa probada: verdad → átomos → disputa → síntesis → expansión → juez → renderizado → trazado.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "**Brainstorm golden run** (MCP server marketplace topic)\r\n- 9-role chain, 4 analysts in parallel, cross-examine + rebut dispute graph\r\n- 4 challenges issued, 3 claims narrowed, 1 unresolved — healthy pressure, not deadlock\r\n- 16+ trace links from rendered artifacts back to truth-layer atoms\r\n- Full chain of custody proven: truth → atoms → dispute → synthesis → expand → judge → render → trace\r",
+      "targetLang": "es"
+    },
+    "0cbce737b8e7e7ca": {
+      "translation": "El sistema operativo",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065410,
+      "source": "The operating system",
+      "targetLang": "es"
+    },
+    "52d2860ea0c20c6e": {
+      "translation": "Capa",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Layer",
+      "targetLang": "es"
+    },
+    "83fb3c13d47c41b2": {
+      "translation": "Asigna una puntuación a los 31 roles en función del contenido del paquete, explica las recomendaciones, evalúa la confianza.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Scores all 31 roles against packet content, explains recommendations, assesses confidence",
+      "targetLang": "es"
+    },
+    "c923c9312241f613": {
+      "translation": "✓ Implementado",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "✓ Shipped",
+      "targetLang": "es"
+    },
+    "3897d77a173aa18f": {
+      "translation": "Ensambla cadenas ordenadas por fase a partir de roles con puntuación, sesgadas por tipo de paquete, no bloqueadas por plantillas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Assembles phase-ordered chains from scored roles, packet-type biased not template-locked",
+      "targetLang": "es"
+    },
+    "3363467dffca8d69": {
+      "translation": "Validación de 4 pasos: conflictos duros, secuencia, redundancia, lagunas de cobertura. Sugerencias de reparación.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions.",
+      "targetLang": "es"
+    },
+    "64c377d4d437db14": {
+      "translation": "Redirige automáticamente las tareas bloqueadas/rechazadas/divididas al solucionador adecuado, junto con la razón y el artefacto requerido.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact",
+      "targetLang": "es"
+    },
+    "a8bfb8991bcda179": {
+      "translation": "Evidencia estructurada en las decisiones, específica para cada rol. Comprobaciones de suficiencia. 12 tipos de evidencia.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds.",
+      "targetLang": "es"
+    },
+    "d0a6ba9b158d9614": {
+      "translation": "Genera manifiestos de ejecución para multi-claude. Perfiles de herramientas por rol, indicaciones del sistema, presupuestos.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets.",
+      "targetLang": "es"
+    },
+    "d3f381f1b62da828": {
+      "translation": "Lista completa probada: 30/30 tareas de oro + 5/5 pruebas negativas. 7 pruebas de paquete completadas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete.",
+      "targetLang": "es"
+    },
+    "1296b68a80e817fc": {
+      "translation": "✓ Completo",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "✓ Complete",
+      "targetLang": "es"
+    },
+    "e27bfd223a1e6fa5": {
+      "translation": "7 paquetes calibrados con selección automática, protección contra errores y recuperación flexible.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback.",
+      "targetLang": "es"
+    },
+    "6a089e7667cf44af": {
+      "translation": "Registra los resultados de las ejecuciones, ajusta los pesos de los paquetes/roles según los resultados y modifica los umbrales de confianza.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds.",
+      "targetLang": "es"
+    },
+    "6b97eec6446dedd1": {
+      "translation": "Detecta tareas compuestas, las divide en paquetes secundarios, asigna paquetes, preserva las dependencias.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Detects composite work, splits into child packets, assigns packs, preserves dependencies.",
+      "targetLang": "es"
+    },
+    "cbc6d0aa4cd7fce3": {
+      "translation": "Ejecuta los paquetes secundarios en orden de dependencia, transfiriendo artefactos, recuperando ramas y sintetizando.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Runs child packets in dependency order with artifact passing, branch recovery, and synthesis.",
+      "targetLang": "es"
+    },
+    "e66b7b086efd088d": {
+      "translation": "Los cambios en el alcance, los hallazgos o los nuevos requisitos durante la ejecución actualizan el plan sin necesidad de reiniciarlo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Mid-run scope changes, findings, or new requirements update the plan without restarting.",
+      "targetLang": "es"
+    },
+    "2e585219834778bc": {
+      "translation": "`roleos init claude` crea los archivos CLAUDE.md, /roleos-route, /roleos-review y /roleos-status. `roleos doctor` verifica la configuración. Las tarjetas de ruta demuestran la participación.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "`roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement.",
+      "targetLang": "es"
+    },
+    "9331edae91d54335": {
+      "translation": "5 ganchos de ciclo de vida (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Aplicación de políticas: recordatorios en las tarjetas de ruta, control de acceso a herramientas, inyección de roles de subagente, auditoría de finalización.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit.",
+      "targetLang": "es"
+    },
+    "a855d18572231340": {
+      "translation": "30 contratos de artefactos por rol. 7 contratos de transferencia de paquetes. Validación estructural. Comprobaciones de integridad de la cadena. Los roles posteriores nunca adivinan lo que recibieron.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "30 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received.",
+      "targetLang": "es"
+    },
+    "cffa2411bf13af06": {
+      "translation": "7 misiones con nombre (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm). Cada una define el paquete, la cadena de roles, el flujo de artefactos, las ramas de escalada y una definición parcial y honesta. Las 7 están probadas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "7 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 7 trial-proven.",
+      "targetLang": "es"
+    },
+    "4293c3d4351b0cae": {
+      "translation": "Crea ejecuciones, avanza paso a paso con seguimiento del estado, completa o falla con informes precisos. Propagación de pasos bloqueados, advertencias de escalada fuera de la cadena, reapertura del último paso.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening.",
+      "targetLang": "es"
+    },
+    "e0ebe1a3c1735035": {
+      "translation": "`roleos start` decide automáticamente entre una misión, un paquete o una ruta flexible. Escalera de recuperación con puntuaciones de confianza, alternativas y detección de tareas compuestas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "`roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection.",
+      "targetLang": "es"
+    },
+    "267d2ec225bee525": {
+      "translation": "`roleos run` crea ejecuciones respaldadas en disco. Comandos: `resume` (reanudar), `next` (siguiente), `explain` (explicar), `complete` (completar), `fail` (fallar). Intervenciones: `reroute` (redirigir), `escalate` (escalar), `retry` (reintentar), `block` (bloquear), `reopen` (reabrir). Guía específica para cada paso. Medición de la fricción.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "`roleos run` creates disk-backed runs. `resume`, `next`, `explain`, `complete`, `fail`. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance. Friction measurement.",
+      "targetLang": "es"
+    },
+    "ec252000e33c8424": {
+      "translation": "Arquitectura de dos capas: verdad (esquemas nativos del rol, átomos de procedencia, gráfico de disputa cruzada) + renderizado (5 voces distintas, prohibiciones léxicas, transcripción del debate). Los enlaces de trazado demuestran que cada afirmación renderizada se corresponde con un átomo de verdad. Ejecución de referencia: 894 pruebas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Two-layer architecture: truth (role-native schemas, provenance atoms, cross-exam dispute graph) + render (5 distinct voices, lexical bans, debate transcript). Trace links prove every rendered claim maps to a truth atom. Golden run: 894 tests.",
+      "targetLang": "es"
+    },
+    "4ddcb5fff0e8a2ef": {
+      "translation": "7 misiones",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "7 missions",
+      "targetLang": "es"
+    },
+    "48ec37908dbc36c2": {
+      "translation": "Misión",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Mission",
+      "targetLang": "es"
+    },
+    "5160fdefe2a39dcc": {
+      "translation": "Cuándo usar",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "When to use",
+      "targetLang": "es"
+    },
+    "90f47c7cc8377f2e": {
+      "translation": "Característica",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "feature",
+      "targetLang": "es"
+    },
+    "7582afb1ed6281ea": {
+      "translation": "Entrega completa de la característica: alcance → especificación → implementación → prueba → revisión",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Full feature delivery: scope → spec → implement → test → review",
+      "targetLang": "es"
+    },
+    "cb4a848c3d519bb6": {
+      "translation": "Corrección de errores",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "bugfix",
+      "targetLang": "es"
+    },
+    "503f8977b369b498": {
+      "translation": "Diagnosticar la causa raíz, corregir, probar, verificar",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Diagnose root cause, fix, test, verify",
+      "targetLang": "es"
+    },
+    "46be1bfd73d8f7ca": {
+      "translation": "Tratamiento",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "treatment",
+      "targetLang": "es"
+    },
+    "f5271104b7743896": {
+      "translation": "Verificación + pulido + documentación + verificación CI + revisión",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Shipcheck + polish + docs + CI verify + review",
+      "targetLang": "es"
+    },
+    "bb328fad1f290d0e": {
+      "translation": "Documentación",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "docs",
+      "targetLang": "es"
+    },
+    "97398be7c4740827": {
+      "translation": "Escribir/actualizar documentación, notas de la versión",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Write/update documentation, release notes",
+      "targetLang": "es"
+    },
+    "f7db5db56aa07a0f": {
+      "translation": "Modelo de amenazas, auditoría, corregir vulnerabilidades, volver a auditar, verificar",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Threat model, audit, fix vulnerabilities, re-audit, verify",
+      "targetLang": "es"
+    },
+    "b0927df8d89302d8": {
+      "translation": "Investigación",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "research",
+      "targetLang": "es"
+    },
+    "1555192291b279e7": {
+      "translation": "Formular la pregunta, investigar, documentar los hallazgos, decidir",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Frame question, research, document findings, decide",
+      "targetLang": "es"
+    },
+    "9943f425ea009d54": {
+      "translation": "Lluvia de ideas",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "brainstorm",
+      "targetLang": "es"
+    },
+    "badc54362e49b8aa": {
+      "translation": "Investigación estructurada con múltiples perspectivas, con desacuerdos trazables y resultados.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Structured multi-perspective inquiry with traceable disagreement and verdict",
+      "targetLang": "es"
+    },
+    "eedf6d36869eeb5e": {
+      "translation": "Cada misión incluye definiciones parciales y honestas: cuando el trabajo se detiene, el sistema documenta lo que se completó y lo que queda, en lugar de simular una finalización.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.\r",
+      "targetLang": "es"
+    },
+    "b1aec467be153d72": {
+      "translation": "Misión de lluvia de ideas",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Brainstorm mission",
+      "targetLang": "es"
+    },
+    "93eed18826db7d94": {
+      "translation": "No es una \"lluvia de ideas de IA\". La misión de lluvia de ideas es **un conjunto de roles especializados bajo un marco legal, con desacuerdos trazables y resultados con valor de juicio.**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "Not \"AI brainstorming.\" The brainstorm mission is **specialized roles under law, with traceable disagreement and verdict-bearing output.**\r",
+      "targetLang": "es"
+    },
+    "9de7b564988b62e4": {
+      "translation": "**¿Qué la diferencia?**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "**What makes it different:**\r",
+      "targetLang": "es"
+    },
+    "b072a79c3e735e3f": {
+      "translation": "- **Capa 1 (verdad):** Cuatro analistas emiten esquemas nativos del rol (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — no prosa compartida. Cada rol tiene restricciones para evitar puntos ciegos: frases prohibidas, tipos de afirmaciones prohibidas, particiones de entrada filtradas. Los átomos llevan información de procedencia. Un gráfico de interrogatorio dirigido genera desafíos específicos. Los analistas originales defienden, refinan o retiran sus afirmaciones bajo presión.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "- **Layer 1 (truth):** Four analysts emit role-native schemas (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — not shared prose. Each role is blindspot-enforced: forbidden phrases, forbidden claim kinds, filtered input partitions. Atoms carry provenance. A directed cross-examination graph produces targeted challenges. Original analysts defend, narrow, or retract under pressure.\r",
+      "targetLang": "es"
+    },
+    "4aa0f7588d1b2831": {
+      "translation": "- **Capa 2 (renderizado):** Cinco voces humanas distintas (Memorándum de Límites, Notas de Campo, Esquema del Sistema, Resumen de Reclamación, Transcripción del Interrogatorio) con restricciones léxicas que evitan la convergencia de las voces. La síntesis consume información verídica, pero nunca produce prosa. Ambas capas están siempre disponibles.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "- **Layer 2 (render):** Five distinct human voices (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) with lexical bans preventing voice convergence. Synthesis consumes truth, never rendered prose. Both layers always available.\r",
+      "targetLang": "es"
+    },
+    "1b725f2ab3c4e1af": {
+      "translation": "- **Cadena de custodia:** Cada oración generada se remonta a un átomo de la capa de verdad. Las instrucciones de síntesis citan átomos. Los interrogatorios se dirigen a identificadores de reclamaciones reales. El grafo de disputas es el producto, no la prosa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "- **Chain of custody:** Every rendered sentence traces back to a truth-layer atom. Synthesis directions cite atoms. Cross-exam targets real claim IDs. The dispute graph is the product, not the prose.\r",
+      "targetLang": "es"
+    },
+    "b263d4978eaed9a4": {
+      "translation": "**Comprobado:** Versión 0.4, ejecución de referencia — 894 pruebas, cadena de custodia completamente verificada. Consulte [`examples/golden-run.md`](examples/golden-run.md) para ver la cadena de artefactos completa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "**Proven:** v0.4 golden run — 894 tests, full chain of custody verified. See [`examples/golden-run.md`](examples/golden-run.md) for the complete artifact chain.\r",
+      "targetLang": "es"
+    },
+    "afa3424a773a027b": {
+      "translation": "- v0.1–v0.4: Fundación — pruebas, adopción, paquete de tratamiento, paquete de inicio.\n- v1.0.0: 32 roles, interfaz de línea de comandos completa, tratamiento comprobado, portabilidad entre múltiples repositorios.\n- v1.0.2: Bloqueo del sistema de roles (correcciones de inicialización de la verdad, init --force).\n- v1.1.0: 31 roles, columna vertebral de enrutamiento completa, detección de conflictos, escalamiento, evidencia, despacho, 7 paquetes de equipo comprobados. 35 pruebas de ejecución. 212 pruebas.\n- v1.2.0: Paquetes calibrados promovidos a la entrada predeterminada. Selección automática, detección de incompatibilidades, sugerencia alternativa, recuperación de enrutamiento libre. 246 pruebas.\n- v1.3.0: Calibración de resultados, descomposición de tareas mixtas, ejecución compuesta, replanificación adaptativa. 317 pruebas.\n- v1.4.0: Columna vertebral de la sesión — `roleos init claude`, `roleos doctor`, tarjetas de ruta, comandos /roleos-route + /roleos-review + /roleos-status. 335 pruebas.\n- v1.5.0: Columna vertebral de los ganchos — 5 ganchos de ciclo de vida para la aplicación en tiempo de ejecución. 358 pruebas.\n- v1.6.0: Columna vertebral de los artefactos — 20 contratos de artefactos por rol, 7 contratos de entrega de paquetes, validación estructural. 385 pruebas.\n- v1.7.0: Prueba de finalización — tareas reales ejecutadas a través de toda la pila. Interfaz de línea de comandos `roleos artifacts`. Escalamiento honesto para correcciones estructurales. 398 pruebas.\n- v1.8.0: Biblioteca de misiones (Fase S) — 6 misiones con nombre, motor de ejecución, informes de finalización. Endurecido a partir de 6 ejecuciones de prueba reales. 481 pruebas.\n- v1.9.0: Ruta de entrada unificada (Fase T) — `roleos start` decide automáticamente entre misión, paquete o enrutamiento libre. Escalera de recuperación, detección compuesta, pruebas de comparación de rutas de entrada. 527 pruebas.\n- **v2.0.0**: Optimización de la experiencia del usuario (Fase U) — `roleos run` crea ejecuciones persistentes respaldadas por disco. Reanudar, siguiente, explicar, completar, fallar. Intervenciones: redirigir, escalar, reintentar, bloquear, reabrir. Guía específica para cada paso. Medición de la fricción. 6 pruebas de fricción. 613 pruebas.\n- **v2.0.1**: Auditoría del manual, documentación para principiantes, correcciones del número de pruebas. 617 pruebas.\n- **v2.1.0**: Misión de lluvia de ideas (v0.4) — roles especializados en el ámbito legal, desacuerdo trazable, salida con valor de veredicto. Arquitectura de dos capas (verdad + renderizado), matriz de permisos de interrogatorio, grafo de disputas, prueba de ejecución de referencia. 7 misiones, 50 roles, 8 paquetes. 894 pruebas.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\r\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\r\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\r\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\r\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\r\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\r\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\r\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\r\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\r\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\r\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\r\n- v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.\r\n- **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.\r\n- **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.\r\n- **v2.1.0**: Brainstorm mission (v0.4) — specialized roles under law, traceable disagreement, verdict-bearing output. Two-layer architecture (truth + render), cross-exam permission matrix, dispute graph, golden run proof. 7 missions, 50 roles, 8 packs. 894 tests.\r",
+      "targetLang": "es"
+    },
+    "ed7f97ee046bbb09": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774639065411,
+      "source": "MIT\r",
+      "targetLang": "es"
+    },
+    "5b46e83778f79c02": {
+      "translation": "Un sistema operativo multi-Claude che assegna personale, definisce i percorsi, convalida e gestisce i processi attraverso 50 contratti di ruolo specializzati. Crea pacchetti di attività, assembla il team giusto in base alla corrispondenza dei ruoli, rileva eventuali problemi prima dell'esecuzione, reindirizza automaticamente le attività in caso di blocco o rifiuto e richiede prove strutturate in ogni decisione.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "A multi-Claude operating system that staffs, routes, validates, and runs work through 50 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.\r",
+      "targetLang": "it"
+    },
+    "409535e92e00d46b": {
+      "translation": "Role OS è il modo professionale di utilizzare multi-Claude. Previene i problemi specifici che i flussi di lavoro AI generici possono causare:",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:\r",
+      "targetLang": "it"
+    },
+    "5b1d5aaac99b477a": {
+      "translation": "Descrivi la tua attività. Role OS decide automaticamente il livello di orchestrazione appropriato.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Describe your task. Role OS decides the right level of orchestration automatically.\r",
+      "targetLang": "it"
+    },
+    "2da66d02dfdcc96c": {
+      "translation": "**La gerarchia di fallback:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "**The fallback ladder:**\r",
+      "targetLang": "it"
+    },
+    "3dedf4caf3d94cd7": {
+      "translation": "1. **Missione** — quando l'attività corrisponde a un flusso di lavoro ricorrente consolidato (correzione di bug, trattamento, rilascio di funzionalità, documentazione, sicurezza, ricerca). Catena di ruoli nota, flusso di artefatti, rami di escalation e definizioni parziali chiare.\n2. **Pacchetto** — quando l'attività appartiene a una famiglia nota ma non ha una struttura di missione completa. 7 pacchetti di team calibrati con selezione automatica e protezioni contro errori.\n3. **Routing libero** — quando l'attività è nuova, complessa o incerta. Valuta tutti i 31 ruoli in base al contenuto del pacchetto e crea una catena dinamica.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research). Known role chain, artifact flow, escalation branches, and honest-partial definitions.\r\n2. **Pack** — when the task is a known family but not a full mission shape. 7 calibrated team packs with auto-selection and mismatch guards.\r\n3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 31 roles against packet content and assembles a dynamic chain.\r",
+      "targetLang": "it"
+    },
+    "6d4eb94eb64162a1": {
+      "translation": "Il sistema non forza mai l'esecuzione di un'attività attraverso un livello di astrazione errato. Spiega perché ha scelto ogni livello e offre alternative.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.\r",
+      "targetLang": "it"
+    },
+    "fefdc937362a51c3": {
+      "translation": "**Un comando per avviare l'esecuzione:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "**One command to active execution:**\r",
+      "targetLang": "it"
+    },
+    "17ebd1cfc4fdf489": {
+      "translation": "**Interventi in caso di problemi:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "**Interventions when things go wrong:**\r",
+      "targetLang": "it"
+    },
+    "d7ab801ee7e6156b": {
+      "translation": "I processi vengono salvati su disco (`.claude/runs/`), quindi le sessioni interrotte possono essere riprese correttamente. Ogni fase include una guida per l'operatore: cosa produrre, sezioni richieste e condizioni di arresto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Runs persist to disk (`.claude/runs/`), so interrupted sessions resume cleanly. Every step includes operator guidance: what to produce, required sections, and stop conditions.\r",
+      "targetLang": "it"
+    },
+    "2d4b8ea52922b1cb": {
+      "translation": "**Una volta definito il percorso:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "**Once routed:**\r",
+      "targetLang": "it"
+    },
+    "d964ce21a8f6637e": {
+      "translation": "1. **Ogni ruolo produce un passaggio** — output strutturato con elementi di prova che riducono l'ambiguità per il ruolo successivo.\n2. **La revisione verifica rispetto al contratto** — accetta, rifiuta o blocca in base a prove strutturate, non a impressioni.\n3. **Il percorso di ripristino viene attivato automaticamente** — le attività bloccate o rifiutate vengono reindirizzate al risolutore appropriato, con una motivazione, il tipo di ripristino e l'artefatto richiesto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role\r\n2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression\r\n3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact\r",
+      "targetLang": "it"
+    },
+    "a39307f68b1939ce": {
+      "translation": "Stato di implementazione a livello di organizzazione",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Org rollout state",
+      "targetLang": "it"
+    },
+    "1f40a0f6925afa7b": {
+      "translation": "Lo stato di implementazione a livello di organizzazione (coda, decisioni, registri di controllo, pacchetti di blocco per repository) è contenuto in un repository privato separato: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Questo repository contiene il prodotto; quello è lo stato operativo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.\r",
+      "targetLang": "it"
+    },
+    "f4c5ad24fcc3f569": {
+      "translation": "Generatore di feedback, Prioritizzatore di roadmap, Redattore di specifiche.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "it"
+    },
+    "969637b54a439cf5": {
+      "translation": "Ogni ruolo ha un contratto completo: missione, quando utilizzarlo, quando non utilizzarlo, input richiesti, output necessari, standard di qualità e trigger di escalation. Ogni ruolo può essere indirizzato — `roleos route` può suggerirne uno qualsiasi in base al contenuto del pacchetto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.\r",
+      "targetLang": "it"
+    },
+    "0bd3701be029ac1e": {
+      "translation": "**Esempio di esecuzione ottimale** (argomento del marketplace dei server MCP)\n- Catena di 9 ruoli, 4 analisti in parallelo, esame incrociato + grafico di contestazione e replica.\n- 4 sfide proposte, 3 affermazioni raffinate, 1 irrisolta — pressione sana, non stallo.\n- Oltre 16 collegamenti di tracciamento dagli artefatti generati agli elementi fondamentali di verità.\n- Catena di custodia completa dimostrata: verità → elementi → contestazione → sintesi → espansione → giudizio → rendering → tracciamento.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "**Brainstorm golden run** (MCP server marketplace topic)\r\n- 9-role chain, 4 analysts in parallel, cross-examine + rebut dispute graph\r\n- 4 challenges issued, 3 claims narrowed, 1 unresolved — healthy pressure, not deadlock\r\n- 16+ trace links from rendered artifacts back to truth-layer atoms\r\n- Full chain of custody proven: truth → atoms → dispute → synthesis → expand → judge → render → trace\r",
+      "targetLang": "it"
+    },
+    "c215e78dbe9e6168": {
+      "translation": "Il sistema operativo",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "The operating system",
+      "targetLang": "it"
+    },
+    "a357e3fb51f961d7": {
+      "translation": "Livello",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Layer",
+      "targetLang": "it"
+    },
+    "051a900ed5b9b553": {
+      "translation": "Valuta tutti i 31 ruoli in base al contenuto del pacchetto, spiega le raccomandazioni, valuta la confidenza.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Scores all 31 roles against packet content, explains recommendations, assesses confidence",
+      "targetLang": "it"
+    },
+    "5787e14d19ec0f88": {
+      "translation": "✓ Implementato",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "✓ Shipped",
+      "targetLang": "it"
+    },
+    "241c755e1db7f48e": {
+      "translation": "Assembla catene ordinate per fase dai ruoli valutati, orientato al tipo di pacchetto, non vincolato a modelli.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Assembles phase-ordered chains from scored roles, packet-type biased not template-locked",
+      "targetLang": "it"
+    },
+    "0670a1e20f7eb143": {
+      "translation": "Convalida in 4 passaggi: conflitti evidenti, sequenza, ridondanza, lacune di copertura. Suggerimenti per la correzione.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions.",
+      "targetLang": "it"
+    },
+    "e4ae65f98d2765c1": {
+      "translation": "Reindirizza automaticamente le attività bloccate/rifiutate/divise al risolutore appropriato con motivazione e artefatto richiesto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact",
+      "targetLang": "it"
+    },
+    "046155bc52400380": {
+      "translation": "Prove strutturate e specifiche per il ruolo nelle decisioni. Controlli di completezza. 12 tipi di prove.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds.",
+      "targetLang": "it"
+    },
+    "6a8f0f5fa7d33c31": {
+      "translation": "Genera manifesti di esecuzione per multi-claude. Profili degli strumenti per ruolo, prompt di sistema, budget.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets.",
+      "targetLang": "it"
+    },
+    "d385c7e98f8010ac": {
+      "translation": "Roster completo dimostrato: 30/30 attività di successo + 5/5 test negativi. 7 test di pacchetto completati.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete.",
+      "targetLang": "it"
+    },
+    "05484207e1dad2d7": {
+      "translation": "✓ Completo",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "✓ Complete",
+      "targetLang": "it"
+    },
+    "8e4739666ab5a7ea": {
+      "translation": "7 pacchetti calibrati con selezione automatica, protezioni contro errori e fallback con routing libero.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "7 calibrated packs with auto-selection, mismatch guards, and free-routing fallback.",
+      "targetLang": "it"
+    },
+    "35884696fdc32bb0": {
+      "translation": "Registra i risultati delle esecuzioni, regola i pesi dei pacchetti/ruoli in base ai risultati e adatta le soglie di confidenza.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds.",
+      "targetLang": "it"
+    },
+    "4f8a56f151cce176": {
+      "translation": "Rileva attività complesse, le suddivide in pacchetti secondari, assegna i pacchetti e preserva le dipendenze.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Detects composite work, splits into child packets, assigns packs, preserves dependencies.",
+      "targetLang": "it"
+    },
+    "73345450d8bf3bbf": {
+      "translation": "Esegue i pacchetti secondari in ordine di dipendenza, trasferendo gli artefatti, gestendo il ripristino dei rami e la sintesi.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Runs child packets in dependency order with artifact passing, branch recovery, and synthesis.",
+      "targetLang": "it"
+    },
+    "2cabbb811688acc2": {
+      "translation": "Modifiche, scoperte o nuovi requisiti durante l'esecuzione aggiornano il piano senza doverlo riavviare.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Mid-run scope changes, findings, or new requirements update the plan without restarting.",
+      "targetLang": "it"
+    },
+    "25db546aea0ef968": {
+      "translation": "`roleos init claude` crea i file CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifica la configurazione. Le schede di routing indicano l'impegno.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "`roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement.",
+      "targetLang": "it"
+    },
+    "6b399440c041d854": {
+      "translation": "5 hook del ciclo di vita (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Applicazione di regole: promemoria sulle schede di routing, controllo sull'uso degli strumenti, assegnazione di ruoli ai subagent e verifica della completezza.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit.",
+      "targetLang": "it"
+    },
+    "71ef5e2228ba93ee": {
+      "translation": "30 contratti per ruolo relativi agli artefatti. 7 contratti di passaggio dei pacchetti. Validazione strutturale. Controlli di completezza della catena. Gli altri ruoli non devono mai indovinare cosa hanno ricevuto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "30 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received.",
+      "targetLang": "it"
+    },
+    "e84212d78f47578c": {
+      "translation": "7 missioni denominate (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm). Ognuna definisce pacchetti, catena di ruoli, flusso di artefatti, rami di escalation e una definizione parziale e onesta. Tutte e 7 sono state testate.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "7 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 7 trial-proven.",
+      "targetLang": "it"
+    },
+    "26426792d55e6fe0": {
+      "translation": "Crea esecuzioni, esegui passo dopo passo con tracciamento dello stato, completa o fallisci con reportistica onesta. Propagazione dei passaggi bloccati, avvisi di escalation fuori catena, riapertura dell'ultimo passaggio.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening.",
+      "targetLang": "it"
+    },
+    "0a5ac472719034a6": {
+      "translation": "`roleos start` decide automaticamente tra missione, pacchetto o routing libero. Sistema di fallback con punteggi di confidenza, alternative e rilevamento di attività complesse.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "`roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection.",
+      "targetLang": "it"
+    },
+    "77ce5df639b1b88d": {
+      "translation": "`roleos run` crea esecuzioni basate su file. Comandi: `resume`, `next`, `explain`, `complete`, `fail`. Interventi: reindirizzamento, escalation, riprova, blocco, riapertura. Guida specifica per ogni passaggio. Misurazione dell'attrito.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "`roleos run` creates disk-backed runs. `resume`, `next`, `explain`, `complete`, `fail`. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance. Friction measurement.",
+      "targetLang": "it"
+    },
+    "877190c6a2477ebd": {
+      "translation": "Architettura a due livelli: verità (schemi nativi per ruolo, atomi di provenienza, grafo di contestazione incrociata) + rendering (5 voci distinte, divieti lessicali, trascrizione del dibattito). I collegamenti di traccia dimostrano che ogni affermazione resa corrisponde a un atomo di verità. Esecuzione di riferimento: 894 test.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Two-layer architecture: truth (role-native schemas, provenance atoms, cross-exam dispute graph) + render (5 distinct voices, lexical bans, debate transcript). Trace links prove every rendered claim maps to a truth atom. Golden run: 894 tests.",
+      "targetLang": "it"
+    },
+    "63ed2071eb5c7f3b": {
+      "translation": "7 missioni",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "7 missions",
+      "targetLang": "it"
+    },
+    "53bf35479db78335": {
+      "translation": "Missione",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Mission",
+      "targetLang": "it"
+    },
+    "9efc329236764a33": {
+      "translation": "Quando utilizzarla",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "When to use",
+      "targetLang": "it"
+    },
+    "a021153e3fe005d8": {
+      "translation": "funzionalità",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "feature",
+      "targetLang": "it"
+    },
+    "704101bcffb41dd8": {
+      "translation": "Consegna completa della funzionalità: ambito → specifica → implementazione → test → revisione",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Full feature delivery: scope → spec → implement → test → review",
+      "targetLang": "it"
+    },
+    "6e88ed862027a1b9": {
+      "translation": "correzione di bug",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "bugfix",
+      "targetLang": "it"
+    },
+    "0f96e22506c0d866": {
+      "translation": "Diagnosi della causa principale, correzione, test, verifica",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Diagnose root cause, fix, test, verify",
+      "targetLang": "it"
+    },
+    "a8cf665966ebd7a1": {
+      "translation": "ottimizzazione",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "treatment",
+      "targetLang": "it"
+    },
+    "f4c5d8814d96f3ae": {
+      "translation": "Controllo + rifinitura + documentazione + verifica CI + revisione",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Shipcheck + polish + docs + CI verify + review",
+      "targetLang": "it"
+    },
+    "398d92da171e2721": {
+      "translation": "documentazione",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "docs",
+      "targetLang": "it"
+    },
+    "0db827a910740768": {
+      "translation": "Scrittura/aggiornamento della documentazione, note di rilascio",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Write/update documentation, release notes",
+      "targetLang": "it"
+    },
+    "68f68fe1a7dd2f02": {
+      "translation": "Modello delle minacce, audit, correzione delle vulnerabilità, nuovo audit, verifica",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Threat model, audit, fix vulnerabilities, re-audit, verify",
+      "targetLang": "it"
+    },
+    "add66322d69e71ae": {
+      "translation": "ricerca",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "research",
+      "targetLang": "it"
+    },
+    "fb31ab705525616a": {
+      "translation": "Formulazione della domanda, ricerca, documentazione dei risultati, decisione",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Frame question, research, document findings, decide",
+      "targetLang": "it"
+    },
+    "0cbda1dd01fa37a8": {
+      "translation": "brainstorming",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "brainstorm",
+      "targetLang": "it"
+    },
+    "bb4a525168b649da": {
+      "translation": "Indagine strutturata con molteplici prospettive, con disaccordo tracciabile e output con verdetto",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Structured multi-perspective inquiry with traceable disagreement and verdict",
+      "targetLang": "it"
+    },
+    "9b25f29582453ea5": {
+      "translation": "Ogni missione include definizioni parziali e oneste: quando il lavoro si blocca, il sistema documenta ciò che è stato completato e ciò che rimane, invece di dichiarare falsamente il completamento.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.\r",
+      "targetLang": "it"
+    },
+    "32a1af2092a6a0a3": {
+      "translation": "Missione di brainstorming",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Brainstorm mission",
+      "targetLang": "it"
+    },
+    "27726c59b25be318": {
+      "translation": "Non \"brainstorming dell'IA\". La missione di brainstorming è **un insieme di ruoli specializzati, con disaccordo tracciabile e output con verdetto.**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "Not \"AI brainstorming.\" The brainstorm mission is **specialized roles under law, with traceable disagreement and verdict-bearing output.**\r",
+      "targetLang": "it"
+    },
+    "d5ee9817891c6c95": {
+      "translation": "**Cosa la rende diversa:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "**What makes it different:**\r",
+      "targetLang": "it"
+    },
+    "35b77a6f9f9cc069": {
+      "translation": "- **Livello 1 (verità):** Quattro analisti emettono schemi nativi per ruolo (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — non prosa condivisa. Ogni ruolo è soggetto a controlli per evitare punti ciechi: frasi vietate, tipi di affermazioni vietate, partizioni di input filtrate. Gli atomi contengono informazioni sulla provenienza. Un grafo di contestazione incrociata genera sfide mirate. Gli analisti originali difendono, restringono o ritraggono le loro affermazioni sotto pressione.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "- **Layer 1 (truth):** Four analysts emit role-native schemas (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — not shared prose. Each role is blindspot-enforced: forbidden phrases, forbidden claim kinds, filtered input partitions. Atoms carry provenance. A directed cross-examination graph produces targeted challenges. Original analysts defend, narrow, or retract under pressure.\r",
+      "targetLang": "it"
+    },
+    "7f8e027a9a48d0df": {
+      "translation": "- **Livello 2 (rendering):** Cinque voci umane distinte (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) con restrizioni lessicali che impediscono la convergenza delle voci. La sintesi utilizza informazioni verificate, ma non produce testo. Entrambi i livelli sono sempre disponibili.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "- **Layer 2 (render):** Five distinct human voices (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) with lexical bans preventing voice convergence. Synthesis consumes truth, never rendered prose. Both layers always available.\r",
+      "targetLang": "it"
+    },
+    "b69a0200006904c9": {
+      "translation": "- **Catena di custodia:** Ogni frase generata può essere ricondotta a un elemento del livello di verità. Le istruzioni di sintesi fanno riferimento a questi elementi. Le domande di controinterrogatorio si basano su identificativi di pretese reali. Il grafo delle controversie è il risultato, non il testo.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "- **Chain of custody:** Every rendered sentence traces back to a truth-layer atom. Synthesis directions cite atoms. Cross-exam targets real claim IDs. The dispute graph is the product, not the prose.\r",
+      "targetLang": "it"
+    },
+    "690fbfd21ab1e3e5": {
+      "translation": "**Verificato:** Versione 0.4, test completi — 894 test, catena di custodia completamente verificata. Consultare [`examples/golden-run.md`](examples/golden-run.md) per la catena completa degli artefatti.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "**Proven:** v0.4 golden run — 894 tests, full chain of custody verified. See [`examples/golden-run.md`](examples/golden-run.md) for the complete artifact chain.\r",
+      "targetLang": "it"
+    },
+    "32567da6b782bc65": {
+      "translation": "- v0.1–v0.4: Fondamenta — test, adozione, pacchetto di trattamento, pacchetto di avvio\n- v1.0.0: 32 ruoli, interfaccia a riga di comando completa, trattamento verificato, portabilità multi-repository\n- v1.0.2: Blocco del sistema operativo dei ruoli (correzioni iniziali della verità, init --force)\n- v1.1.0: 31 ruoli, infrastruttura di routing completa, rilevamento dei conflitti, escalation, prove, dispatch, 7 pacchetti di team verificati. 35 esecuzioni di prova. 212 test.\n- v1.2.0: Pacchetti calibrati promossi a impostazione predefinita. Selezione automatica, rilevamento delle incongruenze, suggerimenti alternativi, fallback di routing libero. 246 test.\n- v1.3.0: Calibrazione dei risultati, decomposizione di attività complesse, esecuzione composita, riprogrammazione adattiva. 317 test.\n- v1.4.0: Infrastruttura delle sessioni — `roleos init claude`, `roleos doctor`, schede di routing, comandi /roleos-route + /roleos-review + /roleos-status. 335 test.\n- v1.5.0: Infrastruttura degli hook — 5 hook del ciclo di vita per l'applicazione in fase di esecuzione. 358 test.\n- v1.6.0: Infrastruttura degli artefatti — 20 contratti di artefatti specifici per ruolo, 7 contratti di trasferimento di pacchetti, convalida strutturale. 385 test.\n- v1.7.0: Dimostrazione del completamento — attività reali eseguite sull'intera piattaforma. Interfaccia a riga di comando `roleos artifacts`. Escalation trasparente per le correzioni strutturali. 398 test.\n- v1.8.0: Libreria di missioni (Fase S) — 6 missioni denominate, motore di esecuzione, report di completamento. Rafforzata da 6 esecuzioni di prova reali. 481 test.\n- v1.9.0: Percorso di accesso unificato (Fase T) — `roleos start` decide automaticamente tra missione, pacchetto o routing libero. Scala di fallback, rilevamento composito, test di confronto del percorso di accesso. 527 test.\n- **v2.0.0**: Ottimizzazione dell'esperienza utente (Fase U) — `roleos run` crea esecuzioni persistenti supportate dal disco. Riprendi, successivo, spiega, completa, fallisci. Interventi: reindirizza, aumenta, riprova, blocca, riapri. Guida specifica per ogni passaggio. Misurazione dell'attrito. 6 test di attrito. 613 test.\n- **v2.0.1**: Revisione del manuale, documentazione per principianti, correzioni del conteggio dei test. 617 test.\n- **v2.1.0**: Missione di brainstorming (v0.4) — ruoli specializzati nel campo legale, disaccordo tracciabile, output con valore probatorio. Architettura a due livelli (verità + rendering), matrice di autorizzazioni per il controinterrogatorio, grafo delle controversie, prova di esecuzione completa. 7 missioni, 50 ruoli, 8 pacchetti. 894 test.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\r\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\r\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\r\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\r\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\r\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\r\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\r\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\r\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\r\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\r\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\r\n- v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.\r\n- **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.\r\n- **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.\r\n- **v2.1.0**: Brainstorm mission (v0.4) — specialized roles under law, traceable disagreement, verdict-bearing output. Two-layer architecture (truth + render), cross-exam permission matrix, dispute graph, golden run proof. 7 missions, 50 roles, 8 packs. 894 tests.\r",
+      "targetLang": "it"
+    },
+    "cf7d056fb6111803": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774639155969,
+      "source": "MIT\r",
+      "targetLang": "it"
+    },
+    "8924dbc22531512b": {
+      "translation": "**Um comando para iniciar a execução:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "**One command to active execution:**\r",
+      "targetLang": "pt"
+    },
+    "dd336528dd357fff": {
+      "translation": "**Intervenções quando algo dá errado:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "**Interventions when things go wrong:**\r",
+      "targetLang": "pt"
+    },
+    "157777d655e91290": {
+      "translation": "As execuções são persistidas no disco (em `.claude/runs/`), permitindo que as sessões interrompidas sejam retomadas sem problemas. Cada etapa inclui orientações para o operador: o que produzir, as seções necessárias e as condições de parada.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "Runs persist to disk (`.claude/runs/`), so interrupted sessions resume cleanly. Every step includes operator guidance: what to produce, required sections, and stop conditions.\r",
+      "targetLang": "pt"
+    },
+    "9f056da1449c8c22": {
+      "translation": "**Sessão de brainstorming de alta qualidade** (tópico do mercado de servidores MCP)\n- Cadeia de 9 papéis, 4 analistas em paralelo, análise cruzada + gráfico de refutação de disputas.\n- 4 desafios propostos, 3 alegações refinadas, 1 não resolvida — pressão saudável, sem impasse.\n- Mais de 16 links de rastreamento dos artefatos gerados até os átomos da camada de verdade.\n- Cadeia de custódia completa comprovada: verdade → átomos → disputa → síntese → expandir → julgar → renderizar → rastrear.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "**Brainstorm golden run** (MCP server marketplace topic)\r\n- 9-role chain, 4 analysts in parallel, cross-examine + rebut dispute graph\r\n- 4 challenges issued, 3 claims narrowed, 1 unresolved — healthy pressure, not deadlock\r\n- 16+ trace links from rendered artifacts back to truth-layer atoms\r\n- Full chain of custody proven: truth → atoms → dispute → synthesis → expand → judge → render → trace\r",
+      "targetLang": "pt"
+    },
+    "ef959472460d0ee2": {
+      "translation": "`roleos run` cria execuções com backup no disco. Comandos: `resume` (retomar), `next` (próximo), `explain` (explicar), `complete` (concluir), `fail` (falha). Intervenções: redirecionar, escalar, tentar novamente, bloquear, reabrir. Orientações específicas para cada etapa. Medição de atrito.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "`roleos run` creates disk-backed runs. `resume`, `next`, `explain`, `complete`, `fail`. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance. Friction measurement.",
+      "targetLang": "pt"
+    },
+    "696fcbadf22ca4a2": {
+      "translation": "Arquitetura de duas camadas: verdade (esquemas nativos do papel, átomos de procedência, gráfico de disputa de análise cruzada) + renderização (5 vozes distintas, restrições lexicais, transcrição do debate). Os links de rastreamento comprovam que cada alegação renderizada corresponde a um átomo de verdade. Sessão de brainstorming de alta qualidade: 894 testes.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "Two-layer architecture: truth (role-native schemas, provenance atoms, cross-exam dispute graph) + render (5 distinct voices, lexical bans, debate transcript). Trace links prove every rendered claim maps to a truth atom. Golden run: 894 tests.",
+      "targetLang": "pt"
+    },
+    "b0c5c0eba4a303ce": {
+      "translation": "brainstorming",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "brainstorm",
+      "targetLang": "pt"
+    },
+    "4bd271c87e26d67f": {
+      "translation": "Investigação estruturada com múltiplas perspectivas, com desacordo rastreável e veredicto.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "Structured multi-perspective inquiry with traceable disagreement and verdict",
+      "targetLang": "pt"
+    },
+    "7e51de9143a75de4": {
+      "translation": "Missão de brainstorming",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "Brainstorm mission",
+      "targetLang": "pt"
+    },
+    "799dab7d6520d19e": {
+      "translation": "Não é \"brainstorming de IA\". A missão de brainstorming é **papéis especializados sob a lei, com desacordo rastreável e resultados que comprovam o veredicto.**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193033,
+      "source": "Not \"AI brainstorming.\" The brainstorm mission is **specialized roles under law, with traceable disagreement and verdict-bearing output.**\r",
+      "targetLang": "pt"
+    },
+    "e514ad5eb6d6d1f4": {
+      "translation": "**O que a diferencia:**",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193034,
+      "source": "**What makes it different:**\r",
+      "targetLang": "pt"
+    },
+    "78f3b793ad895baa": {
+      "translation": "- **Camada 1 (verdade):** Quatro analistas emitem esquemas nativos do papel (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — não é prosa compartilhada. Cada papel tem restrições para evitar pontos cegos: frases proibidas, tipos de alegações proibidas, partições de entrada filtradas. Os átomos carregam informações de procedência. Um gráfico de análise cruzada direcionada gera desafios específicos. Os analistas originais defendem, refinam ou retiram suas alegações sob pressão.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193034,
+      "source": "- **Layer 1 (truth):** Four analysts emit role-native schemas (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — not shared prose. Each role is blindspot-enforced: forbidden phrases, forbidden claim kinds, filtered input partitions. Atoms carry provenance. A directed cross-examination graph produces targeted challenges. Original analysts defend, narrow, or retract under pressure.\r",
+      "targetLang": "pt"
+    },
+    "ad4dd3cdaefd52ad": {
+      "translation": "- **Camada 2 (renderização):** Cinco vozes humanas distintas (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) com restrições lexicais para evitar a convergência das vozes. A síntese consome a verdade, nunca a prosa renderizada. Ambas as camadas estão sempre disponíveis.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193034,
+      "source": "- **Layer 2 (render):** Five distinct human voices (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) with lexical bans preventing voice convergence. Synthesis consumes truth, never rendered prose. Both layers always available.\r",
+      "targetLang": "pt"
+    },
+    "5626606d8e20d851": {
+      "translation": "- **Cadeia de custódia:** Cada frase renderizada rastreia até um átomo da camada de verdade. As instruções de síntese citam os átomos. Os alvos da análise cruzada são IDs de alegações reais. O gráfico de disputa é o produto, não a prosa.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193034,
+      "source": "- **Chain of custody:** Every rendered sentence traces back to a truth-layer atom. Synthesis directions cite atoms. Cross-exam targets real claim IDs. The dispute graph is the product, not the prose.\r",
+      "targetLang": "pt"
+    },
+    "3265a40cae781f78": {
+      "translation": "**Comprovado:** versão 0.4 da sessão de brainstorming de alta qualidade — 894 testes, cadeia de custódia completa verificada. Consulte [`examples/golden-run.md`](examples/golden-run.md) para a cadeia completa de artefatos.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193034,
+      "source": "**Proven:** v0.4 golden run — 894 tests, full chain of custody verified. See [`examples/golden-run.md`](examples/golden-run.md) for the complete artifact chain.\r",
+      "targetLang": "pt"
+    },
+    "0f0c25611c2bb9fe": {
+      "translation": "- v0.1–v0.4: Fundação — testes, adoção, pacote de tratamento, pacote inicial.\n- v1.0.0: 32 funções, CLI completa, tratamento comprovado, portabilidade multi-repositório.\n- v1.0.2: Bloqueio do sistema operacional para funções (correções de inicialização, `init --force`).\n- v1.1.0: 31 funções, roteamento completo, detecção de conflitos, escalonamento, evidências, despacho, 7 pacotes de equipe comprovados. 35 testes de execução. 212 testes.\n- v1.2.0: Pacotes calibrados promovidos a entrada padrão. Seleção automática, detecção de incompatibilidades, sugestão alternativa, fallback de roteamento livre. 246 testes.\n- v1.3.0: Calibração de resultados, decomposição de tarefas mistas, execução composta, replanejamento adaptativo. 317 testes.\n- v1.4.0: Espinha dorsal da sessão — `roleos init claude`, `roleos doctor`, cartões de rota, comandos `/roleos-route + /roleos-review + /roleos-status`. 335 testes.\n- v1.5.0: Espinha dorsal de hooks — 5 hooks de ciclo de vida para aplicação em tempo de execução. 358 testes.\n- v1.6.0: Espinha dorsal de artefatos — 20 contratos de artefatos por função, 7 contratos de transferência de pacotes, validação estrutural. 385 testes.\n- v1.7.0: Prova de conclusão — tarefas reais executadas em toda a pilha. CLI `roleos artifacts`. Escalabilidade honesta para correções estruturais. 398 testes.\n- v1.8.0: Biblioteca de missões (Fase S) — 6 missões nomeadas, motor de execução, relatórios de conclusão. Reforçado com 6 execuções de teste reais. 481 testes.\n- v1.9.0: Caminho de entrada unificado (Fase T) — `roleos start` decide automaticamente entre missão, pacote ou roteamento livre. Escada de fallback, detecção composta, testes de comparação de caminho de entrada. 527 testes.\n- **v2.0.0**: Otimização da experiência do usuário (Fase U) — `roleos run` cria execuções persistentes com backup em disco. Retomar, próximo, explicar, completar, falhar. Intervenções: redirecionar, escalar, tentar novamente, bloquear, reabrir. Orientação passo a passo em cada etapa. Medição de atrito. 6 testes de atrito. 613 testes.\n- **v2.0.1**: Auditoria do manual, documentação para iniciantes, correções na contagem de testes. 617 testes.\n- **v2.1.0**: Missão de brainstorming (v0.4) — funções especializadas sob a lei, desacordo rastreável, saída com valor de decisão. Arquitetura de duas camadas (verdade + renderização), matriz de permissão de interrogatório, grafo de disputas, prova de execução ideal. 7 missões, 50 funções, 8 pacotes. 894 testes.",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193034,
+      "source": "- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack\r\n- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability\r\n- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)\r\n- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.\r\n- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.\r\n- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.\r\n- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.\r\n- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.\r\n- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.\r\n- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.\r\n- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.\r\n- v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.\r\n- **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.\r\n- **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.\r\n- **v2.1.0**: Brainstorm mission (v0.4) — specialized roles under law, traceable disagreement, verdict-bearing output. Two-layer architecture (truth + render), cross-exam permission matrix, dispute graph, golden run proof. 7 missions, 50 roles, 8 packs. 894 tests.\r",
+      "targetLang": "pt"
+    },
+    "673d526b33ab644f": {
+      "translation": "MIT",
+      "model": "translategemma:12b",
+      "timestamp": 1774639193034,
+      "source": "MIT\r",
+      "targetLang": "pt"
     }
   }
 }

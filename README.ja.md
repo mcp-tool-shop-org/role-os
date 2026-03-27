@@ -2,10 +2,8 @@
   <a href="README.md">English</a> | <a href="README.zh.md">中文</a> | <a href="README.es.md">Español</a> | <a href="README.fr.md">Français</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (BR)</a>
 </p>
 
-# Role OS
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/role-os/readme.png" alt="Role OS" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/role-os/readme.png" alt="Role OS" width="600">
 </p>
 
 <p align="center">
@@ -52,6 +50,35 @@ roleos start "something completely novel"
 
 このシステムは、常に適切な抽象レベルでタスクを実行させます。各レベルを選択した理由を説明し、代替案も提示します。
 
+**実行を開始するコマンド:**
+
+```bash
+roleos run "fix the crash in save handler"
+# → Created run: run-1234
+# → Entry: MISSION (bugfix)
+# → Started step 0: Repo Researcher → diagnosis-report
+# → Guidance: Required sections: entrypoints, module-map, build-test-commands
+
+roleos next                    # Start the next step
+roleos complete diagnosis.md   # Complete the active step with artifact
+roleos explain                 # Show full run state and guidance
+roleos resume                  # Continue an interrupted run
+roleos report                  # Generate completion report
+roleos friction                # Measure operator touches
+```
+
+**問題発生時の対応:**
+
+```bash
+roleos retry 0                 # Retry a failed step
+roleos reroute 1 "Frontend Developer" "UI bug"  # Swap a role
+roleos escalate "Test Engineer" "Repo Researcher" "missed edge case" "re-diagnose"
+roleos block 2 "waiting for API spec"
+roleos reopen 0 "found issue in review"
+```
+
+実行結果はディスクに保存されます（`.claude/runs/`）。そのため、中断されたセッションも正常に再開できます。各ステップには、オペレーター向けのガイダンスが含まれており、生成すべき内容、必要なセクション、および停止条件が示されています。
+
 **ルーティング後:**
 
 1. **各役割は成果物を生成:** 構造化された出力で、次の役割が理解しやすいように、証拠となる情報が含まれています。
@@ -97,19 +124,24 @@ Role OSは、Claudeプロジェクトのメモリと連携します。置き換�
 npx role-os init
 
 # Describe what you need — Role OS picks the right level:
-roleos start "fix the crash in save handler"
+roleos run "fix the crash in save handler"
+# → Creates run, picks bugfix mission, starts first step with guidance
+
+# Step through:
+roleos next                    # Start next step
+roleos complete artifact.md    # Complete with artifact
+roleos explain                 # Show full state
+roleos report                  # Completion report
 
 # Or go manual:
+roleos start "fix the crash"   # Entry decision only (no run)
 roleos packet new feature
 roleos route .claude/packets/my-feature.md
 roleos review .claude/packets/my-feature.md accept
-roleos status
 
 # Explore missions and packs:
 roleos mission list
-roleos mission show bugfix
 roleos packs list
-roleos packs show feature
 ```
 
 ## Role OSを使用しない場合
@@ -148,6 +180,12 @@ Role OSは、構造が異なる2つのリポジトリで、3つの異なるテ�
 - 同じトリートメントパッケージを使用。構造は異なり、リポジトリの内容も異なる（クリエイティブワークスペース vs ゲーム）。
 - トリートメントパッケージは移植可能。契約の変更は不要。
 
+**理想的な実行例（MCPサーバーマーケットプレイスのトピック）**
+- 9つの役割を持つ連携、並行して4人の分析者。相互に質問し、反論するグラフ。
+- 4つの課題が提示され、3つの主張が絞り込まれ、1つが未解決。健全なプレッシャーがかかっていますが、行き詰まりはありません。
+- 生成された成果物から、真実の要素への16以上の追跡リンク。
+- 完全なトレーサビリティが証明されています：真実 → 要素 → 反論 → 統合 → 拡張 → 評価 → 生成 → 追跡
+
 ## 主要な特性
 
 これらは変更できません。変更によってこれらのいずれかが弱体化する場合は、却下してください。
@@ -166,7 +204,9 @@ role-os/
   src/
     entry.mjs                  ← Unified entry: mission → pack → free routing
     entry-cmd.mjs              ← `roleos start` CLI command
-    mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
+    run.mjs                    ← Persistent run engine: create → step → pause → resume → report
+    run-cmd.mjs                ← `roleos run/resume/next/explain/complete/fail` + interventions
+    mission.mjs                ← 7 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm)
     mission-run.mjs            ← Mission runner: create → step → complete → report
     mission-cmd.mjs            ← `roleos mission` CLI commands
     route.mjs                  ← 31-role routing + dynamic chain builder
@@ -175,14 +215,17 @@ role-os/
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
     dispatch.mjs               ← Runtime dispatch manifests for multi-claude
-    artifacts.mjs              ← 20 per-role artifact contracts + 7 pack handoffs
+    artifacts.mjs              ← 30 per-role artifact contracts + 7 pack handoffs
     decompose.mjs              ← Composite task detection + splitting
     composite.mjs              ← Dependency-ordered execution + recovery
     replan.mjs                 ← Mid-run adaptive replanning
     calibration.mjs            ← Outcome recording + weight tuning
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
     session.mjs                ← Session scaffolding + doctor
-  test/                        ← 527 tests across 20 test files
+    brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
+    brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
+    brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
+  test/                        ← 894 tests across 30 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
@@ -212,6 +255,8 @@ Role OSは、**ローカルでのみ**動作します。Markdownテンプレー�
 | **Mission library** | 6つの名前付きミッション（新機能追加、バグ修正、改善、ドキュメントのリリース、セキュリティ強化、研究開発）。それぞれが、パッケージ、ロールチェーン、成果物の流れ、エスカレーションのブランチ、正直で部分的な定義を宣言します。6つすべてが試行錯誤され、強化されています。 | ✓ 完了 |
 | **Mission runner** | 実行を開始し、追跡された状態とともにステップを進め、正直なレポートで完了または失敗。ブロックされたステップの伝播、チェーンからの逸脱に関する警告、最後のステップの再開。 | ✓ 完了 |
 | **Unified entry** | `roleos start`は、ミッション、パッケージ、または自由ルーティングを自動的に決定します。信頼度スコア、代替案、および複合検出を備えたフォールバックシステム。 | ✓ 完了 |
+| **Persistent runs** | `roleos run` コマンドは、ディスクに保存された実行結果を作成します。`resume`（再開）、`next`（次へ）、`explain`（説明）、`complete`（完了）、`fail`（失敗）。対応：`reroute`（リダイレクト）、`escalate`（エスカレーション）、`retry`（再試行）、`block`（ブロック）、`reopen`（再開）。各ステップにローカルなガイダンスがあります。摩擦の測定。 | ✓ 完了 |
+| **Brainstorm** | 2層のアーキテクチャ：真実層（役割固有のスキーマ、トレーサビリティを持つ要素、相互質問と反論のグラフ）+ 生成層（5つの異なる声、禁止語、議論の記録）。追跡リンクは、生成されたすべての主張が、真実の要素に対応していることを証明します。理想的な実行例：894件のテスト。 | ✓ 完了 |
 
 ## 6つのミッション
 
@@ -223,23 +268,47 @@ Role OSは、**ローカルでのみ**動作します。Markdownテンプレー�
 | `docs-release` | ドキュメント | 2 | ドキュメントの作成/更新、リリースノート |
 | `security-hardening` | セキュリティ | 4 | 脅威モデルの作成、監査、脆弱性の修正、再監査、検証 |
 | `research-launch` | 研究 | 4 | 問題の定義、調査、結果の文書化、決定 |
+| `brainstorm` | ブレインストーミング | 9 | 追跡可能な意見の相違と結論を持つ、構造化された多角的な調査 |
 
 各ミッションには、正直で部分的な定義が含まれています。作業が停滞した場合、システムは完了した内容と残りの内容を記録し、進捗を偽装することはありません。
 
+### ブレインストーミングミッション
+
+これは「AIによるブレインストーミング」ではありません。ブレインストーミングミッションは、**法に基づいて定義された役割であり、追跡可能な意見の相違と、結論を導き出すための出力を持つ**ものです。
+
+```bash
+roleos run "explore product directions for a developer tool discovery platform"
+# → MISSION: Brainstorm (Structured Inquiry)
+#   Chain: 4 Analysts (parallel) → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge
+```
+
+**何が違うのか:**
+
+- **層1（真実）：** 4人の分析者が、役割固有のスキーマ（コンテキストマップ、ユーザーバリューマップ、メカニズムマップ、ポジショニングマップ）を生成します。これは、共有された文章ではありません。各役割には、盲点防止機能が組み込まれており、禁止語、禁止される主張の種類、およびフィルタリングされた入力セクションがあります。要素には、トレーサビリティ情報が含まれています。方向性のある相互質問グラフにより、ターゲットを絞った課題が生成されます。元の分析者は、プレッシャーの下で、主張を擁護したり、絞り込んだり、撤回したりします。
+
+- **層2（生成）：** 5つの異なる人間の声（境界メモ、フィールドノート、システムスケッチ、主張概要、相互質問記録）があり、禁止語により、声の統一を防ぎます。統合は、真実の要素を使用しますが、生成された文章は使用しません。両方の層は常に利用可能です。
+
+- **トレーサビリティ：** 生成されたすべての文は、真実の要素にトレースバックできます。統合の指示には、要素が引用されています。相互質問は、実際の主張IDを対象としています。意見の相違グラフは、文章ではなく、その結果です。
+
+**検証済み：** v0.4の理想的な実行例：894件のテスト、完全なトレーサビリティが検証済み。完全な成果物のチェーンについては、[`examples/golden-run.md`](examples/golden-run.md) を参照してください。
+
 ## ステータス
 
-- v0.1–v0.4: 基礎 - 試行、導入、改善パッケージ、スターターパッケージ
-- v1.0.0: 32のロール、完全なCLI、実績のある改善、マルチリポジトリの移植性
-- v1.0.2: ロールOSのロックダウン（ブートストラップの真実性の修正、init --force）
-- v1.1.0: 31のロール、完全なルーティング機能、競合検出、エスカレーション、証拠、ディスパッチ、7つの実績のあるチームパッケージ。35回の実行テスト。212件のテスト。
-- v1.2.0: デフォルトとして推奨されるパッケージ。自動選択、不整合の検出、代替案の提案、自由ルーティングのフォールバック。246件のテスト。
-- v1.3.0: 結果の調整、タスクの細分化、複合実行、適応的な再計画。317件のテスト。
-- v1.4.0: セッションの基盤 - `roleos init claude`、`roleos doctor`、ルートカード、/roleos-route + /roleos-review + /roleos-status コマンド。335件のテスト。
-- v1.5.0: フックの基盤 - 実行時の強制のための5つのライフサイクルフック。358件のテスト。
-- v1.6.0: 成果物の基盤 - ロールごとの20件の成果物契約、7件のパッケージ引き継ぎ契約、構造検証。385件のテスト。
-- v1.7.0: 完了の証明 - 実際のタスクをフルスタックで実行。`roleos artifacts` CLI。構造的な修正に関する正直なエスカレーション。398件のテスト。
-- v1.8.0: ミッションライブラリ（Phase S）- 6つの名前付きミッション、ランナーエンジン、完了レポート。6回の実際の試行錯誤で強化されています。481件のテスト。
-- **v1.9.0**: 統合されたエントリパス（Phase T）- `roleos start`は、ミッション、パッケージ、または自由ルーティングを自動的に決定します。フォールバックシステム、複合検出、エントリパスの比較テスト。527件のテスト。
+- v0.1–v0.4: 基礎機能 — テスト、導入、トリートメントパック、スターターパック
+- v1.0.0: 32種類のロール、フルCLI、実績のあるトリートメント、マルチリポジトリ対応
+- v1.0.2: ロールOSのロックダウン（初期設定の修正、`init --force`コマンド）
+- v1.1.0: 31種類のロール、フルルーティング機能、競合検出、エスカレーション、証拠収集、ディスパッチ、7種類の実績のあるチームパック。35回の実行テスト。212件のテスト。
+- v1.2.0: キャリブレーションされたパックがデフォルト設定に。自動選択、不整合検出、代替案の提案、フリールーティングへのフォールバック。246件のテスト。
+- v1.3.0: 結果のキャリブレーション、タスクの細分化、複合実行、適応的な再計画。317件のテスト。
+- v1.4.0: セッション機能 — `roleos init claude`、`roleos doctor`、ルートカード、`/roleos-route`、`/roleos-review`、`/roleos-status`コマンド。335件のテスト。
+- v1.5.0: フック機能 — 実行時強制のための5つのライフサイクルフック。358件のテスト。
+- v1.6.0: アーティファクト機能 — 各ロールごとの20種類のアーティファクト契約、7種類のパックハンドオフ契約、構造検証。385件のテスト。
+- v1.7.0: 完了の検証 — 実際のタスクをフルスタックで実行。`roleos artifacts` CLI。構造的な修正に対する正直なエスカレーション。398件のテスト。
+- v1.8.0: ミッションライブラリ（フェーズS） — 6種類の名前付きミッション、実行エンジン、完了レポート。6回の実際のテストで強化。481件のテスト。
+- v1.9.0: 統合されたエントリーパス（フェーズT） — `roleos start`コマンドが、ミッション、パック、フリールーティングを自動的に選択。フォールバック機能、複合検出、エントリーパスの比較テスト。527件のテスト。
+- **v2.0.0**: ユーザーエクスペリエンス改善（フェーズU） — `roleos run`コマンドが、永続的なディスクベースの実行を作成。再開、次へ、説明、完了、失敗。介入：リルーティング、エスカレーション、再試行、ブロック、再開。各ステップでの詳細なガイダンス。摩擦の測定。6件の摩擦テスト。613件のテスト。
+- **v2.0.1**: マニュアルの監査、初心者向けドキュメント、テスト件数の修正。617件のテスト。
+- **v2.1.0**: ブレインストーミングミッション（v0.4） — 法分野に特化したロール、追跡可能な意見の相違、判決を含む出力。2層アーキテクチャ（真実性 + レンダリング）、クロスエグザム権限マトリックス、紛争グラフ、黄金の実行の検証。7種類のミッション、50種類のロール、8種類のパック。894件のテスト。
 
 ## ライセンス
 
