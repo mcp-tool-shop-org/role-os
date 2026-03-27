@@ -121,12 +121,16 @@ describe("roleos artifacts", () => {
     assert.ok(output.includes("verdict"));
   });
 
-  it("shows all 7 pack chains", () => {
+  it("shows all 8 pack chains", () => {
     setup();
-    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment"]) {
+    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm"]) {
       const output = run("artifacts", "chain", pack);
       assert.ok(output.includes(pack), `Missing pack name for ${pack}`);
-      assert.ok(output.includes("Critic Reviewer"), `Missing Critic for ${pack}`);
+      if (pack === "brainstorm") {
+        assert.ok(output.includes("Judge"), `Missing Judge for brainstorm`);
+      } else {
+        assert.ok(output.includes("Critic Reviewer"), `Missing Critic for ${pack}`);
+      }
     }
   });
 

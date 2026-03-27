@@ -14,7 +14,7 @@
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-A multi-Claude operating system that staffs, routes, validates, and runs work through 31 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.
+A multi-Claude operating system that staffs, routes, validates, and runs work through 50 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict.
 
 ## What it does
 
@@ -104,7 +104,7 @@ Full treatment is a canonical 7-phase protocol defined in Claude project memory 
 
 Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.
 
-## 31 roles across 8 packs
+## 50 roles across 8 packs
 
 | Pack | Roles |
 |------|-------|
@@ -181,6 +181,12 @@ Role OS was proven across three trial shapes in two structurally different repos
 - Same treatment pack, structurally different repo (creative workspace vs game)
 - Treatment Pack portable — no contract modifications needed
 
+**Brainstorm golden run** (MCP server marketplace topic)
+- 9-role chain, 4 analysts in parallel, cross-examine + rebut dispute graph
+- 4 challenges issued, 3 claims narrowed, 1 unresolved — healthy pressure, not deadlock
+- 16+ trace links from rendered artifacts back to truth-layer atoms
+- Full chain of custody proven: truth → atoms → dispute → synthesis → expand → judge → render → trace
+
 ## Core properties
 
 These are non-negotiable. If a change weakens any of them, reject it.
@@ -201,7 +207,7 @@ role-os/
     entry-cmd.mjs              ← `roleos start` CLI command
     run.mjs                    ← Persistent run engine: create → step → pause → resume → report
     run-cmd.mjs                ← `roleos run/resume/next/explain/complete/fail` + interventions
-    mission.mjs                ← 6 named mission types (feature, bugfix, treatment, docs, security, research)
+    mission.mjs                ← 7 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm)
     mission-run.mjs            ← Mission runner: create → step → complete → report
     mission-cmd.mjs            ← `roleos mission` CLI commands
     route.mjs                  ← 31-role routing + dynamic chain builder
@@ -210,14 +216,17 @@ role-os/
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
     dispatch.mjs               ← Runtime dispatch manifests for multi-claude
-    artifacts.mjs              ← 20 per-role artifact contracts + 7 pack handoffs
+    artifacts.mjs              ← 30 per-role artifact contracts + 7 pack handoffs
     decompose.mjs              ← Composite task detection + splitting
     composite.mjs              ← Dependency-ordered execution + recovery
     replan.mjs                 ← Mid-run adaptive replanning
     calibration.mjs            ← Outcome recording + weight tuning
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
     session.mjs                ← Session scaffolding + doctor
-  test/                        ← 617 tests across 27 test files
+    brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
+    brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
+    brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
+  test/                        ← 894 tests across 30 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
@@ -243,13 +252,14 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | **Adaptive replanning** | Mid-run scope changes, findings, or new requirements update the plan without restarting. | ✓ Shipped |
 | **Session spine** | `roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement. | ✓ Shipped |
 | **Hook spine** | 5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit. | ✓ Shipped |
-| **Artifact spine** | 20 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received. | ✓ Shipped |
-| **Mission library** | 6 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 6 trial-run and hardened. | ✓ Shipped |
+| **Artifact spine** | 30 per-role artifact contracts. 7 pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received. | ✓ Shipped |
+| **Mission library** | 7 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. All 7 trial-proven. | ✓ Shipped |
 | **Mission runner** | Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening. | ✓ Shipped |
 | **Unified entry** | `roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection. | ✓ Shipped |
 | **Persistent runs** | `roleos run` creates disk-backed runs. `resume`, `next`, `explain`, `complete`, `fail`. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance. Friction measurement. | ✓ Shipped |
+| **Brainstorm** | Two-layer architecture: truth (role-native schemas, provenance atoms, cross-exam dispute graph) + render (5 distinct voices, lexical bans, debate transcript). Trace links prove every rendered claim maps to a truth atom. Golden run: 894 tests. | ✓ Shipped |
 
-## 6 missions
+## 7 missions
 
 | Mission | Pack | Roles | When to use |
 |---------|------|-------|-------------|
@@ -259,8 +269,29 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | `docs-release` | docs | 2 | Write/update documentation, release notes |
 | `security-hardening` | security | 4 | Threat model, audit, fix vulnerabilities, re-audit, verify |
 | `research-launch` | research | 4 | Frame question, research, document findings, decide |
+| `brainstorm` | brainstorm | 9 | Structured multi-perspective inquiry with traceable disagreement and verdict |
 
 Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.
+
+### Brainstorm mission
+
+Not "AI brainstorming." The brainstorm mission is **specialized roles under law, with traceable disagreement and verdict-bearing output.**
+
+```bash
+roleos run "explore product directions for a developer tool discovery platform"
+# → MISSION: Brainstorm (Structured Inquiry)
+#   Chain: 4 Analysts (parallel) → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge
+```
+
+**What makes it different:**
+
+- **Layer 1 (truth):** Four analysts emit role-native schemas (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — not shared prose. Each role is blindspot-enforced: forbidden phrases, forbidden claim kinds, filtered input partitions. Atoms carry provenance. A directed cross-examination graph produces targeted challenges. Original analysts defend, narrow, or retract under pressure.
+
+- **Layer 2 (render):** Five distinct human voices (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) with lexical bans preventing voice convergence. Synthesis consumes truth, never rendered prose. Both layers always available.
+
+- **Chain of custody:** Every rendered sentence traces back to a truth-layer atom. Synthesis directions cite atoms. Cross-exam targets real claim IDs. The dispute graph is the product, not the prose.
+
+**Proven:** v0.4 golden run — 894 tests, full chain of custody verified. See [`examples/golden-run.md`](examples/golden-run.md) for the complete artifact chain.
 
 ## Status
 
@@ -278,6 +309,7 @@ Each mission includes honest-partial definitions — when work stalls, the syste
 - v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.
 - **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.
 - **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.
+- **v2.1.0**: Brainstorm mission (v0.4) — specialized roles under law, traceable disagreement, verdict-bearing output. Two-layer architecture (truth + render), cross-exam permission matrix, dispute graph, golden run proof. 7 missions, 50 roles, 8 packs. 894 tests.
 
 ## License
 

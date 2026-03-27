@@ -223,6 +223,127 @@ export const ROLE_CATALOG = [
     triggers: ["interview theme", "mental model mapping", "unmet needs ranking"],
     excludeWhen: ["no interview data"],
   },
+
+  // ── BRAINSTORM ──
+  {
+    name: "Context Scout", pack: "brainstorm", phase: 1,
+    keywords: ["landscape", "terminology", "adjacent", "prior art", "domain", "context"],
+    triggers: ["domain landscape", "adjacent space mapping", "terminology mapping"],
+    excludeWhen: ["no exploration needed"],
+  },
+  {
+    name: "User Value Scout", pack: "brainstorm", phase: 1,
+    keywords: ["pain", "desire", "behavior", "unmet need", "user segment", "user value"],
+    triggers: ["user pain mapping", "unmet need discovery", "desire mapping"],
+    excludeWhen: ["no user concern"],
+  },
+  {
+    name: "Creative Leap Scout", pack: "brainstorm", phase: 1,
+    keywords: ["novel", "unexpected", "combination", "analogy", "bold", "creative", "divergent"],
+    triggers: ["cross-domain analogy", "unexpected combination", "bold bet"],
+    excludeWhen: ["conservative approach required"],
+  },
+  {
+    name: "Normalizer", pack: "brainstorm", phase: 2,
+    keywords: ["dedup", "normalize", "cluster", "conflict", "calibrate", "finding"],
+    triggers: ["finding normalization", "conflict detection", "evidence calibration"],
+    excludeWhen: [],
+  },
+  {
+    name: "Synthesizer", pack: "brainstorm", phase: 3,
+    keywords: ["synthesize", "theme", "direction", "pattern", "tension", "consensus"],
+    triggers: ["direction selection", "theme extraction", "tension preservation"],
+    excludeWhen: [],
+  },
+  {
+    name: "Product Expander", pack: "brainstorm", phase: 4,
+    keywords: ["expand", "features", "core loop", "proof", "target user", "product shape"],
+    triggers: ["concept expansion", "product shape", "smallest proof version"],
+    excludeWhen: [],
+    deliverableAffinity: ["Plan"],
+  },
+  {
+    name: "Judge", pack: "brainstorm", phase: 5,
+    keywords: ["judge", "gate", "disposition", "quality", "accept", "revise", "reject"],
+    triggers: ["quality gate", "disposition routing", "revision targeting"],
+    excludeWhen: [],
+  },
+
+  // ── BRAINSTORM (v1.0 optional roles) ──
+  {
+    name: "Mechanics Scout", pack: "brainstorm", phase: 1,
+    keywords: ["structural", "operational", "mechanism", "how it works", "feasibility"],
+    triggers: ["structural feasibility", "operational mechanism"],
+    excludeWhen: [],
+  },
+  {
+    name: "Market Scout", pack: "brainstorm", phase: 1,
+    keywords: ["market", "existing", "whitespace", "sameness", "positioning"],
+    triggers: ["market whitespace", "existing solutions", "sameness trap"],
+    excludeWhen: [],
+  },
+  {
+    name: "Contrarian Scout", pack: "brainstorm", phase: 2,
+    keywords: ["challenge", "contrarian", "counter", "weakness", "overgeneralization"],
+    triggers: ["evidence challenge", "finding challenge", "false novelty"],
+    excludeWhen: [],
+  },
+  {
+    name: "Feasibility Scout", pack: "brainstorm", phase: 1,
+    keywords: ["feasible", "provable", "buildable", "timeline", "complexity"],
+    triggers: ["feasibility assessment", "proof timeline"],
+    excludeWhen: [],
+  },
+  {
+    name: "Quality Bar Scout", pack: "brainstorm", phase: 1,
+    keywords: ["excellence", "quality", "adequate", "bar", "standard"],
+    triggers: ["quality threshold", "excellence criteria"],
+    excludeWhen: [],
+  },
+  {
+    name: "Scenario Expander", pack: "brainstorm", phase: 4,
+    keywords: ["scenario", "user situation", "edge case", "failure mode", "context"],
+    triggers: ["concrete scenario", "user situation", "failure mode analysis"],
+    excludeWhen: [],
+  },
+  {
+    name: "Moat Expander", pack: "brainstorm", phase: 4,
+    keywords: ["moat", "defensibility", "stickiness", "competitive", "differentiation"],
+    triggers: ["defensibility analysis", "competitive moat", "phase planning"],
+    excludeWhen: [],
+  },
+
+  // ── BRAINSTORM v0.3 (specialized analysts with hard boundaries) ──
+  {
+    name: "Context Analyst", pack: "brainstorm", phase: 1,
+    keywords: ["terminology", "genealogy", "adjacency", "category", "boundary", "lineage"],
+    triggers: ["terminology genealogy", "category boundary mapping", "adjacency analysis"],
+    excludeWhen: [],
+  },
+  {
+    name: "User Value Analyst", pack: "brainstorm", phase: 1,
+    keywords: ["jobs", "friction", "willingness", "avoidance", "desire", "pain"],
+    triggers: ["jobs-to-be-done analysis", "friction mapping", "willingness signal detection"],
+    excludeWhen: [],
+  },
+  {
+    name: "Mechanics Analyst", pack: "brainstorm", phase: 1,
+    keywords: ["loop", "dependency", "constraint", "failure mode", "irreducible"],
+    triggers: ["loop decomposition", "dependency chain analysis", "failure mode identification"],
+    excludeWhen: [],
+  },
+  {
+    name: "Positioning Analyst", pack: "brainstorm", phase: 1,
+    keywords: ["substitute", "wedge", "timing", "category frame", "claim"],
+    triggers: ["wedge identification", "substitute comparison", "claim timing analysis"],
+    excludeWhen: [],
+  },
+  {
+    name: "Contrarian Analyst", pack: "brainstorm", phase: 2,
+    keywords: ["challenge", "overstated", "premature", "contradiction", "false"],
+    triggers: ["targeted challenge", "claim attack", "contradiction exposure"],
+    excludeWhen: [],
+  },
 ];
 
 // ── Deliverable type → role affinity ──────────────────────────────────────────

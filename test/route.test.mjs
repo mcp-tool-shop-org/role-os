@@ -12,8 +12,8 @@ import {
 // ── Catalog completeness ──────────────────────────────────────────────────────
 
 describe("ROLE_CATALOG", () => {
-  it("has exactly 31 roles (Information Architect merged into Docs Architect)", () => {
-    assert.equal(ROLE_CATALOG.length, 31);
+  it("has exactly 50 roles (31 base + 14 brainstorm v0.1 + 5 brainstorm v0.3 analysts)", () => {
+    assert.equal(ROLE_CATALOG.length, 50);
   });
 
   it("every role has required fields", () => {

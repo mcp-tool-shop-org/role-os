@@ -254,6 +254,43 @@ export const TEAM_PACKS = {
       { notForSignals: ["handbook", "documentation", "restructure docs"], suggestInstead: "docs", reason: "This is docs-only work, not a full treatment" },
     ],
   },
+
+  // ── Brainstorm (Structured Inquiry) ─────────────────────────────────────────
+  brainstorm: {
+    name: "Brainstorm (Structured Inquiry)",
+    description: "Specialized roles under law, with traceable disagreement and verdict-bearing output.",
+    roles: [
+      "Context Analyst",
+      "User Value Analyst",
+      "Mechanics Analyst",
+      "Positioning Analyst",
+      "Normalizer",
+      "Contrarian Analyst",
+      "Synthesizer",
+      "Product Expander",
+      "Judge",
+    ],
+    orchestratorRequired: false,
+    optionalRoles: ["Scenario Expander", "Moat Expander"],
+    chainOrder: "Context Analyst + User Value Analyst + Mechanics Analyst + Positioning Analyst (parallel) → Normalizer → Contrarian Analyst → Normalizer (rebut) → Synthesizer → Product Expander → Judge",
+    requiredArtifacts: ["context-map", "user-value-map", "mechanics-map", "positioning-map", "provenance-atoms", "challenge-set", "rebuttal-set", "synthesis-report", "expanded-concept", "judge-report"],
+    stopConditions: [
+      "Judge accepts — both truth and render layers assembled, trace links verified",
+      "Judge rejects — return honest partial with truth artifacts intact",
+      "Judge revises — loop back to targeted phase (max 3 loops)",
+    ],
+    escalationOwner: "Judge",
+    dispatchDefaults: { model: "sonnet", maxTurns: 40, maxBudgetUsd: 6.0 },
+    trialEvidence: "v0.4 golden run — 894 tests, full chain of custody proven. Architecture frozen 2026-03-27.",
+    mismatchGuards: [
+      { notForSignals: ["fix bug", "crash", "broken", "regression", "error"], suggestInstead: "bugfix", reason: "This is a bug to fix, not a brainstorm" },
+      { notForSignals: ["implement", "build", "add command", "write code"], suggestInstead: "feature", reason: "This is implementation work, not exploration" },
+      { notForSignals: ["security review", "threat model", "vulnerability"], suggestInstead: "security", reason: "This is a security review, not a brainstorm" },
+      { notForSignals: ["treatment", "repo audit", "shipcheck", "polish"], suggestInstead: "treatment", reason: "This is repo treatment, not a brainstorm" },
+      { notForSignals: ["launch", "announce", "release notes", "messaging"], suggestInstead: "launch", reason: "This is launch work, not a brainstorm" },
+      { notForSignals: ["handbook", "documentation", "restructure docs"], suggestInstead: "docs", reason: "This is docs work, not a brainstorm" },
+    ],
+  },
 };
 
 // ── Pack selection ────────────────────────────────────────────────────────────
@@ -266,6 +303,7 @@ const PACK_KEYWORDS = {
   launch:    ["launch", "announce", "release notes", "messaging", "go-to-market"],
   research:  ["research", "competitive", "ux", "friction", "user", "strategy", "trend"],
   treatment: ["treatment", "polish", "cleanup", "repo audit", "shipcheck", "full treatment"],
+  brainstorm: ["brainstorm", "explore", "ideate", "divergent", "opportunity", "creative directions", "concept exploration", "what could", "possibilities"],
 };
 
 /**

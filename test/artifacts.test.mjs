@@ -43,19 +43,24 @@ describe("ROLE_ARTIFACT_CONTRACTS", () => {
 });
 
 describe("PACK_HANDOFF_CONTRACTS", () => {
-  it("defines handoff contracts for all 7 packs", () => {
-    const packs = ["feature", "bugfix", "security", "docs", "launch", "research", "treatment"];
+  it("defines handoff contracts for all 8 packs", () => {
+    const packs = ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm"];
     for (const p of packs) {
       assert.ok(PACK_HANDOFF_CONTRACTS[p], `Missing contract for ${p}`);
       assert.ok(PACK_HANDOFF_CONTRACTS[p].flow.length >= 2, `${p} flow too short`);
     }
   });
 
-  it("every pack ends with Critic Reviewer → verdict", () => {
+  it("every pack ends with terminal step (consumedBy null)", () => {
     for (const [pack, contract] of Object.entries(PACK_HANDOFF_CONTRACTS)) {
       const last = contract.flow[contract.flow.length - 1];
-      assert.equal(last.role, "Critic Reviewer", `${pack} doesn't end with Critic`);
-      assert.equal(last.produces, "verdict", `${pack} last step doesn't produce verdict`);
+      if (pack === "brainstorm") {
+        assert.equal(last.role, "Judge", `brainstorm should end with Judge`);
+        assert.equal(last.produces, "judge-report", `brainstorm last step should produce judge-report`);
+      } else {
+        assert.equal(last.role, "Critic Reviewer", `${pack} doesn't end with Critic`);
+        assert.equal(last.produces, "verdict", `${pack} last step doesn't produce verdict`);
+      }
       assert.equal(last.consumedBy, null, `${pack} verdict should have no consumer`);
     }
   });
@@ -204,8 +209,8 @@ describe("validatePackChain", () => {
     assert.ok(result.steps.some(s => s.status === "incomplete"));
   });
 
-  it("validates all 7 pack contracts exist", () => {
-    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment"]) {
+  it("validates all 8 pack contracts exist", () => {
+    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm"]) {
       const result = validatePackChain(pack, {});
       assert.ok(result.steps.length > 0, `${pack} has no steps`);
     }
