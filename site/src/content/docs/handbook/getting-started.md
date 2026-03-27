@@ -10,13 +10,13 @@ sidebar:
 Install globally via npm:
 
 ```bash
-npm install -g @mcptoolshop/role-os
+npm install -g role-os
 ```
 
 Or run directly:
 
 ```bash
-npx @mcptoolshop/role-os init
+npx role-os init
 ```
 
 ## Bootstrap a repo
@@ -27,7 +27,7 @@ npx @mcptoolshop/role-os init
 roleos init
 ```
 
-This scaffolds `.claude/` with the full Role Spine: 8 role contracts, schemas, policies, workflows, context templates, and example packets.
+This scaffolds `.claude/` with the full Role Spine: 31 role contracts across 8 packs, schemas, policies, workflows, context templates, and example packets.
 
 ### 2. Fill context (5 min)
 

@@ -9,10 +9,11 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 
 ## What's inside
 
+- **[Beginners](/role-os/handbook/beginners/)** — New to Role OS? Start here for a plain-language walkthrough
 - **[Getting Started](/role-os/handbook/getting-started/)** — Install and run your first task in 5 minutes
 - **[Missions](/role-os/handbook/missions/)** — 6 proven recurring workflows with tracked steps and honest-partial reporting
 - **[Role Spine](/role-os/handbook/role-spine/)** — 31 specialist roles across 8 packs and their contracts
-- **[Team Packs](/role-os/handbook/team-packs/)** — Pre-assembled role chains for docs, metadata, releases, deploys, and review
+- **[Team Packs](/role-os/handbook/team-packs/)** — 7 pre-assembled role chains for common work types
 - **[Reference](/role-os/handbook/reference/)** — CLI commands, schemas, policies, and the operating system layers
 
 ## What is Role OS?
@@ -63,6 +64,6 @@ These are non-negotiable. If a change weakens any of them, reject it.
 - **6 mission trials** — all 6 missions run through the runner, 5 real-friction findings fixed
 - **Entry path trials** — unified entry tested against 20+ real task descriptions
 - **6 friction trials** — persistent runs measured for operator touches across all entry levels
-- **613 tests**, zero failures
+- **617 tests**, zero failures
 
 [Back to landing page](/role-os/)

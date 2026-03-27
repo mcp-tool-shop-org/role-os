@@ -1,124 +1,151 @@
 ---
 title: Team Packs
-description: Pre-assembled role chains for common work types. Pick a pack, fill a packet, and route it in one command.
+description: 7 pre-assembled role chains for common work types. Pick a pack, describe a task, and route it in one command.
 sidebar:
   order: 3
 ---
 
-Team Packs are curated subsets of the Role Spine. Instead of selecting individual roles, you pick a named pack that already contains the right roles in the right order for a given class of work. The router validates the pack against your packet and builds the execution chain.
+Team Packs are curated subsets of the 31-role spine. Instead of selecting individual roles, you pick a named pack that already contains the right roles in the right order for a given class of work. Each pack includes mismatch detection: if your task does not fit the pack, it suggests the right one instead.
 
 ```bash
-roleos route --pack <name> <packet-file>
+roleos run --pack=feature "add export command"
+roleos packs list
+roleos packs suggest .claude/packets/my-task.md
 ```
 
-The `--pack` flag constrains routing to the roles inside that pack. Conflict detection still runs. Roles outside the pack are not eligible unless escalation explicitly requires them.
+## When to use a pack vs. free routing
 
-## When to use a pack vs. individual routing
+Use a pack when the work is well-scoped and the domain is clear. Use free routing (`roleos route`) when the work cuts across domains or you need a custom chain. `roleos start` picks the right level automatically (mission, pack, or free routing) based on your task description.
 
-Use a pack when the work is well-scoped and the domain is clear. Use individual routing when the work cuts across domains or you need a custom chain. Packs save routing overhead on repeated work types — they do not relax any quality gates.
+## The 7 packs
 
-## Available packs
+### 1. Feature Build
 
-### 1. Docs Architect
-
-Designs and structures documentation. Use for new doc sites, handbook sections, content reorganization, or information architecture decisions.
+Full feature delivery: scope, spec, implement, test, review.
 
 | | |
 |---|---|
-| **Roles** | Orchestrator, Product Strategist, Critic Reviewer |
-| **Artifacts** | Page outline, section hierarchy, frontmatter spec, sidebar order, cross-link map |
-| **Stop conditions** | Structure approved by Critic; all sections have owners and stated purpose |
-
-```bash
-roleos route --pack docs-architect .claude/packets/my-docs-task.md
-```
+| **Roles** | Orchestrator, Product Strategist, Spec Writer, Backend Engineer, Test Engineer, Critic Reviewer |
+| **Optional** | UI Designer, Frontend Developer, Security Reviewer |
+| **Chain** | Product Strategist, Spec Writer, Backend Engineer, Test Engineer |
+| **Orchestrator** | Required (multi-role, cross-functional) |
+| **Artifacts** | Scope doc, spec, implementation, test results, verdict |
 
 ---
 
-### 2. Metadata Curator
+### 2. Bugfix / Repair
 
-Audits and corrects structured metadata. Use for frontmatter hygiene, schema validation, sidebar ordering, title/description consistency, and search-index correctness.
+Diagnose, fix, verify, review. Minimal chain, fast turnaround.
 
 | | |
 |---|---|
-| **Roles** | Orchestrator, Test Engineer, Critic Reviewer |
-| **Artifacts** | Metadata audit report, corrected frontmatter, flagged violations with line references |
-| **Stop conditions** | All required fields present and schema-valid; no duplicated sidebar orders; Critic accepts |
-
-```bash
-roleos route --pack metadata-curator .claude/packets/my-metadata-task.md
-```
+| **Roles** | Repo Researcher, Backend Engineer, Test Engineer, Critic Reviewer |
+| **Optional** | Frontend Developer, Performance Engineer |
+| **Chain** | Repo Researcher, Backend Engineer, Test Engineer |
+| **Orchestrator** | Not required |
+| **Artifacts** | Repo map / diagnosis, fix implementation, regression tests, verdict |
 
 ---
 
-### 3. Release Engineer
+### 3. Security Review
 
-Prepares a release: version bump, changelog entry, tag, and publish gate. Use when shipping a new version of any Role OS component.
+Threat model, code review, dependency audit, verdict.
 
 | | |
 |---|---|
-| **Roles** | Orchestrator, Backend Engineer, Test Engineer, Critic Reviewer |
-| **Artifacts** | Bumped version in `package.json`, changelog entry, git tag, publish checklist |
-| **Stop conditions** | Version consistent across all manifests; changelog entry written; CI passes; Critic accepts |
-
-```bash
-roleos route --pack release-engineer .claude/packets/my-release-task.md
-```
+| **Roles** | Security Reviewer, Dependency Auditor, Critic Reviewer |
+| **Optional** | Backend Engineer, Test Engineer |
+| **Chain** | Security Reviewer, Dependency Auditor |
+| **Orchestrator** | Not required |
+| **Artifacts** | Threat model, code review findings, dependency audit, verdict |
 
 ---
 
-### 4. Deployment Verifier
+### 4. Docs / Handbook
 
-Verifies a build or deployment is correct and healthy. Use after publishing a site, shipping a CLI version, or deploying a service.
+Triage raw input, synthesize themes, structure docs, verify metadata, review.
 
 | | |
 |---|---|
-| **Roles** | Orchestrator, Test Engineer, Critic Reviewer |
-| **Artifacts** | Build verification report, broken-link list, render check results, search-index status |
-| **Stop conditions** | Build exits 0; no broken internal links; critical pages render; Critic accepts |
-
-```bash
-roleos route --pack deployment-verifier .claude/packets/my-deploy-task.md
-```
+| **Roles** | Support Triage Lead, Feedback Synthesizer, Docs Architect, Metadata Curator, Critic Reviewer |
+| **Optional** | Repo Translator, Brand Guardian, Release Engineer, Deployment Verifier |
+| **Chain** | Support Triage Lead, Feedback Synthesizer, Docs Architect, Metadata Curator |
+| **Orchestrator** | Not required |
+| **Artifacts** | Classified input, synthesized themes, docs structure, metadata audit, verdict |
 
 ---
 
-### 5. Critic Reviewer
+### 5. Launch / Messaging
 
-A single-role review gate. Use to run an isolated review pass over any prior output without re-executing the full upstream chain.
+Plan launch strategy, write copy, review.
 
 | | |
 |---|---|
-| **Roles** | Critic Reviewer |
-| **Artifacts** | Structured verdict (accept / accept-with-notes / reject / blocked), evidence list, required corrections, next owner |
-| **Stop conditions** | Verdict recorded with full contract-check fields; next owner named |
+| **Roles** | Launch Strategist, Launch Copywriter, Critic Reviewer |
+| **Optional** | Content Strategist, Community Manager |
+| **Chain** | Launch Strategist, Launch Copywriter |
+| **Orchestrator** | Not required |
+| **Artifacts** | Launch plan, release copy, verdict |
 
-```bash
-roleos route --pack critic-reviewer .claude/packets/my-review-task.md
-```
+---
+
+### 6. Research / Strategy
+
+Frame the decision, gather evidence, synthesize, recommend.
+
+| | |
+|---|---|
+| **Roles** | Product Strategist, UX Researcher, Competitive Analyst, Feedback Synthesizer, Critic Reviewer |
+| **Optional** | Trend Researcher, User Interview Synthesizer |
+| **Chain** | Product Strategist, UX Researcher, Competitive Analyst, Feedback Synthesizer |
+| **Orchestrator** | Not required |
+| **Artifacts** | Decision frame, friction inventory, competitive landscape, signal synthesis, verdict |
+
+---
+
+### 7. Treatment (Repo Polish)
+
+Full repo treatment: research, security, audit, docs, metadata, release, deploy, verify.
+
+| | |
+|---|---|
+| **Roles** | Repo Researcher, Security Reviewer, Coverage Auditor, Docs Architect, Metadata Curator, Release Engineer, Deployment Verifier, Critic Reviewer |
+| **Optional** | Brand Guardian, Repo Translator, Dependency Auditor |
+| **Chain** | Repo Researcher, Security Reviewer, Coverage Auditor, Docs Architect, Metadata Curator, Release Engineer, Deployment Verifier |
+| **Orchestrator** | Not required (long but sequential, clear handoffs) |
+| **Artifacts** | Repo map, security findings, coverage audit, docs, metadata audit, release, deployment verification, verdict |
 
 ---
 
 ## Pack reference
 
-| Pack | Roles | Primary use |
-|------|-------|-------------|
-| `docs-architect` | Orchestrator, Product Strategist, Critic | Structure and hierarchy decisions |
-| `metadata-curator` | Orchestrator, Test Engineer, Critic | Frontmatter and schema hygiene |
-| `release-engineer` | Orchestrator, Backend, Test, Critic | Version bumps and publish gates |
-| `deployment-verifier` | Orchestrator, Test Engineer, Critic | Post-deploy health checks |
-| `critic-reviewer` | Critic | Isolated review of any prior output |
+| Pack | Key | Roles | Primary use |
+|------|-----|-------|-------------|
+| Feature Build | `feature` | 6 (+3 optional) | Full feature delivery end-to-end |
+| Bugfix / Repair | `bugfix` | 4 (+2 optional) | Diagnose, fix, test, verify |
+| Security Review | `security` | 3 (+2 optional) | Threat model and dependency audit |
+| Docs / Handbook | `docs` | 5 (+4 optional) | Documentation structure and content |
+| Launch / Messaging | `launch` | 3 (+2 optional) | Launch strategy and release copy |
+| Research / Strategy | `research` | 5 (+2 optional) | Decision framing and evidence gathering |
+| Treatment | `treatment` | 8 (+3 optional) | Full repo polish and publish |
+
+## Mismatch detection
+
+Every pack includes guards that detect when a task does not belong. If you route a bugfix task through the feature pack, the system warns you and suggests `bugfix` instead. This prevents wasted work from routing through the wrong abstraction.
+
+```bash
+roleos packs suggest .claude/packets/my-task.md
+# → Suggested: bugfix (high confidence)
+# → Mismatch: feature pack is wrong for this task — this is a bug to fix, not a feature to build
+```
 
 ## Combining packs
 
-Packs are not mutually exclusive. A docs change often runs `docs-architect` first, then `metadata-curator`, then `deployment-verifier`. The output of each pack is the input packet for the next. Use `roleos review` to record the verdict between packs before continuing.
-
-## Adding custom packs
-
-Custom packs are not yet supported by the CLI. Define the role chain manually in your packet's `constraints` field and route without the `--pack` flag. Pack definitions are planned for a future minor release.
+Packs are not mutually exclusive. A treatment often runs the treatment pack end-to-end, but you can also chain packs manually. The output of each pack is the input for the next. Use `roleos review` to record the verdict between packs.
 
 ## Related
 
-- [Role Spine](/role-os/handbook/role-spine/) — the full 8-role catalog that packs draw from
-- [Getting Started](/role-os/handbook/getting-started/) — `roleos route` without `--pack`
+- [Role Spine](/role-os/handbook/role-spine/) — the full 31-role catalog that packs draw from
+- [Missions](/role-os/handbook/missions/) — 6 recurring workflows built on top of packs
+- [Getting Started](/role-os/handbook/getting-started/) — run your first task
 - [Reference](/role-os/handbook/reference/) — full CLI command reference

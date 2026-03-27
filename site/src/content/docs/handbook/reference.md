@@ -106,10 +106,15 @@ Inspect and validate the mission library. Available missions: `feature-ship`, `b
 ### init
 
 ```bash
-roleos init
+roleos init                    # Scaffold Role Spine into .claude/
+roleos init --force            # Update canonical files (protects context/)
+roleos init claude             # Scaffold Claude Code integration (CLAUDE.md, commands, hooks)
+roleos init claude --force     # Update Claude Code integration files
 ```
 
-Scaffolds the full Role Spine into `.claude/` under the current directory. Includes role contracts, schemas, policies, workflows, context templates, and example packets. Existing files are never overwritten.
+Scaffolds the full Role Spine (31 roles across 8 packs) into `.claude/` under the current directory. Includes role contracts, schemas, policies, workflows, context templates, and example packets. Existing files are never overwritten.
+
+`roleos init claude` adds Claude Code session integration: appends a Role OS section to CLAUDE.md, creates `/roleos-route`, `/roleos-review`, and `/roleos-status` slash commands, and configures lifecycle hooks. Use `roleos doctor` to verify the wiring.
 
 ### packet new
 

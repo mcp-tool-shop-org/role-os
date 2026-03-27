@@ -217,7 +217,7 @@ role-os/
     calibration.mjs            ← Outcome recording + weight tuning
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
     session.mjs                ← Session scaffolding + doctor
-  test/                        ← 613 tests across 25 test files
+  test/                        ← 617 tests across 27 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
@@ -277,6 +277,7 @@ Each mission includes honest-partial definitions — when work stalls, the syste
 - v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.
 - v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.
 - **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.
+- **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.
 
 ## License
 
