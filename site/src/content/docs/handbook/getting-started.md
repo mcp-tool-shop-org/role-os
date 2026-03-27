@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Install Role OS and run your first packet in 10 minutes.
+description: Install Role OS and run your first task in 5 minutes.
 sidebar:
   order: 1
 ---
@@ -87,6 +87,24 @@ roleos review .claude/packets/my-feature.md accept
 ```
 
 Record the verdict: `accept`, `accept-with-notes`, `reject`, or `blocked`. The CLI captures the reviewer, reason, contract checks, and next owner.
+
+## Claude Code integration (optional)
+
+If you use Claude Code, scaffold the session integration:
+
+```bash
+roleos init claude
+```
+
+This appends a Role OS section to your CLAUDE.md, creates `/roleos-route`, `/roleos-review`, and `/roleos-status` slash commands, and configures lifecycle hooks so Claude Code enters every session through role-os routing.
+
+Verify the wiring:
+
+```bash
+roleos doctor
+```
+
+Doctor checks for CLAUDE.md integration, slash commands, hooks, and role contracts. Fix any missing pieces with `roleos init` or `roleos init claude --force`.
 
 ## What you just learned
 

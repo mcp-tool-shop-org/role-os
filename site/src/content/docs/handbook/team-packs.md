@@ -139,6 +139,17 @@ roleos packs suggest .claude/packets/my-task.md
 # → Mismatch: feature pack is wrong for this task — this is a bug to fix, not a feature to build
 ```
 
+## Calibration
+
+Packs were calibrated through execution trials and pack comparison trials. Key calibration findings:
+
+- Orchestrator is conditional: only included when the task is multi-role and cross-functional (not for linear chains like bugfix)
+- Treatment includes Security Reviewer by default (security before polish)
+- Research opens with Product Strategist (framing before investigation)
+- Docs has an upstream-synthesis gate (prevents stale documentation)
+
+Outcome calibration records run results and tunes pack weights over time. Use `roleos run` with different packs to build calibration data for your project.
+
 ## Combining packs
 
 Packs are not mutually exclusive. A treatment often runs the treatment pack end-to-end, but you can also chain packs manually. The output of each pack is the input for the next. Use `roleos review` to record the verdict between packs.

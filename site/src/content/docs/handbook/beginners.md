@@ -55,6 +55,14 @@ roleos init
 
 This creates the `.claude/` directory with role contracts, schemas, policies, and example packets. Existing files are never overwritten.
 
+If you use Claude Code, also scaffold the session integration:
+
+```bash
+roleos init claude
+```
+
+This adds Role OS slash commands (`/roleos-route`, `/roleos-review`, `/roleos-status`) and lifecycle hooks to your Claude Code session. Run `roleos doctor` to verify.
+
 Run your first task:
 
 ```bash

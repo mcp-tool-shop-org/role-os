@@ -20,7 +20,7 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 
 Role OS is a multi-Claude operating system. It staffs work through 31 specialized role contracts, assembles task-specific chains, validates teams before execution, auto-routes recovery when work is blocked, and requires structured evidence in every verdict.
 
-The system provides three entry levels and nine operating layers:
+The system provides three entry levels and ten operating layers:
 
 **Entry levels** — `roleos start` picks the right one:
 

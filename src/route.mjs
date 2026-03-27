@@ -5,7 +5,7 @@ import { detectConflicts } from "./conflicts.mjs";
 import { resolveConflict, resolveSplit, formatEscalation } from "./escalation.mjs";
 import { suggestPack, getPack, checkPackMismatch, getPackRoles } from "./packs.mjs";
 
-// ── Full 32-Role Catalog ─────────────────────────────────────────────────────
+// ── Full 31-Role Catalog ─────────────────────────────────────────────────────
 // Every role in the OS is scoreable. Keywords from routing-rules.md + contracts.
 // Triggers are strong multi-word signals worth bonus points.
 

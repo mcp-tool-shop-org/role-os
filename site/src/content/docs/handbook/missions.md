@@ -9,14 +9,14 @@ Missions are named, repeatable job types that make recurring work boringly relia
 
 ## The 6 missions
 
-| Mission | Pack | Roles | Use when |
-|---------|------|-------|----------|
-| `feature-ship` | feature | 5 | Full feature delivery end-to-end |
-| `bugfix` | bugfix | 4 | Diagnose, fix, test, verify a bug or regression |
-| `treatment` | treatment | 4 | Pre-publish shipcheck + polish + docs + CI |
-| `docs-release` | docs | 2 | Write or update docs, release notes |
-| `security-hardening` | security | 4 | Threat model, audit, fix, re-audit |
-| `research-launch` | research | 4 | Frame question, research, document, decide |
+| Mission | Pack | Roles | Chain | Use when |
+|---------|------|-------|-------|----------|
+| `feature-ship` | feature | 5 | Product Strategist, Spec Writer, Backend Engineer, Test Engineer, Critic Reviewer | Full feature delivery end-to-end |
+| `bugfix` | bugfix | 4 | Repo Researcher, Backend Engineer, Test Engineer, Critic Reviewer | Diagnose, fix, test, verify a bug or regression |
+| `treatment` | treatment | 4 | Security Reviewer, Docs Architect, Deployment Verifier, Critic Reviewer | Pre-publish shipcheck + polish + docs + CI |
+| `docs-release` | docs | 2 | Docs Architect, Critic Reviewer | Write or update docs, release notes |
+| `security-hardening` | security | 4 | Security Reviewer, Backend Engineer, Test Engineer, Critic Reviewer | Threat model, audit, fix, re-audit |
+| `research-launch` | research | 4 | Product Strategist, Competitive Analyst, Docs Architect, Critic Reviewer | Frame question, research, document, decide |
 
 ## Using missions
 

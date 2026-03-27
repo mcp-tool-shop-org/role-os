@@ -26,7 +26,7 @@ roleos run list                         # List all runs
 roleos run show <id>                    # Show run detail
 ```
 
-Creates a disk-backed run from a task description. Auto-decides entry level (mission/pack/free routing), builds steps with guidance, starts the first step, and persists to `.claude/runs/`.
+Creates a disk-backed run from a task description. Auto-decides entry level (mission/pack/free routing), builds steps with guidance, starts the first step, and persists to `.claude/runs/`. Use `--mission=<key>` or `--pack=<key>` to force a specific entry level instead of auto-detection.
 
 ### resume
 
@@ -114,7 +114,7 @@ roleos init claude --force     # Update Claude Code integration files
 
 Scaffolds the full Role Spine (31 roles across 8 packs) into `.claude/` under the current directory. Includes role contracts, schemas, policies, workflows, context templates, and example packets. Existing files are never overwritten.
 
-`roleos init claude` adds Claude Code session integration: appends a Role OS section to CLAUDE.md, creates `/roleos-route`, `/roleos-review`, and `/roleos-status` slash commands, and configures lifecycle hooks. Use `roleos doctor` to verify the wiring.
+`roleos init claude` adds Claude Code session integration: appends a Role OS section to CLAUDE.md, creates `/roleos-route`, `/roleos-review`, and `/roleos-status` slash commands, and configures 5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Use `roleos doctor` to verify the wiring. Hooks provide advisory enforcement: route card reminders, write-tool gating, subagent role injection, and completion audits.
 
 ### packet new
 

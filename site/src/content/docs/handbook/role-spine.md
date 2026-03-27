@@ -142,3 +142,11 @@ Not every packet needs all 31 roles. The router and team packs select the smalle
 - **Launch messaging:** Launch Strategist, Launch Copywriter, Critic Reviewer (3 roles)
 
 Use `roleos packs list` to see all 7 team packs and their role compositions.
+
+## How routing works
+
+The router scores all 31 roles against packet content using weighted keywords and multi-word triggers. Each role declares keyword affinities (e.g., Backend Engineer matches "api", "database", "server") and strong triggers (e.g., "data migration", "schema change"). Roles also declare exclusion conditions (e.g., UI Designer excludes "cli only", "backend only").
+
+The chain builder assembles phase-ordered chains from scored roles. Roles are assigned to phases (0 = orchestration, 1 = framing, 2 = design/spec, 3 = implementation, 4 = testing, 5 = metadata/release, 6 = deployment/launch, 99 = review). The Orchestrator and Critic Reviewer are always included when the chain is multi-step.
+
+Conflict detection runs 4 passes before execution: hard conflicts (mutually exclusive roles), sequence violations (wrong phase ordering), redundancy (overlapping scope), and coverage gaps (missing critical roles for the task type).
