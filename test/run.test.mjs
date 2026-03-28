@@ -133,6 +133,13 @@ describe("step lifecycle", () => {
     assert.throws(() => completeCurrentStep(run, "x", null, TEST_CWD), /No active step/);
   });
 
+  it("completeCurrentStep attaches artifact validation", () => {
+    startNext(run, TEST_CWD);
+    const step = completeCurrentStep(run, "## Diagnosis\nRoot cause.\n## Affected Files\nsrc/x.mjs", null, TEST_CWD);
+    assert.ok(step.artifactValidation, "should attach validation result");
+    assert.ok("valid" in step.artifactValidation);
+  });
+
   it("completing all steps marks run completed", () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);

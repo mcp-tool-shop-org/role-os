@@ -51,14 +51,14 @@ describe("roleos packs", () => {
   // ── list ──────────────────────────────────────────────────────────────────
 
   describe("packs list", () => {
-    it("T1: shows count of all 8 packs", () => {
+    it("T1: shows count of all 9 packs", () => {
       const out = run(["packs", "list"]);
-      assert.match(out, /8 packs available/);
+      assert.match(out, /9 packs available/);
     });
 
-    it("T2: shows all 8 pack keys", () => {
+    it("T2: shows all 9 pack keys", () => {
       const out = run(["packs", "list"]);
-      for (const key of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm"]) {
+      for (const key of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "deep-audit", "brainstorm"]) {
         assert.ok(out.includes(key), `Missing pack key: ${key}`);
       }
     });
@@ -70,7 +70,7 @@ describe("roleos packs", () => {
 
     it("T4: bare 'packs' behaves as 'packs list'", () => {
       const out = run(["packs"]);
-      assert.match(out, /8 packs available/);
+      assert.match(out, /9 packs available/);
     });
   });
 

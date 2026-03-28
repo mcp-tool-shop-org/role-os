@@ -43,8 +43,8 @@ describe("ROLE_ARTIFACT_CONTRACTS", () => {
 });
 
 describe("PACK_HANDOFF_CONTRACTS", () => {
-  it("defines handoff contracts for all 8 packs", () => {
-    const packs = ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm"];
+  it("defines handoff contracts for all 9 packs", () => {
+    const packs = ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm", "deep-audit"];
     for (const p of packs) {
       assert.ok(PACK_HANDOFF_CONTRACTS[p], `Missing contract for ${p}`);
       assert.ok(PACK_HANDOFF_CONTRACTS[p].flow.length >= 2, `${p} flow too short`);

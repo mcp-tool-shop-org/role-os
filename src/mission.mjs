@@ -268,6 +268,65 @@ export const MISSIONS = {
     dispatchDefaults: { model: "sonnet", maxTurns: 40, maxBudgetUsd: 6.0 },
     trialEvidence: "v0.4 golden run — 894 tests green. Full chain of custody proven: truth artifacts, provenance atoms, dispute graph (4 challenges, 3 narrowed, 1 unresolved), rendered artifacts in 5 formats, debate transcript, 16+ trace links from rendered → truth. Architecture frozen 2026-03-27.",
   },
+  // ── Deep Audit (Componentized Repo Understanding) ──────────────────────────
+  "deep-audit": {
+    name: "Deep Audit",
+    description: "Decompose a repo into bounded components, dispatch one auditor per component, inspect seams from the dependency graph, assess test truth, then synthesize into a ranked verdict and action plan. Worker count scales with the repo graph — not fixed.",
+    pack: "deep-audit",
+    entryPath: "Decompose repo → validate parcels → Component Auditor ×N (parallel) + Test Truth Auditor ×M → Seam Auditor ×K (from graph edges) → Audit Synthesizer → Critic reviews verdict",
+    // NOTE: This mission has a DYNAMIC role chain. The static chain below
+    // shows the role archetypes. At dispatch time, Component Auditor and
+    // Seam Auditor are instantiated once per component/boundary cluster.
+    // A 10-component repo with 4 risky boundaries = 10 + 4 + 2 + 1 + 1 = 18 tasks.
+    roleChain: [
+      "Component Auditor",   // ×N — one per component from audit-manifest
+      "Test Truth Auditor",  // ×M — one per component or one overlay pass
+      "Seam Auditor",        // ×K — one per risky boundary cluster from graph
+      "Audit Synthesizer",   // ×1 — consumes all outputs, produces verdict
+      "Critic Reviewer",     // ×1 — final acceptance
+    ],
+    // Dynamic dispatch contract:
+    // Step 1 produces audit-manifest.json with components[] and boundaries[].
+    // Steps 2-4 are instantiated from the manifest:
+    //   - One Component Auditor task per components[] entry
+    //   - One Test Truth Auditor task per component (or grouped by layer)
+    //   - One Seam Auditor task per boundary cluster
+    // Step 5 (Audit Synthesizer) runs after ALL step 2-4 tasks complete.
+    // Step 6 (Critic Reviewer) reviews the synthesis.
+    dynamicDispatch: {
+      scalingRoles: ["Component Auditor", "Test Truth Auditor", "Seam Auditor"],
+      manifestSource: "audit-manifest.json",
+      componentAuditorPer: "components",
+      testTruthAuditorPer: "components",
+      seamAuditorPer: "boundary_clusters",
+      synthesisAfter: ["Component Auditor", "Test Truth Auditor", "Seam Auditor"],
+    },
+    artifactFlow: [
+      // Step 1: Decomposition (done before mission dispatch — input artifact)
+      { role: "Component Auditor",   produces: "component-audit-report", consumedBy: "Audit Synthesizer" },
+      { role: "Test Truth Auditor",  produces: "test-truth-report",      consumedBy: "Audit Synthesizer" },
+      { role: "Seam Auditor",        produces: "seam-audit-report",      consumedBy: "Audit Synthesizer" },
+      { role: "Audit Synthesizer",   produces: "audit-summary",          consumedBy: "Critic Reviewer" },
+      { role: "Audit Synthesizer",   produces: "audit-action-plan",      consumedBy: "Critic Reviewer" },
+      { role: "Critic Reviewer",     produces: "review-verdict",         consumedBy: null },
+    ],
+    escalationBranches: [
+      { trigger: "component exceeds 8K lines", from: "Component Auditor", to: "Component Auditor", action: "re-slice into sub-components, re-dispatch" },
+      { trigger: "circular dependency found", from: "Seam Auditor", to: "Audit Synthesizer", action: "elevate as architectural finding, do not attempt to resolve" },
+      { trigger: "parcel outputs inconsistent", from: "Audit Synthesizer", to: "Component Auditor", action: "re-audit the inconsistent component with narrower scope" },
+      { trigger: "critical finding spans 3+ components", from: "Audit Synthesizer", to: "Seam Auditor", action: "targeted cross-cut audit on the systemic issue" },
+      { trigger: "test suite is ceremonial", from: "Test Truth Auditor", to: "Audit Synthesizer", action: "flag as structural risk — false confidence in coverage" },
+    ],
+    honestPartial: "Component audits complete but seam inspection blocked or synthesis incomplete. Per-component findings are individually valid and actionable. Manifest and component reports exist even if synthesis does not.",
+    stopConditions: [
+      "Audit Synthesizer produces verdict + action plan, Critic accepts",
+      "Decomposition reveals repo is too tangled to slice — document why and abort",
+      "All component audits complete but seam audits blocked — synthesize with component-only truth",
+      "Budget exhausted — synthesize from whatever component audits completed",
+    ],
+    dispatchDefaults: { model: "sonnet", maxTurns: 25, maxBudgetUsd: 3.0 },
+    trialEvidence: "New mission — no trial evidence yet. Architecture designed 2026-03-27.",
+  },
 };
 
 // ── Mission catalog ─────────────────────────────────────────────────────────
@@ -331,6 +390,10 @@ export function suggestMission(taskDescription) {
     "brainstorm": {
       signals: ["brainstorm", "explore ideas", "explore directions", "opportunity map", "creative directions", "concept exploration", "what could we build", "divergent thinking", "ideate"],
       weight: 1.1,
+    },
+    "deep-audit": {
+      signals: ["deep audit", "component audit", "decompose and audit", "audit components", "structural audit", "deep review", "code audit", "repo deep dive"],
+      weight: 1.2,
     },
   };
 

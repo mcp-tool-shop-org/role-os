@@ -41,8 +41,8 @@ describe("createRun", () => {
     }
   });
 
-  it("creates runs for all 7 missions", () => {
-    const keys = ["feature-ship", "bugfix", "treatment", "docs-release", "security-hardening", "research-launch", "brainstorm"];
+  it("creates runs for all 8 missions", () => {
+    const keys = ["feature-ship", "bugfix", "treatment", "docs-release", "security-hardening", "research-launch", "brainstorm", "deep-audit"];
     for (const key of keys) {
       const run = createRun(key, `Test ${key}`);
       assert.ok(run.id.startsWith(`${key}-`));
@@ -108,6 +108,26 @@ describe("completeStep", () => {
     completeStep(run, "verdict");
     assert.equal(run.status, "completed");
     assert.ok(run.completedAt);
+  });
+
+  it("attaches artifact validation to completed step", () => {
+    const run = createRun("bugfix", "test");
+    startNextStep(run);
+    const step = completeStep(run, "## Diagnosis\nRoot cause found.\n## Affected Files\nsrc/x.mjs");
+    assert.ok(step.artifactValidation, "completeStep should attach validation result");
+    assert.ok("valid" in step.artifactValidation, "validation should have valid field");
+  });
+
+  it("validation flags missing sections on incomplete artifact", () => {
+    const run = createRun("feature-ship", "test");
+    startNextStep(run); // Product Strategist
+    // Missing required sections for Product Strategist (needs problem-framing, scope, non-goals, tradeoffs)
+    const step = completeStep(run, "## Problem Framing\nJust this.");
+    assert.ok(step.artifactValidation);
+    assert.equal(step.artifactValidation.valid, false);
+    assert.ok(step.artifactValidation.missing.length > 0);
+    // Step still completes (warn, don't block)
+    assert.equal(step.status, "completed");
   });
 });
 
@@ -407,6 +427,94 @@ describe("full mission lifecycle", () => {
     assert.equal(run.status, "completed");
     const report = generateCompletionReport(run);
     assert.equal(report.artifactsProduced, 5);
+  });
+});
+
+// ── Dynamic dispatch ────────────────────────────────────────────────────────
+
+describe("dynamic dispatch", () => {
+  const manifest = {
+    components: [
+      { id: "comp-a", description: "Component A", lines: 500 },
+      { id: "comp-b", description: "Component B", lines: 800 },
+      { id: "comp-c", description: "Component C", lines: 300 },
+    ],
+    boundaries: [
+      { from: "comp-a", to: "comp-b", interface: "a imports b" },
+      { from: "comp-b", to: "comp-c", interface: "b imports c" },
+    ],
+  };
+
+  it("creates dynamic steps from manifest", () => {
+    const run = createRun("deep-audit", "Audit the repo", { manifest });
+    assert.equal(run.dynamicDispatch, true);
+    assert.ok(run.manifest);
+    // 3 component auditors + 3 test truth + 2 seam + synthesizer×2 + critic = 11
+    assert.equal(run.steps.length, 11);
+  });
+
+  it("creates one Component Auditor per component", () => {
+    const run = createRun("deep-audit", "Audit", { manifest });
+    const compSteps = run.steps.filter(s => s.role === "Component Auditor");
+    assert.equal(compSteps.length, 3);
+    assert.equal(compSteps[0].parcel, "comp-a");
+    assert.equal(compSteps[1].parcel, "comp-b");
+    assert.equal(compSteps[2].parcel, "comp-c");
+  });
+
+  it("creates one Test Truth Auditor per component", () => {
+    const run = createRun("deep-audit", "Audit", { manifest });
+    const testSteps = run.steps.filter(s => s.role === "Test Truth Auditor");
+    assert.equal(testSteps.length, 3);
+  });
+
+  it("creates one Seam Auditor per boundary", () => {
+    const run = createRun("deep-audit", "Audit", { manifest });
+    const seamSteps = run.steps.filter(s => s.role === "Seam Auditor");
+    assert.equal(seamSteps.length, 2);
+    assert.equal(seamSteps[0].parcel, "comp-a-comp-b");
+    assert.equal(seamSteps[1].parcel, "comp-b-comp-c");
+  });
+
+  it("includes non-scaling roles (Synthesizer + Critic)", () => {
+    const run = createRun("deep-audit", "Audit", { manifest });
+    const synth = run.steps.filter(s => s.role === "Audit Synthesizer");
+    const critic = run.steps.filter(s => s.role === "Critic Reviewer");
+    assert.ok(synth.length >= 1);
+    assert.equal(critic.length, 1);
+  });
+
+  it("falls back to static steps without manifest", () => {
+    const run = createRun("deep-audit", "Audit without manifest");
+    assert.equal(run.dynamicDispatch, false);
+    assert.equal(run.manifest, null);
+    // Static artifactFlow has 6 steps
+    assert.equal(run.steps.length, 6);
+  });
+
+  it("can execute dynamic run through full lifecycle", () => {
+    const run = createRun("deep-audit", "Full test", { manifest });
+    // Execute all steps
+    for (let i = 0; i < run.steps.length; i++) {
+      startNextStep(run);
+      completeStep(run, `Artifact for step ${i}`);
+    }
+    assert.equal(run.status, "completed");
+    const report = generateCompletionReport(run);
+    assert.equal(report.outcome, "completed");
+    assert.equal(report.artifactsProduced, 11);
+  });
+
+  it("scales with larger manifests", () => {
+    const bigManifest = {
+      components: Array.from({ length: 10 }, (_, i) => ({ id: `comp-${i}`, lines: 1000 })),
+      boundaries: Array.from({ length: 5 }, (_, i) => ({ from: `comp-${i}`, to: `comp-${i + 1}` })),
+    };
+    const run = createRun("deep-audit", "Big audit", { manifest: bigManifest });
+    // 10 component + 10 test truth + 5 seam + 2 synth + 1 critic = 28
+    assert.equal(run.steps.length, 28);
+    assert.equal(run.steps.filter(s => s.role === "Component Auditor").length, 10);
+    assert.equal(run.steps.filter(s => s.role === "Seam Auditor").length, 5);
   });
 });
 

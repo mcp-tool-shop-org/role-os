@@ -1,11 +1,11 @@
 ---
 title: Role Spine
-description: All 31 specialist roles across 8 packs and their contracts.
+description: All 54 specialist roles across 9 packs and their contracts.
 sidebar:
   order: 2
 ---
 
-Role OS ships 31 proven role contracts organized into 8 packs. Each role has a defined mission, scope boundaries, expected inputs, required outputs, a quality bar, and escalation triggers. The router scores all 31 roles against packet content and assembles the smallest valid chain.
+Role OS ships 54 role contracts organized into 9 packs. Each role has a defined mission, scope boundaries, expected inputs, required outputs, a quality bar, and escalation triggers. The router scores all 54 roles against packet content and assembles the smallest valid chain.
 
 ## Quick reference
 
@@ -19,6 +19,7 @@ Role OS ships 31 proven role contracts organized into 8 packs. Each role has a d
 | **Product** | Feedback Synthesizer, Roadmap Prioritizer, Spec Writer | 3 |
 | **Research** | UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer | 4 |
 | **Growth** | Launch Strategist, Content Strategist, Community Manager, Support Triage Lead | 4 |
+| **Deep Audit** | Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer | 4 |
 
 ## Core (3 roles)
 
@@ -129,9 +130,23 @@ Manages open-source community health: issue triage, contribution guidance, discu
 ### Support Triage Lead
 Classifies support input: bugs vs user errors, recurring patterns, and priority assignment. Produces structured triage output for downstream roles.
 
+## Deep Audit (4 roles)
+
+### Component Auditor
+Audits a single bounded component: code quality, contract compliance, error handling, and architectural patterns. Receives one parcel from the audit manifest. Does not audit boundaries or test suites.
+
+### Test Truth Auditor
+Assesses whether tests for a component prove correctness or merely exist. Distinguishes real coverage from ceremonial tests. Does not write tests or fix code.
+
+### Seam Auditor
+Inspects integration boundaries between components: contract compatibility, data flow, error propagation, and coupling. Works from the dependency graph, not from individual modules.
+
+### Audit Synthesizer
+Consumes all component, test truth, and seam audit reports. Produces a ranked verdict (findings by severity) and an action plan (priority tiers with concrete next steps). Does not perform auditing.
+
 ## Role selection
 
-Not every packet needs all 31 roles. The router and team packs select the smallest chain that covers the work. Common patterns:
+Not every packet needs all 54 roles. The router and team packs select the smallest chain that covers the work. Common patterns:
 
 - **Feature work:** Product Strategist, Spec Writer, Backend Engineer, Test Engineer, Critic Reviewer (5 roles)
 - **Bugfix:** Repo Researcher, Backend Engineer, Test Engineer, Critic Reviewer (4 roles)
@@ -141,11 +156,11 @@ Not every packet needs all 31 roles. The router and team packs select the smalle
 - **Research:** Product Strategist, UX Researcher, Competitive Analyst, Feedback Synthesizer, Critic Reviewer (5 roles)
 - **Launch messaging:** Launch Strategist, Launch Copywriter, Critic Reviewer (3 roles)
 
-Use `roleos packs list` to see all 7 team packs and their role compositions.
+Use `roleos packs list` to see all 9 team packs and their role compositions.
 
 ## How routing works
 
-The router scores all 31 roles against packet content using weighted keywords and multi-word triggers. Each role declares keyword affinities (e.g., Backend Engineer matches "api", "database", "server") and strong triggers (e.g., "data migration", "schema change"). Roles also declare exclusion conditions (e.g., UI Designer excludes "cli only", "backend only").
+The router scores all 54 roles against packet content using weighted keywords and multi-word triggers. Each role declares keyword affinities (e.g., Backend Engineer matches "api", "database", "server") and strong triggers (e.g., "data migration", "schema change"). Roles also declare exclusion conditions (e.g., UI Designer excludes "cli only", "backend only").
 
 The chain builder assembles phase-ordered chains from scored roles. Roles are assigned to phases (0 = orchestration, 1 = framing, 2 = design/spec, 3 = implementation, 4 = testing, 5 = metadata/release, 6 = deployment/launch, 99 = review). The Orchestrator and Critic Reviewer are always included when the chain is multi-step.
 

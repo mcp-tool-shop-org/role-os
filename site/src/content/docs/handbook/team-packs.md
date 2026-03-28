@@ -1,11 +1,11 @@
 ---
 title: Team Packs
-description: 7 pre-assembled role chains for common work types. Pick a pack, describe a task, and route it in one command.
+description: 9 pre-assembled role chains for common work types. Pick a pack, describe a task, and route it in one command.
 sidebar:
   order: 3
 ---
 
-Team Packs are curated subsets of the 31-role spine. Instead of selecting individual roles, you pick a named pack that already contains the right roles in the right order for a given class of work. Each pack includes mismatch detection: if your task does not fit the pack, it suggests the right one instead.
+Team Packs are curated subsets of the 54-role spine. Instead of selecting individual roles, you pick a named pack that already contains the right roles in the right order for a given class of work. Each pack includes mismatch detection: if your task does not fit the pack, it suggests the right one instead.
 
 ```bash
 roleos run --pack=feature "add export command"
@@ -17,7 +17,7 @@ roleos packs suggest .claude/packets/my-task.md
 
 Use a pack when the work is well-scoped and the domain is clear. Use free routing (`roleos route`) when the work cuts across domains or you need a custom chain. `roleos start` picks the right level automatically (mission, pack, or free routing) based on your task description.
 
-## The 7 packs
+## The 9 packs
 
 ### 1. Feature Build
 
@@ -117,6 +117,33 @@ Full repo treatment: research, security, audit, docs, metadata, release, deploy,
 
 ---
 
+### 8. Deep Audit
+
+Decompose repo into components, audit each deeply, inspect seams from dependency graph, synthesize verdict. Worker count scales with repo manifest via dynamic dispatch.
+
+| | |
+|---|---|
+| **Roles** | Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer, Critic Reviewer |
+| **Optional** | Security Reviewer, Dependency Auditor |
+| **Chain** | Component Auditor (×N, parallel) + Test Truth Auditor (×M) → Seam Auditor (×K, from graph) → Audit Synthesizer |
+| **Orchestrator** | Not required |
+| **Artifacts** | Audit manifest, component audit reports, test truth reports, seam audit reports, audit summary, action plan, verdict |
+
+---
+
+### 9. Brainstorm
+
+Structured multi-perspective inquiry with traceable disagreement and verdict-bearing output.
+
+| | |
+|---|---|
+| **Roles** | Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Normalizer, Cross-Examiner, Rebuttal Defender, Synthesizer, Judge |
+| **Chain** | 4 Analysts (parallel) → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge |
+| **Orchestrator** | Not required |
+| **Artifacts** | Role-native schemas, provenance atoms, cross-exam dispute graph, synthesis, verdict |
+
+---
+
 ## Pack reference
 
 | Pack | Key | Roles | Primary use |
@@ -128,6 +155,8 @@ Full repo treatment: research, security, audit, docs, metadata, release, deploy,
 | Launch / Messaging | `launch` | 3 (+2 optional) | Launch strategy and release copy |
 | Research / Strategy | `research` | 5 (+2 optional) | Decision framing and evidence gathering |
 | Treatment | `treatment` | 8 (+3 optional) | Full repo polish and publish |
+| Deep Audit | `deep-audit` | 5 (+2 optional) | Manifest-scaled repo audit |
+| Brainstorm | `brainstorm` | 9 | Multi-perspective inquiry with traceable disagreement |
 
 ## Mismatch detection
 
@@ -156,7 +185,7 @@ Packs are not mutually exclusive. A treatment often runs the treatment pack end-
 
 ## Related
 
-- [Role Spine](/role-os/handbook/role-spine/) — the full 31-role catalog that packs draw from
-- [Missions](/role-os/handbook/missions/) — 6 recurring workflows built on top of packs
+- [Role Spine](/role-os/handbook/role-spine/) — the full 54-role catalog that packs draw from
+- [Missions](/role-os/handbook/missions/) — 8 recurring workflows built on top of packs
 - [Getting Started](/role-os/handbook/getting-started/) — run your first task
 - [Reference](/role-os/handbook/reference/) — full CLI command reference

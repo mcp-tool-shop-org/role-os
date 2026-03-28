@@ -322,7 +322,7 @@ function generateSessionStartScript() {
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync("/dev/stdin", "utf-8").toString() || "{}");
+const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
 const cwd = input.cwd || process.cwd();
 const stateDir = join(cwd, ".claude", "hooks");
 mkdirSync(stateDir, { recursive: true });
@@ -356,7 +356,7 @@ function generatePromptSubmitScript() {
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync("/dev/stdin", "utf-8").toString() || "{}");
+const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 
@@ -389,7 +389,7 @@ function generatePreToolUseScript() {
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync("/dev/stdin", "utf-8").toString() || "{}");
+const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 
@@ -421,7 +421,7 @@ function generateSubagentStartScript() {
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync("/dev/stdin", "utf-8").toString() || "{}");
+const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 
@@ -444,7 +444,7 @@ function generateStopScript() {
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync("/dev/stdin", "utf-8").toString() || "{}");
+const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 

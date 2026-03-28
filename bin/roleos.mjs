@@ -12,6 +12,7 @@ import { packsCommand } from "../src/packs-cmd.mjs";
 import { scaffoldClaude, doctor, formatDoctor } from "../src/session.mjs";
 import { artifactsCommand } from "../src/artifacts-cmd.mjs";
 import { missionCommand } from "../src/mission-cmd.mjs";
+import { auditCommand } from "../src/audit-cmd.mjs";
 import { startCommand } from "../src/entry-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
@@ -59,6 +60,11 @@ Usage:
   roleos artifacts show <role>       Show artifact contract for a role
   roleos artifacts validate <role> <file>  Validate a file against a contract
   roleos artifacts chain <pack>      Show pack handoff flow
+  roleos audit                        Start a deep audit on the current repo
+  roleos audit manifest               Show the audit manifest
+  roleos audit manifest --generate    Generate a skeleton manifest from src/
+  roleos audit status                 Show audit run progress
+  roleos audit verify                 Verify manifest and audit outputs
   roleos mission list                List all missions
   roleos mission show <key>          Show full mission detail
   roleos mission suggest <text>      Suggest a mission for a task
@@ -180,6 +186,9 @@ try {
       break;
     case "friction":
       await frictionCommand(args);
+      break;
+    case "audit":
+      await auditCommand(args);
       break;
     case "mission":
       await missionCommand(args);

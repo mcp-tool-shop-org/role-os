@@ -1,7 +1,7 @@
 {
   "name": "role-os",
-  "version": "2.1.0",
-  "description": "Role OS — a multi-Claude operating system where 50 specialized roles execute work through contracts, conflict detection, escalation, and structured evidence. 8 proven team packs, 7 missions including brainstorm with traceable disagreement and verdict-bearing output.",
+  "version": "2.2.0",
+  "description": "Role OS — a multi-Claude operating system where 54 specialized roles execute work through contracts, conflict detection, escalation, and structured evidence. 9 team packs, 8 missions including deep audit with manifest-scaled dynamic dispatch and brainstorm with traceable disagreement.",
   "homepage": "https://mcp-tool-shop-org.github.io/role-os/",
   "bugs": {
     "url": "https://github.com/mcp-tool-shop-org/role-os/issues"

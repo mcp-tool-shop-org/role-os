@@ -308,14 +308,20 @@ export function failChild(exec, category, reason) {
 
 /**
  * Find all categories that transitively depend on a given category.
+ * Uses a visited set to guard against circular dependency graphs.
  */
 function findUnreachable(exec, failedCategory) {
   const unreachable = new Set();
+  const visited = new Set();
   let changed = true;
   while (changed) {
     changed = false;
     for (const child of exec.children) {
       if (unreachable.has(child.category)) continue;
+      if (visited.has(child.category) && !child.dependsOn.includes(failedCategory) && !child.dependsOn.some(d => unreachable.has(d))) {
+        continue; // already evaluated without being unreachable — skip
+      }
+      visited.add(child.category);
       if (child.dependsOn.includes(failedCategory) || child.dependsOn.some(d => unreachable.has(d))) {
         unreachable.add(child.category);
         changed = true;
@@ -323,6 +329,41 @@ function findUnreachable(exec, failedCategory) {
     }
   }
   return [...unreachable];
+}
+
+/**
+ * Check for circular dependencies in the execution plan.
+ * Returns an array of categories involved in cycles (empty if none).
+ *
+ * @param {CompositeExecution} exec
+ * @returns {string[]}
+ */
+export function detectCycles(exec) {
+  const resolved = new Set();
+  const visiting = new Set();
+  const cycles = [];
+
+  function visit(category) {
+    if (resolved.has(category)) return;
+    if (visiting.has(category)) {
+      cycles.push(category);
+      return;
+    }
+    visiting.add(category);
+    const child = exec.children.find(c => c.category === category);
+    if (child) {
+      for (const dep of child.dependsOn) {
+        visit(dep);
+      }
+    }
+    visiting.delete(category);
+    resolved.add(category);
+  }
+
+  for (const child of exec.children) {
+    visit(child.category);
+  }
+  return cycles;
 }
 
 // ── Invalidation ──────────────────────────────────────────────────────────────

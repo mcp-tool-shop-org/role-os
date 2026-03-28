@@ -106,6 +106,14 @@ export const ROLE_ARTIFACT_CONTRACTS = {
     consumedBy: ["Backend Engineer", "Coverage Auditor", "Security Reviewer"],
     completionRule: "Entrypoints listed. Module responsibilities described. Commands documented.",
   },
+  "Dependency Auditor": {
+    artifactType: "dependency-audit",
+    requiredSections: ["vulnerability-summary", "outdated-inventory"],
+    optionalSections: ["supply-chain-risks", "update-recommendations", "license-audit"],
+    requiredEvidence: [],
+    consumedBy: ["Critic Reviewer", "Security Reviewer"],
+    completionRule: "Vulnerabilities triaged. Outdated deps inventoried with severity.",
+  },
   "Metadata Curator": {
     artifactType: "metadata-audit",
     requiredSections: ["manifest-audit", "registry-alignment"],
@@ -256,6 +264,40 @@ export const ROLE_ARTIFACT_CONTRACTS = {
     consumedBy: [],
     completionRule: "Disposition is accept/revise_expand/revise_synthesize/reject. Verdicts: ready_to_advance/needs_incubation/not_active_now. Actions: build_now/hold_for_followon/archive_but_retain. Revise requires targets.",
   },
+
+  // ── Deep Audit ──
+  "Component Auditor": {
+    artifactType: "component-audit-report",
+    requiredSections: ["findings", "what-i-could-not-verify", "adjacent-parcel-risks", "parcel-statistics"],
+    optionalSections: [],
+    requiredEvidence: ["component-parcel-definition"],
+    consumedBy: ["Audit Synthesizer"],
+    completionRule: "Every file in owned paths read. Findings use standardized schema with severity, confidence, category, file, evidence, impact. Adjacent parcel risks are specific, not generic.",
+  },
+  "Seam Auditor": {
+    artifactType: "seam-audit-report",
+    requiredSections: ["findings", "false-independence-risks", "content-code-drift", "dependency-direction-assessment"],
+    optionalSections: [],
+    requiredEvidence: ["boundary-cluster-definition", "component-graph"],
+    consumedBy: ["Audit Synthesizer"],
+    completionRule: "Every declared boundary inspected. Findings reference both sides. Content-code drift quotes both content claim and code reality.",
+  },
+  "Test Truth Auditor": {
+    artifactType: "test-truth-report",
+    requiredSections: ["findings", "untested-but-risky", "ceremonial-tests", "integration-gaps", "test-suite-health-summary"],
+    optionalSections: [],
+    requiredEvidence: ["test-file-paths", "implementation-file-paths"],
+    consumedBy: ["Audit Synthesizer"],
+    completionRule: "Distinguishes 'line executed' from 'behavior verified'. Lists source files with no test. Estimates real coverage with reasoning.",
+  },
+  "Audit Synthesizer": {
+    artifactType: "audit-summary",
+    requiredSections: ["verdict", "posture", "by-the-numbers", "structurally-sound", "fragile", "dangerous", "dead-weight", "cross-cutting-findings", "contradictions", "audit-gaps"],
+    optionalSections: [],
+    requiredEvidence: ["component-audit-report", "seam-audit-report", "test-truth-report"],
+    consumedBy: ["Critic Reviewer"],
+    completionRule: "Reconciles findings across parcels. Cross-cutting findings reference source parcels. Contradictions adjudicated. Action plan groups by root cause and leverage.",
+  },
 };
 
 // ── Artifact validation ───────────────────────────────────────────────────────
@@ -346,7 +388,7 @@ export const PACK_HANDOFF_CONTRACTS = {
   security: {
     flow: [
       { role: "Security Reviewer", produces: "security-findings", consumedBy: "Critic Reviewer" },
-      { role: "Dependency Auditor", produces: "metadata-audit", consumedBy: "Critic Reviewer" },
+      { role: "Dependency Auditor", produces: "dependency-audit", consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer", produces: "verdict", consumedBy: null },
     ],
   },
@@ -396,6 +438,15 @@ export const PACK_HANDOFF_CONTRACTS = {
       { role: "Release Engineer", produces: "release-plan", consumedBy: "Deployment Verifier" },
       { role: "Deployment Verifier", produces: "deployment-report", consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer", produces: "verdict", consumedBy: null },
+    ],
+  },
+  "deep-audit": {
+    flow: [
+      { role: "Component Auditor",  produces: "component-audit-report", consumedBy: "Audit Synthesizer" },
+      { role: "Test Truth Auditor", produces: "test-truth-report",      consumedBy: "Audit Synthesizer" },
+      { role: "Seam Auditor",       produces: "seam-audit-report",      consumedBy: "Audit Synthesizer" },
+      { role: "Audit Synthesizer",  produces: "audit-summary",          consumedBy: "Critic Reviewer" },
+      { role: "Critic Reviewer",    produces: "verdict",                consumedBy: null },
     ],
   },
 };

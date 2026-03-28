@@ -121,10 +121,11 @@ describe("Input partitioning", () => {
     assert.equal(Object.keys(filtered).length, 0, "Contrarian should see no brief fields");
   });
 
-  it("unknown role gets full brief as fallback", () => {
+  it("unknown role gets minimal brief (topic only)", () => {
     const filtered = partitionBrief(fullBrief, "Unknown Role");
     assert.equal(filtered.topic, fullBrief.topic);
-    assert.equal(filtered.audience, fullBrief.audience);
+    assert.equal(filtered.audience, undefined, "Unknown role should not see audience");
+    assert.equal(Object.keys(filtered).length, 1, "Unknown role should only see topic");
   });
 });
 

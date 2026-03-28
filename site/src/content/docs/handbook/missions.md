@@ -1,13 +1,13 @@
 ---
 title: Missions
-description: 6 proven recurring workflows with tracked steps, escalation branches, and honest-partial reporting.
+description: 8 proven recurring workflows with tracked steps, escalation branches, and honest-partial reporting.
 sidebar:
   order: 1.5
 ---
 
 Missions are named, repeatable job types that make recurring work boringly reliable. Each mission declares a pack, role chain, artifact flow, escalation branches, and an honest-partial definition.
 
-## The 6 missions
+## The 8 missions
 
 | Mission | Pack | Roles | Chain | Use when |
 |---------|------|-------|-------|----------|
@@ -17,6 +17,8 @@ Missions are named, repeatable job types that make recurring work boringly relia
 | `docs-release` | docs | 2 | Docs Architect, Critic Reviewer | Write or update docs, release notes |
 | `security-hardening` | security | 4 | Security Reviewer, Backend Engineer, Test Engineer, Critic Reviewer | Threat model, audit, fix, re-audit |
 | `research-launch` | research | 4 | Product Strategist, Competitive Analyst, Docs Architect, Critic Reviewer | Frame question, research, document, decide |
+| `brainstorm` | brainstorm | 9 | 4 Analysts → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge | Structured multi-perspective inquiry with traceable disagreement |
+| `deep-audit` | deep-audit | 5 (scales) | Component Auditor ×N + Test Truth Auditor ×M → Seam Auditor ×K → Synthesizer → Critic | Manifest-scaled repo audit — worker count scales with repo graph |
 
 ## Using missions
 
@@ -41,6 +43,20 @@ This shows the full role chain, artifact flow, escalation branches, stop conditi
 roleos mission suggest "audit security vulnerabilities"
 # → security-hardening (high confidence)
 ```
+
+### Run a deep audit
+
+The `deep-audit` mission has a dedicated CLI shortcut:
+
+```bash
+roleos audit manifest --generate     # Skeleton from src/
+# Edit audit-manifest.json — define components and boundaries
+roleos audit                         # Start the audit run
+roleos audit status                  # Check progress
+roleos audit verify                  # Verify outputs
+```
+
+This dispatches one auditor per component, scales with repo size, and synthesizes into a ranked action plan.
 
 ### Validate all missions
 
@@ -93,10 +109,26 @@ Missions define escalation branches for common failure modes:
 
 When an escalation targets a role that already completed their step, the runner re-opens that step and clears the previous artifact. When the target role is not in the mission's chain, the runner records a warning so the operator knows manual intervention is needed.
 
+## Deep audit mission
+
+The deep audit mission decomposes a repo into bounded components and dispatches specialist auditors at a scale determined by the repo's dependency graph.
+
+**Dynamic dispatch:** Worker count is not fixed. A 10-component repo with 5 boundary clusters produces 28 steps (`2×10 + 5 + 3`). The scaling formula is `2N + K + 3` where N = components, K = boundaries.
+
+**Manifest-backed:** An `audit-manifest.json` defines components (file paths, line counts) and boundaries (from/to with interface descriptions). Each auditor receives only its parcel.
+
+**Four role archetypes:**
+- **Component Auditor** — code truth per module
+- **Test Truth Auditor** — tests that prove vs tests that exist
+- **Seam Auditor** — integration boundaries from the dependency graph
+- **Audit Synthesizer** — ranked verdict + action plan from all parcels
+
+**Artifact validation:** `validateArtifact()` fires on every step completion. Results are attached to step objects. The system tracks whether each artifact met its contract.
+
 ## CLI reference
 
 ```bash
-roleos mission list                    # List all 6 missions
+roleos mission list                    # List all 8 missions
 roleos mission show <key>              # Full detail for a mission
 roleos mission suggest <text>          # Suggest a mission for a task
 roleos mission validate [key]          # Validate wiring (all or one)

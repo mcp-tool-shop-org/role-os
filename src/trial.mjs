@@ -10,7 +10,7 @@
  */
 
 import { ROLE_CATALOG, scoreRole, MIN_SCORE_THRESHOLD } from "./route.mjs";
-import { TOOL_PROFILES } from "./dispatch.mjs";
+import { TOOL_PROFILES } from "./tool-profiles.mjs";
 import { getRequirements } from "./evidence.mjs";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";

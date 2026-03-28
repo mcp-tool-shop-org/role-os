@@ -10,8 +10,8 @@
  */
 
 import { MISSIONS, getMission, validateMission } from "./mission.mjs";
-import { TEAM_PACKS } from "./packs.mjs";
-import { validateArtifact, ROLE_ARTIFACT_CONTRACTS } from "./artifacts.mjs";
+import { validateArtifact } from "./artifacts.mjs";
+import { STEP_TRANSITIONS, isValidStepTransition } from "./state-machine.mjs";
 
 let _runCounter = 0;
 
@@ -59,7 +59,7 @@ let _runCounter = 0;
  * @param {string} taskDescription
  * @returns {MissionRun}
  */
-export function createRun(missionKey, taskDescription) {
+export function createRun(missionKey, taskDescription, options = {}) {
   const mission = getMission(missionKey);
   if (!mission) {
     throw new Error(`Mission "${missionKey}" not found. Available: ${Object.keys(MISSIONS).join(", ")}`);
@@ -72,16 +72,26 @@ export function createRun(missionKey, taskDescription) {
 
   const id = `${missionKey}-${Date.now()}-${++_runCounter}`;
 
-  const steps = mission.artifactFlow.map((step) => ({
-    role: step.role,
-    produces: step.produces,
-    consumedBy: step.consumedBy,
-    status: "pending",
-    artifact: null,
-    note: null,
-    startedAt: null,
-    completedAt: null,
-  }));
+  let steps;
+  const dd = mission.dynamicDispatch;
+
+  if (dd && options.manifest) {
+    // Dynamic dispatch — build steps from manifest
+    steps = buildDynamicSteps(mission, options.manifest);
+  } else {
+    // Static dispatch — use artifactFlow as-is
+    steps = mission.artifactFlow.map((step) => ({
+      role: step.role,
+      produces: step.produces,
+      consumedBy: step.consumedBy,
+      status: "pending",
+      artifact: null,
+      artifactValidation: null,
+      note: null,
+      startedAt: null,
+      completedAt: null,
+    }));
+  }
 
   return {
     id,
@@ -93,7 +103,92 @@ export function createRun(missionKey, taskDescription) {
     startedAt: new Date().toISOString(),
     completedAt: null,
     completionReport: null,
+    dynamicDispatch: dd && options.manifest ? true : false,
+    manifest: options.manifest || null,
   };
+}
+
+/**
+ * Build steps from manifest for dynamic dispatch missions.
+ * @param {Object} mission
+ * @param {Object} manifest - The audit-manifest.json content
+ * @returns {MissionStep[]}
+ */
+function buildDynamicSteps(mission, manifest) {
+  const dd = mission.dynamicDispatch;
+  const steps = [];
+
+  // Scaling roles: one step per manifest entry
+  const components = manifest[dd.componentAuditorPer] || [];
+  const boundaries = manifest[dd.seamAuditorPer] || manifest.boundaries || [];
+
+  // Component Auditor × N
+  for (const comp of components) {
+    steps.push({
+      role: "Component Auditor",
+      produces: "component-audit-report",
+      consumedBy: "Audit Synthesizer",
+      parcel: comp.id || comp.name,
+      status: "pending",
+      artifact: null,
+      artifactValidation: null,
+      note: null,
+      startedAt: null,
+      completedAt: null,
+    });
+  }
+
+  // Test Truth Auditor × M
+  for (const comp of components) {
+    steps.push({
+      role: "Test Truth Auditor",
+      produces: "test-truth-report",
+      consumedBy: "Audit Synthesizer",
+      parcel: comp.id || comp.name,
+      status: "pending",
+      artifact: null,
+      artifactValidation: null,
+      note: null,
+      startedAt: null,
+      completedAt: null,
+    });
+  }
+
+  // Seam Auditor × K
+  for (const boundary of boundaries) {
+    const label = boundary.id || `${boundary.from}-${boundary.to}`;
+    steps.push({
+      role: "Seam Auditor",
+      produces: "seam-audit-report",
+      consumedBy: "Audit Synthesizer",
+      parcel: label,
+      status: "pending",
+      artifact: null,
+      artifactValidation: null,
+      note: null,
+      startedAt: null,
+      completedAt: null,
+    });
+  }
+
+  // Non-scaling roles from artifactFlow (Audit Synthesizer, Critic Reviewer)
+  for (const step of mission.artifactFlow) {
+    if (!dd.scalingRoles.includes(step.role)) {
+      steps.push({
+        role: step.role,
+        produces: step.produces,
+        consumedBy: step.consumedBy,
+        status: "pending",
+        artifact: null,
+        artifactValidation: null,
+        note: null,
+        startedAt: null,
+        completedAt: null,
+      });
+    }
+  }
+
+  return steps;
 }
 
 // ── Step through a run ──────────────────────────────────────────────────────
@@ -104,6 +199,10 @@ export function createRun(missionKey, taskDescription) {
  * @returns {MissionStep|null} The started step, or null if no pending steps
  */
 export function startNextStep(run) {
+  // Guard: refuse to activate a new step if one is already active (prevents dual-active)
+  const alreadyActive = run.steps.find((s) => s.status === "active");
+  if (alreadyActive) return null;
+
   const next = run.steps.find((s) => s.status === "pending");
   if (!next) return null;
 
@@ -126,6 +225,10 @@ export function completeStep(run, artifact, note) {
   if (!active) {
     throw new Error("No active step to complete");
   }
+
+  // Validate artifact against role contract (warn, don't block)
+  const validation = validateArtifact(active.role, artifact);
+  active.artifactValidation = validation;
 
   active.status = "completed";
   active.artifact = artifact;

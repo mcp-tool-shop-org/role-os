@@ -1,0 +1,288 @@
+{
+  "repo": "mcp-tool-shop-org/role-os",
+  "version": "2.1.0",
+  "timestamp": "2026-03-27T00:00:00Z",
+  "language": "JavaScript (ESM)",
+  "runtime": "Node.js 18+",
+  "total_source_lines": 11607,
+  "total_test_lines": 10569,
+  "external_dependencies": 0,
+  "components": [
+    {
+      "id": "routing-roles",
+      "description": "Role catalog (50+ roles), scoring engine, chain assembly, conflict detection, team packs, escalation routing",
+      "owned_paths": [
+        "src/route.mjs",
+        "src/conflicts.mjs",
+        "src/escalation.mjs",
+        "src/packs.mjs"
+      ],
+      "forbidden_paths": [
+        "src/run.mjs", "src/brainstorm.mjs", "src/mission.mjs",
+        "src/artifacts.mjs", "src/session.mjs", "test/"
+      ],
+      "upstream_deps": [],
+      "downstream_consumers": ["run-engine", "mission-entry", "contracts-evidence"],
+      "public_interfaces": [
+        "src/route.mjs: ROLE_CATALOG, scoreRole, detectType, assembleChain, assessConfidence, routeCommand",
+        "src/packs.mjs: TEAM_PACKS, getPack, getPackList",
+        "src/escalation.mjs: escalate, findResolver",
+        "src/conflicts.mjs: detectConflicts"
+      ],
+      "test_location": ["test/route.test.mjs", "test/conflicts.test.mjs", "test/escalation.test.mjs", "test/packs.test.mjs"],
+      "lines": 1587,
+      "risk_hints": {
+        "churn": "medium",
+        "privileged_code": true,
+        "external_io": false,
+        "concurrency": false,
+        "statefulness": "light",
+        "complexity": "high",
+        "notes": "packs.mjs is the most-imported hub module (7 dependents). route.mjs contains the core scoring algorithm."
+      }
+    },
+    {
+      "id": "run-engine",
+      "description": "Persistent run state machine, step execution, dispatch manifest, replanning after failure, nested composite decomposition",
+      "owned_paths": [
+        "src/run.mjs",
+        "src/run-cmd.mjs",
+        "src/dispatch.mjs",
+        "src/replan.mjs",
+        "src/composite.mjs"
+      ],
+      "forbidden_paths": [
+        "src/route.mjs", "src/brainstorm.mjs", "src/mission.mjs",
+        "src/artifacts.mjs", "src/session.mjs", "test/"
+      ],
+      "upstream_deps": ["routing-roles", "mission-entry"],
+      "downstream_consumers": [],
+      "public_interfaces": [
+        "src/run.mjs: createRun, resumeRun, completeStep, failStep",
+        "src/run-cmd.mjs: runCommand",
+        "src/dispatch.mjs: buildDispatchManifest, updateStepState, generateEscalationPacket",
+        "src/replan.mjs: replan, buildReplanOptions",
+        "src/composite.mjs: decomposeComposite, synthesizeResults"
+      ],
+      "test_location": ["test/run.test.mjs", "test/run-cmd.test.mjs", "test/run-trials.test.mjs", "test/dispatch.test.mjs", "test/replan.test.mjs", "test/composite.test.mjs"],
+      "lines": 2545,
+      "risk_hints": {
+        "churn": "high",
+        "privileged_code": true,
+        "external_io": true,
+        "concurrency": false,
+        "statefulness": "heavy",
+        "complexity": "high",
+        "notes": "run.mjs is the largest file (949 lines). State machine transitions are the highest-risk area. Imports 5 internal modules."
+      }
+    },
+    {
+      "id": "mission-entry",
+      "description": "Predefined mission workflows (7 missions), entry path selection (mission/pack/free-routing), task decomposition into steps",
+      "owned_paths": [
+        "src/mission.mjs",
+        "src/mission-cmd.mjs",
+        "src/mission-run.mjs",
+        "src/entry.mjs",
+        "src/entry-cmd.mjs",
+        "src/decompose.mjs"
+      ],
+      "forbidden_paths": [
+        "src/run.mjs", "src/brainstorm.mjs", "src/route.mjs",
+        "src/session.mjs", "test/"
+      ],
+      "upstream_deps": ["routing-roles"],
+      "downstream_consumers": ["run-engine"],
+      "public_interfaces": [
+        "src/mission.mjs: getMission, getMissionList, MISSIONS",
+        "src/mission-run.mjs: executeMissionRun",
+        "src/entry.mjs: selectEntryPath, buildEntryManifest",
+        "src/decompose.mjs: decompose, estimateComplexity"
+      ],
+      "test_location": ["test/mission.test.mjs", "test/mission-cmd.test.mjs", "test/mission-run.test.mjs", "test/mission-trials.test.mjs", "test/entry.test.mjs", "test/entry-trials.test.mjs", "test/decompose.test.mjs"],
+      "lines": 1741,
+      "risk_hints": {
+        "churn": "medium",
+        "privileged_code": false,
+        "external_io": false,
+        "concurrency": false,
+        "statefulness": "medium",
+        "complexity": "medium",
+        "notes": "mission.mjs imports packs+artifacts+route, making it a dependency aggregator. entry.mjs is the decision tree root."
+      }
+    },
+    {
+      "id": "brainstorm-system",
+      "description": "Multi-perspective search pipeline, evidence modes (strict/mixed/speculative/invention), role-native schemas, two-layer rendering (truth+render), cross-examination permissions",
+      "owned_paths": [
+        "src/brainstorm.mjs",
+        "src/brainstorm-render.mjs",
+        "src/brainstorm-roles.mjs"
+      ],
+      "forbidden_paths": [
+        "src/run.mjs", "src/route.mjs", "src/mission.mjs",
+        "src/artifacts.mjs", "src/session.mjs", "test/"
+      ],
+      "upstream_deps": [],
+      "downstream_consumers": [],
+      "public_interfaces": [
+        "src/brainstorm.mjs: validateEvidencePair, resolveFrame, validateBrainstormResult",
+        "src/brainstorm-render.mjs: renderBrainstormOutput, formatPerspective",
+        "src/brainstorm-roles.mjs: ROLE_NATIVE_SCHEMAS, ROLE_BLINDSPOTS, CROSS_EXAM_PERMISSIONS, validateRoleNativeOutput, canChallenge, translateToAtoms"
+      ],
+      "test_location": ["test/brainstorm.test.mjs", "test/brainstorm-render.test.mjs", "test/brainstorm-roles.test.mjs", "test/brainstorm-golden-run.test.mjs"],
+      "lines": 2014,
+      "risk_hints": {
+        "churn": "medium",
+        "privileged_code": false,
+        "external_io": false,
+        "concurrency": false,
+        "statefulness": "light",
+        "complexity": "high",
+        "notes": "Completely isolated island — zero imports from other src/ modules. Complex validation logic and schema definitions. Two-layer architecture (truth+render) is novel and needs careful audit."
+      }
+    },
+    {
+      "id": "contracts-evidence",
+      "description": "Handoff artifact contracts per role, artifact validation, structured evidence tracking, outcome calibration, trial execution, review verdicts",
+      "owned_paths": [
+        "src/artifacts.mjs",
+        "src/artifacts-cmd.mjs",
+        "src/evidence.mjs",
+        "src/calibration.mjs",
+        "src/trial.mjs",
+        "src/review.mjs"
+      ],
+      "forbidden_paths": [
+        "src/run.mjs", "src/brainstorm.mjs", "src/route.mjs",
+        "src/session.mjs", "test/"
+      ],
+      "upstream_deps": ["routing-roles"],
+      "downstream_consumers": ["run-engine", "mission-entry"],
+      "public_interfaces": [
+        "src/artifacts.mjs: ROLE_ARTIFACT_CONTRACTS, PACK_HANDOFF_CONTRACTS, validateArtifact, getHandoffContract",
+        "src/evidence.mjs: validateEvidencePair, GROUNDING_LEVELS",
+        "src/calibration.mjs: recordOutcome, readOutcomes, computeCalibration, computePackBoosts",
+        "src/trial.mjs: runTrial, buildTrialManifest",
+        "src/review.mjs: generateReview"
+      ],
+      "test_location": ["test/artifacts.test.mjs", "test/artifacts-cmd.test.mjs", "test/evidence.test.mjs", "test/calibration.test.mjs", "test/trial.test.mjs"],
+      "lines": 1982,
+      "risk_hints": {
+        "churn": "low",
+        "privileged_code": false,
+        "external_io": true,
+        "concurrency": false,
+        "statefulness": "medium",
+        "complexity": "medium",
+        "notes": "calibration.mjs and trial.mjs do file I/O. artifacts.mjs is a hub (4 dependents). Contract validation logic is critical for system integrity."
+      }
+    },
+    {
+      "id": "session-scaffolding",
+      "description": "Claude Code .claude/ scaffolding, hooks config generation, CLI entry point, file utilities, packet creation, status display, prompt templates",
+      "owned_paths": [
+        "src/session.mjs",
+        "src/hooks.mjs",
+        "src/init.mjs",
+        "src/packet.mjs",
+        "src/status.mjs",
+        "src/prompts.mjs",
+        "src/fs-utils.mjs",
+        "bin/roleos.mjs"
+      ],
+      "forbidden_paths": [
+        "src/run.mjs", "src/brainstorm.mjs", "src/route.mjs",
+        "src/mission.mjs", "src/artifacts.mjs", "test/"
+      ],
+      "upstream_deps": [],
+      "downstream_consumers": ["routing-roles", "mission-entry", "contracts-evidence"],
+      "public_interfaces": [
+        "src/session.mjs: scaffoldClaude, generateHooksConfig, doctor",
+        "src/hooks.mjs: HOOK_DEFINITIONS, generateSettings",
+        "src/init.mjs: initRoleOS",
+        "src/packet.mjs: createPacket, parsePacket",
+        "src/status.mjs: showStatus, getRunState",
+        "src/fs-utils.mjs: readJSON, writeJSON, ensureDir",
+        "bin/roleos.mjs: CLI dispatch"
+      ],
+      "test_location": ["test/session.test.mjs", "test/hooks.test.mjs", "test/cli.test.mjs", "test/version.test.mjs"],
+      "lines": 1563,
+      "risk_hints": {
+        "churn": "low",
+        "privileged_code": true,
+        "external_io": true,
+        "concurrency": false,
+        "statefulness": "light",
+        "complexity": "low",
+        "notes": "fs-utils.mjs is a shared utility hub (6 dependents). session.mjs writes to user's .claude/ directory — privileged. hooks.mjs generates Claude Code settings — must be correct."
+      }
+    }
+  ],
+  "shared_utilities": [
+    {
+      "path": "src/fs-utils.mjs",
+      "assigned_to": "session-scaffolding",
+      "consumed_by": ["routing-roles", "mission-entry", "contracts-evidence", "session-scaffolding"]
+    },
+    {
+      "path": "src/prompts.mjs",
+      "assigned_to": "session-scaffolding",
+      "consumed_by": ["contracts-evidence", "session-scaffolding"]
+    }
+  ],
+  "boundaries": [
+    {
+      "from": "run-engine",
+      "to": "routing-roles",
+      "interface": "run.mjs imports route.mjs and packs.mjs",
+      "contract": "assembleChain() returns role chain for run steps"
+    },
+    {
+      "from": "run-engine",
+      "to": "mission-entry",
+      "interface": "run.mjs imports entry.mjs and mission.mjs",
+      "contract": "entry provides run manifest, mission provides step definitions"
+    },
+    {
+      "from": "run-engine",
+      "to": "contracts-evidence",
+      "interface": "run.mjs imports artifacts.mjs",
+      "contract": "validateArtifact() gates step completion"
+    },
+    {
+      "from": "mission-entry",
+      "to": "routing-roles",
+      "interface": "mission.mjs and entry.mjs import route.mjs and packs.mjs",
+      "contract": "missions reference pack names and route through role catalog"
+    },
+    {
+      "from": "mission-entry",
+      "to": "contracts-evidence",
+      "interface": "mission.mjs and mission-run.mjs import artifacts.mjs",
+      "contract": "missions define required artifacts per step"
+    },
+    {
+      "from": "contracts-evidence",
+      "to": "routing-roles",
+      "interface": "trial.mjs imports route.mjs, review.mjs imports escalation.mjs",
+      "contract": "trials use routing to assign roles, reviews use escalation for failures"
+    },
+    {
+      "from": "routing-roles",
+      "to": "session-scaffolding",
+      "interface": "route.mjs imports fs-utils.mjs",
+      "contract": "readJSON for loading saved routing state"
+    },
+    {
+      "from": "run-engine",
+      "to": "session-scaffolding",
+      "interface": "dispatch.mjs imports escalation.mjs (shared leaf)",
+      "contract": "generateEscalationPacket uses escalation routing"
+    }
+  ],
+  "content_parcels": {
+    "note": "starter-pack/ and .claude/ contain role definitions, policies, schemas, and workflows — Markdown content, not code. Boundary auditor should check these for consistency with code contracts.",
+    "paths": ["starter-pack/", ".claude/"]
+  }
+}

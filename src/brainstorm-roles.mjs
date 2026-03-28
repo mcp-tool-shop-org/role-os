@@ -139,7 +139,10 @@ export const INPUT_PARTITIONS = {
  */
 export function partitionBrief(request, roleName) {
   const partition = INPUT_PARTITIONS[roleName];
-  if (!partition) return request; // Unknown role gets full brief (fallback)
+  if (!partition) {
+    // Unknown roles receive only the topic — minimal brief, not full access
+    return request.topic !== undefined ? { topic: request.topic } : {};
+  }
 
   const filtered = {};
   for (const field of partition.permitted) {
@@ -700,6 +703,46 @@ export function translateToAtoms(roleName, roleOutput) {
   }
 
   return atoms;
+}
+
+/**
+ * Map from specific claim_kind (atom layer) to broad statement kind (scout layer).
+ * This bridges the two naming conventions:
+ *   - Scout findings use `.kind` ∈ {"claim", "opportunity", "risk", "tension", "unknown"}
+ *   - Translated atoms use `.claim_kind` with specific types per role
+ */
+export const CLAIM_KIND_TO_STATEMENT_KIND = {
+  // Context Analyst → claim
+  definition: "claim", category: "claim", lineage: "claim", boundary: "claim",
+  // User Value Analyst → opportunity or claim
+  need: "opportunity", desire: "opportunity", friction: "risk", willingness: "claim",
+  // Mechanics Analyst → claim or risk
+  loop: "claim", dependency: "claim", failure_mode: "risk", mechanism: "claim",
+  // Positioning Analyst → opportunity
+  substitute: "tension", wedge: "opportunity", category_frame: "claim",
+  positioning: "claim", timing: "opportunity",
+  // Contrarian Analyst → tension
+  challenge: "tension", contradiction: "tension", overstatement: "tension", gap: "risk",
+  // Normalizer
+  adjacency: "claim", avoidance: "risk", constraint: "claim",
+};
+
+/**
+ * Normalize an atom to include both `.claim_kind` (specific) and `.kind` (broad).
+ * Ensures atoms are compatible with both the scout validation layer and
+ * the cross-examination layer.
+ *
+ * @param {object} atom - Atom with claim_kind
+ * @returns {object} Atom with both claim_kind and kind fields
+ */
+export function normalizeAtomKind(atom) {
+  if (atom.kind && !atom.claim_kind) {
+    return { ...atom, claim_kind: atom.kind };
+  }
+  if (atom.claim_kind && !atom.kind) {
+    return { ...atom, kind: CLAIM_KIND_TO_STATEMENT_KIND[atom.claim_kind] || "unknown" };
+  }
+  return atom;
 }
 
 /**

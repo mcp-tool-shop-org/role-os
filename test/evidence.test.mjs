@@ -169,11 +169,11 @@ describe("checkSufficiency", () => {
     assert.ok(result.missingRequired.includes("output"));
   });
 
-  it("warns on contradictions in approve verdict", () => {
+  it("warns on contradictions in accept verdict", () => {
     const result = checkSufficiency({
       verdict: "accept",
       reviewerRole: "Backend Engineer",
-      summary: "Approved despite concern",
+      summary: "Accepted despite concern",
       evidence: [
         { kind: "code", reference: "src/api.ts", claim: "endpoint implemented", status: "supports" },
         { kind: "test", reference: "test/api.test.ts", claim: "2 tests failing", status: "contradicts" },
@@ -183,14 +183,14 @@ describe("checkSufficiency", () => {
       confidence: "medium",
     });
     assert.ok(result.contradictions.length > 0);
-    assert.ok(result.warnings.some(w => w.includes("contradictions")));
+    assert.ok(result.warnings.some(w => w.includes("'accept' but evidence contains contradictions")));
   });
 
-  it("warns on approve with missing evidence items", () => {
+  it("warns on accept with missing evidence items", () => {
     const result = checkSufficiency({
       verdict: "accept",
       reviewerRole: "Critic Reviewer",
-      summary: "Approved",
+      summary: "Accepted",
       evidence: [
         { kind: "spec", reference: "packet.md", claim: "scope met", status: "supports" },
         { kind: "reasoning", reference: "review notes", claim: "quality bar met", status: "supports" },
@@ -200,10 +200,10 @@ describe("checkSufficiency", () => {
       risks: [],
       confidence: "medium",
     });
-    assert.ok(result.warnings.some(w => w.includes("marked 'missing'")));
+    assert.ok(result.warnings.some(w => w.includes("'accept' but some evidence items are marked 'missing'")));
   });
 
-  it("warns on non-approve without gaps or requiredNextArtifact", () => {
+  it("warns on non-accept without gaps or requiredNextArtifact", () => {
     const result = checkSufficiency({
       verdict: "reject",
       reviewerRole: "Critic Reviewer",
@@ -219,7 +219,7 @@ describe("checkSufficiency", () => {
     assert.ok(result.warnings.some(w => w.includes("gaps or requiredNextArtifact")));
   });
 
-  it("warns on low-confidence approve", () => {
+  it("warns on low-confidence accept", () => {
     const result = checkSufficiency({
       verdict: "accept",
       reviewerRole: "Critic Reviewer",
@@ -232,7 +232,59 @@ describe("checkSufficiency", () => {
       risks: [],
       confidence: "low",
     });
-    assert.ok(result.warnings.some(w => w.includes("Low confidence approve")));
+    assert.ok(result.warnings.some(w => w.includes("Low confidence accept")));
+  });
+
+  it("zero warnings on clean accept verdict (no contradictions, no missing, high confidence)", () => {
+    const result = checkSufficiency({
+      verdict: "accept",
+      reviewerRole: "Critic Reviewer",
+      summary: "Clean accept",
+      evidence: [
+        { kind: "spec", reference: "packet.md", claim: "scope met", status: "supports" },
+        { kind: "reasoning", reference: "review", claim: "quality bar met", status: "supports" },
+      ],
+      gaps: [],
+      risks: [],
+      confidence: "high",
+    });
+    assert.equal(result.warnings.length, 0, `Expected zero warnings but got: ${JSON.stringify(result.warnings)}`);
+  });
+
+  it("warning messages use 'accept' terminology, not 'approve'", () => {
+    // Contradiction warning
+    const contradicted = checkSufficiency({
+      verdict: "accept",
+      reviewerRole: "Backend Engineer",
+      summary: "check",
+      evidence: [
+        { kind: "code", reference: "src/x.ts", claim: "done", status: "supports" },
+        { kind: "test", reference: "test/x.ts", claim: "failing", status: "contradicts" },
+      ],
+      gaps: [],
+      risks: [],
+      confidence: "high",
+    });
+    for (const w of contradicted.warnings) {
+      assert.ok(!w.includes("approve"), `Warning should not contain 'approve': ${w}`);
+    }
+
+    // Low confidence warning
+    const lowConf = checkSufficiency({
+      verdict: "accept",
+      reviewerRole: "Critic Reviewer",
+      summary: "check",
+      evidence: [
+        { kind: "reasoning", reference: "notes", claim: "ok", status: "supports" },
+        { kind: "spec", reference: "spec", claim: "met", status: "supports" },
+      ],
+      gaps: [],
+      risks: [],
+      confidence: "low",
+    });
+    for (const w of lowConf.warnings) {
+      assert.ok(!w.includes("approve"), `Warning should not contain 'approve': ${w}`);
+    }
   });
 
   it("no warnings on clean reject with gaps and next artifact", () => {

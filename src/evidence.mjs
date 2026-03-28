@@ -146,7 +146,7 @@ const DEFAULT_REQUIREMENTS = {
  * @property {EvidenceItem[]} evidence - Structured evidence items
  * @property {string[]} gaps - What's missing or weak
  * @property {string[]} risks - Identified risks
- * @property {string} [requiredNextArtifact] - What the next role must produce (for non-approve)
+ * @property {string} [requiredNextArtifact] - What the next role must produce (for non-accept)
  * @property {string} confidence - One of CONFIDENCE_LEVELS
  */
 
@@ -182,25 +182,25 @@ export function checkSufficiency(verdict) {
     .map(e => `${e.kind}: ${e.claim} (${e.reference})`);
 
   if (contradictions.length > 0 && verdict.verdict === "accept") {
-    warnings.push("Verdict is 'approve' but evidence contains contradictions — review carefully");
+    warnings.push("Verdict is 'accept' but evidence contains contradictions — review carefully");
   }
 
-  // Check for missing evidence items on non-approve verdicts
+  // Check for missing evidence items on accept verdicts
   const missingItems = verdict.evidence.filter(e => e.status === "missing");
   if (missingItems.length > 0 && verdict.verdict === "accept") {
-    warnings.push("Verdict is 'approve' but some evidence items are marked 'missing'");
+    warnings.push("Verdict is 'accept' but some evidence items are marked 'missing'");
   }
 
-  // Non-approve verdicts should have gaps or requiredNextArtifact
-  if (verdict.verdict !== "approve" && verdict.verdict !== "accept-with-notes") {
+  // Non-accept verdicts should have gaps or requiredNextArtifact
+  if (verdict.verdict !== "accept" && verdict.verdict !== "accept-with-notes") {
     if (verdict.gaps.length === 0 && !verdict.requiredNextArtifact) {
-      warnings.push("Non-approve verdict should specify gaps or requiredNextArtifact for recovery");
+      warnings.push("Non-accept verdict should specify gaps or requiredNextArtifact for recovery");
     }
   }
 
-  // Low confidence + approve is suspicious
+  // Low confidence + accept is suspicious
   if (verdict.confidence === "low" && verdict.verdict === "accept") {
-    warnings.push("Low confidence approve — consider whether evidence is actually sufficient");
+    warnings.push("Low confidence accept — consider whether evidence is actually sufficient");
   }
 
   const sufficient = missingRequired.length === 0 && contradictions.length === 0;

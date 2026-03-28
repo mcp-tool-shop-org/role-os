@@ -344,6 +344,36 @@ export const ROLE_CATALOG = [
     triggers: ["targeted challenge", "claim attack", "contradiction exposure"],
     excludeWhen: [],
   },
+
+  // ── DEEP AUDIT ──
+  {
+    name: "Component Auditor", pack: "deep-audit", phase: 3,
+    keywords: ["audit", "component", "correctness", "dead code", "error handling", "state management"],
+    triggers: ["deep audit", "component audit", "code audit", "line-by-line audit"],
+    excludeWhen: ["test audit only", "boundary audit only"],
+    deliverableAffinity: ["Review"],
+  },
+  {
+    name: "Seam Auditor", pack: "deep-audit", phase: 4,
+    keywords: ["boundary", "seam", "interface", "contract", "integration", "dependency direction"],
+    triggers: ["boundary audit", "seam inspection", "interface mismatch", "cross-component"],
+    excludeWhen: ["single component only", "test audit only"],
+    deliverableAffinity: ["Review"],
+  },
+  {
+    name: "Test Truth Auditor", pack: "deep-audit", phase: 3,
+    keywords: ["test coverage", "test truth", "ceremonial test", "test gap", "mock fidelity"],
+    triggers: ["test truth audit", "coverage reality", "test quality assessment"],
+    excludeWhen: ["no tests exist", "implementation audit only"],
+    deliverableAffinity: ["Review"],
+  },
+  {
+    name: "Audit Synthesizer", pack: "deep-audit", phase: 5,
+    keywords: ["synthesis", "verdict", "action plan", "reconcile", "cross-cutting"],
+    triggers: ["audit synthesis", "repo verdict", "finding reconciliation"],
+    excludeWhen: ["component audit still running", "no findings to synthesize"],
+    deliverableAffinity: ["Review"],
+  },
 ];
 
 // ── Deliverable type → role affinity ──────────────────────────────────────────

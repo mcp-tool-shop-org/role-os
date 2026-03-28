@@ -255,6 +255,38 @@ export const TEAM_PACKS = {
     ],
   },
 
+  // ── Deep Audit (Componentized Repo Understanding) ──────────────────────────
+  "deep-audit": {
+    name: "Deep Audit",
+    description: "Decompose repo into components, audit each deeply, inspect seams, synthesize verdict. Scales with repo graph.",
+    roles: [
+      "Component Auditor",
+      "Test Truth Auditor",
+      "Seam Auditor",
+      "Audit Synthesizer",
+      "Critic Reviewer",
+    ],
+    orchestratorRequired: false, // mission step sequence handles orchestration
+    optionalRoles: ["Security Reviewer", "Dependency Auditor"],
+    chainOrder: "Component Auditor (×N, parallel) + Test Truth Auditor (×M) → Seam Auditor (×K, from graph) → Audit Synthesizer",
+    requiredArtifacts: ["audit-manifest", "component-audit-report", "seam-audit-report", "test-truth-report", "audit-summary", "audit-action-plan"],
+    stopConditions: [
+      "All component parcels audited + seams inspected + synthesis complete",
+      "Critical finding in decomposition phase — repo too tangled to slice cleanly",
+      "Component auditor finds scope exceeds 8K lines — request re-slice",
+    ],
+    escalationOwner: "Audit Synthesizer",
+    dispatchDefaults: { model: "sonnet", maxTurns: 25, maxBudgetUsd: 3.0 },
+    trialEvidence: "New mission — no trial evidence yet. First test: role-os self-audit.",
+    mismatchGuards: [
+      { notForSignals: ["fix bug", "crash", "broken", "regression"], suggestInstead: "bugfix", reason: "This is a bug to fix, not a deep audit" },
+      { notForSignals: ["implement", "build", "add command", "new feature"], suggestInstead: "feature", reason: "This is feature work, not an audit" },
+      { notForSignals: ["launch", "announce", "release notes", "messaging"], suggestInstead: "launch", reason: "This is launch work, not an audit" },
+      { notForSignals: ["treatment", "shipcheck", "polish"], suggestInstead: "treatment", reason: "This is repo treatment (surface polish), not a deep audit" },
+      { notForSignals: ["brainstorm", "explore ideas", "ideate"], suggestInstead: "brainstorm", reason: "This is brainstorming, not an audit" },
+    ],
+  },
+
   // ── Brainstorm (Structured Inquiry) ─────────────────────────────────────────
   brainstorm: {
     name: "Brainstorm (Structured Inquiry)",
@@ -304,6 +336,7 @@ const PACK_KEYWORDS = {
   research:  ["research", "competitive", "ux", "friction", "user", "strategy", "trend"],
   treatment: ["treatment", "polish", "cleanup", "repo audit", "shipcheck", "full treatment"],
   brainstorm: ["brainstorm", "explore", "ideate", "divergent", "opportunity", "creative directions", "concept exploration", "what could", "possibilities"],
+  "deep-audit": ["deep audit", "component audit", "repo audit deep", "decompose and audit", "audit components", "code audit", "structural audit", "deep review"],
 };
 
 /**

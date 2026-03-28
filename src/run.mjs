@@ -12,14 +12,13 @@
  * Interventions: reroute, split, escalate, retry, block, reopen
  */
 
-import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync, renameSync } from "node:fs";
 import { join } from "node:path";
 import { decideEntry } from "./entry.mjs";
 import { getMission } from "./mission.mjs";
 import { TEAM_PACKS, getPack } from "./packs.mjs";
 import { ROLE_CATALOG } from "./route.mjs";
-import { ROLE_ARTIFACT_CONTRACTS } from "./artifacts.mjs";
-import { getHandoffContract } from "./artifacts.mjs";
+import { ROLE_ARTIFACT_CONTRACTS, validateArtifact, getHandoffContract } from "./artifacts.mjs";
 
 // ── Run directory ────────────────────────────────────────────────────────────
 
@@ -286,6 +285,10 @@ function guessArtifact(roleName) {
  * @returns {RunStep|null}
  */
 export function startNext(run, cwd) {
+  // Guard: refuse to activate a new step if one is already active (prevents dual-active)
+  const alreadyActive = run.steps.find(s => s.status === "active");
+  if (alreadyActive) return null;
+
   const next = run.steps.find(s => s.status === "pending");
   if (!next) return null;
 
@@ -308,6 +311,10 @@ export function startNext(run, cwd) {
 export function completeCurrentStep(run, artifact, note, cwd) {
   const active = run.steps.find(s => s.status === "active");
   if (!active) throw new Error("No active step to complete");
+
+  // Validate artifact against role contract (warn, don't block)
+  const validation = validateArtifact(active.role, artifact);
+  active.artifactValidation = validation;
 
   active.status = "completed";
   active.artifact = artifact;
@@ -851,7 +858,10 @@ export function formatReport(report) {
 export function saveRun(cwd, run) {
   const dir = runsDir(cwd);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(runPath(cwd, run.id), JSON.stringify(run, null, 2));
+  const target = runPath(cwd, run.id);
+  const tmp = target + ".tmp";
+  writeFileSync(tmp, JSON.stringify(run, null, 2));
+  renameSync(tmp, target);
 }
 
 /**

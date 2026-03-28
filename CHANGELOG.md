@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.2.0
+
+### Added
+
+#### Deep Audit Mission — Runner-Native Componentized Repo Audit
+
+- **Deep audit mission** — 8th mission in the library. Decomposes a repo into bounded components, dispatches one auditor per component, inspects seams from the dependency graph, assesses test truth, then synthesizes into a ranked verdict and action plan.
+- **Dynamic dispatch** — missions with `dynamicDispatch` field now expand from a manifest at runtime. `createRun("deep-audit", task, { manifest })` creates N + M + K + 3 steps from the repo graph instead of a fixed static chain. A 6-component / 8-boundary repo produces 23 steps; a 10-component / 5-boundary repo produces 28.
+- **4 new audit roles** — Component Auditor, Seam Auditor, Test Truth Auditor, Audit Synthesizer. Each with full artifact contracts, tool profiles, and role definitions in starter-pack.
+- **Deep-audit pack** — 9th team pack with scaling chain order, dispatch defaults, and mismatch guards.
+- **Artifact validation at execution boundaries** — `validateArtifact()` now runs on every step completion in both `run.mjs` and `mission-run.mjs`. Validation results are attached to the step object. Warn, don't block.
+- **Proof run test suite** — `test/deep-audit-proof.test.mjs` proves the full runner-native lifecycle against the real audit-manifest.json: step creation, parcel identity, validation, escalation, partial failure, scaling formula, and report generation.
+
+### Fixed
+
+- **Critical: "approve" vs "accept" verdict mismatch** — `evidence.mjs:195` checked `!== "approve"` but the enum defines `"accept"`. Every accept verdict generated a spurious warning. Tests masked it via substring matching. Fixed to `"accept"` with hardened exact-assertion tests.
+- **Dead imports removed** — `TEAM_PACKS` and `ROLE_ARTIFACT_CONTRACTS` in mission-run.mjs, `TEAM_PACKS` in run.mjs, `scoreRole` and `MIN_SCORE_THRESHOLD` in trial.mjs were imported but never used.
+- **Warning message terminology** — all evidence warning messages now use "accept" instead of "approve" consistently.
+
+### Changed
+
+- Mission count: 7 → 8
+- Role count: 50 → 54 (4 deep audit roles)
+- Pack count: 8 → 9
+- Artifact contract count: 30 → 34 (4 new audit role contracts)
+- Test count: 905 → 936
+
+### Evidence
+
+- Self-audit dogfood: 128 findings (1 critical, 11 high, 39 medium) across 6 component parcels, 8 boundary seams, and 31 test files
+- Runner-native proof run: 23 dynamic steps from real manifest, full lifecycle, all green
+- Scaling formula verified: 2N + K + 3 holds for manifests of 3, 6, 10, and 15 components
+
 ## 2.1.0
 
 ### Added
