@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.2.1
+
+### Added
+- **`roleos audit` CLI** — first-class entry point for deep audit with subcommands: `audit`, `audit manifest`, `audit manifest --generate`, `audit status`, `audit verify`
+- **Shared state machine** (`src/state-machine.mjs`) — canonical step/run transitions shared by both runners
+- **Shared tool profiles** (`src/tool-profiles.mjs`) — extracted from dispatch.mjs to break trial→dispatch coupling
+
+### Fixed
+- **P3-1:** Cycle detection in composite execution (`detectCycles` + visited-set guard in `findUnreachable`)
+- **P3-2:** Dual-active guard in `startNext`/`startNextStep` prevents two steps active simultaneously
+- **P3-3:** Atomic persistence — `saveRun` writes to temp file then renames
+- **P4-1:** Dependency Auditor has own artifact contract (`dependency-audit`), pack handoff corrected
+- **P4-2:** `partitionBrief` returns topic-only for unknown roles instead of full brief
+- **P4-3:** Atom kind normalization layer bridges scout `.kind` and atom `.claim_kind`
+- **P4-4:** `/dev/stdin` → `readFileSync(0)` for Windows compatibility in all 5 hooks
+- **P4-5:** TOOL_PROFILES extracted to shared module, eliminating trial→dispatch coupling
+- Node 18 compatibility fix for `import.meta.dirname` in deep-audit-proof test
+
+### Tests
+- 18 new tests (audit-cmd, audit-p5, deep-audit-proof) — total: 954
+
 ## 2.2.0
 
 ### Added
