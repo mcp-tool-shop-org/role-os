@@ -23,8 +23,13 @@ import {
   formatCompletionReport,
 } from "../src/mission-run.mjs";
 
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
+
 // Load the REAL manifest — not a mock
-const manifestPath = join(import.meta.dirname, "..", "audit-manifest.json");
+const manifestPath = join(__dirname, "..", "audit-manifest.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 
 // ── Manifest sanity ─────────────────────────────────────────────────────────
