@@ -105,6 +105,7 @@ export function createRun(missionKey, taskDescription, options = {}) {
     completionReport: null,
     dynamicDispatch: dd && options.manifest ? true : false,
     manifest: options.manifest || null,
+    knowledge: options.knowledge || null, // Phase 5: PacketKnowledge from retrieval
   };
 }
 
@@ -391,6 +392,7 @@ export function generateCompletionReport(run) {
     status: s.status,
     hasArtifact: !!s.artifact,
     note: s.note,
+    knowledge: s.knowledge || null, // Phase 5: per-step knowledge posture
   }));
 
   const isComplete = run.status === "completed";
@@ -413,6 +415,13 @@ export function generateCompletionReport(run) {
     artifactChain,
     escalationCount: run.escalations.length,
     escalations: run.escalations,
+    knowledge: run.knowledge ? {
+      status: run.knowledge.status,
+      selected_count: run.knowledge.retrieval_bundle?.selected?.length ?? 0,
+      trust_posture: run.knowledge.retrieval_bundle?.provenance?.trust_posture ?? "unknown",
+      freshness_posture: run.knowledge.retrieval_bundle?.provenance?.freshness_posture ?? "unknown",
+      warning_codes: (run.knowledge.retrieval_bundle?.warnings ?? []).map((w) => w.code),
+    } : null,
     honestPartial: isPartial || isFailed ? mission.honestPartial : null,
     verdict: isComplete
       ? "Mission completed — all artifacts produced, all steps passed."
@@ -458,7 +467,20 @@ export function formatCompletionReport(report) {
                  step.status === "blocked" ? "[-]" : "[ ]";
     const artifact = step.hasArtifact ? ` → ${step.produces}` : "";
     const note = step.note ? ` (${step.note})` : "";
-    lines.push(`  ${icon} ${step.role}${artifact}${note}`);
+    const kStatus = step.knowledge ? ` [knowledge: ${step.knowledge.status}]` : "";
+    lines.push(`  ${icon} ${step.role}${artifact}${kStatus}${note}`);
+  }
+
+  // Knowledge posture (Phase 5)
+  if (report.knowledge) {
+    lines.push("");
+    lines.push("## Knowledge");
+    lines.push(`  Status: ${report.knowledge.status}`);
+    lines.push(`  Evidence: ${report.knowledge.selected_count} chunks selected`);
+    lines.push(`  Trust: ${report.knowledge.trust_posture} | Freshness: ${report.knowledge.freshness_posture}`);
+    if (report.knowledge.warning_codes.length > 0) {
+      lines.push(`  Warnings: ${report.knowledge.warning_codes.join(", ")}`);
+    }
   }
 
   if (report.escalationCount > 0) {
