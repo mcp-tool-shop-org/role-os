@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.1
+
+### Changed
+- Version bump for dogfood swarm mission release
+
 ## 2.3.0
 
 ### Added
