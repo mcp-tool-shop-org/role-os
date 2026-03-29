@@ -17,6 +17,7 @@ import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { resolveBlocked, resolveRejected } from "./escalation.mjs";
 import { TOOL_PROFILES } from "./tool-profiles.mjs";
+import { renderKnowledgeBlock, knowledgeManifestSummary } from "./knowledge/render-knowledge-block.mjs";
 
 // ── Default role config ─────────────────────────────────────────────────────
 
@@ -42,7 +43,9 @@ export const EXEC_STATES = [
 
 // ── System prompt builder ─────────────────────────────────────────────────────
 
-function buildRolePrompt(roleName, packetContent, chainContext) {
+function buildRolePrompt(roleName, packetContent, chainContext, packetKnowledge) {
+  const knowledgeBlock = renderKnowledgeBlock(packetKnowledge);
+
   return `You are operating as ${roleName} in a Role-OS managed chain.
 
 ## Your Role Contract
@@ -55,7 +58,7 @@ ${packetContent}
 You are step ${chainContext.stepNumber} of ${chainContext.totalSteps} in this chain.
 ${chainContext.previousRole ? `Previous role: ${chainContext.previousRole} (${chainContext.previousStatus})` : "You are the first role in this chain."}
 ${chainContext.nextRole ? `Next role: ${chainContext.nextRole}` : "You are the last role before Critic review."}
-
+${knowledgeBlock ? `\n${knowledgeBlock}\n` : ""}
 ## Handoff Requirements
 When you finish, produce a structured handoff:
 1. Summary of what you did
@@ -84,7 +87,7 @@ When you finish, produce a structured handoff:
  * @param {Object} [options.overrides] - Per-role config overrides
  * @returns {DispatchManifest}
  */
-export function buildDispatchManifest({ packetFile, packetContent, chainRoles, cwd, overrides = {} }) {
+export function buildDispatchManifest({ packetFile, packetContent, chainRoles, cwd, overrides = {}, packetKnowledge = null }) {
   const runId = `run-${Date.now()}`;
   const steps = [];
 
@@ -106,7 +109,7 @@ export function buildDispatchManifest({ packetFile, packetContent, chainRoles, c
       role: role.name,
       pack: role.pack,
       tools: TOOL_PROFILES[role.name] || ["Read", "Glob", "Grep"],
-      systemPrompt: buildRolePrompt(role.name, packetContent, chainContext),
+      systemPrompt: buildRolePrompt(role.name, packetContent, chainContext, packetKnowledge),
       model: roleOverrides.model || DEFAULTS.model,
       maxTurns: roleOverrides.maxTurns || DEFAULTS.maxTurns,
       maxBudgetUsd: roleOverrides.maxBudgetUsd || DEFAULTS.maxBudgetUsd,
@@ -117,6 +120,7 @@ export function buildDispatchManifest({ packetFile, packetContent, chainRoles, c
         from: i > 0 ? chainRoles[i - 1].role.name : null,
         to: i < chainRoles.length - 1 ? chainRoles[i + 1].role.name : null,
       },
+      knowledge: knowledgeManifestSummary(packetKnowledge),
     });
   }
 

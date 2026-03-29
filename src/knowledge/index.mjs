@@ -10,3 +10,4 @@ export { retrieveForDispatch, configureKnowledge, isKnowledgeConfigured } from "
 export { attachBundleToPacket, hasKnowledge, getKnowledgeStatus } from "./attach-bundle-to-packet.mjs";
 export { provenanceFromChunk, attachProvenance, reconcileEvidenceWithBundle } from "./attach-bundle-to-evidence.mjs";
 export { applyFallbackPolicy } from "./fallback-policy.mjs";
+export { renderKnowledgeBlock, knowledgeManifestSummary } from "./render-knowledge-block.mjs";
