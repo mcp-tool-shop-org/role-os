@@ -26,8 +26,8 @@ describe("createPersistentRun", () => {
   beforeEach(setup);
   afterEach(teardown);
 
-  it("creates a run from a bugfix task", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("creates a run from a bugfix task", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     assert.ok(run.id.startsWith("run-"));
     assert.equal(run.entryLevel, "mission");
     assert.equal(run.missionKey, "bugfix");
@@ -36,48 +36,48 @@ describe("createPersistentRun", () => {
     assert.ok(run.createdAt);
   });
 
-  it("persists run to disk", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("persists run to disk", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     const loaded = loadRun(TEST_CWD, run.id);
     assert.ok(loaded);
     assert.equal(loaded.id, run.id);
     assert.equal(loaded.taskDescription, run.taskDescription);
   });
 
-  it("creates a run from a feature task → mission or pack", () => {
-    const run = createPersistentRun("add a new export CSV feature to the dashboard", TEST_CWD);
+  it("creates a run from a feature task → mission or pack", async () => {
+    const run = await createPersistentRun("add a new export CSV feature to the dashboard", TEST_CWD);
     assert.ok(run.entryLevel === "mission" || run.entryLevel === "pack");
     assert.ok(run.steps.length >= 2);
   });
 
-  it("creates a free-routing run for novel tasks", () => {
-    const run = createPersistentRun("do something entirely unique and unprecedented", TEST_CWD);
+  it("creates a free-routing run for novel tasks", async () => {
+    const run = await createPersistentRun("do something entirely unique and unprecedented", TEST_CWD);
     assert.equal(run.entryLevel, "free-routing");
     assert.equal(run.steps.length, 3); // minimal chain
   });
 
-  it("accepts forceMission override", () => {
-    const run = createPersistentRun("anything", TEST_CWD, { forceMission: "treatment" });
+  it("accepts forceMission override", async () => {
+    const run = await createPersistentRun("anything", TEST_CWD, { forceMission: "treatment" });
     assert.equal(run.entryLevel, "mission");
     assert.equal(run.missionKey, "treatment");
   });
 
-  it("accepts forcePack override", () => {
-    const run = createPersistentRun("anything", TEST_CWD, { forcePack: "security" });
+  it("accepts forcePack override", async () => {
+    const run = await createPersistentRun("anything", TEST_CWD, { forcePack: "security" });
     assert.equal(run.entryLevel, "pack");
     assert.equal(run.packKey, "security");
   });
 
-  it("throws on empty task", () => {
-    assert.throws(() => createPersistentRun("", TEST_CWD), /Task description required/);
+  it("throws on empty task", async () => {
+    await assert.rejects(() => createPersistentRun("", TEST_CWD), /Task description required/);
   });
 
-  it("throws on invalid forceMission", () => {
-    assert.throws(() => createPersistentRun("x", TEST_CWD, { forceMission: "nonexistent" }), /not found/);
+  it("throws on invalid forceMission", async () => {
+    await assert.rejects(() => createPersistentRun("x", TEST_CWD, { forceMission: "nonexistent" }), /not found/);
   });
 
-  it("each step has guidance", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("each step has guidance", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     for (const step of run.steps) {
       assert.ok(step.guidance, `Step ${step.index} (${step.role}) missing guidance`);
       assert.ok(step.guidance.includes("Role:"));
@@ -85,8 +85,8 @@ describe("createPersistentRun", () => {
     }
   });
 
-  it("steps have correct initial state", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("steps have correct initial state", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     for (const step of run.steps) {
       assert.equal(step.status, "pending");
       assert.equal(step.artifact, null);
@@ -99,13 +99,13 @@ describe("createPersistentRun", () => {
 
 describe("step lifecycle", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+    run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
   });
   afterEach(teardown);
 
-  it("startNext activates first pending step", () => {
+  it("startNext activates first pending step", async () => {
     const step = startNext(run, TEST_CWD);
     assert.ok(step);
     assert.equal(step.status, "active");
@@ -113,14 +113,14 @@ describe("step lifecycle", () => {
     assert.equal(run.status, "running");
   });
 
-  it("startNext returns null when no pending steps", () => {
+  it("startNext returns null when no pending steps", async () => {
     // Make all steps completed
     for (const s of run.steps) { s.status = "completed"; }
     const result = startNext(run, TEST_CWD);
     assert.equal(result, null);
   });
 
-  it("completeCurrentStep marks step completed", () => {
+  it("completeCurrentStep marks step completed", async () => {
     startNext(run, TEST_CWD);
     const step = completeCurrentStep(run, "diagnosis.md", "Found root cause", TEST_CWD);
     assert.equal(step.status, "completed");
@@ -129,18 +129,18 @@ describe("step lifecycle", () => {
     assert.ok(step.completedAt);
   });
 
-  it("completeCurrentStep throws when no active step", () => {
+  it("completeCurrentStep throws when no active step", async () => {
     assert.throws(() => completeCurrentStep(run, "x", null, TEST_CWD), /No active step/);
   });
 
-  it("completeCurrentStep attaches artifact validation", () => {
+  it("completeCurrentStep attaches artifact validation", async () => {
     startNext(run, TEST_CWD);
     const step = completeCurrentStep(run, "## Diagnosis\nRoot cause.\n## Affected Files\nsrc/x.mjs", null, TEST_CWD);
     assert.ok(step.artifactValidation, "should attach validation result");
     assert.ok("valid" in step.artifactValidation);
   });
 
-  it("completing all steps marks run completed", () => {
+  it("completing all steps marks run completed", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `artifact-${i}`, null, TEST_CWD);
@@ -149,7 +149,7 @@ describe("step lifecycle", () => {
     assert.ok(run.completedAt);
   });
 
-  it("failCurrentStep blocks downstream", () => {
+  it("failCurrentStep blocks downstream", async () => {
     startNext(run, TEST_CWD);
     failCurrentStep(run, "failed", "Cannot find the bug", TEST_CWD);
 
@@ -158,13 +158,13 @@ describe("step lifecycle", () => {
     assert.equal(run.status, "failed");
   });
 
-  it("failCurrentStep with partial status", () => {
+  it("failCurrentStep with partial status", async () => {
     startNext(run, TEST_CWD);
     failCurrentStep(run, "partial", "Found partial info", TEST_CWD);
     assert.equal(run.status, "partial");
   });
 
-  it("failCurrentStep rejects invalid status", () => {
+  it("failCurrentStep rejects invalid status", async () => {
     startNext(run, TEST_CWD);
     assert.throws(() => failCurrentStep(run, "bogus", "reason", TEST_CWD), /Invalid fail status/);
   });
@@ -174,20 +174,20 @@ describe("step lifecycle", () => {
 
 describe("pause and resume", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+    run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     startNext(run, TEST_CWD);
   });
   afterEach(teardown);
 
-  it("pauses a running run", () => {
+  it("pauses a running run", async () => {
     pauseRun(run, TEST_CWD);
     assert.equal(run.status, "paused");
     assert.ok(run.pausedAt);
   });
 
-  it("resumes a paused run with active step", () => {
+  it("resumes a paused run with active step", async () => {
     pauseRun(run, TEST_CWD);
     const step = resumeRun(run, TEST_CWD);
     assert.equal(run.status, "running");
@@ -196,7 +196,7 @@ describe("pause and resume", () => {
     assert.equal(run.pausedAt, null);
   });
 
-  it("resumes a paused run with no active step (starts next)", () => {
+  it("resumes a paused run with no active step (starts next)", async () => {
     completeCurrentStep(run, "done", null, TEST_CWD);
     pauseRun(run, TEST_CWD);
     const step = resumeRun(run, TEST_CWD);
@@ -205,11 +205,11 @@ describe("pause and resume", () => {
     assert.equal(step.index, 1);
   });
 
-  it("throws when resuming non-paused run", () => {
+  it("throws when resuming non-paused run", async () => {
     assert.throws(() => resumeRun(run, TEST_CWD), /Cannot resume/);
   });
 
-  it("persists pause/resume state", () => {
+  it("persists pause/resume state", async () => {
     pauseRun(run, TEST_CWD);
     const loaded = loadRun(TEST_CWD, run.id);
     assert.equal(loaded.status, "paused");
@@ -220,14 +220,14 @@ describe("pause and resume", () => {
 
 describe("interventions", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+    run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
   });
   afterEach(teardown);
 
   describe("reroute", () => {
-    it("changes a step's role", () => {
+    it("changes a step's role", async () => {
       const oldRole = run.steps[1].role;
       reroute(run, 1, "Frontend Developer", "Need frontend fix", TEST_CWD);
       assert.equal(run.steps[1].role, "Frontend Developer");
@@ -236,11 +236,11 @@ describe("interventions", () => {
       assert.equal(run.interventions[0].type, "reroute");
     });
 
-    it("rejects reroute to nonexistent role", () => {
+    it("rejects reroute to nonexistent role", async () => {
       assert.throws(() => reroute(run, 1, "FakeRole", "test", TEST_CWD), /not in catalog/);
     });
 
-    it("rejects reroute of completed step", () => {
+    it("rejects reroute of completed step", async () => {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, "done", null, TEST_CWD);
       assert.throws(() => reroute(run, 0, "Frontend Developer", "too late", TEST_CWD), /Cannot reroute a completed/);
@@ -248,7 +248,7 @@ describe("interventions", () => {
   });
 
   describe("escalate", () => {
-    it("re-opens a completed step", () => {
+    it("re-opens a completed step", async () => {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, "diagnosis", null, TEST_CWD);
       startNext(run, TEST_CWD);
@@ -259,14 +259,14 @@ describe("interventions", () => {
       assert.equal(run.escalations.length, 1);
     });
 
-    it("warns when target role not in chain", () => {
+    it("warns when target role not in chain", async () => {
       const result = escalate(run, "Test Engineer", "UI Designer", "need design", "redesign", TEST_CWD);
       assert.equal(result.reopened, false);
       assert.ok(result.warning);
       assert.ok(result.warning.includes("not in this run's chain"));
     });
 
-    it("unblocks downstream steps when escalation re-opens", () => {
+    it("unblocks downstream steps when escalation re-opens", async () => {
       // Complete step 0, start and fail step 1 (blocks step 2+)
       startNext(run, TEST_CWD);
       completeCurrentStep(run, "done", null, TEST_CWD);
@@ -284,7 +284,7 @@ describe("interventions", () => {
   });
 
   describe("retry", () => {
-    it("retries a failed step", () => {
+    it("retries a failed step", async () => {
       startNext(run, TEST_CWD);
       failCurrentStep(run, "failed", "oops", TEST_CWD);
 
@@ -294,7 +294,7 @@ describe("interventions", () => {
       assert.equal(run.interventions.length, 1);
     });
 
-    it("unblocks downstream after retry", () => {
+    it("unblocks downstream after retry", async () => {
       startNext(run, TEST_CWD);
       failCurrentStep(run, "failed", "oops", TEST_CWD);
       const blockedBefore = run.steps.filter(s => s.status === "blocked").length;
@@ -304,11 +304,11 @@ describe("interventions", () => {
       assert.ok(blockedAfter < blockedBefore);
     });
 
-    it("rejects retry of non-failed step", () => {
+    it("rejects retry of non-failed step", async () => {
       assert.throws(() => retry(run, 0, TEST_CWD), /not failed\/partial/);
     });
 
-    it("resets run status from failed to paused", () => {
+    it("resets run status from failed to paused", async () => {
       startNext(run, TEST_CWD);
       failCurrentStep(run, "failed", "oops", TEST_CWD);
       assert.equal(run.status, "failed");
@@ -319,7 +319,7 @@ describe("interventions", () => {
   });
 
   describe("block", () => {
-    it("blocks a step with reason", () => {
+    it("blocks a step with reason", async () => {
       blockStep(run, 1, "Waiting for API spec", TEST_CWD);
       assert.equal(run.steps[1].status, "blocked");
       assert.equal(run.steps[1].note, "Waiting for API spec");
@@ -327,7 +327,7 @@ describe("interventions", () => {
   });
 
   describe("reopen", () => {
-    it("reopens a completed step", () => {
+    it("reopens a completed step", async () => {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, "done", null, TEST_CWD);
 
@@ -336,11 +336,11 @@ describe("interventions", () => {
       assert.equal(run.steps[0].artifact, null);
     });
 
-    it("rejects reopen of pending step", () => {
+    it("rejects reopen of pending step", async () => {
       assert.throws(() => reopenStep(run, 0, "test", TEST_CWD), /can only reopen/);
     });
 
-    it("resets run status from completed to paused", () => {
+    it("resets run status from completed to paused", async () => {
       for (let i = 0; i < run.steps.length; i++) {
         startNext(run, TEST_CWD);
         completeCurrentStep(run, `a-${i}`, null, TEST_CWD);
@@ -357,13 +357,13 @@ describe("interventions", () => {
 
 describe("introspection", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+    run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
   });
   afterEach(teardown);
 
-  it("getPosition returns correct state", () => {
+  it("getPosition returns correct state", async () => {
     const pos = getPosition(run);
     assert.equal(pos.completedCount, 0);
     assert.ok(pos.totalSteps >= 3);
@@ -371,14 +371,14 @@ describe("introspection", () => {
     assert.ok(pos.nextStep);
   });
 
-  it("getPosition shows active step", () => {
+  it("getPosition shows active step", async () => {
     startNext(run, TEST_CWD);
     const pos = getPosition(run);
     assert.ok(pos.activeStep);
     assert.equal(pos.activeStep.index, 0);
   });
 
-  it("explainRun produces readable output", () => {
+  it("explainRun produces readable output", async () => {
     startNext(run, TEST_CWD);
     const text = explainRun(run);
     assert.ok(text.includes("Run:"));
@@ -388,14 +388,14 @@ describe("introspection", () => {
     assert.ok(text.includes("Current Step Guidance"));
   });
 
-  it("formatNext shows active step guidance", () => {
+  it("formatNext shows active step guidance", async () => {
     startNext(run, TEST_CWD);
     const text = formatNext(run);
     assert.ok(text.includes("Active:"));
     assert.ok(text.includes("Repo Researcher"));
   });
 
-  it("formatNext shows completion message", () => {
+  it("formatNext shows completion message", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `a-${i}`, null, TEST_CWD);
@@ -409,13 +409,13 @@ describe("introspection", () => {
 
 describe("completion report", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+    run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
   });
   afterEach(teardown);
 
-  it("generates report for completed run", () => {
+  it("generates report for completed run", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `artifact-${i}`, null, TEST_CWD);
@@ -426,7 +426,7 @@ describe("completion report", () => {
     assert.ok(report.verdict.includes("completed"));
   });
 
-  it("generates report for failed run with honest-partial", () => {
+  it("generates report for failed run with honest-partial", async () => {
     startNext(run, TEST_CWD);
     failCurrentStep(run, "failed", "cannot reproduce", TEST_CWD);
     const report = generateReport(run);
@@ -434,7 +434,7 @@ describe("completion report", () => {
     assert.ok(report.verdict.includes("failed"));
   });
 
-  it("formatReport produces readable output", () => {
+  it("formatReport produces readable output", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `artifact-${i}`, null, TEST_CWD);
@@ -453,30 +453,30 @@ describe("persistence", () => {
   beforeEach(setup);
   afterEach(teardown);
 
-  it("listRuns returns all runs sorted by newest first", () => {
-    createPersistentRun("task one", TEST_CWD);
-    createPersistentRun("task two", TEST_CWD);
+  it("listRuns returns all runs sorted by newest first", async () => {
+    await createPersistentRun("task one", TEST_CWD);
+    await createPersistentRun("task two", TEST_CWD);
     const list = listRuns(TEST_CWD);
     assert.equal(list.length, 2);
     // Newest first
     assert.ok(list[0].createdAt >= list[1].createdAt);
   });
 
-  it("listRuns returns empty array when no runs", () => {
+  it("listRuns returns empty array when no runs", async () => {
     const list = listRuns(TEST_CWD);
     assert.equal(list.length, 0);
   });
 
-  it("findActiveRun finds running run", () => {
-    const run = createPersistentRun("fix bug", TEST_CWD);
+  it("findActiveRun finds running run", async () => {
+    const run = await createPersistentRun("fix bug", TEST_CWD);
     startNext(run, TEST_CWD);
     const found = findActiveRun(TEST_CWD);
     assert.ok(found);
     assert.equal(found.id, run.id);
   });
 
-  it("findActiveRun finds paused run", () => {
-    const run = createPersistentRun("fix bug", TEST_CWD);
+  it("findActiveRun finds paused run", async () => {
+    const run = await createPersistentRun("fix bug", TEST_CWD);
     startNext(run, TEST_CWD);
     pauseRun(run, TEST_CWD);
     const found = findActiveRun(TEST_CWD);
@@ -484,8 +484,8 @@ describe("persistence", () => {
     assert.equal(found.status, "paused");
   });
 
-  it("findActiveRun returns null when all runs completed", () => {
-    const run = createPersistentRun("fix bug", TEST_CWD);
+  it("findActiveRun returns null when all runs completed", async () => {
+    const run = await createPersistentRun("fix bug", TEST_CWD);
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `a-${i}`, null, TEST_CWD);
@@ -494,13 +494,13 @@ describe("persistence", () => {
     assert.equal(found, null);
   });
 
-  it("loadRun returns null for nonexistent run", () => {
+  it("loadRun returns null for nonexistent run", async () => {
     const result = loadRun(TEST_CWD, "nonexistent");
     assert.equal(result, null);
   });
 
-  it("round-trips full run state through disk", () => {
-    const run = createPersistentRun("fix bug", TEST_CWD);
+  it("round-trips full run state through disk", async () => {
+    const run = await createPersistentRun("fix bug", TEST_CWD);
     startNext(run, TEST_CWD);
     completeCurrentStep(run, "diagnosis.md", "Root cause found", TEST_CWD);
     reroute(run, 1, "Frontend Developer", "UI bug", TEST_CWD);
@@ -519,8 +519,8 @@ describe("friction measurement", () => {
   beforeEach(setup);
   afterEach(teardown);
 
-  it("measures friction for a clean run", () => {
-    const run = createPersistentRun("fix bug", TEST_CWD);
+  it("measures friction for a clean run", async () => {
+    const run = await createPersistentRun("fix bug", TEST_CWD);
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `a-${i}`, null, TEST_CWD);
@@ -531,8 +531,8 @@ describe("friction measurement", () => {
     assert.equal(f.frictionScore, "low");
   });
 
-  it("measures friction for a run with interventions", () => {
-    const run = createPersistentRun("fix bug", TEST_CWD);
+  it("measures friction for a run with interventions", async () => {
+    const run = await createPersistentRun("fix bug", TEST_CWD);
     startNext(run, TEST_CWD);
     failCurrentStep(run, "failed", "oops", TEST_CWD);
     retry(run, 0, TEST_CWD);
@@ -551,8 +551,8 @@ describe("end-to-end lifecycle", () => {
   beforeEach(setup);
   afterEach(teardown);
 
-  it("full lifecycle: create → start → complete all → report", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("full lifecycle: create → start → complete all → report", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     assert.equal(run.status, "planning");
 
     // Step through all steps
@@ -583,8 +583,8 @@ describe("end-to-end lifecycle", () => {
     assert.equal(loaded.status, "completed");
   });
 
-  it("lifecycle with failure, retry, and recovery", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("lifecycle with failure, retry, and recovery", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
 
     // Start and fail step 0
     startNext(run, TEST_CWD);
@@ -610,8 +610,8 @@ describe("end-to-end lifecycle", () => {
     assert.ok(f.interventions >= 1);
   });
 
-  it("lifecycle with pause and resume", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("lifecycle with pause and resume", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     startNext(run, TEST_CWD);
 
     // Pause mid-step
@@ -625,8 +625,8 @@ describe("end-to-end lifecycle", () => {
     assert.equal(loaded.status, "running");
   });
 
-  it("lifecycle with escalation loop", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("lifecycle with escalation loop", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
 
     // Complete step 0 and 1
     startNext(run, TEST_CWD);

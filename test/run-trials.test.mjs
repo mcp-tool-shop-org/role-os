@@ -42,19 +42,19 @@ function teardown() {
 
 describe("U1 — Bugfix mission clean run", () => {
   let run, findings;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
     findings = [];
-    run = createPersistentRun("fix the crash in save handler when file is locked", TEST_CWD);
+    run = await createPersistentRun("fix the crash in save handler when file is locked", TEST_CWD);
   });
   afterEach(teardown);
 
-  it("routes to bugfix mission", () => {
+  it("routes to bugfix mission", async () => {
     assert.equal(run.entryLevel, "mission");
     assert.equal(run.missionKey, "bugfix");
   });
 
-  it("step-through requires exactly N startNext + completeStep calls", () => {
+  it("step-through requires exactly N startNext + completeStep calls", async () => {
     const stepCount = run.steps.length;
     let touches = 0;
 
@@ -79,7 +79,7 @@ describe("U1 — Bugfix mission clean run", () => {
     }
   });
 
-  it("completion report is truthful", () => {
+  it("completion report is truthful", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `artifact-${i}.md`, null, TEST_CWD);
@@ -91,7 +91,7 @@ describe("U1 — Bugfix mission clean run", () => {
     assert.ok(report.verdict.includes("completed"));
   });
 
-  it("friction score is low for clean run", () => {
+  it("friction score is low for clean run", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `a-${i}`, null, TEST_CWD);
@@ -107,20 +107,20 @@ describe("U1 — Bugfix mission clean run", () => {
 
 describe("U2 — Feature mission with reroute", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("add a new export CSV feature to the data dashboard", TEST_CWD);
+    run = await createPersistentRun("add a new export CSV feature to the data dashboard", TEST_CWD);
   });
   afterEach(teardown);
 
-  it("routes to feature mission or pack", () => {
+  it("routes to feature mission or pack", async () => {
     assert.ok(
       run.entryLevel === "mission" || run.entryLevel === "pack",
       `Expected mission or pack, got ${run.entryLevel}`
     );
   });
 
-  it("reroute changes the execution path cleanly", () => {
+  it("reroute changes the execution path cleanly", async () => {
     // Start step 0
     startNext(run, TEST_CWD);
     completeCurrentStep(run, "strategy.md", null, TEST_CWD);
@@ -151,17 +151,17 @@ describe("U2 — Feature mission with reroute", () => {
 
 describe("U3 — Treatment mission with retry", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("run the full treatment and shipcheck on this repo", TEST_CWD, { forceMission: "treatment" });
+    run = await createPersistentRun("run the full treatment and shipcheck on this repo", TEST_CWD, { forceMission: "treatment" });
   });
   afterEach(teardown);
 
-  it("routes to treatment mission", () => {
+  it("routes to treatment mission", async () => {
     assert.equal(run.missionKey, "treatment");
   });
 
-  it("fail → retry → complete lifecycle works", () => {
+  it("fail → retry → complete lifecycle works", async () => {
     // Start step 0
     startNext(run, TEST_CWD);
 
@@ -196,24 +196,24 @@ describe("U3 — Treatment mission with retry", () => {
 
 describe("U4 — Pack-level security run", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("audit the dispatch module for injection risks", TEST_CWD, { forcePack: "security" });
+    run = await createPersistentRun("audit the dispatch module for injection risks", TEST_CWD, { forcePack: "security" });
   });
   afterEach(teardown);
 
-  it("creates a pack-level run", () => {
+  it("creates a pack-level run", async () => {
     assert.equal(run.entryLevel, "pack");
     assert.equal(run.packKey, "security");
   });
 
-  it("pack steps have guidance", () => {
+  it("pack steps have guidance", async () => {
     for (const step of run.steps) {
       assert.ok(step.guidance, `Step ${step.index} (${step.role}) should have guidance`);
     }
   });
 
-  it("completes through pack chain", () => {
+  it("completes through pack chain", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `security-artifact-${i}`, null, TEST_CWD);
@@ -226,23 +226,23 @@ describe("U4 — Pack-level security run", () => {
 
 describe("U5 — Free routing novel task", () => {
   let run;
-  beforeEach(() => {
+  beforeEach(async () => {
     setup();
-    run = createPersistentRun("prototype a completely novel approach to config validation", TEST_CWD);
+    run = await createPersistentRun("prototype a completely novel approach to config validation", TEST_CWD);
   });
   afterEach(teardown);
 
-  it("falls to free routing for unknown task shape", () => {
+  it("falls to free routing for unknown task shape", async () => {
     assert.equal(run.entryLevel, "free-routing");
   });
 
-  it("has 3-step minimal chain", () => {
+  it("has 3-step minimal chain", async () => {
     assert.equal(run.steps.length, 3);
     assert.equal(run.steps[0].role, "Repo Researcher");
     assert.equal(run.steps[2].role, "Critic Reviewer");
   });
 
-  it("completes through free-routing chain", () => {
+  it("completes through free-routing chain", async () => {
     for (let i = 0; i < run.steps.length; i++) {
       startNext(run, TEST_CWD);
       completeCurrentStep(run, `output-${i}`, null, TEST_CWD);
@@ -261,9 +261,9 @@ describe("U6 — Interrupted run with disk resume", () => {
   beforeEach(setup);
   afterEach(teardown);
 
-  it("survives session interruption", () => {
+  it("survives session interruption", async () => {
     // Session 1: create and start
-    const run1 = createPersistentRun("fix the crash in save handler", TEST_CWD);
+    const run1 = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     startNext(run1, TEST_CWD);
     completeCurrentStep(run1, "diagnosis.md", null, TEST_CWD);
     pauseRun(run1, TEST_CWD);
@@ -294,8 +294,8 @@ describe("U6 — Interrupted run with disk resume", () => {
     assert.equal(run2.status, "completed");
   });
 
-  it("findActiveRun picks up paused run", () => {
-    const run = createPersistentRun("fix the crash in save handler", TEST_CWD);
+  it("findActiveRun picks up paused run", async () => {
+    const run = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     startNext(run, TEST_CWD);
     pauseRun(run, TEST_CWD);
 
@@ -312,18 +312,18 @@ describe("U-series friction summary", () => {
   beforeEach(setup);
   afterEach(teardown);
 
-  it("all 6 trial types produce low/medium friction scores", () => {
+  it("all 6 trial types produce low/medium friction scores", async () => {
     const results = [];
 
     // U1: Clean bugfix
-    const u1 = createPersistentRun("fix the crash in save handler", TEST_CWD);
+    const u1 = await createPersistentRun("fix the crash in save handler", TEST_CWD);
     for (let i = 0; i < u1.steps.length; i++) {
       startNext(u1, TEST_CWD); completeCurrentStep(u1, `a-${i}`, null, TEST_CWD);
     }
     results.push({ trial: "U1", ...measureFriction(u1) });
 
     // U3: Treatment with retry
-    const u3 = createPersistentRun("run shipcheck", TEST_CWD, { forceMission: "treatment" });
+    const u3 = await createPersistentRun("run shipcheck", TEST_CWD, { forceMission: "treatment" });
     startNext(u3, TEST_CWD);
     failCurrentStep(u3, "failed", "issue", TEST_CWD);
     retry(u3, 0, TEST_CWD);
@@ -337,7 +337,7 @@ describe("U-series friction summary", () => {
     results.push({ trial: "U3", ...measureFriction(u3) });
 
     // U5: Free routing
-    const u5 = createPersistentRun("novel prototype idea", TEST_CWD);
+    const u5 = await createPersistentRun("novel prototype idea", TEST_CWD);
     for (let i = 0; i < u5.steps.length; i++) {
       startNext(u5, TEST_CWD); completeCurrentStep(u5, `a-${i}`, null, TEST_CWD);
     }

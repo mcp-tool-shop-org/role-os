@@ -30,8 +30,8 @@ describe("P5-1: concurrent persistent run state", () => {
   it("two runs saved to the same cwd do not overwrite each other", async () => {
     const { createPersistentRun, loadRun, listRuns } = await import("../src/run.mjs");
 
-    const run1 = createPersistentRun("first task", TEST_CWD);
-    const run2 = createPersistentRun("second task", TEST_CWD);
+    const run1 = await createPersistentRun("first task", TEST_CWD);
+    const run2 = await createPersistentRun("second task", TEST_CWD);
 
     assert.notEqual(run1.id, run2.id, "Run IDs must be unique");
 
@@ -48,7 +48,7 @@ describe("P5-1: concurrent persistent run state", () => {
   it("saveRun produces atomic writes (tmp file renamed)", async () => {
     const { createPersistentRun, saveRun, loadRun } = await import("../src/run.mjs");
 
-    const run = createPersistentRun("atomic test", TEST_CWD);
+    const run = await createPersistentRun("atomic test", TEST_CWD);
     run.status = "running";
     saveRun(TEST_CWD, run);
 
@@ -172,7 +172,7 @@ describe("P5-6: artifact persistence round-trip", () => {
   it("completeCurrentStep persists artifact and reloads correctly", async () => {
     const { createPersistentRun, startNext, completeCurrentStep, loadRun } = await import("../src/run.mjs");
 
-    const run = createPersistentRun("round-trip test", TEST_CWD);
+    const run = await createPersistentRun("round-trip test", TEST_CWD);
     startNext(run, TEST_CWD);
 
     const artifactContent = "## Files to Change\n- src/run.mjs\n\n## Implementation Approach\nFix bug.\n\n## Risk Notes\nNone.";

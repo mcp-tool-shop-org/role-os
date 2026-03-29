@@ -109,13 +109,16 @@ export async function runCommand(args) {
   // Strip flags from task description
   const taskText = args.filter(a => !a.startsWith("--")).join(" ");
 
-  const run = createPersistentRun(taskText, cwd, opts);
+  const run = await createPersistentRun(taskText, cwd, opts);
 
   console.log(`Created run: ${run.id}`);
   console.log(`Entry: ${run.entryLevel.toUpperCase()}`);
   if (run.missionKey) console.log(`Mission: ${run.missionKey}`);
   if (run.packKey) console.log(`Pack: ${run.packKey}`);
   console.log(`Steps: ${run.steps.length}`);
+  if (run.knowledge) {
+    console.log(`Knowledge: ${run.knowledge.status} (${run.knowledge.retrieval_bundle?.selected?.length ?? 0} chunks)`);
+  }
   console.log("");
 
   // Auto-start the first step

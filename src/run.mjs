@@ -19,6 +19,7 @@ import { getMission } from "./mission.mjs";
 import { TEAM_PACKS, getPack } from "./packs.mjs";
 import { ROLE_CATALOG } from "./route.mjs";
 import { ROLE_ARTIFACT_CONTRACTS, validateArtifact, getHandoffContract } from "./artifacts.mjs";
+import { retrieveForDispatch, isKnowledgeConfigured } from "./knowledge/index.mjs";
 
 // ── Run directory ────────────────────────────────────────────────────────────
 
@@ -88,7 +89,7 @@ let _counter = 0;
  * @param {string} [opts.forcePack] - force a specific pack key
  * @returns {PersistentRun}
  */
-export function createPersistentRun(taskDescription, cwd, opts = {}) {
+export async function createPersistentRun(taskDescription, cwd, opts = {}) {
   if (!taskDescription || !taskDescription.trim()) {
     throw new Error("Task description required");
   }
@@ -125,6 +126,26 @@ export function createPersistentRun(taskDescription, cwd, opts = {}) {
 
   const id = `run-${Date.now()}-${++_counter}`;
 
+  // Knowledge retrieval — automatic when corpus is configured
+  let knowledge = null;
+  if (isKnowledgeConfigured()) {
+    // Retrieve for the primary role in the chain (first step's role)
+    const primaryRole = steps[0]?.role;
+    if (primaryRole) {
+      try {
+        const roleId = primaryRole.toLowerCase().replace(/\s+/g, "-");
+        const result = await retrieveForDispatch({
+          roleId,
+          taskText: taskDescription.trim(),
+        });
+        knowledge = { retrieval_bundle: result.bundle, status: result.status };
+      } catch (e) {
+        // Retrieval failure is non-fatal — run proceeds without knowledge
+        knowledge = null;
+      }
+    }
+  }
+
   const run = {
     id,
     taskDescription: taskDescription.trim(),
@@ -140,6 +161,7 @@ export function createPersistentRun(taskDescription, cwd, opts = {}) {
     pausedAt: null,
     completedAt: null,
     completionReport: null,
+    knowledge,
   };
 
   // Persist
@@ -789,6 +811,13 @@ export function generateReport(run) {
     artifactChain: artifacts,
     escalationCount: run.escalations.length,
     interventionCount: run.interventions.length,
+    knowledge: run.knowledge ? {
+      status: run.knowledge.status,
+      selected_count: run.knowledge.retrieval_bundle?.selected?.length ?? 0,
+      trust_posture: run.knowledge.retrieval_bundle?.provenance?.trust_posture ?? "unknown",
+      freshness_posture: run.knowledge.retrieval_bundle?.provenance?.freshness_posture ?? "unknown",
+      warning_codes: (run.knowledge.retrieval_bundle?.warnings ?? []).map((w) => w.code),
+    } : null,
     honestPartial: (isPartial || isFailed) ? honestPartial : null,
     verdict: isComplete
       ? "Run completed — all steps passed."
@@ -833,6 +862,18 @@ export function formatReport(report) {
     const artifact = step.hasArtifact ? ` → ${step.produces}` : "";
     const note = step.note ? ` (${step.note})` : "";
     lines.push(`  ${icon} ${step.index}. ${step.role}${artifact}${note}`);
+  }
+
+  // Knowledge posture (Phase 5)
+  if (report.knowledge) {
+    lines.push("");
+    lines.push("## Knowledge");
+    lines.push(`  Status: ${report.knowledge.status}`);
+    lines.push(`  Evidence: ${report.knowledge.selected_count} chunks selected`);
+    lines.push(`  Trust: ${report.knowledge.trust_posture} | Freshness: ${report.knowledge.freshness_posture}`);
+    if (report.knowledge.warning_codes.length > 0) {
+      lines.push(`  Warnings: ${report.knowledge.warning_codes.join(", ")}`);
+    }
   }
 
   if (report.honestPartial) {
