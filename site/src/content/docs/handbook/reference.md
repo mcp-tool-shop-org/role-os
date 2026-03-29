@@ -107,6 +107,28 @@ Runs a componentized deep audit against the current repo. The audit decomposes a
 **Workflow:**
 1. `roleos audit manifest --generate` — creates a skeleton `audit-manifest.json`
 2. Edit the manifest to define components, boundaries, and dependencies
+
+### swarm
+
+```bash
+roleos swarm                           # Start a dogfood swarm on the current repo
+roleos swarm manifest                  # Show the swarm manifest
+roleos swarm manifest --generate       # Auto-detect domains and generate manifest
+roleos swarm status                    # Show swarm run progress by stage
+roleos swarm findings                  # List findings by severity
+roleos swarm approve                   # Approve the current feature gate
+roleos swarm verify                    # Verify manifest and run state
+```
+
+Runs a multi-pass convergence swarm on the current repo. The swarm moves through four stages (health-a, health-b, health-c, feature), each dispatching parallel domain agents with exclusive file ownership. Build gates run after every wave.
+
+**Workflow:**
+1. `roleos swarm manifest --generate` — auto-detects repo type and generates `swarm-manifest.json` with domain assignments
+2. Edit the manifest to customize domain boundaries (optional)
+3. `roleos swarm` — starts the swarm, creates a save-point tag, begins Health-A
+4. `roleos swarm status` — check progress by stage
+5. `roleos swarm approve` — approve feature findings when prompted
+6. `roleos swarm verify` — verify final state
 3. `roleos audit` — starts a persistent run using the `deep-audit` mission
 4. `roleos next` — step through each auditor
 5. `roleos audit verify` — confirms manifest and outputs are consistent

@@ -1,11 +1,11 @@
 ---
 title: Role Spine
-description: All 54 specialist roles across 9 packs and their contracts.
+description: All 61 specialist roles across 10 packs and their contracts.
 sidebar:
   order: 2
 ---
 
-Role OS ships 54 role contracts organized into 9 packs. Each role has a defined mission, scope boundaries, expected inputs, required outputs, a quality bar, and escalation triggers. The router scores all 54 roles against packet content and assembles the smallest valid chain.
+Role OS ships 61 role contracts organized into 10 packs. Each role has a defined mission, scope boundaries, expected inputs, required outputs, a quality bar, and escalation triggers. The router scores all 61 roles against packet content and assembles the smallest valid chain.
 
 ## Quick reference
 
@@ -20,6 +20,7 @@ Role OS ships 54 role contracts organized into 9 packs. Each role has a defined 
 | **Research** | UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer | 4 |
 | **Growth** | Launch Strategist, Content Strategist, Community Manager, Support Triage Lead | 4 |
 | **Deep Audit** | Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer | 4 |
+| **Swarm** | Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer | 7 |
 
 ## Core (3 roles)
 
@@ -144,9 +145,32 @@ Inspects integration boundaries between components: contract compatibility, data
 ### Audit Synthesizer
 Consumes all component, test truth, and seam audit reports. Produces a ranked verdict (findings by severity) and an action plan (priority tiers with concrete next steps). Does not perform auditing.
 
+## Swarm (7 roles)
+
+### Swarm Coordinator
+Orchestrates the multi-pass convergence protocol. Manages the swarm manifest, enforces stage gates, evaluates exit conditions (0 CRITICAL + 0 HIGH), runs build gates after every wave, and presents findings to the user at approval checkpoints. Does not audit or remediate code.
+
+### Swarm Backend Agent
+Exclusive ownership of core server logic files. Audits and remediates in the same wave — reads assigned files, identifies findings by severity, applies fixes, and verifies the build still passes. Only touches files within its manifest assignment.
+
+### Swarm Bridge Agent
+Exclusive ownership of secondary services, integrations, WebSocket bridges, middleware, and adapters. Same audit-and-remediate cycle as other domain agents. Skipped for repos with no bridge layer.
+
+### Swarm Tests Agent
+Exclusive ownership of the test suite: test files, fixtures, mocks, and conftest. Audits for gaps, ceremonial tests, and fixture quality. Reports coverage delta after remediations.
+
+### Swarm Infra Agent
+Exclusive ownership of CI workflows, configuration files, and documentation. Inspects GitHub Actions, Docker, ESLint/Prettier configs, README accuracy, and CHANGELOG freshness. Does not touch source code.
+
+### Swarm Frontend Agent
+Exclusive ownership of the UI layer: components, pages, styles, and public assets. Audits for bugs, accessibility issues, and UX improvements. Reports accessibility findings separately.
+
+### Swarm Synthesizer
+Produces the final verification report after all four stages complete. Summarizes stage results, tallies findings fixed vs remaining, runs the final test suite, and recommends ship, hold, or re-swarm.
+
 ## Role selection
 
-Not every packet needs all 54 roles. The router and team packs select the smallest chain that covers the work. Common patterns:
+Not every packet needs all 61 roles. The router and team packs select the smallest chain that covers the work. Common patterns:
 
 - **Feature work:** Product Strategist, Spec Writer, Backend Engineer, Test Engineer, Critic Reviewer (5 roles)
 - **Bugfix:** Repo Researcher, Backend Engineer, Test Engineer, Critic Reviewer (4 roles)
@@ -156,11 +180,11 @@ Not every packet needs all 54 roles. The router and team packs select the smalle
 - **Research:** Product Strategist, UX Researcher, Competitive Analyst, Feedback Synthesizer, Critic Reviewer (5 roles)
 - **Launch messaging:** Launch Strategist, Launch Copywriter, Critic Reviewer (3 roles)
 
-Use `roleos packs list` to see all 9 team packs and their role compositions.
+Use `roleos packs list` to see all 10 team packs and their role compositions.
 
 ## How routing works
 
-The router scores all 54 roles against packet content using weighted keywords and multi-word triggers. Each role declares keyword affinities (e.g., Backend Engineer matches "api", "database", "server") and strong triggers (e.g., "data migration", "schema change"). Roles also declare exclusion conditions (e.g., UI Designer excludes "cli only", "backend only").
+The router scores all 61 roles against packet content using weighted keywords and multi-word triggers. Each role declares keyword affinities (e.g., Backend Engineer matches "api", "database", "server") and strong triggers (e.g., "data migration", "schema change"). Roles also declare exclusion conditions (e.g., UI Designer excludes "cli only", "backend only").
 
 The chain builder assembles phase-ordered chains from scored roles. Roles are assigned to phases (0 = orchestration, 1 = framing, 2 = design/spec, 3 = implementation, 4 = testing, 5 = metadata/release, 6 = deployment/launch, 99 = review). The Orchestrator and Critic Reviewer are always included when the chain is multi-step.
 

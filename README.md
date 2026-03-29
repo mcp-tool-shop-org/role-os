@@ -221,12 +221,14 @@ role-os/
     entry-cmd.mjs              ← `roleos start` CLI command
     run.mjs                    ← Persistent run engine: create → step → pause → resume → report
     run-cmd.mjs                ← `roleos run/resume/next/explain/complete/fail` + interventions
-    mission.mjs                ← 8 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm, deep-audit)
+    mission.mjs                ← 9 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm, deep-audit, dogfood-swarm)
     mission-run.mjs            ← Mission runner: create → step → complete → report
     mission-cmd.mjs            ← `roleos mission` CLI commands
     audit-cmd.mjs              ← `roleos audit` — deep audit entry point with manifest generation
-    route.mjs                  ← 54-role routing + dynamic chain builder
-    packs.mjs                  ← 9 calibrated team packs + auto-selection
+    swarm-cmd.mjs              ← `roleos swarm` — dogfood swarm entry point with domain detection
+    swarm/                     ← Domain detection, build gate, evidence persistence bridge
+    route.mjs                  ← 61-role routing + dynamic chain builder
+    packs.mjs                  ← 10 calibrated team packs + auto-selection
     conflicts.mjs              ← 4-pass conflict detection
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
@@ -243,7 +245,7 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 954 tests across 33 test files
+  test/                        ← 1150 tests across 37 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
@@ -255,14 +257,14 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 
 | Layer | What it does | Status |
 |-------|-------------|--------|
-| **Routing** | Scores all 54 roles against packet content, explains recommendations, assesses confidence | ✓ Shipped |
+| **Routing** | Scores all 61 roles against packet content, explains recommendations, assesses confidence | ✓ Shipped |
 | **Chain builder** | Assembles phase-ordered chains from scored roles, packet-type biased not template-locked | ✓ Shipped |
 | **Conflict detection** | 4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions. | ✓ Shipped |
 | **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact | ✓ Shipped |
 | **Evidence** | Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds. | ✓ Shipped |
 | **Dispatch** | Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets. | ✓ Shipped |
 | **Trials** | Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete. | ✓ Complete |
-| **Team Packs** | 9 calibrated packs with auto-selection, mismatch guards, and free-routing fallback. | ✓ Shipped |
+| **Team Packs** | 10 calibrated packs with auto-selection, mismatch guards, and free-routing fallback. | ✓ Shipped |
 | **Outcome calibration** | Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds. | ✓ Shipped |
 | **Mixed-task decomposition** | Detects composite work, splits into child packets, assigns packs, preserves dependencies. | ✓ Shipped |
 | **Composite execution** | Runs child packets in dependency order with artifact passing, branch recovery, and synthesis. | ✓ Shipped |
@@ -270,14 +272,15 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | **Session spine** | `roleos init claude` scaffolds CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifies wiring. Route cards prove engagement. | ✓ Shipped |
 | **Hook spine** | 5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Advisory enforcement: route card reminders, write-tool gating, subagent role injection, completion audit. | ✓ Shipped |
 | **Artifact spine** | Per-role artifact contracts. Pack handoff contracts. Structural validation. Chain completeness checks. Downstream roles never guess what they received. | ✓ Shipped |
-| **Mission library** | 8 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm, deep-audit). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. | ✓ Shipped |
+| **Mission library** | 9 named missions (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm, deep-audit, dogfood-swarm). Each declares pack, role chain, artifact flow, escalation branches, honest-partial definition. | ✓ Shipped |
 | **Mission runner** | Create runs, step through with tracked state, complete/fail with honest reporting. Blocked-step propagation, out-of-chain escalation warnings, last-step re-opening. | ✓ Shipped |
 | **Unified entry** | `roleos start` decides mission vs pack vs free routing automatically. Fallback ladder with confidence scores, alternatives, and composite detection. | ✓ Shipped |
 | **Persistent runs** | `roleos run` creates disk-backed runs. `resume`, `next`, `explain`, `complete`, `fail`. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance. Friction measurement. | ✓ Shipped |
 | **Brainstorm** | Two-layer architecture: truth (role-native schemas, provenance atoms, cross-exam dispute graph) + render (5 distinct voices, lexical bans, debate transcript). Trace links prove every rendered claim maps to a truth atom. Golden run proven. | ✓ Shipped |
 | **Deep Audit** | Manifest-scaled repo audit: decompose repo into components, dispatch N auditors + M test truth auditors + K seam auditors from dependency graph, synthesize into ranked verdict and action plan. Dynamic dispatch scales with repo size (2N + K + 3 formula). Runner-native with artifact validation at every step. | ✓ Shipped |
+| **Dogfood Swarm** | Multi-pass convergence: three health stages (bug/security → proactive → humanization) then feature pass. Exclusive file ownership, build gates after every wave, user checkpoints. Domain auto-detection generates manifests. Evidence bridge to dogfood-labs. | ✓ Shipped |
 
-## 8 missions
+## 9 missions
 
 | Mission | Pack | Roles | When to use |
 |---------|------|-------|-------------|
@@ -289,6 +292,7 @@ Role OS operates **locally only**. It copies markdown templates and writes packe
 | `research-launch` | research | 4 | Frame question, research, document findings, decide |
 | `brainstorm` | brainstorm | 9 | Structured multi-perspective inquiry with traceable disagreement and verdict |
 | `deep-audit` | deep-audit | 5 (scales) | Manifest-backed repo audit — worker count scales with repo graph via dynamic dispatch |
+| `dogfood-swarm` | swarm | 8 (scales) | Multi-pass convergence: health-a → health-b → health-c → feature → final synthesis |
 
 Each mission includes honest-partial definitions — when work stalls, the system documents what was completed and what remains instead of bluffing completion.
 
@@ -332,6 +336,28 @@ roleos run "deep audit this repo" --manifest=audit-manifest.json
 
 **Proven:** Runner-native proof run — 18 tests against real manifest, full lifecycle verified including escalation re-opening and partial failure. Scaling formula verified for 3/6/10/15-component manifests.
 
+### Dogfood swarm mission
+
+Not a one-pass linter. The dogfood swarm mission **runs a multi-pass convergence protocol that moves a repo from "works" to "production-ready" through three health stages and iterative feature delivery.**
+
+```bash
+roleos swarm
+# → MISSION: Dogfood Swarm (Multi-Pass Convergence)
+#   Stages: Health-A → Health-B → Health-C → Feature → Final
+#   Domain agents: 3-5 parallel per wave (exclusive file ownership)
+```
+
+**What makes it different:**
+
+- **Three-stage health pass** — Stage A fixes bugs and security issues (loop until 0 CRITICAL + 0 HIGH). Stage B applies proactive hardening (user reviews findings). Stage C humanizes the codebase — error messages that help users, reconnection feedback, loading states, accessibility. Each stage is a distinct lens, not the same scan repeated.
+- **Exclusive file ownership** — every domain agent owns specific files via `swarm-manifest.json`. No two agents edit the same file. No merge conflicts. No coordination overhead.
+- **Build gates** — lint + typecheck + test must pass after every wave. The system auto-detects the build system (Node, Rust, Python, Go) and runs the right commands.
+- **User checkpoints** — Health-B and the feature pass require explicit user approval before execution. The system presents findings, the user decides what to build.
+- **Iterative convergence** — stages loop with wave loops until exit conditions are met or max iterations reached. Each wave re-audits from scratch to catch regressions introduced by previous fixes.
+- **Domain auto-detection** — `roleos swarm manifest --generate` detects repo type (CLI, web, desktop, MCP, monorepo) and generates non-overlapping domain assignments.
+
+**Proven:** claude-collaborate (2026-03-28) — 35→129 tests, 106 health findings fixed, v1.1.0 shipped. Protocol v2.0 with 9 phases.
+
 ## Status
 
 - v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack
@@ -350,6 +376,7 @@ roleos run "deep audit this repo" --manifest=audit-manifest.json
 - **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.
 - **v2.1.0**: Brainstorm mission (v0.4) — specialized roles under law, traceable disagreement, verdict-bearing output. Two-layer architecture (truth + render), cross-exam permission matrix, dispute graph, golden run proof. 7 missions, 50 roles, 8 packs. 894 tests.
 - **v2.2.0**: Deep Audit mission — manifest-scaled repo audit with dynamic dispatch. 4 new audit roles (Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer). Worker count scales with repo graph (2N + K + 3 formula). Artifact validation wired at both execution boundaries. Runner-native proof run green. accept/approve truth fix in evidence layer. 8 missions, 54 roles, 9 packs. 936 tests.
+- **v2.3.0**: Dogfood Swarm mission — multi-pass convergence (health-a → health-b → health-c → feature → final). 7 new swarm roles (Swarm Coordinator, 5 domain agents, Swarm Synthesizer). Two new mission primitives: waveLoops (iterative convergence) and exclusiveOwnership (domain file boundaries). Dynamic domain dispatch, build gates, `roleos swarm` CLI, domain auto-detection, evidence persistence bridge. 9 missions, 61 roles, 10 packs. 1150 tests.
 
 ## License
 

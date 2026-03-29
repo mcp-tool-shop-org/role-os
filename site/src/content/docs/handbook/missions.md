@@ -1,13 +1,13 @@
 ---
 title: Missions
-description: 8 proven recurring workflows with tracked steps, escalation branches, and honest-partial reporting.
+description: 9 proven recurring workflows with tracked steps, escalation branches, and honest-partial reporting.
 sidebar:
   order: 1.5
 ---
 
 Missions are named, repeatable job types that make recurring work boringly reliable. Each mission declares a pack, role chain, artifact flow, escalation branches, and an honest-partial definition.
 
-## The 8 missions
+## The 9 missions
 
 | Mission | Pack | Roles | Chain | Use when |
 |---------|------|-------|-------|----------|
@@ -19,6 +19,7 @@ Missions are named, repeatable job types that make recurring work boringly relia
 | `research-launch` | research | 4 | Product Strategist, Competitive Analyst, Docs Architect, Critic Reviewer | Frame question, research, document, decide |
 | `brainstorm` | brainstorm | 9 | 4 Analysts → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge | Structured multi-perspective inquiry with traceable disagreement |
 | `deep-audit` | deep-audit | 5 (scales) | Component Auditor ×N + Test Truth Auditor ×M → Seam Auditor ×K → Synthesizer → Critic | Manifest-scaled repo audit — worker count scales with repo graph |
+| `dogfood-swarm` | swarm | 8 (scales) | Coordinator → [5 domain agents parallel] → gate (×4 stages) → Synthesizer → Critic | Multi-pass convergence: health → proactive → humanization → feature |
 
 ## Using missions
 
@@ -125,13 +126,42 @@ The deep audit mission decomposes a repo into bounded components and dispatches 
 
 **Artifact validation:** `validateArtifact()` fires on every step completion. Results are attached to step objects. The system tracks whether each artifact met its contract.
 
+## Dogfood swarm mission
+
+The dogfood swarm mission runs a **multi-pass convergence protocol** that moves a repo from "works" to "production-ready" through three health stages and iterative feature delivery.
+
+**Four stages in sequence:**
+
+1. **Health-A** (Bug/Security Fix) — 5 parallel domain agents audit and remediate. Loops until 0 CRITICAL + 0 HIGH findings remain.
+2. **Health-B** (Proactive Hardening) — defensive coding, observability, graceful degradation. User reviews findings before amend wave.
+3. **Health-C** (Humanization) — error messages that help users fix problems, reconnection feedback, loading states, accessibility. Loops until clean.
+4. **Feature** (Capability Audit) — missing capabilities, UX gaps, production readiness. User approves before execution.
+
+**Exclusive file ownership:** Each domain agent owns specific files via `swarm-manifest.json`. No two agents edit the same file.
+
+**Build gates:** Lint + typecheck + test must pass after every wave. Auto-detects Node, Rust, Python, and Go build systems.
+
+**Domain auto-detection:** `roleos swarm manifest --generate` detects repo type (CLI, web, desktop, MCP, monorepo) and generates non-overlapping domain assignments with 3-5 agents.
+
+**Two new mission primitives:**
+- `waveLoops` — iterative convergence with exit conditions, max iterations, and build gates
+- `exclusiveOwnership` — strict domain file boundaries enforced by manifest
+
+**Proven:** claude-collaborate (2026-03-28) — 35→129 tests, 106 findings fixed, v1.1.0 shipped.
+
 ## CLI reference
 
 ```bash
-roleos mission list                    # List all 8 missions
+roleos mission list                    # List all 9 missions
 roleos mission show <key>              # Full detail for a mission
 roleos mission suggest <text>          # Suggest a mission for a task
 roleos mission validate [key]          # Validate wiring (all or one)
 roleos start <task description>        # Auto-decide: mission, pack, or free routing
 roleos start --json <task description> # Same, but JSON output
+roleos swarm                           # Start a dogfood swarm
+roleos swarm manifest --generate       # Auto-detect domains
+roleos swarm status                    # Check swarm progress by stage
+roleos swarm findings                  # List findings by severity
+roleos swarm approve                   # Approve feature gate
+roleos swarm verify                    # Verify manifest and run state
 ```

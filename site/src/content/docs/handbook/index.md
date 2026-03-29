@@ -11,14 +11,14 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 
 - **[Beginners](/role-os/handbook/beginners/)** — New to Role OS? Start here for a plain-language walkthrough
 - **[Getting Started](/role-os/handbook/getting-started/)** — Install and run your first task in 5 minutes
-- **[Missions](/role-os/handbook/missions/)** — 6 proven recurring workflows with tracked steps and honest-partial reporting
-- **[Role Spine](/role-os/handbook/role-spine/)** — 31 specialist roles across 8 packs and their contracts
-- **[Team Packs](/role-os/handbook/team-packs/)** — 7 pre-assembled role chains for common work types
+- **[Missions](/role-os/handbook/missions/)** — 9 proven recurring workflows with tracked steps and honest-partial reporting
+- **[Role Spine](/role-os/handbook/role-spine/)** — 61 specialist roles across 10 packs and their contracts
+- **[Team Packs](/role-os/handbook/team-packs/)** — 10 pre-assembled role chains for common work types
 - **[Reference](/role-os/handbook/reference/)** — CLI commands, schemas, policies, and the operating system layers
 
 ## What is Role OS?
 
-Role OS is a multi-Claude operating system. It staffs work through 31 specialized role contracts, assembles task-specific chains, validates teams before execution, auto-routes recovery when work is blocked, and requires structured evidence in every verdict.
+Role OS is a multi-Claude operating system. It staffs work through 61 specialized role contracts, assembles task-specific chains, validates teams before execution, auto-routes recovery when work is blocked, and requires structured evidence in every verdict.
 
 The system provides three entry levels and ten operating layers:
 
@@ -28,7 +28,7 @@ The system provides three entry levels and ten operating layers:
 |-------|------|-------------|
 | **Mission** | Task matches a proven recurring workflow | Known role chain, artifact flow, escalation branches, honest-partial definition |
 | **Pack** | Task is a known family but not a full mission | Pre-assembled team with mismatch detection |
-| **Free routing** | Task is novel, mixed, or uncertain | All 31 roles scored, dynamic chain assembled |
+| **Free routing** | Task is novel, mixed, or uncertain | All 61 roles scored, dynamic chain assembled |
 
 **Operating layers:**
 
@@ -37,7 +37,7 @@ The system provides three entry levels and ten operating layers:
 | **Unified entry** | Decides mission vs pack vs free routing with confidence scores and alternatives |
 | **Persistent runs** | `roleos run` creates disk-backed runs with resume, interventions, step guidance, and friction measurement |
 | **Mission runner** | Tracked steps, artifact chain, escalation loops, completion reports |
-| **Routing** | Scores all 31 roles against packet content with weighted keywords, triggers, and confidence levels |
+| **Routing** | Scores all 61 roles against packet content with weighted keywords, triggers, and confidence levels |
 | **Chain builder** | Assembles phase-ordered chains from scored roles — not frozen templates |
 | **Conflict detection** | 4-pass validation catches hard conflicts, sequence errors, redundancy, and coverage gaps |
 | **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason and required artifact |

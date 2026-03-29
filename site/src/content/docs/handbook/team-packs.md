@@ -1,11 +1,11 @@
 ---
 title: Team Packs
-description: 9 pre-assembled role chains for common work types. Pick a pack, describe a task, and route it in one command.
+description: 10 pre-assembled role chains for common work types. Pick a pack, describe a task, and route it in one command.
 sidebar:
   order: 3
 ---
 
-Team Packs are curated subsets of the 54-role spine. Instead of selecting individual roles, you pick a named pack that already contains the right roles in the right order for a given class of work. Each pack includes mismatch detection: if your task does not fit the pack, it suggests the right one instead.
+Team Packs are curated subsets of the 61-role spine. Instead of selecting individual roles, you pick a named pack that already contains the right roles in the right order for a given class of work. Each pack includes mismatch detection: if your task does not fit the pack, it suggests the right one instead.
 
 ```bash
 roleos run --pack=feature "add export command"
@@ -17,7 +17,7 @@ roleos packs suggest .claude/packets/my-task.md
 
 Use a pack when the work is well-scoped and the domain is clear. Use free routing (`roleos route`) when the work cuts across domains or you need a custom chain. `roleos start` picks the right level automatically (mission, pack, or free routing) based on your task description.
 
-## The 9 packs
+## The 10 packs
 
 ### 1. Feature Build
 
@@ -157,6 +157,21 @@ Structured multi-perspective inquiry with traceable disagreement and verdict-bea
 | Treatment | `treatment` | 8 (+3 optional) | Full repo polish and publish |
 | Deep Audit | `deep-audit` | 5 (+2 optional) | Manifest-scaled repo audit |
 | Brainstorm | `brainstorm` | 9 | Multi-perspective inquiry with traceable disagreement |
+| Dogfood Swarm | `swarm` | 8 (+0 optional) | Multi-pass convergence with exclusive file ownership |
+
+### 10. Dogfood Swarm
+
+Multi-pass convergence: three health stages then iterative feature delivery with exclusive file ownership and build gates.
+
+| | |
+|---|---|
+| **Roles** | Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer, Critic Reviewer |
+| **Optional** | (none — domain agents scale from manifest) |
+| **Chain** | Coordinator → [5 domain agents parallel] → Coordinator gate (×4 stages) → Synthesizer → Critic |
+| **Artifacts** | `swarm-gate`, `wave-report` (×5 per wave), `swarm-final-report`, `verdict` |
+| **When** | You want to move a repo from "works" to "production-ready" through systematic convergence |
+| **Not for** | Single bugs, brainstorms, research, launches, docs-only work |
+| **Proven** | claude-collaborate: 35→129 tests, 106 findings fixed, v1.1.0 shipped |
 
 ## Mismatch detection
 
@@ -185,7 +200,7 @@ Packs are not mutually exclusive. A treatment often runs the treatment pack end-
 
 ## Related
 
-- [Role Spine](/role-os/handbook/role-spine/) — the full 54-role catalog that packs draw from
-- [Missions](/role-os/handbook/missions/) — 8 recurring workflows built on top of packs
+- [Role Spine](/role-os/handbook/role-spine/) — the full 61-role catalog that packs draw from
+- [Missions](/role-os/handbook/missions/) — 9 recurring workflows built on top of packs
 - [Getting Started](/role-os/handbook/getting-started/) — run your first task
 - [Reference](/role-os/handbook/reference/) — full CLI command reference
