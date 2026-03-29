@@ -13,10 +13,13 @@ import {
   reconcileEvidenceWithBundle,
   applyFallbackPolicy,
 } from "../src/knowledge/index.mjs";
-import { join, resolve } from "node:path";
+import { join, resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const KNOWLEDGE_CORE_ROLES = resolve(
-  import.meta.dirname,
+  __dirname,
   "..",
   "..",
   "knowledge-core",

@@ -6,14 +6,17 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Default overlay search paths (relative to knowledge-core root)
 const OVERLAY_PATHS = [
   // Local knowledge-core checkout (development)
-  join(resolve(import.meta.dirname, "..", ".."), "knowledge-core", "knowledge", "roles"),
+  join(resolve(__dirname, "..", ".."), "knowledge-core", "knowledge", "roles"),
   // Fallback: role-os local knowledge dir
-  join(resolve(import.meta.dirname, ".."), "knowledge", "roles"),
+  join(resolve(__dirname, ".."), "knowledge", "roles"),
 ];
 
 /**
