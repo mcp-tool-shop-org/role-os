@@ -1,5 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import {
   resolveOverlay,
   hasOverlay,
@@ -23,17 +24,21 @@ const KNOWLEDGE_CORE_ROLES = resolve(
   "roles"
 );
 
+const HAS_KNOWLEDGE_CORE = existsSync(KNOWLEDGE_CORE_ROLES);
+
 // ── Overlay Resolution ──────────────────────────────────────────────
+// These tests require the knowledge-core sibling checkout.
+// In CI (no sibling), they skip gracefully.
 
 describe("resolveOverlay", () => {
-  it("resolves security-reviewer overlay", () => {
+  it("resolves security-reviewer overlay", { skip: !HAS_KNOWLEDGE_CORE && "knowledge-core not available" }, () => {
     const result = resolveOverlay("security-reviewer", { searchPaths: [KNOWLEDGE_CORE_ROLES] });
     assert.ok(result, "should find overlay");
     assert.equal(result.overlay.role_id, "security-reviewer");
     assert.equal(result.overlay.version, "1.0");
   });
 
-  it("resolves all 5 pilot overlays", () => {
+  it("resolves all 5 pilot overlays", { skip: !HAS_KNOWLEDGE_CORE && "knowledge-core not available" }, () => {
     const pilots = [
       "product-strategist",
       "security-reviewer",
@@ -55,7 +60,7 @@ describe("resolveOverlay", () => {
 });
 
 describe("hasOverlay", () => {
-  it("returns true for pilot role", () => {
+  it("returns true for pilot role", { skip: !HAS_KNOWLEDGE_CORE && "knowledge-core not available" }, () => {
     assert.equal(hasOverlay("security-reviewer", { searchPaths: [KNOWLEDGE_CORE_ROLES] }), true);
   });
 
