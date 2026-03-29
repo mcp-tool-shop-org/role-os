@@ -121,7 +121,7 @@ describe("generateSwarmManifest", () => {
     const dir = makeTmpDir();
     writePackage(dir, { name: "test" });
     const manifest = generateSwarmManifest(dir);
-    assert.deepEqual(manifest.stages, ["health-a", "health-b", "health-c", "feature"]);
+    assert.deepEqual(manifest.stages, ["health-a", "health-b", "health-c", "feature", "treatment"]);
     rmSync(dir, { recursive: true });
   });
 

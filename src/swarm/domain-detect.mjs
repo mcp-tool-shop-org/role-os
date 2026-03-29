@@ -140,7 +140,7 @@ export function generateSwarmManifest(cwd, options = {}) {
     repo: repoName,
     repoType,
     domains,
-    stages: ["health-a", "health-b", "health-c", "feature"],
+    stages: ["health-a", "health-b", "health-c", "feature", "treatment"],
     exclusiveOwnership: {
       mode: "strict",
       maxAgentsPerWave: domains.length,

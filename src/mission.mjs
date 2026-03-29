@@ -331,9 +331,9 @@ export const MISSIONS = {
   // ── Dogfood Swarm (Multi-Pass Health + Feature Convergence) ─────────────────
   "dogfood-swarm": {
     name: "Dogfood Swarm",
-    description: "Three-stage health pass (bug/security → proactive → humanization) then iterative feature pass with exclusive file ownership, build gates, and user checkpoints. Moves a repo from 'works' to 'production-ready.' Domain agent count scales with repo structure.",
+    description: "Three-stage health pass (bug/security → proactive → humanization), iterative feature pass, final synthesis, then Full Treatment (shipcheck, branding, handbook, repo-knowledge). Moves a repo from 'works' to 'whole.' Domain agent count scales with repo structure.",
     pack: "swarm",
-    entryPath: "Generate swarm manifest → Save-point tag → Health-A wave (5 agents parallel, loop until 0 CRITICAL+HIGH) → Health-B wave (proactive, user review) → Health-C wave (humanization, loop) → Feature wave (user approval gate, loop) → Synthesizer → Critic verdict",
+    entryPath: "Generate swarm manifest → Save-point tag → Health-A wave (5 agents parallel, loop until 0 CRITICAL+HIGH) → Health-B wave (proactive, user review) → Health-C wave (humanization, loop) → Feature wave (user approval gate, loop) → Final test → Full Treatment (shipcheck → README + translations → landing page → handbook → repo-knowledge DB) → Critic verdict",
     roleChain: [
       "Swarm Coordinator",     // ×1 — orchestrates all stages, enforces gates
       "Swarm Backend Agent",   // ×1 — exclusive ownership of backend files
@@ -390,6 +390,15 @@ export const MISSIONS = {
         buildGate: true,
         userApproval: true,
       },
+      {
+        stage: "treatment",
+        lens: "Full Treatment — shipcheck gate (hard gates A-D must pass), README finalize + logo + badges, translations (user-run), landing page scaffold, handbook (3-7 pages via Starlight), repo metadata, repo-knowledge DB entry, deploy + verify",
+        exitCondition: "shipcheck audit exits 0 + landing page deployed + handbook pages live + repo-knowledge DB entry created",
+        maxIterations: 2,
+        buildGate: true,
+        userApproval: true,
+        notes: "Read memory/full-treatment.md + memory/handbook-playbook.md before starting. Translations run locally by user (not Claude). Version must be v1.0.0 minimum. CI must pass before moving on.",
+      },
     ],
     // Exclusive ownership — domain file boundaries (new primitive, unique to swarm)
     exclusiveOwnership: {
@@ -430,6 +439,11 @@ export const MISSIONS = {
       { role: "Swarm Frontend Agent", produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "feature" },
       { role: "Swarm Coordinator",    produces: "swarm-gate",         consumedBy: "Swarm Synthesizer", stage: "feature" },
 
+      // Treatment: Full Treatment wave (shipcheck, README, landing page, handbook, repo-knowledge)
+      { role: "Swarm Infra Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "treatment" },
+      { role: "Swarm Frontend Agent", produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "treatment" },
+      { role: "Swarm Coordinator",    produces: "swarm-gate",         consumedBy: "Swarm Synthesizer", stage: "treatment" },
+
       // Final: Synthesize + Critic verdict
       { role: "Swarm Synthesizer",    produces: "swarm-final-report", consumedBy: "Critic Reviewer",   stage: "final" },
       { role: "Critic Reviewer",      produces: "review-verdict",     consumedBy: null,                 stage: "final" },
@@ -441,17 +455,20 @@ export const MISSIONS = {
       { trigger: "health pass stuck at max iterations", from: "Swarm Coordinator", to: "Swarm Synthesizer", action: "synthesize with partial health — document remaining CRITICAL/HIGH" },
       { trigger: "feature audit finds no gaps", from: "Swarm Coordinator", to: "Swarm Synthesizer", action: "skip feature execution, advance to final synthesis" },
       { trigger: "user rejects feature audit", from: "Swarm Coordinator", to: "Swarm Coordinator", action: "re-scope feature audit with user feedback, re-run" },
+      { trigger: "shipcheck audit fails during treatment", from: "Swarm Coordinator", to: "Swarm Infra Agent", action: "fix failing hard gates (A-D), re-run shipcheck audit" },
+      { trigger: "translations not run by user", from: "Swarm Coordinator", to: "Swarm Coordinator", action: "prompt user to run translate-all.mjs locally, do NOT run from Claude" },
     ],
-    honestPartial: "One or more health stages complete but feature pass blocked or incomplete. Per-stage findings are individually valid and actionable. Manifest and wave reports exist even if synthesis does not. Build gate status is known.",
+    honestPartial: "One or more stages complete but later stages blocked or incomplete. Per-stage findings are individually valid and actionable. Manifest and wave reports exist even if synthesis does not. Build gate status is known. A repo that passes health+feature but not treatment is 'production-ready but not whole.'",
     stopConditions: [
-      "All four stages converge — Synthesizer produces final report, Critic accepts",
+      "All five stages converge (health, feature, final test, treatment) — Synthesizer produces final report, Critic accepts",
       "Health pass stuck after max iterations — synthesize with partial health findings",
       "Feature pass stuck after max iterations — synthesize with partial feature progress",
+      "Treatment blocked (shipcheck fails, translations pending) — synthesize with partial treatment status",
       "Build gate fails repeatedly — stop and report infrastructure issue",
       "User halts swarm — synthesize from completed stages",
     ],
     dispatchDefaults: { model: "sonnet", maxTurns: 40, maxBudgetUsd: 6.0 },
-    trialEvidence: "Proven on claude-collaborate (2026-03-28): 35→129 tests, 106 health findings fixed, v1.1.0 shipped. Protocol v2.0.",
+    trialEvidence: "Proven on claude-collaborate (2026-03-28): 35→129 tests, 106 health findings fixed, v1.1.0 shipped. Stillpoint (2026-03-29): 26→136 tests, treatment pending. Protocol v3.0 (added Phase 10: Full Treatment).",
   },
 };
 

@@ -175,14 +175,15 @@ describe("dogfood-swarm mission", () => {
     assert.equal(result.mission, "dogfood-swarm");
   });
 
-  it("has waveLoops with 4 stages", () => {
+  it("has waveLoops with 5 stages", () => {
     const wl = MISSIONS["dogfood-swarm"].waveLoops;
     assert.ok(Array.isArray(wl));
-    assert.equal(wl.length, 4);
+    assert.equal(wl.length, 5);
     assert.equal(wl[0].stage, "health-a");
     assert.equal(wl[1].stage, "health-b");
     assert.equal(wl[2].stage, "health-c");
     assert.equal(wl[3].stage, "feature");
+    assert.equal(wl[4].stage, "treatment");
   });
 
   it("health-a loops until 0 CRITICAL + 0 HIGH", () => {
@@ -200,6 +201,15 @@ describe("dogfood-swarm mission", () => {
   it("feature stage requires user approval", () => {
     const feat = MISSIONS["dogfood-swarm"].waveLoops[3];
     assert.equal(feat.userApproval, true);
+  });
+
+  it("treatment stage requires user approval and references full-treatment", () => {
+    const treat = MISSIONS["dogfood-swarm"].waveLoops[4];
+    assert.equal(treat.stage, "treatment");
+    assert.equal(treat.userApproval, true);
+    assert.equal(treat.buildGate, true);
+    assert.ok(treat.exitCondition.includes("shipcheck"));
+    assert.ok(treat.notes.includes("full-treatment.md"));
   });
 
   it("has exclusiveOwnership config", () => {
@@ -231,6 +241,7 @@ describe("dogfood-swarm mission", () => {
     assert.ok(stages.has("health-b"));
     assert.ok(stages.has("health-c"));
     assert.ok(stages.has("feature"));
+    assert.ok(stages.has("treatment"));
     assert.ok(stages.has("final"));
   });
 
@@ -251,13 +262,13 @@ describe("Swarm dynamic dispatch", () => {
       { id: "tests", role: "Swarm Tests Agent", patterns: ["test/**"], agentSlot: 1 },
       { id: "infra", role: "Swarm Infra Agent", patterns: [".github/**", "*.md"], agentSlot: 2 },
     ],
-    stages: ["health-a", "health-b", "health-c", "feature"],
+    stages: ["health-a", "health-b", "health-c", "feature", "treatment"],
   };
 
   it("creates run with correct step count from manifest", () => {
-    // 3 domains × 4 stages = 12 domain steps + 4 coordinator gates + synthesizer + critic = 18
+    // 3 domains × 5 stages = 15 domain steps + 5 coordinator gates + synthesizer + critic = 22
     const run = createRun("dogfood-swarm", "Test swarm", { manifest: sampleManifest });
-    assert.equal(run.steps.length, 18);
+    assert.equal(run.steps.length, 22);
   });
 
   it("domain steps have stage annotations", () => {
@@ -269,7 +280,7 @@ describe("Swarm dynamic dispatch", () => {
   it("coordinator gate steps exist for each stage", () => {
     const run = createRun("dogfood-swarm", "Test swarm", { manifest: sampleManifest });
     const gates = run.steps.filter(s => s.isGate);
-    assert.equal(gates.length, 4); // one per stage
+    assert.equal(gates.length, 5); // one per stage (health-a, health-b, health-c, feature, treatment)
   });
 
   it("gates have exit condition and build gate flags", () => {
@@ -292,13 +303,13 @@ describe("Swarm dynamic dispatch", () => {
     assert.equal(featGate.userApproval, true);
   });
 
-  it("stages are ordered correctly (health-a → health-b → health-c → feature → final)", () => {
+  it("stages are ordered correctly (health-a → health-b → health-c → feature → treatment → final)", () => {
     const run = createRun("dogfood-swarm", "Test swarm", { manifest: sampleManifest });
     const stageOrder = [];
     for (const step of run.steps) {
       if (!stageOrder.includes(step.stage)) stageOrder.push(step.stage);
     }
-    assert.deepEqual(stageOrder, ["health-a", "health-b", "health-c", "feature", "final"]);
+    assert.deepEqual(stageOrder, ["health-a", "health-b", "health-c", "feature", "treatment", "final"]);
   });
 
   it("final stage has Synthesizer and Critic", () => {
@@ -327,9 +338,9 @@ describe("Swarm dynamic dispatch", () => {
         { id: "frontend", role: "Swarm Frontend Agent", patterns: ["ui/**"], agentSlot: 4 },
       ],
     };
-    // 5 domains × 4 stages = 20 domain steps + 4 gates + 2 final = 26
+    // 5 domains × 5 stages = 25 domain steps + 5 gates + 2 final = 32
     const run = createRun("dogfood-swarm", "Test swarm", { manifest: bigManifest });
-    assert.equal(run.steps.length, 26);
+    assert.equal(run.steps.length, 32);
   });
 });
 

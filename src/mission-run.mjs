@@ -205,7 +205,7 @@ function buildDynamicSteps(mission, manifest) {
 function buildSwarmSteps(mission, manifest) {
   const steps = [];
   const domains = manifest.domains || [];
-  const stages = manifest.stages || ["health-a", "health-b", "health-c", "feature"];
+  const stages = manifest.stages || ["health-a", "health-b", "health-c", "feature", "treatment"];
   const waveLoops = mission.waveLoops || [];
 
   // For each stage, create domain agent steps + coordinator gate
