@@ -11,3 +11,4 @@ export { attachBundleToPacket, hasKnowledge, getKnowledgeStatus } from "./attach
 export { provenanceFromChunk, attachProvenance, reconcileEvidenceWithBundle } from "./attach-bundle-to-evidence.mjs";
 export { applyFallbackPolicy } from "./fallback-policy.mjs";
 export { renderKnowledgeBlock, knowledgeManifestSummary } from "./render-knowledge-block.mjs";
+export { analyzeArtifactEvidence } from "./analyze-artifact-evidence.mjs";
