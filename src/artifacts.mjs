@@ -298,6 +298,64 @@ export const ROLE_ARTIFACT_CONTRACTS = {
     consumedBy: ["Critic Reviewer"],
     completionRule: "Reconciles findings across parcels. Cross-cutting findings reference source parcels. Contradictions adjudicated. Action plan groups by root cause and leverage.",
   },
+
+  // ── Dogfood Swarm ───────────────────────────────────────────────────────────
+  "Swarm Coordinator": {
+    artifactType: "swarm-gate",
+    requiredSections: ["phase", "stage", "wave-count", "findings-summary", "severity-breakdown", "exit-condition-status", "decision"],
+    optionalSections: ["build-gate-results", "user-approval-status"],
+    requiredEvidence: ["wave-report"],
+    consumedBy: ["Swarm Backend Agent", "Swarm Bridge Agent", "Swarm Tests Agent", "Swarm Infra Agent", "Swarm Frontend Agent", "Swarm Synthesizer"],
+    completionRule: "Exit condition evaluated against accumulated findings. Decision is one of: loop (re-run wave), advance (next stage), or halt (max iterations or build gate failure).",
+  },
+  "Swarm Backend Agent": {
+    artifactType: "wave-report",
+    requiredSections: ["findings", "remediations", "files-touched", "build-status"],
+    optionalSections: ["architecture-notes"],
+    requiredEvidence: [],
+    consumedBy: ["Swarm Coordinator"],
+    completionRule: "Every file in assigned scope inspected. Findings severity-triaged. Remediations applied in severity order. Build passes after changes.",
+  },
+  "Swarm Bridge Agent": {
+    artifactType: "wave-report",
+    requiredSections: ["findings", "remediations", "files-touched", "build-status"],
+    optionalSections: ["integration-notes"],
+    requiredEvidence: [],
+    consumedBy: ["Swarm Coordinator"],
+    completionRule: "Every file in assigned scope inspected. Findings severity-triaged. Remediations applied in severity order. Build passes after changes.",
+  },
+  "Swarm Tests Agent": {
+    artifactType: "wave-report",
+    requiredSections: ["findings", "remediations", "files-touched", "build-status", "coverage-delta"],
+    optionalSections: ["test-health-notes"],
+    requiredEvidence: [],
+    consumedBy: ["Swarm Coordinator"],
+    completionRule: "Test suite audited for gaps, ceremonial tests, and fixture quality. Coverage delta reported. Build passes after changes.",
+  },
+  "Swarm Infra Agent": {
+    artifactType: "wave-report",
+    requiredSections: ["findings", "remediations", "files-touched", "build-status"],
+    optionalSections: ["ci-notes", "doc-freshness"],
+    requiredEvidence: [],
+    consumedBy: ["Swarm Coordinator"],
+    completionRule: "CI workflows, config files, and docs inspected. Findings severity-triaged. Build passes after changes.",
+  },
+  "Swarm Frontend Agent": {
+    artifactType: "wave-report",
+    requiredSections: ["findings", "remediations", "files-touched", "build-status", "accessibility-issues"],
+    optionalSections: ["ux-improvements", "responsive-notes"],
+    requiredEvidence: [],
+    consumedBy: ["Swarm Coordinator"],
+    completionRule: "UI layer audited for bugs, accessibility, and UX. Accessibility issues listed separately. Build passes after changes.",
+  },
+  "Swarm Synthesizer": {
+    artifactType: "swarm-final-report",
+    requiredSections: ["executive-summary", "stage-results", "total-findings-fixed", "remaining-items", "test-verification", "recommendation"],
+    optionalSections: ["metrics-comparison", "evidence-links"],
+    requiredEvidence: ["swarm-gate", "wave-report"],
+    consumedBy: ["Critic Reviewer"],
+    completionRule: "All stages summarized. Total findings fixed vs remaining tallied. Final test suite run. Recommendation is ship, hold, or re-swarm.",
+  },
 };
 
 // ── Artifact validation ───────────────────────────────────────────────────────
@@ -447,6 +505,18 @@ export const PACK_HANDOFF_CONTRACTS = {
       { role: "Seam Auditor",       produces: "seam-audit-report",      consumedBy: "Audit Synthesizer" },
       { role: "Audit Synthesizer",  produces: "audit-summary",          consumedBy: "Critic Reviewer" },
       { role: "Critic Reviewer",    produces: "verdict",                consumedBy: null },
+    ],
+  },
+  swarm: {
+    flow: [
+      { role: "Swarm Coordinator",    produces: "swarm-gate",         consumedBy: "Swarm Backend Agent" },
+      { role: "Swarm Backend Agent",  produces: "wave-report",        consumedBy: "Swarm Coordinator" },
+      { role: "Swarm Bridge Agent",   produces: "wave-report",        consumedBy: "Swarm Coordinator" },
+      { role: "Swarm Tests Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator" },
+      { role: "Swarm Infra Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator" },
+      { role: "Swarm Frontend Agent", produces: "wave-report",        consumedBy: "Swarm Coordinator" },
+      { role: "Swarm Synthesizer",    produces: "swarm-final-report", consumedBy: "Critic Reviewer" },
+      { role: "Critic Reviewer",      produces: "verdict",            consumedBy: null },
     ],
   },
 };

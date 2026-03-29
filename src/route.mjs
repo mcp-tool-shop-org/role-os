@@ -374,6 +374,57 @@ export const ROLE_CATALOG = [
     excludeWhen: ["component audit still running", "no findings to synthesize"],
     deliverableAffinity: ["Review"],
   },
+
+  // ── Dogfood Swarm (Multi-Pass Health + Feature Convergence) ─────────────────
+  {
+    name: "Swarm Coordinator", pack: "swarm", phase: 0,
+    keywords: ["swarm", "wave", "gate", "convergence", "health pass", "dogfood"],
+    triggers: ["dogfood swarm", "swarm coordinator", "wave orchestration", "health gate"],
+    excludeWhen: ["single bug fix", "brainstorm only", "docs only"],
+    deliverableAffinity: ["Review"],
+  },
+  {
+    name: "Swarm Backend Agent", pack: "swarm", phase: 3,
+    keywords: ["backend", "server", "core logic", "api", "database", "service"],
+    triggers: ["swarm backend", "backend audit and fix", "server health"],
+    excludeWhen: ["frontend only", "docs only", "test only"],
+    deliverableAffinity: ["Code", "Review"],
+  },
+  {
+    name: "Swarm Bridge Agent", pack: "swarm", phase: 3,
+    keywords: ["bridge", "integration", "websocket", "middleware", "adapter", "protocol"],
+    triggers: ["swarm bridge", "bridge audit and fix", "integration health"],
+    excludeWhen: ["no secondary services", "single module repo"],
+    deliverableAffinity: ["Code", "Review"],
+  },
+  {
+    name: "Swarm Tests Agent", pack: "swarm", phase: 3,
+    keywords: ["test", "coverage", "fixture", "mock", "assertion", "spec"],
+    triggers: ["swarm tests", "test audit and fix", "test health"],
+    excludeWhen: ["no test suite", "implementation only"],
+    deliverableAffinity: ["Test", "Review"],
+  },
+  {
+    name: "Swarm Infra Agent", pack: "swarm", phase: 3,
+    keywords: ["ci", "workflow", "config", "docs", "readme", "changelog", "infrastructure"],
+    triggers: ["swarm infra", "infra audit and fix", "ci health", "docs health"],
+    excludeWhen: ["code only", "no ci"],
+    deliverableAffinity: ["Review"],
+  },
+  {
+    name: "Swarm Frontend Agent", pack: "swarm", phase: 3,
+    keywords: ["frontend", "ui", "component", "css", "html", "react", "view"],
+    triggers: ["swarm frontend", "frontend audit and fix", "ui health"],
+    excludeWhen: ["no frontend", "cli only", "backend only"],
+    deliverableAffinity: ["Code", "Review"],
+  },
+  {
+    name: "Swarm Synthesizer", pack: "swarm", phase: 5,
+    keywords: ["synthesis", "final report", "verification", "summary", "recommendation"],
+    triggers: ["swarm synthesis", "swarm final report", "swarm verification"],
+    excludeWhen: ["swarm still running", "no wave results"],
+    deliverableAffinity: ["Review"],
+  },
 ];
 
 // ── Deliverable type → role affinity ──────────────────────────────────────────

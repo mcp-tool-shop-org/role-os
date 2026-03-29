@@ -51,9 +51,9 @@ describe("roleos packs", () => {
   // ── list ──────────────────────────────────────────────────────────────────
 
   describe("packs list", () => {
-    it("T1: shows count of all 9 packs", () => {
+    it("T1: shows count of all 10 packs", () => {
       const out = run(["packs", "list"]);
-      assert.match(out, /9 packs available/);
+      assert.match(out, /10 packs available/);
     });
 
     it("T2: shows all 9 pack keys", () => {
@@ -70,7 +70,7 @@ describe("roleos packs", () => {
 
     it("T4: bare 'packs' behaves as 'packs list'", () => {
       const out = run(["packs"]);
-      assert.match(out, /9 packs available/);
+      assert.match(out, /10 packs available/);
     });
   });
 

@@ -323,6 +323,42 @@ export const TEAM_PACKS = {
       { notForSignals: ["handbook", "documentation", "restructure docs"], suggestInstead: "docs", reason: "This is docs work, not a brainstorm" },
     ],
   },
+
+  // ── Dogfood Swarm (Multi-Pass Health + Feature Convergence) ─────────────────
+  swarm: {
+    name: "Dogfood Swarm (Multi-Pass Convergence)",
+    description: "Three-stage health pass (bug/security → proactive → humanization) then iterative feature pass, all with exclusive file ownership, build gates, and user checkpoints. Moves a repo from 'works' to 'production-ready.'",
+    roles: [
+      "Swarm Coordinator",
+      "Swarm Backend Agent",
+      "Swarm Bridge Agent",
+      "Swarm Tests Agent",
+      "Swarm Infra Agent",
+      "Swarm Frontend Agent",
+      "Swarm Synthesizer",
+      "Critic Reviewer",
+    ],
+    orchestratorRequired: false,
+    optionalRoles: [],
+    chainOrder: "Coordinator → [5 domain agents parallel] → Coordinator gate (repeat per stage: health-a, health-b, health-c, feature) → Synthesizer → Critic Reviewer",
+    requiredArtifacts: ["swarm-gate", "wave-report", "swarm-final-report", "review-verdict"],
+    stopConditions: [
+      "All four stages converge — Synthesizer produces final report, Critic accepts",
+      "Health pass stuck after max iterations — synthesize with partial health findings",
+      "Feature pass stuck after max iterations — synthesize with partial feature progress",
+      "Build gate fails repeatedly — stop and report infrastructure issue",
+    ],
+    escalationOwner: "Swarm Coordinator",
+    dispatchDefaults: { model: "sonnet", maxTurns: 40, maxBudgetUsd: 6.0 },
+    trialEvidence: "Proven on claude-collaborate (2026-03-28): 35→129 tests, 106 health findings fixed, v1.1.0 shipped. Protocol v2.0.",
+    mismatchGuards: [
+      { notForSignals: ["fix bug", "single bug", "one crash", "quick fix"], suggestInstead: "bugfix", reason: "This is a single bug to fix, not a full swarm" },
+      { notForSignals: ["brainstorm", "explore ideas", "concept", "ideate"], suggestInstead: "brainstorm", reason: "This is exploration, not convergence work" },
+      { notForSignals: ["research", "competitive analysis", "user research"], suggestInstead: "research", reason: "This is research, not repo health work" },
+      { notForSignals: ["launch", "announce", "release notes", "go-to-market"], suggestInstead: "launch", reason: "This is launch work, not repo health" },
+      { notForSignals: ["handbook", "documentation only", "restructure docs"], suggestInstead: "docs", reason: "This is docs work — swarm is for full repo convergence" },
+    ],
+  },
 };
 
 // ── Pack selection ────────────────────────────────────────────────────────────
@@ -337,6 +373,7 @@ const PACK_KEYWORDS = {
   treatment: ["treatment", "polish", "cleanup", "repo audit", "shipcheck", "full treatment"],
   brainstorm: ["brainstorm", "explore", "ideate", "divergent", "opportunity", "creative directions", "concept exploration", "what could", "possibilities"],
   "deep-audit": ["deep audit", "component audit", "repo audit deep", "decompose and audit", "audit components", "code audit", "structural audit", "deep review"],
+  swarm: ["swarm", "dogfood", "health pass", "multi-pass", "convergence", "wave", "full quality", "production ready", "dogfood swarm"],
 };
 
 /**

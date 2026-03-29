@@ -13,7 +13,7 @@
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-A multi-Claude operating system that staffs, routes, validates, and runs work through 54 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict. Includes dynamic dispatch for manifest-scaled missions — a 10-component repo automatically becomes 28 auditor steps, not 6.
+A multi-Claude operating system that staffs, routes, validates, and runs work through 61 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict. Includes dynamic dispatch for manifest-scaled missions — a 10-component repo automatically becomes 28 auditor steps, not 6. The dogfood swarm mission runs multi-pass convergence: three health stages then iterative feature delivery with exclusive file ownership and build gates.
 
 ## What it does
 
@@ -44,9 +44,9 @@ roleos start "something completely novel"
 
 **The fallback ladder:**
 
-1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research, brainstorm, deep-audit). Known role chain, artifact flow, escalation branches, and honest-partial definitions.
-2. **Pack** — when the task is a known family but not a full mission shape. 9 calibrated team packs with auto-selection and mismatch guards.
-3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 54 roles against packet content and assembles a dynamic chain.
+1. **Mission** — when the task matches a proven recurring workflow (bugfix, treatment, feature-ship, docs, security, research, brainstorm, deep-audit, dogfood-swarm). Known role chain, artifact flow, escalation branches, and honest-partial definitions.
+2. **Pack** — when the task is a known family but not a full mission shape. 10 calibrated team packs with auto-selection and mismatch guards.
+3. **Free routing** — when the task is novel, mixed, or uncertain. Scores all 61 roles against packet content and assembles a dynamic chain.
 
 The system never forces work through the wrong abstraction. It explains why it chose each level and offers alternatives.
 
@@ -103,7 +103,7 @@ Full treatment is a canonical 7-phase protocol defined in Claude project memory 
 
 Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.
 
-## 54 roles across 9 packs
+## 61 roles across 10 packs
 
 | Pack | Roles |
 |------|-------|
@@ -116,6 +116,7 @@ Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gate
 | **Research** (4) | UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer |
 | **Growth** (4) | Launch Strategist, Content Strategist, Community Manager, Support Triage Lead |
 | **Deep Audit** (4) | Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer |
+| **Swarm** (7) | Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer |
 
 Every role has a full contract: mission, use when, do not use when, expected inputs, required outputs, quality bar, and escalation triggers. Every role is routable — `roleos route` can recommend any of them based on packet content.
 
@@ -139,6 +140,13 @@ roleos audit manifest --generate   # Create audit-manifest.json
 roleos audit                       # Start component-level deep audit
 roleos audit status                # Check audit progress
 roleos audit verify                # Verify manifest and outputs
+
+# Dogfood swarm:
+roleos swarm manifest --generate   # Auto-detect domains from repo structure
+roleos swarm                       # Start multi-pass convergence swarm
+roleos swarm status                # Check swarm progress by stage
+roleos swarm findings              # List findings by severity
+roleos swarm approve               # Approve feature gate
 
 # Or go manual:
 roleos start "fix the crash"   # Entry decision only (no run)

@@ -6,8 +6,8 @@ import { ROLE_CATALOG } from "../src/route.mjs";
 // ── Pack structure ────────────────────────────────────────────────────────────
 
 describe("TEAM_PACKS", () => {
-  it("has 9 packs", () => {
-    assert.equal(Object.keys(TEAM_PACKS).length, 9);
+  it("has 10 packs", () => {
+    assert.equal(Object.keys(TEAM_PACKS).length, 10);
   });
 
   it("every pack has required fields", () => {
@@ -126,9 +126,9 @@ describe("getPack", () => {
 // ── Pack listing ──────────────────────────────────────────────────────────────
 
 describe("listPacks", () => {
-  it("returns all 9 packs with summary info", () => {
+  it("returns all 10 packs with summary info", () => {
     const packs = listPacks();
-    assert.equal(packs.length, 9);
+    assert.equal(packs.length, 10);
     for (const p of packs) {
       assert.ok(p.key);
       assert.ok(p.name);

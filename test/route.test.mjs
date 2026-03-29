@@ -12,8 +12,8 @@ import {
 // ── Catalog completeness ──────────────────────────────────────────────────────
 
 describe("ROLE_CATALOG", () => {
-  it("has exactly 54 roles (31 base + 14 brainstorm v0.1 + 5 brainstorm v0.3 analysts + 4 deep-audit)", () => {
-    assert.equal(ROLE_CATALOG.length, 54);
+  it("has exactly 61 roles (31 base + 14 brainstorm v0.1 + 5 brainstorm v0.3 analysts + 4 deep-audit + 7 swarm)", () => {
+    assert.equal(ROLE_CATALOG.length, 61);
   });
 
   it("every role has required fields", () => {

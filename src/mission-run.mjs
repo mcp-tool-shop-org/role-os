@@ -75,7 +75,10 @@ export function createRun(missionKey, taskDescription, options = {}) {
   let steps;
   const dd = mission.dynamicDispatch;
 
-  if (dd && options.manifest) {
+  if (missionKey === "dogfood-swarm" && dd && options.manifest) {
+    // Swarm dispatch — build staged domain steps from swarm manifest
+    steps = buildSwarmSteps(mission, options.manifest);
+  } else if (dd && options.manifest) {
     // Dynamic dispatch — build steps from manifest
     steps = buildDynamicSteps(mission, options.manifest);
   } else {
@@ -188,6 +191,93 @@ function buildDynamicSteps(mission, manifest) {
       });
     }
   }
+
+  return steps;
+}
+
+/**
+ * Build steps from swarm manifest for dogfood-swarm missions.
+ * Creates domain agent steps per stage with coordinator gates.
+ * @param {Object} mission
+ * @param {Object} manifest - The swarm-manifest.json content
+ * @returns {MissionStep[]}
+ */
+function buildSwarmSteps(mission, manifest) {
+  const steps = [];
+  const domains = manifest.domains || [];
+  const stages = manifest.stages || ["health-a", "health-b", "health-c", "feature"];
+  const waveLoops = mission.waveLoops || [];
+
+  // For each stage, create domain agent steps + coordinator gate
+  for (const stage of stages) {
+    const loopDef = waveLoops.find(w => w.stage === stage);
+
+    // One step per domain agent
+    for (const domain of domains) {
+      steps.push({
+        role: domain.role,
+        produces: "wave-report",
+        consumedBy: "Swarm Coordinator",
+        domain: domain.id,
+        stage,
+        waveIteration: 0,
+        patterns: domain.patterns,
+        status: "pending",
+        artifact: null,
+        artifactValidation: null,
+        note: null,
+        startedAt: null,
+        completedAt: null,
+      });
+    }
+
+    // Coordinator gate step after domain agents
+    steps.push({
+      role: "Swarm Coordinator",
+      produces: "swarm-gate",
+      consumedBy: stage === stages[stages.length - 1] ? "Swarm Synthesizer" : domains[0]?.role || null,
+      stage,
+      isGate: true,
+      exitCondition: loopDef?.exitCondition || null,
+      maxIterations: loopDef?.maxIterations || 1,
+      buildGate: loopDef?.buildGate ?? true,
+      userApproval: loopDef?.userApproval ?? false,
+      lens: loopDef?.lens || null,
+      status: "pending",
+      artifact: null,
+      artifactValidation: null,
+      note: null,
+      startedAt: null,
+      completedAt: null,
+    });
+  }
+
+  // Final stage: Synthesizer + Critic
+  steps.push({
+    role: "Swarm Synthesizer",
+    produces: "swarm-final-report",
+    consumedBy: "Critic Reviewer",
+    stage: "final",
+    status: "pending",
+    artifact: null,
+    artifactValidation: null,
+    note: null,
+    startedAt: null,
+    completedAt: null,
+  });
+
+  steps.push({
+    role: "Critic Reviewer",
+    produces: "review-verdict",
+    consumedBy: null,
+    stage: "final",
+    status: "pending",
+    artifact: null,
+    artifactValidation: null,
+    note: null,
+    startedAt: null,
+    completedAt: null,
+  });
 
   return steps;
 }

@@ -13,6 +13,7 @@ import { scaffoldClaude, doctor, formatDoctor } from "../src/session.mjs";
 import { artifactsCommand } from "../src/artifacts-cmd.mjs";
 import { missionCommand } from "../src/mission-cmd.mjs";
 import { auditCommand } from "../src/audit-cmd.mjs";
+import { swarmCommand } from "../src/swarm-cmd.mjs";
 import { startCommand } from "../src/entry-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
@@ -65,6 +66,13 @@ Usage:
   roleos audit manifest --generate    Generate a skeleton manifest from src/
   roleos audit status                 Show audit run progress
   roleos audit verify                 Verify manifest and audit outputs
+  roleos swarm                        Start a dogfood swarm on the current repo
+  roleos swarm manifest               Show the swarm manifest
+  roleos swarm manifest --generate    Auto-detect domains and generate manifest
+  roleos swarm status                 Show swarm run progress
+  roleos swarm findings               List findings by severity
+  roleos swarm approve                Approve the current feature gate
+  roleos swarm verify                 Verify manifest and run state
   roleos mission list                List all missions
   roleos mission show <key>          Show full mission detail
   roleos mission suggest <text>      Suggest a mission for a task
@@ -189,6 +197,9 @@ try {
       break;
     case "audit":
       await auditCommand(args);
+      break;
+    case "swarm":
+      await swarmCommand(args);
       break;
     case "mission":
       await missionCommand(args);

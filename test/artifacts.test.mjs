@@ -43,8 +43,8 @@ describe("ROLE_ARTIFACT_CONTRACTS", () => {
 });
 
 describe("PACK_HANDOFF_CONTRACTS", () => {
-  it("defines handoff contracts for all 9 packs", () => {
-    const packs = ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm", "deep-audit"];
+  it("defines handoff contracts for all 10 packs", () => {
+    const packs = ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm", "deep-audit", "swarm"];
     for (const p of packs) {
       assert.ok(PACK_HANDOFF_CONTRACTS[p], `Missing contract for ${p}`);
       assert.ok(PACK_HANDOFF_CONTRACTS[p].flow.length >= 2, `${p} flow too short`);
@@ -209,8 +209,8 @@ describe("validatePackChain", () => {
     assert.ok(result.steps.some(s => s.status === "incomplete"));
   });
 
-  it("validates all 8 pack contracts exist", () => {
-    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm"]) {
+  it("validates all 9 pack contracts exist", () => {
+    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm", "swarm"]) {
       const result = validatePackChain(pack, {});
       assert.ok(result.steps.length > 0, `${pack} has no steps`);
     }

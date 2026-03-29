@@ -12,8 +12,8 @@ import {
 // ── Catalog completeness ────────────────────────────────────────────────────
 
 describe("MISSIONS catalog", () => {
-  it("defines 8 named missions (6 base + brainstorm + deep-audit)", () => {
-    assert.equal(Object.keys(MISSIONS).length, 8);
+  it("defines 9 named missions (6 base + brainstorm + deep-audit + dogfood-swarm)", () => {
+    assert.equal(Object.keys(MISSIONS).length, 9);
   });
 
   it("every mission has required fields", () => {
@@ -83,7 +83,7 @@ describe("listMissions", () => {
   it("returns array with correct shape", () => {
     const list = listMissions();
     assert.ok(Array.isArray(list));
-    assert.equal(list.length, 8);
+    assert.equal(list.length, 9);
     for (const item of list) {
       assert.ok(item.key);
       assert.ok(item.name);
@@ -179,7 +179,7 @@ describe("validateMission", () => {
     assert.ok(result.issues[0].includes("not found"));
   });
 
-  it("validates all 8 missions successfully", () => {
+  it("validates all 9 missions successfully", () => {
     for (const key of Object.keys(MISSIONS)) {
       const result = validateMission(key);
       assert.equal(result.valid, true, `${key} failed: ${result.issues.join(", ")}`);
@@ -193,6 +193,6 @@ describe("validateAllMissions", () => {
   it("returns allValid true for current catalog", () => {
     const { allValid, results } = validateAllMissions();
     assert.equal(allValid, true);
-    assert.equal(Object.keys(results).length, 8);
+    assert.equal(Object.keys(results).length, 9);
   });
 });

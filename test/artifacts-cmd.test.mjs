@@ -121,9 +121,9 @@ describe("roleos artifacts", () => {
     assert.ok(output.includes("verdict"));
   });
 
-  it("shows all 8 pack chains", () => {
+  it("shows all 9 pack chains", () => {
     setup();
-    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm"]) {
+    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm", "swarm"]) {
       const output = run("artifacts", "chain", pack);
       assert.ok(output.includes(pack), `Missing pack name for ${pack}`);
       if (pack === "brainstorm") {

@@ -79,4 +79,13 @@ export const TOOL_PROFILES = {
   "Seam Auditor":         ["Read", "Glob", "Grep"],
   "Test Truth Auditor":   ["Read", "Glob", "Grep"],
   "Audit Synthesizer":    ["Read", "Glob", "Grep", "Write"],
+
+  // Dogfood Swarm
+  "Swarm Coordinator":    ["Read", "Glob", "Grep", "Bash", "Write"],
+  "Swarm Backend Agent":  ["Read", "Glob", "Grep", "Bash", "Write", "Edit"],
+  "Swarm Bridge Agent":   ["Read", "Glob", "Grep", "Bash", "Write", "Edit"],
+  "Swarm Tests Agent":    ["Read", "Glob", "Grep", "Bash", "Write", "Edit"],
+  "Swarm Infra Agent":    ["Read", "Glob", "Grep", "Bash", "Write", "Edit"],
+  "Swarm Frontend Agent": ["Read", "Glob", "Grep", "Bash", "Write", "Edit"],
+  "Swarm Synthesizer":    ["Read", "Glob", "Grep", "Bash", "Write"],
 };

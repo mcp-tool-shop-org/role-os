@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.3.0
+
+### Added
+
+#### Dogfood Swarm Mission — Multi-Pass Health + Feature Convergence
+
+- **Dogfood swarm mission** — 9th mission in the library. Three-stage health pass (bug/security → proactive → humanization) then iterative feature pass with exclusive file ownership, build gates, and user checkpoints. Moves a repo from "works" to "production-ready." Proven on claude-collaborate (35→129 tests, 106 findings fixed, v1.1.0 shipped).
+- **7 new roles** — Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer (61 total roles)
+- **Swarm team pack** — 10th pack, 8 roles (7 swarm + Critic Reviewer), with mismatch guards and trial evidence
+- **Two new mission primitives**:
+  - `waveLoops` — iterative convergence with exit conditions, max iterations, build gates, and user approval flags
+  - `exclusiveOwnership` — strict domain file boundaries enforced by manifest
+- **Dynamic domain dispatch** — scales agent count based on repo structure via `swarm-manifest.json`
+- **`roleos swarm` CLI** — first-class entry point with subcommands: `swarm`, `swarm manifest`, `swarm manifest --generate`, `swarm status`, `swarm findings`, `swarm approve`, `swarm verify`
+- **Domain detection** (`src/swarm/domain-detect.mjs`) — auto-detects repo type (CLI, web, desktop, MCP, monorepo) and generates domain manifests with non-overlapping file ownership
+- **Build gate** (`src/swarm/build-gate.mjs`) — auto-detects build system (Node, Rust, Python, Go) and runs lint → typecheck → test verification after every wave
+- **Evidence persistence bridge** (`src/swarm/persist-bridge.mjs`) — optional connection back to dogfood-labs, converts wave results to dogfood submission + audit DB payloads
+- **7 artifact contracts** — `swarm-gate`, `wave-report` (×5 with domain-specific sections), `swarm-final-report`
+- **Pack handoff contract** for swarm flow
+
+### Tests
+- 97 new tests (swarm core, domain detection, build gate, persist bridge) — total: 1150
+
 ## 2.2.1
 
 ### Added

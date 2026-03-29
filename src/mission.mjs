@@ -327,6 +327,132 @@ export const MISSIONS = {
     dispatchDefaults: { model: "sonnet", maxTurns: 25, maxBudgetUsd: 3.0 },
     trialEvidence: "New mission — no trial evidence yet. Architecture designed 2026-03-27.",
   },
+
+  // ── Dogfood Swarm (Multi-Pass Health + Feature Convergence) ─────────────────
+  "dogfood-swarm": {
+    name: "Dogfood Swarm",
+    description: "Three-stage health pass (bug/security → proactive → humanization) then iterative feature pass with exclusive file ownership, build gates, and user checkpoints. Moves a repo from 'works' to 'production-ready.' Domain agent count scales with repo structure.",
+    pack: "swarm",
+    entryPath: "Generate swarm manifest → Save-point tag → Health-A wave (5 agents parallel, loop until 0 CRITICAL+HIGH) → Health-B wave (proactive, user review) → Health-C wave (humanization, loop) → Feature wave (user approval gate, loop) → Synthesizer → Critic verdict",
+    roleChain: [
+      "Swarm Coordinator",     // ×1 — orchestrates all stages, enforces gates
+      "Swarm Backend Agent",   // ×1 — exclusive ownership of backend files
+      "Swarm Bridge Agent",    // ×1 — exclusive ownership of bridge/integration files
+      "Swarm Tests Agent",     // ×1 — exclusive ownership of test files
+      "Swarm Infra Agent",     // ×1 — exclusive ownership of CI/config/docs
+      "Swarm Frontend Agent",  // ×1 — exclusive ownership of frontend files
+      "Swarm Synthesizer",     // ×1 — final verification report
+      "Critic Reviewer",       // ×1 — final acceptance
+    ],
+    // Dynamic dispatch contract:
+    // swarm-manifest.json defines domains[] with non-overlapping file paths.
+    // Each domain maps to one of the 5 domain agent roles.
+    // Domains are instantiated per stage (health-a, health-b, health-c, feature).
+    // Coordinator gates between stages evaluate exit conditions.
+    dynamicDispatch: {
+      scalingRoles: ["Swarm Backend Agent", "Swarm Bridge Agent", "Swarm Tests Agent", "Swarm Infra Agent", "Swarm Frontend Agent"],
+      manifestSource: "swarm-manifest.json",
+      domainAgentPer: "domains",
+      coordinatorAfter: "each-stage",
+      synthesisAfter: "all-stages",
+    },
+    // Wave loops — iterative convergence (new primitive, unique to swarm)
+    waveLoops: [
+      {
+        stage: "health-a",
+        lens: "Bug/Security Fix — audit for bugs, security, quality, types, test coverage, doc accuracy",
+        exitCondition: "0 CRITICAL + 0 HIGH findings open",
+        maxIterations: 4,
+        buildGate: true,
+        userApproval: false,
+      },
+      {
+        stage: "health-b",
+        lens: "Proactive Health — defensive coding, observability, graceful degradation, future-proofing",
+        exitCondition: "user approves proactive findings",
+        maxIterations: 2,
+        buildGate: true,
+        userApproval: true,
+      },
+      {
+        stage: "health-c",
+        lens: "Humanization — error messages that help users fix problems, reconnection/retry feedback, responsive layouts, loading states, state persistence, accessibility",
+        exitCondition: "0 CRITICAL + 0 HIGH humanization findings open",
+        maxIterations: 3,
+        buildGate: true,
+        userApproval: false,
+      },
+      {
+        stage: "feature",
+        lens: "Feature Audit — missing capabilities, feature gaps, UX, production readiness",
+        exitCondition: "user approves feature audit + 0 CRITICAL feature gaps",
+        maxIterations: 5,
+        buildGate: true,
+        userApproval: true,
+      },
+    ],
+    // Exclusive ownership — domain file boundaries (new primitive, unique to swarm)
+    exclusiveOwnership: {
+      mode: "strict",
+      manifestSource: "swarm-manifest.json",
+      maxAgentsPerWave: 5,
+    },
+    artifactFlow: [
+      // Health-A: Bug/Security audit + remediate (loops)
+      { role: "Swarm Backend Agent",  produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-a" },
+      { role: "Swarm Bridge Agent",   produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-a" },
+      { role: "Swarm Tests Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-a" },
+      { role: "Swarm Infra Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-a" },
+      { role: "Swarm Frontend Agent", produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-a" },
+      { role: "Swarm Coordinator",    produces: "swarm-gate",         consumedBy: "Swarm Backend Agent", stage: "health-a" },
+
+      // Health-B: Proactive hardening (user review gate)
+      { role: "Swarm Backend Agent",  produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-b" },
+      { role: "Swarm Bridge Agent",   produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-b" },
+      { role: "Swarm Tests Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-b" },
+      { role: "Swarm Infra Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-b" },
+      { role: "Swarm Frontend Agent", produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-b" },
+      { role: "Swarm Coordinator",    produces: "swarm-gate",         consumedBy: "Swarm Backend Agent", stage: "health-b" },
+
+      // Health-C: Humanization (UX emphasis, loops)
+      { role: "Swarm Backend Agent",  produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-c" },
+      { role: "Swarm Bridge Agent",   produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-c" },
+      { role: "Swarm Tests Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-c" },
+      { role: "Swarm Infra Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-c" },
+      { role: "Swarm Frontend Agent", produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "health-c" },
+      { role: "Swarm Coordinator",    produces: "swarm-gate",         consumedBy: "Swarm Backend Agent", stage: "health-c" },
+
+      // Feature: Audit → user approval → execute (loops)
+      { role: "Swarm Backend Agent",  produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "feature" },
+      { role: "Swarm Bridge Agent",   produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "feature" },
+      { role: "Swarm Tests Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "feature" },
+      { role: "Swarm Infra Agent",    produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "feature" },
+      { role: "Swarm Frontend Agent", produces: "wave-report",        consumedBy: "Swarm Coordinator", stage: "feature" },
+      { role: "Swarm Coordinator",    produces: "swarm-gate",         consumedBy: "Swarm Synthesizer", stage: "feature" },
+
+      // Final: Synthesize + Critic verdict
+      { role: "Swarm Synthesizer",    produces: "swarm-final-report", consumedBy: "Critic Reviewer",   stage: "final" },
+      { role: "Critic Reviewer",      produces: "review-verdict",     consumedBy: null,                 stage: "final" },
+    ],
+    escalationBranches: [
+      { trigger: "build gate fails after remediation", from: "Swarm Coordinator", to: "Swarm Coordinator", action: "halt stage, report which agent's changes broke the build" },
+      { trigger: "domain agent touches files outside its assignment", from: "Swarm Coordinator", to: "Swarm Coordinator", action: "reject wave-report, re-run agent with strict boundary warning" },
+      { trigger: "finding spans multiple domains", from: "Swarm Coordinator", to: "Swarm Coordinator", action: "assign to the domain with most file overlap, note cross-domain in finding" },
+      { trigger: "health pass stuck at max iterations", from: "Swarm Coordinator", to: "Swarm Synthesizer", action: "synthesize with partial health — document remaining CRITICAL/HIGH" },
+      { trigger: "feature audit finds no gaps", from: "Swarm Coordinator", to: "Swarm Synthesizer", action: "skip feature execution, advance to final synthesis" },
+      { trigger: "user rejects feature audit", from: "Swarm Coordinator", to: "Swarm Coordinator", action: "re-scope feature audit with user feedback, re-run" },
+    ],
+    honestPartial: "One or more health stages complete but feature pass blocked or incomplete. Per-stage findings are individually valid and actionable. Manifest and wave reports exist even if synthesis does not. Build gate status is known.",
+    stopConditions: [
+      "All four stages converge — Synthesizer produces final report, Critic accepts",
+      "Health pass stuck after max iterations — synthesize with partial health findings",
+      "Feature pass stuck after max iterations — synthesize with partial feature progress",
+      "Build gate fails repeatedly — stop and report infrastructure issue",
+      "User halts swarm — synthesize from completed stages",
+    ],
+    dispatchDefaults: { model: "sonnet", maxTurns: 40, maxBudgetUsd: 6.0 },
+    trialEvidence: "Proven on claude-collaborate (2026-03-28): 35→129 tests, 106 health findings fixed, v1.1.0 shipped. Protocol v2.0.",
+  },
 };
 
 // ── Mission catalog ─────────────────────────────────────────────────────────
@@ -394,6 +520,10 @@ export function suggestMission(taskDescription) {
     "deep-audit": {
       signals: ["deep audit", "component audit", "decompose and audit", "audit components", "structural audit", "deep review", "code audit", "repo deep dive"],
       weight: 1.2,
+    },
+    "dogfood-swarm": {
+      signals: ["dogfood swarm", "swarm", "health pass", "multi-pass", "convergence", "full quality pass", "production ready", "wave-based audit", "swarm this repo"],
+      weight: 1.3,
     },
   };
 

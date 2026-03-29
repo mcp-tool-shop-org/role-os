@@ -23,7 +23,7 @@ function runFail(args) {
 // ── mission list ────────────────────────────────────────────────────────────
 
 describe("roleos mission list", () => {
-  it("lists all 8 missions", () => {
+  it("lists all 9 missions", () => {
     const out = run("mission list");
     assert.ok(out.includes("Mission Library"));
     assert.ok(out.includes("feature-ship"));
@@ -34,7 +34,8 @@ describe("roleos mission list", () => {
     assert.ok(out.includes("research-launch"));
     assert.ok(out.includes("brainstorm"));
     assert.ok(out.includes("deep-audit"));
-    assert.ok(out.includes("8 missions"));
+    assert.ok(out.includes("dogfood-swarm"));
+    assert.ok(out.includes("9 missions"));
   });
 });
 
