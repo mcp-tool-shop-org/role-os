@@ -132,3 +132,10 @@ Must not recommend trend adoption without cost assessment.
 ## User Interview Synthesizer
 May read interview transcripts and notes.
 Must not project desired outcomes onto user words.
+
+## Red-Teamer
+May read canon files, rule manifests, test fixtures, validator source, and approved records.
+May invoke validators and capture their verdicts.
+May construct synthetic test inputs targeting a declared subject under test.
+Must not modify validator rules, canon data, or production pipeline code.
+Must not self-heal uncaught breaks — surface them for the Critic Reviewer or owner.

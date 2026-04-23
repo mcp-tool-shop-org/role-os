@@ -186,6 +186,22 @@ export const ROLE_ARTIFACT_CONTRACTS = {
     consumedBy: ["Feedback Synthesizer", "Docs Architect"],
     completionRule: "Each item classified. Priority assigned. Route to owner named.",
   },
+  "Red-Teamer": {
+    artifactType: "red-team-report",
+    requiredSections: [
+      "subject-under-test",
+      "attack-vectors",
+      "attempted-violations",
+      "catch-rate",
+      "uncaught-breaks",
+      "recommendations",
+    ],
+    optionalSections: ["attack-taxonomy", "severity-ranking", "diff-from-prior-run"],
+    requiredEvidence: [],
+    consumedBy: ["Critic Reviewer"],
+    completionRule:
+      "Subject under test named. At least 5 attack vectors across 4+ categories. Catch rate computed (caught/attempted). Uncaught breaks itemized with severity and minimal reproduction. Pipelines rejecting 0/N attacks flagged as suspect (probably untested rather than hardened).",
+  },
 
   // ── Brainstorm mission roles (v0.4) ─────────────────────────────────────────
   //

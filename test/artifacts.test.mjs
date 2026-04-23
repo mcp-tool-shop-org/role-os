@@ -40,6 +40,23 @@ describe("ROLE_ARTIFACT_CONTRACTS", () => {
     const contract = ROLE_ARTIFACT_CONTRACTS["Critic Reviewer"];
     assert.equal(contract.consumedBy.length, 0);
   });
+
+  it("Red-Teamer produces a red-team-report consumed by Critic Reviewer", () => {
+    const contract = ROLE_ARTIFACT_CONTRACTS["Red-Teamer"];
+    assert.ok(contract, "Red-Teamer role missing");
+    assert.equal(contract.artifactType, "red-team-report");
+    assert.ok(contract.consumedBy.includes("Critic Reviewer"));
+  });
+
+  it("Red-Teamer contract requires named subject and attack evidence", () => {
+    const contract = ROLE_ARTIFACT_CONTRACTS["Red-Teamer"];
+    assert.ok(contract.requiredSections.includes("subject-under-test"),
+      "Red-team reports must name the subject under test for reproducibility");
+    assert.ok(contract.requiredSections.includes("attack-vectors"));
+    assert.ok(contract.requiredSections.includes("attempted-violations"));
+    assert.ok(contract.requiredSections.includes("catch-rate"));
+    assert.ok(contract.requiredSections.includes("uncaught-breaks"));
+  });
 });
 
 describe("PACK_HANDOFF_CONTRACTS", () => {
