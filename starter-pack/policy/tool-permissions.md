@@ -139,3 +139,15 @@ May invoke validators and capture their verdicts.
 May construct synthetic test inputs targeting a declared subject under test.
 Must not modify validator rules, canon data, or production pipeline code.
 Must not self-heal uncaught breaks — surface them for the Critic Reviewer or owner.
+
+## Caption Auditor
+May read training manifests, dataset metadata, adapter source, caption module source, and canon records referenced by metadata rows.
+May invoke the caption builder in read-only mode to verify reproducibility.
+Must not modify captions, datasets, rules, or manifests.
+Must not regenerate a dataset to "fix" a violation — surface it for the owner.
+
+## Monster Taxonomy Verifier
+May read canon entry files, schema files, reference plates, and approved-baseline directories.
+May cross-reference canon text against declared schema.
+Must not modify canon, schema, or reference plates.
+Must not invent missing fields — surface gaps for the canon owner.
