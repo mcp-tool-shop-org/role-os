@@ -57,6 +57,37 @@ describe("ROLE_ARTIFACT_CONTRACTS", () => {
     assert.ok(contract.requiredSections.includes("catch-rate"));
     assert.ok(contract.requiredSections.includes("uncaught-breaks"));
   });
+
+  it("Caption Auditor produces a caption-audit consumed by Critic Reviewer", () => {
+    const contract = ROLE_ARTIFACT_CONTRACTS["Caption Auditor"];
+    assert.ok(contract, "Caption Auditor role missing");
+    assert.equal(contract.artifactType, "caption-audit");
+    assert.ok(contract.consumedBy.includes("Critic Reviewer"));
+  });
+
+  it("Caption Auditor contract requires sample reproducibility", () => {
+    const contract = ROLE_ARTIFACT_CONTRACTS["Caption Auditor"];
+    assert.ok(contract.requiredSections.includes("dataset-scope"));
+    assert.ok(contract.requiredSections.includes("rule-compliance-summary"));
+    assert.ok(contract.requiredSections.includes("violations"));
+    assert.ok(contract.requiredSections.includes("sampling-strategy"),
+      "Caption audit must declare how the sample was taken, for reproducibility");
+  });
+
+  it("Monster Taxonomy Verifier produces a taxonomy-audit consumed by Critic Reviewer", () => {
+    const contract = ROLE_ARTIFACT_CONTRACTS["Monster Taxonomy Verifier"];
+    assert.ok(contract, "Monster Taxonomy Verifier role missing");
+    assert.equal(contract.artifactType, "taxonomy-audit");
+    assert.ok(contract.consumedBy.includes("Critic Reviewer"));
+  });
+
+  it("Monster Taxonomy Verifier contract requires LoRA-separability verdict", () => {
+    const contract = ROLE_ARTIFACT_CONTRACTS["Monster Taxonomy Verifier"];
+    assert.ok(contract.requiredSections.includes("entries-audited"));
+    assert.ok(contract.requiredSections.includes("schema-compliance"));
+    assert.ok(contract.requiredSections.includes("lora-separability-assessment"),
+      "Taxonomy audit must declare whether the creature set is ready to train separately from humans");
+  });
 });
 
 describe("PACK_HANDOFF_CONTRACTS", () => {

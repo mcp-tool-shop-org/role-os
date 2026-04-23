@@ -202,6 +202,36 @@ export const ROLE_ARTIFACT_CONTRACTS = {
     completionRule:
       "Subject under test named. At least 5 attack vectors across 4+ categories. Catch rate computed (caught/attempted). Uncaught breaks itemized with severity and minimal reproduction. Pipelines rejecting 0/N attacks flagged as suspect (probably untested rather than hardened).",
   },
+  "Caption Auditor": {
+    artifactType: "caption-audit",
+    requiredSections: [
+      "dataset-scope",
+      "rule-compliance-summary",
+      "violations",
+      "sampling-strategy",
+      "recommendations",
+    ],
+    optionalSections: ["strategy-distribution", "trigger-inventory", "duplicate-inventory"],
+    requiredEvidence: [],
+    consumedBy: ["Critic Reviewer"],
+    completionRule:
+      "Dataset scope named with manifest/path + record count + caption strategy in force. Per-rule compliance rate computed across declared sample. Each violation cites rule, record id, and minimal caption evidence. Sampling strategy declared (full | N-sampled | stratified) for reproducibility. Recommendations tied to specific rule violations and priority-ranked. Refuses to PASS if 100% compliance with sample size < 5.",
+  },
+  "Monster Taxonomy Verifier": {
+    artifactType: "taxonomy-audit",
+    requiredSections: [
+      "entries-audited",
+      "schema-compliance",
+      "missing-fields",
+      "lora-separability-assessment",
+      "recommendations",
+    ],
+    optionalSections: ["lineage-coverage", "palette-consistency", "scale-distribution"],
+    requiredEvidence: [],
+    consumedBy: ["Critic Reviewer"],
+    completionRule:
+      "At least 5 entries audited (or all if fewer in scope). Schema compliance computed per required field with absolute counts and percentages. Missing fields enumerated per entry. LoRA-separability assessment declared explicitly (YES | NO | CONDITIONAL) with blockers named. Recommendations actionable. Entries declaring human_element: true in pure-monster scope are flagged as contamination risk.",
+  },
 
   // ── Brainstorm mission roles (v0.4) ─────────────────────────────────────────
   //
