@@ -15,6 +15,7 @@ import { missionCommand } from "../src/mission-cmd.mjs";
 import { auditCommand } from "../src/audit-cmd.mjs";
 import { swarmCommand } from "../src/swarm-cmd.mjs";
 import { startCommand } from "../src/entry-cmd.mjs";
+import { verifyCitationsCommand } from "../src/verify-citations-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
@@ -73,6 +74,7 @@ Usage:
   roleos swarm findings               List findings by severity
   roleos swarm approve                Approve the current feature gate
   roleos swarm verify                 Verify manifest and run state
+  roleos verify-citations <dispatch>  Verify a research dispatch's citations via prism (gate)
   roleos mission list                List all missions
   roleos mission show <key>          Show full mission detail
   roleos mission suggest <text>      Suggest a mission for a task
@@ -200,6 +202,9 @@ try {
       break;
     case "swarm":
       await swarmCommand(args);
+      break;
+    case "verify-citations":
+      await verifyCitationsCommand(args);
       break;
     case "mission":
       await missionCommand(args);

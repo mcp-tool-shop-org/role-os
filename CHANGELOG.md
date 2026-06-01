@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.4.0
+
+### Added
+
+#### Citation-Verification Gate — defers citation truthfulness to prism (an external, family-different verifier)
+
+- **`roleos verify-citations <dispatch.md|.json>` CLI** — extracts a research dispatch's citations, shells the external `prism verify` CLI (a family-different, reasoning-stripped citation verifier), and gates on the verdict. Exit `0` = accept, `20` = blocking (a cited paper did not resolve in arXiv/Crossref — likely fabricated), `10` = advisory (revise / escalate), `2` = no resolvable citations found.
+- **Citation gate module** (`src/verify-citations.mjs`, peer to `build-gate.mjs`) — deterministic, copy-only extraction (`extractCitations` — never invents an identifier); a three-tier gate keyed to the failure source (`gateCitations`): existence `fabricated` → **BLOCKING** hard halt, soft groundedness `contradicted` → advisory revise, low-confidence → advisory escalate. An unreachable verifier **escalates, never default-accepts** ("an unreachable gate is a closed gate"). Emits a receipt chained to prism's HMAC receipt (per-citation `source_sha256` pins → drift-detectable on re-run).
+- **Critic Reviewer** gains a citation-verification clause — for a research dispatch it runs the gate, treats blocking as reject and advisory as accept-with-notes / escalate, and never grades the citations itself.
+- **Design doc** (`design/citation-verification-runner.md`) — research-grounded by a 4-question study-swarm (`wf_20651368-297`), with a Standards-compliance section scoring 15/15 on the applicable standards (NAMED_COMPENSATORS a documented read-only skip): EXTERNAL_VERIFIER, ANDON_AUTHORITY, PIN_PER_STEP, DECOMPOSE_BY_SECRETS, and UNCERTAINTY_GATED_HUMANS (the contrastive escalate-to-human path).
+- Pairs with prism **v0.3.2**'s `prism verify --gate` (verdict-coded exit status).
+
+### Tests
+- 14 new tests (extraction; three-tier gate; runner with injected prism — accept / block / escalate / unreachable). Module is testable with no real prism shell-out.
+
 ## 2.3.1
 
 ### Changed
