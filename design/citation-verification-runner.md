@@ -99,9 +99,11 @@ dispatch.md (Research grounding prose)
     role-os receipt embeds prism's HMAC-receipt id + signature and content-hashes over
     (citations-hash + prism-signature + verdict), so neither the extracted citations nor prism's
     verdict can be altered without breaking the chain. Model the lineage in W3C PROV terms —
-    orchestrator Agent ≠ verifier Agent, explicit at the provenance layer. **Separate HMAC keys**
-    (RFC 2104): verifying prism's *inner* HMAC at the gate is what lets role-os trust a verdict it
-    did not compute. (v1 records the chain + content-hash; a separately-keyed outer HMAC is v2.)
+    orchestrator Agent ≠ verifier Agent, explicit at the provenance layer. **v1 RECORDS** prism's
+    receipt id + signature into a hash-chained role-os receipt (chain-of-custody); trust rests on
+    role-os having *spawned* the prism process locally — it does **not** cryptographically verify
+    prism's signature (that needs a shared key, RFC 2104). **Cryptographic inner-HMAC verification +
+    a separately-keyed outer receipt is v2** — the v1 receipt does not overstate its tamper-evidence.
 
 ## Locked design (v1)
 
@@ -121,8 +123,10 @@ dispatch.md (Research grounding prose)
   escalate, never accept.**
 
 **`roleos verify-citations <dispatch.md|.json> [--intent ...] [--provider ollama] [--json]`** —
-prints a human or JSON report; **exit 0 = accept, non-zero = needs attention** (blocking or
-advisory), so an operator/CI step can branch on it.
+prints a human or JSON report; **exit codes: 0 accept · 20 blocking (fabricated) · 30 escalate
+(verifier unreachable / low-confidence — a closed gate) · 10 revise · 2 no-citations**. Blocking is
+evaluated before accept (in `gateCitations` AND at the exit boundary) so the floor can never be
+shadowed by a drifted/contradictory top-level verdict.
 
 **Critic Reviewer** (`.claude/agents/core/critic-reviewer.md`) gains a checklist clause: for a
 research dispatch with a Research-grounding section, run `roleos verify-citations`; `blocking`
@@ -142,7 +146,7 @@ Scored against the six workflow standards (this gate IS a new workflow).
 | NAMED_COMPENSATORS | **skip** | Read-only: extraction reads the dispatch, prism verify is a read-only GET-backed call, the receipt is git-reversible. No irreversible world-touching write ⇒ no compensator (documented skip, per the rule's own example). |
 | DECOMPOSE_BY_SECRETS | 3 | `verify-citations.mjs` hides extraction + the prism shell-out + the tiering; the CLI command hides arg/output formatting; prism hides verification. One secret per module (Parnas). |
 | UNCERTAINTY_GATED_HUMANS | 3 | The Tier-3 **escalate** path is a genuine uncertainty-gated human checkpoint (gated on the verifier's own low confidence, not step count), with a **contrastive** message and a forcing function (view the source span before accepting). This is where role-os — the interactive layer — implements the standard prism (non-interactive) could only defer. |
-| EXTERNAL_VERIFIER | 3 | The whole point: role-os (generator) defers citation adjudication to prism, a **different model family**, reasoning-stripped, by construction (L1 routing). role-os never grades its own dispatch; it verifies prism's inner HMAC to trust a verdict it didn't compute. |
+| EXTERNAL_VERIFIER | 3 | The whole point: role-os (generator) defers citation adjudication to prism, a **different model family**, reasoning-stripped, by construction (L1 routing). role-os never grades its own dispatch — and enforces prism's existence floor *itself* (blocking dominates accept). It **records** prism's signed receipt (chain-of-custody; cryptographic inner-HMAC verification is a v2 item). |
 
 ### Irreversible actions & compensators
 None. The gate **reads** a dispatch, **shells a read-only verifier** (prism verify resolves
@@ -157,5 +161,6 @@ gate; chained content-hash receipt with drift detection; `roleos verify-citation
 Reviewer checklist clause; prism verdict exit codes; tests against a mocked prism.
 
 **v2:** LLM extraction fallback for off-template bullets (two-stage); bounded auto-revise loop on
-the soft groundedness tier; a separately-keyed outer HMAC receipt + VCR-style request/response
-cassette for full offline replay; a formal `citationGate` stage in the mission state machine.
+the soft groundedness tier; **cryptographic verification of prism's inner HMAC** (needs a shared
+key) + a separately-keyed outer HMAC receipt + VCR-style request/response cassette for full offline
+replay; a formal `citationGate` stage in the mission state machine.

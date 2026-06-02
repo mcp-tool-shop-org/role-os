@@ -1,9 +1,10 @@
 /**
  * `roleos verify-citations <dispatch.md|.json>` — run the citation gate and report.
  *
- * Exit codes: 0 = accept, 20 = blocking (a cited paper did not resolve — likely fabricated),
- * 10 = advisory (revise / escalate), 2 = no resolvable citations found. Non-zero = needs
- * attention, so a mission step, CI job, or operator can branch on it.
+ * Exit codes: 0 accept · 20 blocking (a cited paper did not resolve — likely fabricated) · 30
+ * escalate (verifier unreachable / low-confidence — a closed gate; NEVER accept) · 10 revise ·
+ * 2 no resolvable citations found. Non-zero = needs attention, so a mission step, CI job, or
+ * operator can branch on it.
  */
 
 import { writeFileSync } from "node:fs";
@@ -38,8 +39,8 @@ export async function verifyCitationsCommand(args) {
     try {
       writeFileSync(out, JSON.stringify(result.receipt, null, 2));
       result.receipt_path = out;
-    } catch {
-      /* receipt persistence is best-effort */
+    } catch (err) {
+      console.error(`warning: could not write the citation receipt to ${out}: ${err.message}`);
     }
   }
 
@@ -49,10 +50,21 @@ export async function verifyCitationsCommand(args) {
     printReport(dispatch, result);
   }
 
-  if (result.pass) process.exit(0);
-  if (result.blocking) process.exit(20);
-  if (result.reason === "no_citations") process.exit(2);
-  process.exit(10);
+  process.exit(exitCodeFor(result));
+}
+
+/**
+ * Map a gate result to the shell exit code (the gate's machine contract). Blocking is checked
+ * FIRST so a (contradictory) accept can never shadow the hard halt.
+ *   20 = blocking (a fabricated citation) · 0 = accept · 2 = no citations ·
+ *   30 = escalate (verifier unreachable / low-confidence — a closed gate) · 10 = revise.
+ */
+export function exitCodeFor(result) {
+  if (result.blocking) return 20;
+  if (result.pass) return 0;
+  if (result.reason === "no_citations") return 2;
+  if (result.verdict === "escalate") return 30;
+  return 10;
 }
 
 function parseArgs(args) {

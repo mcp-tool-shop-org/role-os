@@ -1,6 +1,10 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { extractCitations, gateCitations, runCitationGate } from "../src/verify-citations.mjs";
+import { exitCodeFor } from "../src/verify-citations-cmd.mjs";
 
 // ── Fixtures ───────────────────────────────────────────────────────────────────────────────────
 
@@ -12,6 +16,13 @@ const SAMPLE = `## Research grounding
 4. This is just a prose sentence with no citation in it.
 5. **A claim with a non-resolvable source.** Some Author 2020 (RFC 9110). Implication: surfaced for manual review.
 `;
+
+// All-resolvable, nothing unparsed — a dispatch that should cleanly ACCEPT.
+const CLEAN_SAMPLE = [
+  "1. **Autoregressive LLMs cannot self-verify.** Kambhampati et al. 2024 (arXiv:2402.01817).",
+  "2. **Self-correction degrades reasoning.** Huang et al. 2023 (arXiv:2310.01798).",
+  "3. **Hash-chaining is tamper-evident.** Haber & Stornetta 1991 (DOI:10.1007/BF00196791).",
+].join("\n");
 
 function prismResponse(over = {}) {
   return {
@@ -139,7 +150,7 @@ describe("gateCitations", () => {
 
 describe("runCitationGate", () => {
   it("accepts and emits a receipt chained to prism's HMAC receipt", () => {
-    const r = runCitationGate(SAMPLE, { exec: execReturning(prismResponse()) });
+    const r = runCitationGate(CLEAN_SAMPLE, { exec: execReturning(prismResponse()) });
     assert.equal(r.pass, true);
     assert.equal(r.verdict, "accept");
     assert.equal(r.receipt.prism_receipt.id, "prism-abc");
@@ -204,5 +215,90 @@ describe("runCitationGate", () => {
     });
     assert.equal(r.verdict, "refuse");
     assert.equal(r.blocking, true);
+  });
+});
+
+// ── Adversarial-pass regression fixes ───────────────────────────────────────────────────────────
+
+describe("extractCitations — arXiv URL forms (regression: URL bypass of the existence floor)", () => {
+  it("extracts arXiv cited as a URL (abs / pdf / old-style)", () => {
+    const md = [
+      "1. **A.** Smith 2024 (https://arxiv.org/abs/2402.01817).",
+      "2. **B.** Jones 2023 (arxiv.org/pdf/2310.01798).",
+      "3. **C.** Lee 2009 (https://arxiv.org/abs/hep-th/9901001).",
+    ].join("\n");
+    const ids = extractCitations(md).citations.map((c) => c.identifier);
+    assert.ok(ids.includes("arXiv:2402.01817"), "abs URL");
+    assert.ok(ids.includes("arXiv:2310.01798"), "pdf URL");
+    assert.ok(ids.includes("arXiv:hep-th/9901001"), "old-style URL");
+  });
+
+  it("surfaces a 2nd identifier in one item to unparsed (no silent drop)", () => {
+    const md = "1. **Two.** Smith 2024 (arXiv:2402.01817); Jones 2023 (arXiv:2310.01798).";
+    const { citations, unparsed } = extractCitations(md);
+    assert.equal(citations.length, 1);
+    assert.equal(citations[0].identifier, "arXiv:2402.01817");
+    assert.ok(unparsed.some((u) => u.includes("multiple sources")));
+  });
+});
+
+describe("gateCitations — role-os enforces the floor (regression: pass shadowed blocking)", () => {
+  it("a fabricated citation BLOCKS even when prism's top-level verdict is accept", () => {
+    const g = gateCitations(
+      prismResponse({
+        verdict: "accept",
+        citation_results: [{ citation_id: "c1", existence: "fabricated", verdict: "refuse" }],
+      }),
+    );
+    assert.equal(g.blocking, true);
+    assert.equal(g.pass, false);
+    assert.equal(g.verdict, "refuse"); // blocking dominates the contradictory accept
+  });
+
+  it("accept with NO adjudicated citations is not trusted (-> escalate)", () => {
+    const g = gateCitations({ verdict: "accept", citation_results: [] });
+    assert.equal(g.pass, false);
+    assert.equal(g.verdict, "escalate");
+    assert.equal(g.reason, "incomplete_adjudication");
+  });
+});
+
+describe("runCitationGate — unparsed safety net + exit contract", () => {
+  it("a non-empty unparsed list downgrades a pass to advisory", () => {
+    const md = [
+      "1. **Real.** Kambhampati 2024 (arXiv:2402.01817).",
+      "2. **Unresolvable.** Some Author 2020 (RFC 9110).",
+    ].join("\n");
+    const r = runCitationGate(md, { exec: execReturning(prismResponse()) });
+    assert.equal(r.pass, false);
+    assert.equal(r.advisory, true);
+    assert.equal(r.reason, "unparsed_citations");
+    assert.ok(r.unparsed.length >= 1);
+  });
+
+  it("JSON input surfaces a claim with no resolvable id to unparsed (not dropped)", () => {
+    const dir = mkdtempSync(join(tmpdir(), "cite-json-"));
+    const f = join(dir, "c.json");
+    writeFileSync(
+      f,
+      JSON.stringify([
+        { id: "a", claim: "real", identifier: "arXiv:2402.01817" },
+        { id: "b", claim: "no resolvable id here", identifier: "RFC 9110" },
+      ]),
+    );
+    const r = runCitationGate(f, { exec: execReturning(prismResponse()) });
+    rmSync(dir, { recursive: true, force: true });
+    assert.ok(r.unparsed.length >= 1);
+  });
+});
+
+describe("exitCodeFor — the gate's machine contract (blocking-first)", () => {
+  it("maps each state, with blocking shadowing a contradictory pass", () => {
+    assert.equal(exitCodeFor({ blocking: true, pass: false }), 20);
+    assert.equal(exitCodeFor({ blocking: true, pass: true }), 20);
+    assert.equal(exitCodeFor({ pass: true }), 0);
+    assert.equal(exitCodeFor({ pass: false, reason: "no_citations" }), 2);
+    assert.equal(exitCodeFor({ pass: false, verdict: "escalate" }), 30);
+    assert.equal(exitCodeFor({ pass: false, verdict: "revise" }), 10);
   });
 });

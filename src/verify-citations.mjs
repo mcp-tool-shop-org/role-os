@@ -20,8 +20,10 @@ import { tmpdir } from "node:os";
 import { createHash } from "node:crypto";
 
 // ── Identifier patterns (copy-only — the extractor never invents an identifier) ──────────────
+// Matches `arXiv:2402.01817`, `arXiv 2402.01817`, AND URL forms `arxiv.org/abs/2402.01817`,
+// `.../pdf/...`, versioned, and old-style `hep-th/9901001` (the most common real citation format).
 const ARXIV =
-  /arxiv[:\s/]+(?:abs\/)?(\d{4}\.\d{4,5}(?:v\d+)?|[a-z-]+(?:\.[A-Z]{2})?\/\d{7}(?:v\d+)?)/i;
+  /arxiv(?:\.org)?[:\s/]+(?:(?:abs|pdf)\/)?(\d{4}\.\d{4,5}(?:v\d+)?|[a-z-]+(?:\.[A-Z]{2})?\/\d{7}(?:v\d+)?)/i;
 const DOI = /\b(10\.\d{4,9}\/[^\s)\]}"'<>]+)/;
 
 /**
@@ -59,8 +61,19 @@ export function extractCitations(markdown) {
       authors: extractAuthors(raw),
       year: extractYear(raw),
     });
+    // Surface a multi-citation item (only the first identifier is verified) so the miss is visible.
+    if (countIdentifiers(raw) > 1) {
+      unparsed.push(`(item cites multiple sources — only the first was verified) ${oneLine(raw).slice(0, 120)}`);
+    }
   }
   return { citations, unparsed };
+}
+
+/** Count distinct arXiv/DOI identifiers in an item — flags multi-cite items that drop extras. */
+function countIdentifiers(text) {
+  const ax = text.match(new RegExp(ARXIV.source, "ig")) || [];
+  const di = text.match(new RegExp(DOI.source, "ig")) || [];
+  return ax.length + di.length;
 }
 
 /** Match the first resolvable identifier (arXiv first, then DOI). Returns null if none. */
@@ -150,7 +163,8 @@ function looksLikeCitation(raw) {
  */
 
 /**
- * Map a parsed `prism verify` response to the three-tier gate.
+ * Map a parsed `prism verify` response to the three-tier gate. role-os enforces the existence
+ * floor itself: blocking dominates accept, and an accept with no adjudicated results is not trusted.
  * @param {object} prismResponse  parsed VerifyResponse JSON, or `{ error: {...} }`
  * @returns {GateResult}
  */
@@ -170,7 +184,7 @@ export function gateCitations(prismResponse) {
       citations: [],
     };
   }
-  const verdict = prismResponse.verdict || "escalate";
+  const rawVerdict = prismResponse.verdict || "escalate";
   const citations = (prismResponse.citation_results || []).map((cr) => ({
     id: cr.citation_id ?? null,
     identifier: cr.identifier ?? null,
@@ -181,9 +195,29 @@ export function gateCitations(prismResponse) {
     detail: cr.detail,
     span: cr.supporting_span ?? null,
   }));
+  // role-os enforces the deterministic floor ITSELF (it does not delegate it to prism's top-level
+  // aggregation): any fabricated-existence citation BLOCKS and dominates a top-level "accept", so a
+  // contradictory or drifted prism response can never shadow the hard halt.
   const blocking = citations.some((c) => c.existence === "fabricated");
-  const pass = verdict === "accept";
-  return { verdict, pass, blocking, advisory: !pass && !blocking, citations };
+  if (blocking) {
+    return { verdict: "refuse", pass: false, blocking: true, advisory: false, citations };
+  }
+  // A clean accept must actually adjudicate citations — an "accept" carrying ZERO results is not
+  // trusted (prism stdout is an untrusted boundary input). (Exact submitted-vs-adjudicated count
+  // cross-check is a v2 hardening.)
+  if (rawVerdict === "accept" && citations.length === 0) {
+    return {
+      verdict: "escalate",
+      pass: false,
+      blocking: false,
+      advisory: true,
+      reason: "incomplete_adjudication",
+      detail: "prism returned no adjudicated citations for an accept verdict",
+      citations,
+    };
+  }
+  const pass = rawVerdict === "accept";
+  return { verdict: rawVerdict, pass, blocking: false, advisory: !pass, citations };
 }
 
 function blockedResult(verdict, reason, detail) {
@@ -257,7 +291,19 @@ export function runCitationGate(input, options = {}) {
     };
   }
 
-  const gate = gateCitations(result.response);
+  let gate = gateCitations(result.response);
+  // A clean accept also requires that extraction left NO citation-like item unverified — a non-empty
+  // `unparsed` (e.g. a citation format the extractor missed) must not pass as fully verified.
+  if (gate.pass && unparsed.length > 0) {
+    gate = {
+      ...gate,
+      verdict: "escalate",
+      pass: false,
+      advisory: true,
+      reason: "unparsed_citations",
+      detail: `${unparsed.length} citation-like item(s) could not be parsed/resolved`,
+    };
+  }
   const receipt = buildReceipt({ input, artifact, response: result.response, gate });
   return { ...gate, unparsed, receipt, duration: Date.now() - start };
 }
@@ -276,8 +322,16 @@ function loadCitations(input) {
       } catch {
         return { citations: [], unparsed: ["(.json file was not valid JSON)"] };
       }
-      const citations = (Array.isArray(arr) ? arr : []).map(normalizeJsonCitation).filter(Boolean);
-      return { citations, unparsed: [] };
+      const citations = [];
+      const unparsed = [];
+      for (const item of Array.isArray(arr) ? arr : []) {
+        const norm = normalizeJsonCitation(item);
+        if (norm) citations.push(norm);
+        else if (item && typeof item === "object" && (item.claim || item.finding)) {
+          unparsed.push(oneLine(JSON.stringify(item)).slice(0, 160)); // a claim with no resolvable id
+        }
+      }
+      return { citations, unparsed };
     }
     return extractCitations(content);
   }
