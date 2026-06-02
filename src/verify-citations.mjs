@@ -325,13 +325,15 @@ function shellPrism({ prismCmd, file, intent, callerFamily, provider, timeout, r
 /** Default exec — execFileSync, capturing stdout even when prism exits non-zero (refuse/error). */
 function defaultExec(cmd, args, { timeout, cwd }) {
   try {
+    // No shell: execFileSync passes args verbatim (the intent string contains spaces).
+    // `cmd` must be an executable, not a shell builtin — on Windows set PRISM_CMD to the full
+    // path of prism.exe (a real PE shim, not a .cmd), or use a POSIX bare name on PATH.
     const stdout = execFileSync(cmd, args, {
       cwd,
       timeout,
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
       maxBuffer: 16 * 1024 * 1024,
-      shell: process.platform === "win32", // resolve .cmd/.exe shims on Windows; args are ours
     });
     return { status: 0, stdout, stderr: "" };
   } catch (err) {
