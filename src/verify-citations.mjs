@@ -196,6 +196,7 @@ export function gateCitations(prismResponse) {
     detail: cr.detail,
     span: cr.supporting_span ?? null,
     source_title: cr.source_title ?? null,
+    source_abstract: cr.source_abstract ?? null,
   }));
   // role-os enforces the deterministic floor ITSELF (it does not delegate it to prism's top-level
   // aggregation): any fabricated-existence citation BLOCKS and dominates a top-level "accept", so a

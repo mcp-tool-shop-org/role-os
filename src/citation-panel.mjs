@@ -29,16 +29,18 @@ export const DEFAULT_OFFLOAD_SCRIPT =
 
 /**
  * Build the evidence string the panel judges the claim against: prism's retrieved source title +
- * the single supporting span prism surfaced. Thin by design — if even prism's OWN best span does
- * not entail the claim under a strict panel, that is exactly the false-confirm worth catching.
- * (Surfacing prism's full retrieved abstract would strengthen this — tracked as a prism follow-up.)
+ * its FULL retrieved abstract (prism v0.6+ surfaces `source_abstract`), falling back to the single
+ * supporting span on older prism builds. Judging against the whole abstract — not one sentence —
+ * stops the panel from escalating a faithful claim that the abstract entails but prism's single
+ * span does not (the wave-6 e2e Kambhampati false-escalation). A strict panel that STILL cannot
+ * entail the claim from the full abstract is exactly the false-confirm worth catching.
  * @returns {string} evidence, or "" when prism surfaced nothing to judge against.
  */
-export function buildEvidence({ source_title, span } = {}) {
+export function buildEvidence({ source_title, source_abstract, span } = {}) {
   const title = (source_title || "").trim();
-  const s = (span || "").trim();
-  if (!title && !s) return "";
-  return [title ? `Title: ${title}` : "", s].filter(Boolean).join("\n\n");
+  const body = (source_abstract || "").trim() || (span || "").trim();
+  if (!title && !body) return "";
+  return [title ? `Title: ${title}` : "", body].filter(Boolean).join("\n\n");
 }
 
 /** Default exec — execFileSync, capturing stdout even on a non-zero exit, no shell (args verbatim). */

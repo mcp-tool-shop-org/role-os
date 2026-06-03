@@ -26,6 +26,8 @@ function prismSupported(over = {}) {
         action: "OK",
         detail: "source supports the claim",
         source_title: "LLMs Can't Plan, But Can Help Planning in LLM-Modulo Frameworks",
+        source_abstract:
+          "We argue that autoregressive LLMs cannot self-verify; the LLM-Modulo framework pairs the LLM with external sound critics to close the loop.",
         supporting_span: "We argue LLMs cannot self-verify their own outputs and need an external sound verifier.",
       },
     ],
@@ -53,6 +55,14 @@ describe("buildEvidence", () => {
   it("title only / span only", () => {
     assert.equal(buildEvidence({ source_title: "T", span: "" }), "Title: T");
     assert.equal(buildEvidence({ source_title: null, span: "S" }), "S");
+  });
+  it("prefers the FULL abstract over the span when prism surfaces it (v0.6+)", () => {
+    assert.equal(buildEvidence({ source_title: "T", source_abstract: "A", span: "S" }), "Title: T\n\nA");
+    assert.equal(buildEvidence({ source_abstract: "A", span: "S" }), "A");
+  });
+  it("falls back to the span when no abstract (older prism builds — backward compatible)", () => {
+    assert.equal(buildEvidence({ source_title: "T", source_abstract: "", span: "S" }), "Title: T\n\nS");
+    assert.equal(buildEvidence({ source_title: "T", span: "S" }), "Title: T\n\nS");
   });
   it("nothing -> empty (cannot judge)", () => {
     assert.equal(buildEvidence({ source_title: "", span: null }), "");
@@ -175,6 +185,24 @@ describe("runCitationGate with --local-panel", () => {
     assert.deepEqual(r.receipt.local_panel.seats, ["qwen3-4b", "qwen3-14b", "mistral-nemo-12b"]);
     assert.equal(r.receipt.local_panel.disagreements.length, 0);
     assert.equal(exitCodeFor(r), 0);
+  });
+
+  it("panel judges against prism's FULL abstract, not just the span (Move #2 wiring)", () => {
+    let seenEvidence = "";
+    const capture = (_cmd, args) => {
+      const i = args.indexOf("--evidence");
+      seenEvidence = i >= 0 ? args[i + 1] : "";
+      return { status: 0, stdout: JSON.stringify({ verdict: "supported", mode: "panel", seats: [] }), stderr: "" };
+    };
+    const r = runCitationGate(ONE, {
+      exec: prismExec(prismSupported()),
+      localPanel: true,
+      offloadExec: capture,
+    });
+    assert.equal(r.pass, true);
+    // The evidence the panel saw carries prism's full retrieved abstract — a phrase that appears in
+    // source_abstract but NOT in supporting_span proves the abstract (not the span) was used.
+    assert.match(seenEvidence, /pairs the LLM with external sound critics/);
   });
 
   it("prism accept + panel refuted -> gate DOWNGRADED to escalate (exit 30)", () => {
