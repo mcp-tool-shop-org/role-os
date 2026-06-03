@@ -1,13 +1,13 @@
 # Changelog
 
-## [Unreleased]
+## 2.6.0
 
 ### Changed
 
 #### `verify-citations --local-panel` now judges against prism's FULL abstract (not just the span)
 
-- The local panel previously re-checked each `supported` citation against only prism's `source_title` + the single `supporting_span` the groundedness lens surfaced. A faithful claim that the *full* abstract entails — but no single span does — was escalated as a panel disagreement (the wave-6 end-to-end Kambhampati false-escalation). `buildEvidence` now prefers prism's full `source_abstract` (surfaced by prism **v0.6+**), falling back to the span on older prism builds — so faithful claims land cleanly while genuine false-confirms are still caught.
-- `gateCitations` threads `source_abstract` through from prism's `citation_results`. Requires prism ≥ 0.6 to take effect; older prism builds omit the field and the span fallback preserves prior behavior. Pairs with `tensor-engine-knowledge` wave-9 (the 3rd verifier family + the full-abstract e2e).
+- The local panel previously re-checked each `supported` citation against only prism's `source_title` + the single `supporting_span` the groundedness lens surfaced. A faithful claim that the *full* abstract entails — but no single span does — was escalated as a panel disagreement (the wave-6 end-to-end Kambhampati false-escalation). `buildEvidence` now prefers prism's full `source_abstract` (surfaced by prism **v1.0+**), falling back to the span on older prism builds — so faithful claims land cleanly while genuine false-confirms are still caught.
+- `gateCitations` threads `source_abstract` through from prism's `citation_results`. Requires prism ≥ 1.0 to take effect; older prism builds omit the field and the span fallback preserves prior behavior. Pairs with `tensor-engine-knowledge` wave-9 (the 3rd verifier family + the full-abstract e2e).
 
 ### Tests
 - 3 new tests (`buildEvidence` abstract-preference + span fallback; an end-to-end assertion that the panel's evidence carries the full abstract). **1199 total, all green.**

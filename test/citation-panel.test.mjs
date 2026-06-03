@@ -56,7 +56,7 @@ describe("buildEvidence", () => {
     assert.equal(buildEvidence({ source_title: "T", span: "" }), "Title: T");
     assert.equal(buildEvidence({ source_title: null, span: "S" }), "S");
   });
-  it("prefers the FULL abstract over the span when prism surfaces it (v0.6+)", () => {
+  it("prefers the FULL abstract over the span when prism surfaces it (v1.0+)", () => {
     assert.equal(buildEvidence({ source_title: "T", source_abstract: "A", span: "S" }), "Title: T\n\nA");
     assert.equal(buildEvidence({ source_abstract: "A", span: "S" }), "A");
   });

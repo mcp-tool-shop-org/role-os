@@ -29,7 +29,7 @@ export const DEFAULT_OFFLOAD_SCRIPT =
 
 /**
  * Build the evidence string the panel judges the claim against: prism's retrieved source title +
- * its FULL retrieved abstract (prism v0.6+ surfaces `source_abstract`), falling back to the single
+ * its FULL retrieved abstract (prism v1.0+ surfaces `source_abstract`), falling back to the single
  * supporting span on older prism builds. Judging against the whole abstract — not one sentence —
  * stops the panel from escalating a faithful claim that the abstract entails but prism's single
  * span does not (the wave-6 e2e Kambhampati false-escalation). A strict panel that STILL cannot
