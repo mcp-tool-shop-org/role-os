@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.5.0
+
+### Added
+
+#### Local-panel seat — a second, family-different verifier for `verify-citations`, runnable locally for free
+
+- **`roleos verify-citations --local-panel`** — adds a local grounded-entailment PANEL (the `offload` CLI on **Qwen3-4B + Qwen3-14B + Mistral-Nemo-12B** via llama-swap) as a SECOND verifier seat, decorrelated from the Claude generator by construction (no Anthropic model in the panel) and from prism's single groundedness model (3 seats, ≥2 families, conservative majority). It re-checks each citation prism marked `supported` against prism's own retrieved evidence (`source_title` + `supporting_span`).
+- **Monotone-tightening** — the panel can only downgrade a passing gate to **escalate** (`local_panel_disagreement`), never loosen one; the deterministic existence floor (`fabricated` → blocking) always dominates, and a non-passing gate is left untouched. A panel that is requested but unreachable **escalates** (`local_panel_unreachable`) — the same closed-gate invariant prism uses.
+- **Why it earns its seat (EXTERNAL_VERIFIER, now local + zero-cost):** the panel's measured property is **zero false-confirms** — a 3-seat conservative majority never stamps a false claim "supported." On a 16-case real-arXiv citation set, `mistral-nemo-12b` solo false-confirmed a refuted claim (inverting arXiv:2404.13076's finding); the panel held it at `insufficient`. Receipt + dataset: `tensor-engine-knowledge/verifier/citation-panel-receipt.json` (study-swarm wave-6, recipe #156).
+- **Receipt** gains a `local_panel` block (PIN_PER_STEP): the exact seat models used, per-citation panel verdicts, and any disagreement that downgraded the gate — folded into the receipt's hash chain via the verdict + a panel digest.
+- New module `src/citation-panel.mjs` (`runOffloadPanel`, `applyLocalPanel`, `buildEvidence`); injectable `offloadExec` for tests. **Off by default** — opt in with `--local-panel` (needs llama-swap up + `offload.py` on the rig; `OFFLOAD_PYTHON` / `OFFLOAD_SCRIPT` / `--llamaswap-base` configurable).
+
+### Tests
+- 16 new tests (evidence building; the panel runner — agree / refuted / insufficient / no-evidence / unreachable / garbage; monotone `applyLocalPanel`; end-to-end `runCitationGate --local-panel` incl. the PIN'd receipt + blocking-skips-panel). **1196 total, all green.**
+
 ## 2.4.0
 
 ### Added

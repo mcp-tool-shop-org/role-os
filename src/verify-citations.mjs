@@ -18,6 +18,7 @@ import { mkdtempSync, writeFileSync, rmSync, readFileSync, existsSync } from "no
 import { join, extname } from "node:path";
 import { tmpdir } from "node:os";
 import { createHash } from "node:crypto";
+import { runOffloadPanel, applyLocalPanel, buildEvidence } from "./citation-panel.mjs";
 
 // ── Identifier patterns (copy-only — the extractor never invents an identifier) ──────────────
 // Matches `arXiv:2402.01817`, `arXiv 2402.01817`, AND URL forms `arxiv.org/abs/2402.01817`,
@@ -194,6 +195,7 @@ export function gateCitations(prismResponse) {
     action: cr.action,
     detail: cr.detail,
     span: cr.supporting_span ?? null,
+    source_title: cr.source_title ?? null,
   }));
   // role-os enforces the deterministic floor ITSELF (it does not delegate it to prism's top-level
   // aggregation): any fabricated-existence citation BLOCKS and dominates a top-level "accept", so a
@@ -251,6 +253,13 @@ export function runCitationGate(input, options = {}) {
     retries = 1,
     exec = defaultExec,
     cwd = process.cwd(),
+    // Local-panel seat (opt-in): a family-different entailment panel (offload, on local models)
+    // re-checks prism's `supported` citations. Monotone-tightening; off by default.
+    localPanel = false,
+    offloadExec,
+    offloadPython,
+    offloadScript,
+    llamaswapBase,
   } = options;
 
   const start = Date.now();
@@ -304,8 +313,47 @@ export function runCitationGate(input, options = {}) {
       detail: `${unparsed.length} citation-like item(s) could not be parsed/resolved`,
     };
   }
-  const receipt = buildReceipt({ input, artifact, response: result.response, gate });
+  // Local-panel seat: re-check prism's `supported` citations with a family-different entailment
+  // panel on local models. Runs only when requested AND the gate is still passing — it can only
+  // tighten, so there is nothing to challenge on an already-blocking/advisory gate.
+  let panel = null;
+  if (localPanel && gate.pass) {
+    const supported = buildPanelInput(citations, gate.citations);
+    if (supported.length > 0) {
+      panel = runOffloadPanel(supported, {
+        ...(offloadExec ? { exec: offloadExec } : {}),
+        ...(offloadPython ? { python: offloadPython } : {}),
+        ...(offloadScript ? { script: offloadScript } : {}),
+        ...(llamaswapBase ? { base: llamaswapBase } : {}),
+        cwd,
+      });
+      gate = applyLocalPanel(gate, panel);
+    }
+  }
+
+  const receipt = buildReceipt({ input, artifact, response: result.response, gate, panel });
   return { ...gate, unparsed, receipt, duration: Date.now() - start };
+}
+
+/**
+ * Build the local-panel input: prism's `supported` citations only (the panel can only challenge an
+ * accept), joined to their claim (from the artifact) + the evidence prism retrieved (title + span).
+ */
+function buildPanelInput(artifactCitations, gateCitations) {
+  const claimById = new Map();
+  const claimByIdent = new Map();
+  for (const c of artifactCitations) {
+    if (c.id) claimById.set(c.id, c.claim);
+    if (c.identifier) claimByIdent.set(c.identifier, c.claim);
+  }
+  const out = [];
+  for (const gc of gateCitations) {
+    if (gc.finding_match !== "supported") continue;
+    const claim = claimById.get(gc.id) ?? claimByIdent.get(gc.identifier) ?? "";
+    if (!claim) continue;
+    out.push({ id: gc.id, identifier: gc.identifier, claim, evidence: buildEvidence(gc) });
+  }
+  return out;
 }
 
 function loadCitations(input) {
@@ -419,11 +467,17 @@ function tryParseJson(text) {
   }
 }
 
-function buildReceipt({ input, artifact, response, gate }) {
+function buildReceipt({ input, artifact, response, gate, panel = null }) {
   const citationsHash = sha256(JSON.stringify(artifact));
   const prismReceipt = response.receipt || {};
   const pins = Array.isArray(prismReceipt.retrieval_pins) ? prismReceipt.retrieval_pins : [];
-  const chain = sha256([citationsHash, prismReceipt.signature || "", gate.verdict].join("|"));
+  // The local-panel seat folds into the chain via gate.verdict (a disagreement downgrades it to
+  // escalate) AND via its own digest, so neither prism's verdict nor the panel's can be altered
+  // without breaking the chain.
+  const panelDigest = panel
+    ? sha256(JSON.stringify({ seats: panel.seats, perCitation: panel.perCitation }))
+    : "";
+  const chain = sha256([citationsHash, prismReceipt.signature || "", gate.verdict, panelDigest].join("|"));
   return {
     schema: "roleos-citation-receipt/v1",
     kind: "citation-verification",
@@ -448,6 +502,17 @@ function buildReceipt({ input, artifact, response, gate }) {
       source_sha256: p.source_sha256,
       existence: p.existence,
     })),
+    // Local-panel seat (when run): the actual seat models (PIN_PER_STEP), what each citation got,
+    // and any disagreement with prism that downgraded the gate.
+    local_panel: panel
+      ? {
+          seats: panel.seats,
+          reachable: panel.reachable,
+          checked: panel.checked,
+          per_citation: panel.perCitation,
+          disagreements: panel.disagreements,
+        }
+      : null,
     chain_sha256: chain,
   };
 }
