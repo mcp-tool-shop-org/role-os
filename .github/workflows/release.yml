@@ -1,0 +1,33 @@
+name: Release
+
+# Publish to npm via Trusted Publishing (OIDC) when a GitHub release is published.
+# No long-lived NODE_AUTH_TOKEN — the npm Trusted Publisher for mcp-tool-shop-org/role-os is
+# configured against this workflow (release.yml); npm CLI >= 11.5 performs the OIDC exchange.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write # OIDC token for npm Trusted Publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Use an OIDC-capable npm (Trusted Publishing needs npm >= 11.5)
+        run: npm install -g npm@latest
+      - run: npm ci
+      - run: npm test
+      - name: Publish to npm via Trusted Publishing (OIDC)
+        run: npm publish --provenance --access public
