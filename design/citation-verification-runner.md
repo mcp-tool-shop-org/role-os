@@ -135,18 +135,47 @@ research dispatch with a Research-grounding section, run `roleos verify-citation
 **prism enhancement (paired):** verdict-specific CLI exit codes (`0`/`10`/`20`/`30` =
 accept/revise/refuse/escalate) so the shell gate branches cleanly.
 
+## Local-panel seat (added v2.5.0) — a second family-different verifier, local + free
+
+prism is the family-different verifier of record (retrieval: the deterministic existence floor +
+its own groundedness lens). `--local-panel` adds a SECOND seat decorrelated from BOTH the Claude
+generator AND prism's single groundedness model: a 3-seat conservative-majority entailment panel
+running entirely on local models (the `offload` CLI — `qwen3-4b` + `qwen3-14b` + `mistral-nemo-12b`
+on llama-swap). It re-judges each citation prism marked `supported`, using prism's OWN retrieved
+evidence (`source_title` + `supporting_span`) as the source — so if even prism's best span does not
+entail the claim under a strict panel, that is the false-confirm worth catching.
+
+- **Monotone-tightening (the safety invariant).** The panel can only downgrade a *passing* gate to
+  `escalate` (`local_panel_disagreement`); it never loosens, never overrides the existence floor
+  (blocking dominates), and never runs on an already non-passing gate. A requested-but-unreachable
+  panel escalates (`local_panel_unreachable`) — the closed-gate rule, applied to the seat.
+- **Why it is sound to add (not just more models).** The panel's measured property (tensor-engine-
+  knowledge #156, re-proven wave-6 on a real arXiv set in `verifier/citation-panel-receipt.json`) is
+  **zero false-confirms**: a 3-seat conservative majority never stamps a false claim "supported,"
+  even when a single seat slips (on that set `mistral-nemo-12b` solo false-confirmed a refuted claim
+  inverting arXiv:2404.13076; the panel held it at `insufficient`). So a panel disagreement on a
+  prism `supported` is a real signal, and routing it to a human with a contrastive message is exactly
+  UNCERTAINTY_GATED_HUMANS. This realizes `multi-lens ≥ 3` with a *decorrelated mechanism* (an
+  entailment panel) rather than redundant copies of prism's own lens.
+- **Receipt.** A `local_panel` block records the exact seat models (PIN_PER_STEP), per-citation panel
+  verdicts, and disagreements; the panel digest + the (possibly-downgraded) verdict fold into the
+  receipt hash chain.
+- **Module.** `src/citation-panel.mjs` — pure/injectable (`offloadExec`), mirroring verify-citations'
+  exec discipline. Off by default. Evidence is presently prism's single span; surfacing prism's full
+  retrieved abstract would strengthen the panel (a prism follow-up).
+
 ## Standards compliance
 
 Scored against the six workflow standards (this gate IS a new workflow).
 
 | Standard | Score | Evidence |
 |---|---|---|
-| PIN_PER_STEP | 3 | The gate pins the prism CLI invocation (command + caller-family + provider) and emits a receipt chaining prism's HMAC receipt (id + signature) + the citations content-hash; prism's `retrieval_pins` (query + `source_sha256`) make the retrieval replayable + drift-detectable. |
+| PIN_PER_STEP | 3 | The gate pins the prism CLI invocation (command + caller-family + provider) and emits a receipt chaining prism's HMAC receipt (id + signature) + the citations content-hash; prism's `retrieval_pins` (query + `source_sha256`) make the retrieval replayable + drift-detectable. The local-panel `local_panel` receipt block pins the exact seat models that ran; the eval receipt also pins the offload verify-prompt hash + each source abstract's `sha256`. |
 | ANDON_AUTHORITY | 3 | `blocking` (existence-fabricated) halts the dispatch before its architectural lock; an unreachable verifier escalates, never default-accepts. The halt carries the defect (which citation, why) + owner. |
 | NAMED_COMPENSATORS | **skip** | Read-only: extraction reads the dispatch, prism verify is a read-only GET-backed call, the receipt is git-reversible. No irreversible world-touching write ⇒ no compensator (documented skip, per the rule's own example). |
 | DECOMPOSE_BY_SECRETS | 3 | `verify-citations.mjs` hides extraction + the prism shell-out + the tiering; the CLI command hides arg/output formatting; prism hides verification. One secret per module (Parnas). |
 | UNCERTAINTY_GATED_HUMANS | 3 | The Tier-3 **escalate** path is a genuine uncertainty-gated human checkpoint (gated on the verifier's own low confidence, not step count), with a **contrastive** message and a forcing function (view the source span before accepting). This is where role-os — the interactive layer — implements the standard prism (non-interactive) could only defer. |
-| EXTERNAL_VERIFIER | 3 | The whole point: role-os (generator) defers citation adjudication to prism, a **different model family**, reasoning-stripped, by construction (L1 routing). role-os never grades its own dispatch — and enforces prism's existence floor *itself* (blocking dominates accept). It **records** prism's signed receipt (chain-of-custody; cryptographic inner-HMAC verification is a v2 item). |
+| EXTERNAL_VERIFIER | 3 | The whole point: role-os (generator) defers citation adjudication to prism, a **different model family**, reasoning-stripped, by construction (L1 routing). role-os never grades its own dispatch — and enforces prism's existence floor *itself* (blocking dominates accept). It **records** prism's signed receipt (chain-of-custody; cryptographic inner-HMAC verification is a v2 item). **v2.5.0 adds `--local-panel`: a SECOND family-different seat (a 3-seat Qwen+Mistral entailment panel, no Anthropic model, decorrelated from both Claude and prism) with a measured 0-false-confirm property and a receipt of it catching a real single-model false-confirm — multi-lens ≥ 3, runnable locally for free.** |
 
 ### Irreversible actions & compensators
 None. The gate **reads** a dispatch, **shells a read-only verifier** (prism verify resolves

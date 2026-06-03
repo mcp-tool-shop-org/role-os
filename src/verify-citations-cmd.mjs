@@ -17,7 +17,7 @@ export async function verifyCitationsCommand(args) {
 
   if (!dispatch) {
     const err = new Error(
-      "Usage: roleos verify-citations <dispatch.md|.json> [--provider ollama] [--intent <text>] [--json] [--receipt <path>]",
+      "Usage: roleos verify-citations <dispatch.md|.json> [--provider ollama] [--intent <text>] [--local-panel] [--json] [--receipt <path>]",
     );
     err.exitCode = 1;
     err.hint =
@@ -28,6 +28,12 @@ export async function verifyCitationsCommand(args) {
   const result = runCitationGate(dispatch, {
     provider: flags.provider || "ollama",
     ...(typeof flags.intent === "string" ? { intent: flags.intent } : {}),
+    // --local-panel: add the family-different offload entailment panel as a second seat (local,
+    // zero-cost). Re-checks prism's `supported` citations; monotone-tightening (escalates on
+    // disagreement, never loosens). Needs llama-swap up + offload.py on the rig.
+    localPanel: flags["local-panel"] === true,
+    ...(typeof flags["offload-script"] === "string" ? { offloadScript: flags["offload-script"] } : {}),
+    ...(typeof flags["llamaswap-base"] === "string" ? { llamaswapBase: flags["llamaswap-base"] } : {}),
   });
 
   // Persist the chained receipt (audit trail) unless --no-receipt.
@@ -107,6 +113,15 @@ function printReport(dispatch, r) {
       `\n  ${r.unparsed.length} item(s) looked like citations but had no resolvable arXiv/DOI id (verify manually):`,
     );
     for (const u of r.unparsed.slice(0, 10)) console.log(`    ? ${u.slice(0, 120)}`);
+  }
+
+  if (r.local_panel) {
+    const p = r.local_panel;
+    const seats = p.seats && p.seats.length ? p.seats.join(", ") : "(none reached)";
+    console.log(`\nLocal panel: ${p.checked} citation(s) re-checked by [${seats}]${p.reachable ? "" : " — UNREACHABLE"}`);
+    for (const d of p.disagreements || []) {
+      console.log(`  - [DISAGREE] ${d.identifier || d.id} — prism: ${d.prism}, panel: ${d.panel}`);
+    }
   }
 
   if (r.receipt_path) console.log(`\nReceipt: ${r.receipt_path}`);
