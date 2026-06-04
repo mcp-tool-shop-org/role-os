@@ -38,18 +38,34 @@ python test_harvester.py                   # self-tests / ANDON + join receipts 
 | parse (transcripts) | `harvester/parse_transcripts.py` | the JSONL transcript format |
 | parse (outcomes) | `harvester/parse_outcomes.py` | each outcome source's format |
 | join | `harvester/join.py` | the fuzzy multi-key match + confidence |
-| label | `harvester/label.py` | outcome policy, cost weight, baseline, cascade |
+| label | `harvester/label.py` | outcome policy, cost weight, baseline, label_reason |
 | scrub | `harvester/scrub.py` | privacy + the ANDON secret re-scan |
 | split | `harvester/split.py` | exam/audit/train + the human-review gate |
 | manifest | `harvester/manifest.py` | provenance, hashes, contamination hard-fail |
 | build | `harvester/build.py` | orchestration; writes nothing until both ANDON gates pass |
+| freeze | `harvester/freeze.py` | fold human-review verdicts -> the gold exam |
+
+## Human-review pass (exam gold — UNCERTAINTY_GATED_HUMANS)
+
+The temporal exam has no external gold; humans resolve it. Workflow:
+
+1. `python -m harvester.build` → writes `dataset/v0.1/human_review_queue.jsonl` (the highest-uncertainty
+   exam-pool records).
+2. Open **`review-ui/index.html`** in a browser (offline, single file, no network/AI). Click **Load
+   queue** → pick `human_review_queue.jsonl`. Review one record per keystroke (the harvester's guess +
+   `label_reason` are pre-filled; confirm or override). Resumable via localStorage. Click **Export
+   resolved** → downloads `exam_resolved.jsonl`.
+3. `python -m harvester.freeze <path>/exam_resolved.jsonl` → writes `dataset/v0.1/exam.jsonl` (the
+   frozen, human-resolved GOLD exam: `outcome_source="human"`, `weak_label=false`) + `exam_freeze_report.json`.
+   Hard-fails if any resolved id is a train record (exam contamination).
 
 ## Output (local, git-ignored, regenerable)
 
 `dataset/v0.1/`: `corpus.jsonl`, `train.jsonl`, `audit.jsonl`, `exam_pool.jsonl`,
-`human_review_queue.jsonl`, `manifest.json`. The corpus is **not** committed to this public repo
-(even scrubbed, it is internal operational data); it regenerates from the harvester. The harvester
-**code** is tracked.
+`human_review_queue.jsonl`, `manifest.json`, and after the review pass `exam.jsonl` +
+`exam_freeze_report.json`. The data is **not** committed to this public repo (even scrubbed, it is
+internal operational data); it regenerates from the harvester. The harvester **code** and the offline
+`review-ui/index.html` are tracked.
 
 ## Safety
 

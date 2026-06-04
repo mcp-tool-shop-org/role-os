@@ -6,9 +6,12 @@ Run:  python test_harvester.py    (from tools/token-budget-dataset/)
 Exit 0 = all pass; non-zero = a gate is broken (treat as build-blocking).
 All secret literals below are OBVIOUSLY fake placeholders.
 """
+import json
+import os
 import sys
+import tempfile
 
-from harvester import scrub, manifest, join, config, label
+from harvester import scrub, manifest, join, config, label, freeze
 
 FAILS = []
 
@@ -135,11 +138,51 @@ def test_join_does_not_overclaim():
     check("out-of-window dispatch is not exact", res_far["join_confidence"] != "exact")
 
 
+def _write_jsonl(path, rows):
+    with open(path, "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r) + "\n")
+
+
+def test_freeze_folds_human_verdicts():
+    print("test_freeze_folds_human_verdicts")
+    d = tempfile.mkdtemp()
+    A = {"dispatch_id": "agent-A", "outcome": "success", "outcome_source": "transcript",
+         "weak_label": True, "cost_weight": 1.0}
+    B = {"dispatch_id": "agent-B", "outcome": "success", "outcome_source": "transcript",
+         "weak_label": True, "cost_weight": 1.0}
+    _write_jsonl(os.path.join(d, "corpus.jsonl"), [A, B])
+    _write_jsonl(os.path.join(d, "train.jsonl"), [B])        # B is a TRAIN record
+    _write_jsonl(os.path.join(d, "exam_pool.jsonl"), [A])    # A is in the exam
+    rp = os.path.join(d, "exam_resolved.jsonl")
+    _write_jsonl(rp, [{"dispatch_id": "agent-A", "harvester_outcome": "success",
+                       "human_outcome": "wasteful", "confirmed": False, "note": "cache churn",
+                       "reviewed_at": "2026-06-04T00:00:00Z", "reviewer": "mike"}])
+    rep = freeze.freeze(rp, v_dir=d)
+    exam = [json.loads(l) for l in open(os.path.join(d, "exam.jsonl"), encoding="utf-8")]
+    check("one record frozen", len(exam) == 1)
+    rec = exam[0]
+    check("human outcome applied", rec["outcome"] == "wasteful")
+    check("marked gold", rec["weak_label"] is False and rec["outcome_source"] == "human")
+    check("override counted", rep["overrode"] == 1 and rep["confirmed"] == 0)
+
+    # ANDON: a resolved id that is a TRAIN record must hard-fail (would contaminate the exam)
+    _write_jsonl(rp, [{"dispatch_id": "agent-B", "harvester_outcome": "success",
+                       "human_outcome": "success", "confirmed": True, "note": "",
+                       "reviewed_at": "2026-06-04T00:00:00Z", "reviewer": "mike"}])
+    raised = False
+    try:
+        freeze.freeze(rp, v_dir=d)
+    except manifest.AndonHalt:
+        raised = True
+    check("certifying a train record hard-fails", raised)
+
+
 def main():
     for t in (test_scrub_redacts_real_secrets, test_andon_catches_unscrubbed_secret,
               test_contamination_check_raises, test_canon_truncation,
               test_path_email_redaction, test_baseline, test_cost_weighting,
-              test_join_does_not_overclaim):
+              test_join_does_not_overclaim, test_freeze_folds_human_verdicts):
         t()
     print()
     if FAILS:

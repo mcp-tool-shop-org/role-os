@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispatch Review</title>
+<style>
+  :root{
+    --bg:#0a0c10;
+    --bg-2:#0e1117;
+    --panel:#12161d;
+    --panel-2:#161b23;
+    --line:#222a35;
+    --line-2:#2c3542;
+    --ink:#e6edf3;
+    --ink-dim:#a9b4c0;
+    --ink-mut:#6e7a89;
+    --accent:#58a6ff;
+    --focus:#388bfd;
+
+    /* outcomes */
+    --success:#3fb950;
+    --starved:#d29922;
+    --wasteful:#bc6bff;
+    --failed:#f85149;
+    --unknown:#7d8896;
+
+    /* spend segments */
+    --seg-output:#3fb950;
+    --seg-cwrite:#58a6ff;
+    --seg-cread:#e0a93a;
+    --seg-input:#5a6675;
+
+    --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --radius:8px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(88,166,255,.06), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;}
+  ::selection{background:rgba(88,166,255,.3);}
+
+  /* ============ layout ============ */
+  .app{display:flex;flex-direction:column;min-height:100vh;}
+
+  /* ============ header ============ */
+  header.topbar{
+    position:sticky;top:0;z-index:30;
+    display:flex;align-items:center;gap:22px;
+    padding:12px 20px;
+    background:rgba(10,12,16,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:11px;flex-shrink:0;}
+  .brand .dot{width:11px;height:11px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,.18);}
+  .brand h1{
+    margin:0;font-family:var(--mono);font-size:13px;letter-spacing:.18em;
+    text-transform:uppercase;font-weight:600;color:var(--ink);white-space:nowrap;
+  }
+  .brand h1 span{color:var(--ink-mut);}
+
+  .progress-wrap{display:flex;flex-direction:column;gap:6px;flex:1;min-width:160px;max-width:520px;}
+  .progress-top{display:flex;align-items:baseline;gap:14px;font-family:var(--mono);font-size:12px;color:var(--ink-dim);}
+  .progress-count{font-size:15px;color:var(--ink);font-weight:600;letter-spacing:.02em;white-space:nowrap;flex-shrink:0;}
+  .progress-top{flex-wrap:nowrap;}
+  .progress-count b{color:var(--accent);}
+  .progress-pills{display:flex;gap:10px;margin-left:auto;}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.04em;}
+  .pill i{width:8px;height:8px;border-radius:2px;font-style:normal;display:inline-block;}
+  .pill.confirmed i{background:var(--success);}
+  .pill.overridden i{background:var(--starved);}
+  .pill.left i{background:var(--ink-mut);}
+  .progressbar{height:6px;border-radius:99px;background:#1a2029;overflow:hidden;position:relative;}
+  .progressbar>div{height:100%;border-radius:99px;
+    background:linear-gradient(90deg,#2563c9,var(--accent));transition:width .25s ease;}
+
+  .topbar-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .reviewer-field{display:flex;align-items:center;gap:7px;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:6px 10px;}
+  .reviewer-field label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-mut);}
+  .reviewer-field input{
+    background:transparent;border:none;color:var(--ink);font-family:var(--mono);
+    font-size:13px;width:104px;outline:none;}
+  .reviewer-field input::placeholder{color:var(--ink-mut);}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 13px;border-radius:var(--radius);
+    border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink);
+    font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;
+    transition:border-color .15s,background .15s,transform .05s;
+  }
+  .btn:hover{border-color:#3c4858;background:#1b212b;}
+  .btn:active{transform:translateY(1px);}
+  .btn.primary{background:#1f6feb;border-color:#388bfd;color:#fff;}
+  .btn.primary:hover{background:#2c7bf5;}
+  .btn:focus-visible,.verdict:focus-visible,a:focus-visible,input:focus-visible,
+  .icon-btn:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .btn .kbd-mini{font-family:var(--mono);font-size:10px;color:var(--ink-mut);
+    border:1px solid var(--line-2);border-radius:4px;padding:0 4px;line-height:15px;}
+
+  /* ============ main ============ */
+  main{flex:1;width:100%;max-width:1140px;margin:0 auto;padding:22px 20px 150px;}
+
+  /* harvester banner */
+  .banner{
+    position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:linear-gradient(180deg,var(--panel),var(--bg-2));
+    padding:18px 20px;margin-bottom:18px;
+  }
+  .banner::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--unknown);}
+  .banner[data-oc="success"]::before{background:var(--success);}
+  .banner[data-oc="starved"]::before{background:var(--starved);}
+  .banner[data-oc="wasteful"]::before{background:var(--wasteful);}
+  .banner[data-oc="failed"]::before{background:var(--failed);}
+  .banner[data-oc="unknown"]::before{background:var(--unknown);}
+  .banner-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+  .banner-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mut);}
+  .oc-chip{
+    display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-weight:700;
+    font-size:21px;letter-spacing:.06em;text-transform:uppercase;
+    padding:3px 12px;border-radius:7px;border:1px solid;
+  }
+  .oc-chip i{width:9px;height:9px;border-radius:50%;background:currentColor;}
+  .oc-success{color:var(--success);border-color:rgba(63,185,80,.45);background:rgba(63,185,80,.10);}
+  .oc-starved{color:var(--starved);border-color:rgba(210,153,34,.45);background:rgba(210,153,34,.10);}
+  .oc-wasteful{color:var(--wasteful);border-color:rgba(188,107,255,.45);background:rgba(188,107,255,.10);}
+  .oc-failed{color:var(--failed);border-color:rgba(248,81,73,.45);background:rgba(248,81,73,.10);}
+  .oc-unknown{color:var(--unknown);border-color:rgba(125,136,150,.45);background:rgba(125,136,150,.10);}
+  .banner-reason{font-size:15px;color:var(--ink-dim);line-height:1.5;max-width:90ch;}
+  .banner-reason b{color:var(--ink);font-weight:600;}
+  .banner-confirm-hint{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--ink-mut);}
+  .banner-confirm-hint b{color:var(--ink-dim);}
+  .reviewed-flag{position:absolute;right:16px;top:14px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:99px;
+    border:1px solid;display:none;align-items:center;gap:7px;}
+  .reviewed-flag i{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .reviewed-flag.match{color:var(--success);border-color:rgba(63,185,80,.4);background:rgba(63,185,80,.08);}
+  .reviewed-flag.diff{color:var(--starved);border-color:rgba(210,153,34,.4);background:rgba(210,153,34,.08);}
+
+  /* card */
+  .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-bottom:18px;}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:13px 18px;border-bottom:1px solid var(--line);}
+  .card-title{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mut);}
+  .card-body{padding:18px;}
+
+  /* spend */
+  .spend-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:16px;}
+  .spend-total .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mut);}
+  .spend-total .val{font-family:var(--mono);font-size:34px;font-weight:700;color:var(--ink);line-height:1.05;letter-spacing:.01em;}
+  .spend-total .val small{font-size:14px;color:var(--ink-mut);font-weight:500;}
+  .spend-raw{text-align:right;font-family:var(--mono);}
+  .spend-raw .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mut);}
+  .spend-raw .val{font-size:18px;color:var(--ink-dim);font-weight:600;}
+  .spend-raw .note{font-size:11px;color:var(--ink-mut);max-width:30ch;margin-top:2px;line-height:1.35;}
+
+  .stack{display:flex;height:46px;border-radius:7px;overflow:hidden;border:1px solid var(--line-2);background:#0c1016;}
+  .stack .seg{position:relative;min-width:2px;display:flex;align-items:center;
+    transition:filter .15s;overflow:hidden;}
+  .stack .seg:hover{filter:brightness(1.12);}
+  .stack .seg .seg-in{padding:0 10px;font-family:var(--mono);font-size:11px;font-weight:700;
+    color:rgba(0,0,0,.78);white-space:nowrap;letter-spacing:.02em;}
+  .stack .seg.output{background:var(--seg-output);}
+  .stack .seg.cwrite{background:var(--seg-cwrite);}
+  .stack .seg.cread{background:var(--seg-cread);}
+  .stack .seg.input{background:var(--seg-input);}
+
+  .stack-legend{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+  .leg{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--bg-2);}
+  .leg .leg-top{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+  .leg .leg-top i{width:10px;height:10px;border-radius:3px;}
+  .leg.output .leg-top i{background:var(--seg-output);}
+  .leg.cwrite .leg-top i{background:var(--seg-cwrite);}
+  .leg.cread  .leg-top i{background:var(--seg-cread);}
+  .leg.input  .leg-top i{background:var(--seg-input);}
+  .leg .leg-name{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:600;}
+  .leg .leg-wt{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ink-mut);
+    border:1px solid var(--line-2);border-radius:4px;padding:0 5px;}
+  .leg .leg-val{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ink);}
+  .leg .leg-share{font-family:var(--mono);font-size:11px;color:var(--ink-mut);}
+  .leg .leg-raw{font-family:var(--mono);font-size:10px;color:var(--ink-mut);margin-top:3px;}
+
+  .spend-callout{margin-top:14px;display:none;align-items:center;gap:10px;
+    border:1px solid rgba(224,169,58,.4);background:rgba(224,169,58,.08);
+    border-radius:8px;padding:10px 13px;font-size:13px;color:#f0cd87;}
+  .spend-callout.show{display:flex;}
+  .spend-callout b{color:#f6e0a8;}
+  .spend-callout .ico{font-family:var(--mono);font-weight:700;color:var(--seg-cread);}
+
+  /* facts */
+  .facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .fact{background:var(--panel);padding:11px 13px;min-height:58px;}
+  .fact .k{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-mut);margin-bottom:3px;}
+  .fact .v{font-family:var(--mono);font-size:14px;color:var(--ink);word-break:break-word;}
+  .fact .v.muted{color:var(--ink-mut);}
+  .fact .v .badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:5px;margin-left:0;white-space:nowrap;}
+  .badge.warn{background:rgba(210,153,34,.14);color:var(--starved);border:1px solid rgba(210,153,34,.4);}
+  .badge.ok{background:rgba(63,185,80,.12);color:var(--success);border:1px solid rgba(63,185,80,.35);}
+  .badge.red{background:rgba(248,81,73,.12);color:var(--failed);border:1px solid rgba(248,81,73,.35);}
+  .badge.dim{background:rgba(125,136,150,.12);color:var(--ink-dim);border:1px solid var(--line-2);}
+  .ext-evidence{grid-column:1/-1;display:flex;align-items:center;gap:9px;background:var(--panel-2);
+    padding:10px 13px;font-size:12px;color:var(--starved);font-family:var(--mono);}
+
+  /* task text */
+  details.task{border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-bottom:18px;overflow:hidden;}
+  details.task>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;
+    padding:13px 18px;}
+  details.task>summary::-webkit-details-marker{display:none;}
+  .task-caret{font-family:var(--mono);font-size:11px;color:var(--ink-mut);transition:transform .15s;}
+  details.task[open] .task-caret{transform:rotate(90deg);}
+  .task-meta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink-mut);}
+  .task-preview{font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--ink-dim);
+    padding:0 18px 16px;white-space:pre-wrap;word-break:break-word;
+    display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;max-height:none;}
+  details.task[open] .task-preview{-webkit-line-clamp:unset;display:block;}
+  .task-role{display:inline-flex;gap:6px;align-items:center;}
+  .role-tag{font-family:var(--mono);font-size:10px;padding:1px 7px;border-radius:5px;
+    border:1px solid var(--line-2);color:var(--ink-dim);letter-spacing:.05em;}
+
+  /* verdict bar */
+  .verdict-dock{position:fixed;left:0;right:0;bottom:0;z-index:25;
+    background:linear-gradient(180deg,rgba(10,12,16,0),rgba(10,12,16,.92) 22%,var(--bg) 60%);
+    padding:14px 20px 16px;}
+  .verdict-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .verdicts{display:flex;gap:9px;flex-wrap:wrap;}
+  .verdict{
+    position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+    padding:8px 14px;border-radius:9px;border:1.5px solid var(--line-2);
+    background:var(--panel-2);color:var(--ink-dim);cursor:pointer;min-width:104px;
+    transition:border-color .12s,background .12s,transform .05s,color .12s;
+  }
+  .verdict:hover{transform:translateY(-1px);}
+  .verdict .v-key{position:absolute;top:6px;right:8px;font-family:var(--mono);font-size:10px;color:var(--ink-mut);
+    border:1px solid var(--line-2);border-radius:4px;padding:0 4px;line-height:14px;}
+  .verdict .v-name{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .verdict .v-desc{font-size:10.5px;color:var(--ink-mut);line-height:1.25;max-width:140px;}
+  .verdict[data-oc="success"]:hover,.verdict[data-oc="success"].chosen{border-color:var(--success);color:var(--success);background:rgba(63,185,80,.08);}
+  .verdict[data-oc="starved"]:hover,.verdict[data-oc="starved"].chosen{border-color:var(--starved);color:var(--starved);background:rgba(210,153,34,.08);}
+  .verdict[data-oc="wasteful"]:hover,.verdict[data-oc="wasteful"].chosen{border-color:var(--wasteful);color:var(--wasteful);background:rgba(188,107,255,.08);}
+  .verdict[data-oc="failed"]:hover,.verdict[data-oc="failed"].chosen{border-color:var(--failed);color:var(--failed);background:rgba(248,81,73,.08);}
+  .verdict[data-oc="unknown"]:hover,.verdict[data-oc="unknown"].chosen{border-color:var(--unknown);color:var(--ink);background:rgba(125,136,150,.10);}
+  /* harvester's guess gets a glow ring */
+  .verdict.guess{box-shadow:0 0 0 1px rgba(88,166,255,.0);}
+  .verdict.guess::after{content:"HARVESTER";position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+    font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:#0a0c10;background:var(--accent);
+    padding:1px 6px;border-radius:99px;font-weight:700;}
+  .verdict.guess{border-style:dashed;}
+  .verdict.chosen{box-shadow:0 0 0 3px rgba(88,166,255,.16);}
+
+  .note-field{flex:1;min-width:200px;display:flex;align-items:center;gap:9px;
+    background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:0 12px;height:54px;}
+  .note-field .nk{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mut);}
+  .note-field input{flex:1;background:transparent;border:none;color:var(--ink);font-size:13.5px;outline:none;height:100%;}
+  .note-field input::placeholder{color:var(--ink-mut);}
+  .nav-btns{display:flex;gap:8px;}
+  .icon-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    width:54px;height:54px;border-radius:9px;border:1px solid var(--line-2);background:var(--panel-2);
+    color:var(--ink-dim);cursor:pointer;font-family:var(--mono);font-size:10px;}
+  .icon-btn:hover{border-color:#3c4858;color:var(--ink);}
+  .icon-btn .ar{font-size:16px;line-height:1;}
+
+  /* keyboard legend */
+  .legend-toggle{position:fixed;left:16px;bottom:84px;z-index:24;}
+  .legend{position:fixed;left:16px;bottom:120px;z-index:40;width:300px;
+    background:var(--panel);border:1px solid var(--line-2);border-radius:12px;padding:14px;
+    box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;}
+  .legend.show{display:block;}
+  .legend h3{margin:0 0 11px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mut);}
+  .legend-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12.5px;color:var(--ink-dim);}
+  .legend-row .keys{display:flex;gap:4px;margin-left:auto;}
+  kbd{font-family:var(--mono);font-size:11px;background:var(--panel-2);border:1px solid var(--line-2);
+    border-bottom-width:2px;border-radius:5px;padding:2px 7px;color:var(--ink);min-width:20px;text-align:center;}
+
+  /* empty / overlay states */
+  .overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+    background:rgba(8,10,13,.72);backdrop-filter:blur(6px);padding:24px;}
+  .overlay[hidden]{display:none;}
+  .empty-card{max-width:560px;width:100%;background:var(--panel);border:1px solid var(--line-2);
+    border-radius:16px;padding:34px;box-shadow:0 30px 80px rgba(0,0,0,.55);text-align:center;}
+  .empty-card .glyph{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:14px;}
+  .empty-card h2{margin:0 0 10px;font-size:24px;letter-spacing:-.01em;}
+  .empty-card p{margin:0 auto 22px;color:var(--ink-dim);max-width:42ch;line-height:1.55;}
+  .empty-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .empty-meta{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:11.5px;color:var(--ink-mut);line-height:1.7;text-align:left;}
+  .empty-meta b{color:var(--ink-dim);}
+  .skip-note{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--starved);display:none;}
+  .skip-note.show{display:block;}
+
+  /* summary modal */
+  .modal{max-width:640px;width:100%;background:var(--panel);border:1px solid var(--line-2);
+    border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.55);overflow:hidden;}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);}
+  .modal-head h2{margin:0;font-size:18px;}
+  .modal-body{padding:22px;}
+  .sum-row{display:flex;gap:14px;margin-bottom:20px;}
+  .sum-stat{flex:1;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center;}
+  .sum-stat .n{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--ink);line-height:1;}
+  .sum-stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mut);margin-top:7px;}
+  .sum-stat.confirmed .n{color:var(--success);}
+  .sum-stat.overridden .n{color:var(--starved);}
+  .dist h4{margin:0 0 12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mut);}
+  .dist-row{display:flex;align-items:center;gap:12px;margin-bottom:9px;}
+  .dist-row .dl{font-family:var(--mono);font-size:12px;width:88px;text-transform:uppercase;letter-spacing:.04em;}
+  .dist-row .db{flex:1;height:20px;background:#0c1016;border-radius:5px;overflow:hidden;}
+  .dist-row .db>div{height:100%;border-radius:5px;transition:width .3s;}
+  .dist-row .dn{font-family:var(--mono);font-size:13px;color:var(--ink);width:34px;text-align:right;font-weight:600;}
+  .modal-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px;border-top:1px solid var(--line);}
+
+  .all-done{text-align:center;padding:60px 20px;color:var(--ink-dim);}
+  .all-done .big{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:var(--success);text-transform:uppercase;margin-bottom:12px;}
+  .all-done h2{margin:0 0 8px;color:var(--ink);}
+
+  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);z-index:60;
+    background:var(--panel-2);border:1px solid var(--line-2);border-radius:10px;padding:10px 16px;
+    font-family:var(--mono);font-size:12.5px;color:var(--ink);box-shadow:0 12px 40px rgba(0,0,0,.5);
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+
+  @media (max-width:1080px){
+    .brand h1 span{display:none;}
+  }
+  @media (max-width:980px){
+    .progress-pills{display:none;}
+  }
+  @media (max-width:760px){
+    .stack-legend{grid-template-columns:repeat(2,1fr);}
+    .facts{grid-template-columns:repeat(2,1fr);}
+    .reviewer-field{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <h1>Dispatch&nbsp;Review <span>/ spend outcomes</span></h1>
+    </div>
+
+    <div class="progress-wrap" aria-live="polite">
+      <div class="progress-top">
+        <span class="progress-count"><b id="prog-done">0</b> / <span id="prog-total">0</span></span>
+        <div class="progress-pills">
+          <span class="pill confirmed"><i></i><span id="pill-confirmed">0</span> confirmed</span>
+          <span class="pill overridden"><i></i><span id="pill-overridden">0</span> overridden</span>
+          <span class="pill left"><i></i><span id="pill-left">0</span> left</span>
+        </div>
+      </div>
+      <div class="progressbar" role="progressbar" aria-label="Review progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="reviewer-field">
+        <label for="reviewer">Reviewer</label>
+        <input id="reviewer" type="text" placeholder="name…" autocomplete="off" spellcheck="false" aria-label="Reviewer name">
+      </div>
+      <button class="btn" id="btn-load" type="button">Load queue</button>
+      <button class="btn" id="btn-export" type="button">Export resolved</button>
+      <button class="btn" id="btn-summary" type="button" aria-haspopup="dialog">Summary</button>
+    </div>
+  </header>
+
+  <main id="record-view" aria-live="polite">
+    <!-- record renders here -->
+  </main>
+</div>
+
+<!-- verdict dock -->
+<div class="verdict-dock" id="verdict-dock" style="display:none;">
+  <div class="verdict-inner">
+    <div class="verdicts" id="verdicts" role="group" aria-label="Choose outcome verdict"></div>
+    <div class="note-field">
+      <span class="nk">Note</span>
+      <input id="note-input" type="text" placeholder="optional one-line note (N)" autocomplete="off" aria-label="Optional note">
+    </div>
+    <div class="nav-btns">
+      <button class="icon-btn" id="btn-prev" type="button" aria-label="Previous record (Left arrow)"><span class="ar">←</span>prev</button>
+      <button class="icon-btn" id="btn-skip" type="button" aria-label="Skip without verdict (Right arrow)"><span class="ar">→</span>skip</button>
+    </div>
+  </div>
+</div>
+
+<!-- keyboard legend -->
+<button class="btn legend-toggle" id="legend-toggle" type="button" style="display:none;">⌨ Keys</button>
+<div class="legend" id="legend" role="dialog" aria-label="Keyboard shortcuts">
+  <h3>Keyboard</h3>
+  <div class="legend-row"><span>Confirm harvester guess</span><span class="keys"><kbd>Enter</kbd><kbd>C</kbd></span></div>
+  <div class="legend-row"><span style="color:var(--success)">success</span><span class="keys"><kbd>1</kbd></span></div>
+  <div class="legend-row"><span style="color:var(--starved)">starved</span><span class="keys"><kbd>2</kbd></span></div>
+  <div class="legend-row"><span style="color:var(--wasteful)">wasteful</span><span class="keys"><kbd>3</kbd></span></div>
+  <div class="legend-row"><span style="color:var(--failed)">failed</span><span class="keys"><kbd>4</kbd></span></div>
+  <div class="legend-row"><span style="color:var(--unknown)">unknown</span><span class="keys"><kbd>5</kbd></span></div>
+  <div class="legend-row"><span>Focus note</span><span class="keys"><kbd>N</kbd></span></div>
+  <div class="legend-row"><span>Skip (no verdict)</span><span class="keys"><kbd>→</kbd></span></div>
+  <div class="legend-row"><span>Previous record</span><span class="keys"><kbd>←</kbd></span></div>
+</div>
+
+<!-- empty / load overlay -->
+<div class="overlay" id="empty-overlay">
+  <div class="empty-card">
+    <div class="glyph">// Dispatch Review</div>
+    <h2>Load a queue to begin</h2>
+    <p>Confirm or override the harvester's outcome guess for each AI dispatch — one keystroke per record. Files are read locally and never uploaded or modified.</p>
+    <div class="empty-actions">
+      <button class="btn primary" id="btn-load-2" type="button">Load .jsonl queue</button>
+      <button class="btn" id="btn-demo" type="button">Try 2 demo records</button>
+    </div>
+    <div class="skip-note" id="empty-skip-note"></div>
+    <div class="empty-meta">
+      <div>Outcomes: <b>success</b> · <b>starved</b> · <b>wasteful</b> · <b>failed</b> · <b>unknown</b></div>
+      <div>Progress is saved in this browser, keyed by <b>dispatch_id</b> — reload to resume.</div>
+      <div>Export writes <b>exam_resolved.jsonl</b>, one object per reviewed record.</div>
+    </div>
+  </div>
+</div>
+
+<!-- summary modal -->
+<div class="overlay" id="summary-overlay" hidden>
+  <div class="modal" role="dialog" aria-label="Review summary" aria-modal="true">
+    <div class="modal-head">
+      <h2>Review summary</h2>
+      <button class="btn" id="btn-summary-close" type="button">Close</button>
+    </div>
+    <div class="modal-body" id="summary-body"></div>
+    <div class="modal-foot">
+      <button class="btn" id="btn-summary-export" type="button">Export resolved</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="file-input" accept=".jsonl,.json,application/json,text/plain" hidden>
+<div class="toast" id="toast" role="status"></div>
+<div class="visually-hidden" id="aria-live" aria-live="assertive"></div>
+
+<script>
+"use strict";
+(function(){
+  /* ---------------- demo data ---------------- */
+  const DEMO = [
+    {"dispatch_id":"agent-EXAMPLE0001","grain":"subagent","cwd_repo":"demo-service","timestamp":"2026-06-03T14:22:05Z","task_text":"You are the DOCS domain agent. Audit the README and CONTRIBUTING for broken links and stale version badges, then propose fixes.","task_text_len":118,"role":"DOCS","attribution_skill":"dogfood-swarm","context_tokens":41200,"complexity_signals":{"num_turns":54,"num_tool_results":31,"has_large_artifact":false,"phase":"stage-a","wave":"2","action":"audit"},"cost_weighted_spend":948756,"input_tokens_total":5120,"cache_creation_total":210400,"cache_read_total":3980000,"output_tokens_total":12840,"outcome":"success","outcome_source":"transcript","join_confidence":"none","weak_label":true,"cost_weight":1.0,"label_reason":"ended cleanly (end_turn) at 948,756 weighted spend — completion only, task quality unverified","baseline_spend":61800,"peak_context_tokens":104300,"final_stop_reason":"end_turn","tier_used":"opus","compaction_observed":false,"compaction_trigger":null},
+    {"dispatch_id":"agent-EXAMPLE0002","grain":"session","cwd_repo":"demo-service","timestamp":"2026-06-03T19:40:12Z","task_text":"Refactor the payments module end to end and migrate every call site, with tests.","task_text_len":80,"role":null,"attribution_skill":null,"context_tokens":38900,"complexity_signals":{"num_turns":410,"num_tool_results":null,"has_large_artifact":true,"phase":null,"wave":null,"action":"refactor"},"cost_weighted_spend":58200000,"input_tokens_total":402000,"cache_creation_total":9100000,"cache_read_total":410000000,"output_tokens_total":1820000,"outcome":"starved","outcome_source":"transcript","join_confidence":"none","weak_label":true,"cost_weight":5.0,"label_reason":"observed spend is a LOWER bound — forced an auto-compaction, peak context near the 1M ceiling","baseline_spend":58350,"peak_context_tokens":963000,"final_stop_reason":"tool_use","tier_used":"opus","compaction_observed":true,"compaction_trigger":"auto"}
+  ];
+
+  const OUTCOMES = ["success","starved","wasteful","failed","unknown"];
+  const OUTCOME_DESC = {
+    success:"right-sized — finished cleanly, spend is a good target",
+    starved:"ran out / compacted / cut off — spend is a LOWER bound",
+    wasteful:"big spend for little output — over-provisioned",
+    failed:"failed for non-length reasons — token count is noise",
+    unknown:"not enough signal to say"
+  };
+  const SEG_DEFS = [
+    {key:"output", cls:"output", name:"output",     weight:5,    src:"output_tokens_total"},
+    {key:"cwrite", cls:"cwrite", name:"cache write",weight:1.25, src:"cache_creation_total"},
+    {key:"cread",  cls:"cread",  name:"cache read", weight:0.1,  src:"cache_read_total"},
+    {key:"input",  cls:"input",  name:"input",      weight:1,    src:"input_tokens_total"}
+  ];
+
+  const LS_VERDICTS = "review-ui:verdicts:v1";
+  const LS_REVIEWER = "review-ui:reviewer:v1";
+
+  /* ---------------- state ---------------- */
+  let queue = [];
+  let idx = 0;
+  let verdicts = loadVerdicts();   // { dispatch_id: {human_outcome, note, reviewed_at, confirmed, harvester_outcome} }
+  let reviewer = "";
+
+  /* ---------------- helpers ---------------- */
+  const $ = (s,r=document)=>r.querySelector(s);
+  function num(v){ return (typeof v==="number" && isFinite(v)) ? v : (typeof v==="string" && v.trim()!=="" && isFinite(+v) ? +v : null); }
+  function fmt(n){ if(n===null||n===undefined||(typeof n==="number"&&!isFinite(n))) return "—"; return Number(n).toLocaleString("en-US"); }
+  function dash(v){ return (v===null||v===undefined||v==="") ? "—" : v; }
+  function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+  function compact(n){
+    if(n===null||n===undefined||!isFinite(n)) return "—";
+    const a=Math.abs(n);
+    if(a>=1e9) return (n/1e9).toFixed(a>=1e10?0:1)+"B";
+    if(a>=1e6) return (n/1e6).toFixed(a>=1e7?0:1)+"M";
+    if(a>=1e3) return (n/1e3).toFixed(a>=1e4?0:1)+"K";
+    return String(n);
+  }
+
+  function loadVerdicts(){
+    try{ return JSON.parse(localStorage.getItem(LS_VERDICTS)) || {}; }catch(e){ return {}; }
+  }
+  function saveVerdicts(){
+    try{ localStorage.setItem(LS_VERDICTS, JSON.stringify(verdicts)); }catch(e){}
+  }
+
+  /* ---------------- toast ---------------- */
+  let toastT=null;
+  function toast(msg){
+    const el=$("#toast"); el.textContent=msg; el.classList.add("show");
+    clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("show"),1800);
+  }
+  function announce(msg){ $("#aria-live").textContent=msg; }
+
+  /* ---------------- parsing ---------------- */
+  function parseJSONL(text){
+    const lines=text.split(/\r?\n/);
+    const records=[]; let skipped=0;
+    for(const line of lines){
+      const t=line.trim();
+      if(!t) continue;
+      try{
+        const o=JSON.parse(t);
+        if(o && typeof o==="object" && !Array.isArray(o) && o.dispatch_id!==undefined && o.dispatch_id!==null){
+          records.push(o);
+        } else { skipped++; }
+      }catch(e){ skipped++; }
+    }
+    return {records, skipped};
+  }
+
+  function loadQueue(records, skipped, label){
+    if(!records.length){
+      showSkip("No valid records found"+(skipped?(" ("+skipped+" malformed line"+(skipped===1?"":"s")+" skipped)"):"")+".");
+      return;
+    }
+    queue = records;
+    $("#empty-overlay").setAttribute("hidden","");
+    $("#verdict-dock").style.display="";
+    $("#legend-toggle").style.display="";
+    idx = firstUnreviewedIndex();
+    render();
+    let msg = label+" — "+records.length+" record"+(records.length===1?"":"s");
+    if(skipped) msg += " · "+skipped+" malformed skipped";
+    const already = reviewedInQueueCount();
+    if(already) msg += " · already reviewed: "+already;
+    toast(msg);
+    announce(msg);
+  }
+
+  function showSkip(msg){
+    const el=$("#empty-skip-note"); el.textContent=msg; el.classList.add("show");
+  }
+
+  /* ---------------- progress helpers ---------------- */
+  function isReviewed(r){ return !!verdicts[r.dispatch_id]; }
+  function firstUnreviewedIndex(){
+    for(let i=0;i<queue.length;i++){ if(!isReviewed(queue[i])) return i; }
+    return 0;
+  }
+  function reviewedInQueueCount(){ return queue.filter(isReviewed).length; }
+  function counts(){
+    let confirmed=0, overridden=0;
+    for(const r of queue){
+      const v=verdicts[r.dispatch_id];
+      if(!v) continue;
+      if(v.confirmed) confirmed++; else overridden++;
+    }
+    const done=confirmed+overridden;
+    return {confirmed, overridden, done, left:queue.length-done};
+  }
+
+  /* ---------------- spend ---------------- */
+  function computeSpend(r){
+    const segs = SEG_DEFS.map(d=>{
+      const raw = num(r[d.src]);
+      const val = (raw===null?0:raw)*d.weight;
+      return {...d, raw, val};
+    });
+    const sum = segs.reduce((a,s)=>a+s.val,0);
+    return {segs, sum};
+  }
+
+  /* ---------------- render ---------------- */
+  function render(){
+    updateHeader();
+    if(!queue.length) return;
+    const c = counts();
+    if(c.left===0){ renderAllDone(); return; }
+    const r = queue[idx];
+    renderRecord(r);
+    updateDock(r);
+  }
+
+  function updateHeader(){
+    const total=queue.length;
+    const c=counts();
+    $("#prog-total").textContent=total;
+    $("#prog-done").textContent=c.done;
+    $("#pill-confirmed").textContent=c.confirmed;
+    $("#pill-overridden").textContent=c.overridden;
+    $("#pill-left").textContent=c.left;
+    const pct = total? Math.round(c.done/total*100):0;
+    $("#prog-fill").style.width=pct+"%";
+    const pb=$(".progressbar"); pb.setAttribute("aria-valuenow",pct);
+  }
+
+  function ocClass(o){ return OUTCOMES.includes(o)?o:"unknown"; }
+
+  function renderRecord(r){
+    const cs = r.complexity_signals && typeof r.complexity_signals==="object" ? r.complexity_signals : {};
+    const spend = computeSpend(r);
+    const harvOutcome = OUTCOMES.includes(r.outcome) ? r.outcome : "unknown";
+    const existing = verdicts[r.dispatch_id];
+    const rawOutput = num(r.output_tokens_total);
+    const reported = num(r.cost_weighted_spend);
+    const total = spend.sum;
+    const creadSeg = spend.segs.find(s=>s.key==="cread");
+    const creadShare = total>0 ? creadSeg.val/total : 0;
+
+    // stacked bar segments
+    let stackHTML="";
+    for(const s of spend.segs){
+      const pct = total>0 ? (s.val/total*100) : 0;
+      const showIn = pct>=12;
+      stackHTML += '<div class="seg '+s.cls+'" style="width:'+pct.toFixed(3)+'%" '+
+        'title="'+s.name+': '+fmt(Math.round(s.val))+' weighted ('+pct.toFixed(1)+'%)">'+
+        (showIn?'<span class="seg-in">'+s.name+' · '+compact(Math.round(s.val))+'</span>':'')+'</div>';
+    }
+
+    // legend
+    let legHTML="";
+    for(const s of spend.segs){
+      const pct = total>0 ? (s.val/total*100):0;
+      legHTML += '<div class="leg '+s.cls+'">'+
+        '<div class="leg-top"><i></i><span class="leg-name">'+s.name+'</span>'+
+        '<span class="leg-wt">×'+s.weight+'</span></div>'+
+        '<div class="leg-val">'+(s.raw===null?'—':fmt(Math.round(s.val)))+'</div>'+
+        '<div class="leg-share">'+pct.toFixed(1)+'% of weighted</div>'+
+        '<div class="leg-raw">raw '+fmt(s.raw)+'</div>'+
+        '</div>';
+    }
+
+    // facts
+    const facts = [
+      ["context_tokens", fmt(num(r.context_tokens))],
+      ["peak_context", fmt(num(r.peak_context_tokens))],
+      ["num_turns", fmt(num(cs.num_turns))],
+      ["tier_used", dash(r.tier_used)],
+      ["final_stop", dash(r.final_stop_reason)],
+      ["compaction", compactionBadge(r)],
+      ["grain", dash(r.grain)],
+      ["cwd_repo", dash(r.cwd_repo)],
+      ["outcome_source", dash(r.outcome_source)],
+      ["join_confidence", dash(r.join_confidence)],
+      ["weak_label", boolBadge(r.weak_label)],
+      ["baseline_spend", fmt(num(r.baseline_spend))]
+    ];
+    let factsHTML="";
+    for(const [k,v] of facts){
+      const muted = (v==="—")?" muted":"";
+      factsHTML += '<div class="fact"><div class="k">'+k+'</div><div class="v'+muted+'">'+v+'</div></div>';
+    }
+    // external evidence row
+    const extRow = (r.outcome_source && r.outcome_source!=="transcript")
+      ? '<div class="ext-evidence">⚠ external evidence — join_confidence: <b style="margin-left:4px;color:inherit">'+esc(dash(r.join_confidence))+'</b></div>'
+      : '';
+
+    // task text
+    const taskText = (r.task_text!==undefined && r.task_text!==null && r.task_text!=="") ? String(r.task_text) : "";
+    const taskLen = num(r.task_text_len);
+    const roleTag = r.role ? '<span class="role-tag">'+esc(r.role)+'</span>' : '';
+    const skillTag = r.attribution_skill ? '<span class="role-tag">'+esc(r.attribution_skill)+'</span>' : '';
+
+    // reviewed flag
+    let reviewedFlag="";
+    if(existing){
+      const cls = existing.confirmed ? "match":"diff";
+      const txt = existing.confirmed ? "reviewed · confirmed" : "reviewed · overridden → "+existing.human_outcome;
+      reviewedFlag = '<div class="reviewed-flag '+cls+'" style="display:flex"><i></i>'+esc(txt)+'</div>';
+    }
+
+    const ts = r.timestamp ? esc(r.timestamp) : "—";
+
+    $("#record-view").innerHTML =
+      // banner
+      '<div class="banner" data-oc="'+harvOutcome+'">'+
+        reviewedFlag+
+        '<div class="banner-head">'+
+          '<span class="banner-kicker">Harvester thinks</span>'+
+          '<span class="oc-chip oc-'+harvOutcome+'"><i></i>'+harvOutcome+'</span>'+
+          '<span class="banner-kicker" style="margin-left:auto">'+esc(dash(r.dispatch_id))+' · '+ts+'</span>'+
+        '</div>'+
+        '<div class="banner-reason">'+(r.label_reason?esc(r.label_reason):'<span style="color:var(--ink-mut)">no label_reason provided</span>')+'</div>'+
+        '<div class="banner-confirm-hint">Press <b>Enter / C</b> to confirm <b>'+harvOutcome+'</b>, or pick a different verdict below (<b>1–5</b>).</div>'+
+      '</div>'+
+
+      // spend
+      '<section class="card" aria-label="Spend breakdown">'+
+        '<div class="card-head"><span class="card-title">Cost-weighted spend · where it went</span>'+
+          '<span class="card-title" style="color:var(--ink-dim)">output×5 · cache_write×1.25 · cache_read×0.1 · input×1</span></div>'+
+        '<div class="card-body">'+
+          '<div class="spend-head">'+
+            '<div class="spend-total"><div class="lbl">Reported cost_weighted_spend</div>'+
+              '<div class="val">'+fmt(reported)+' <small>weighted</small></div></div>'+
+            '<div class="spend-raw"><div class="lbl">raw output_tokens</div>'+
+              '<div class="val">'+fmt(rawOutput)+'</div>'+
+              '<div class="note">real weighted cost is '+
+                (rawOutput&&reported?Math.round(reported/Math.max(rawOutput,1)).toLocaleString("en-US")+'× the raw output':'far above raw output')+'</div>'+
+            '</div>'+
+          '</div>'+
+          '<div class="stack" role="img" aria-label="Stacked weighted spend by component">'+stackHTML+'</div>'+
+          '<div class="stack-legend">'+legHTML+'</div>'+
+          '<div class="spend-callout '+(creadShare>=0.5?'show':'')+'">'+
+            '<span class="ico">▮</span><span><b>cache_read dominates</b> — '+Math.round(creadShare*100)+'% of weighted spend went to cache reads (weight 0.1, but the raw volume is enormous).</span>'+
+          '</div>'+
+          '<div style="margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--ink-mut)">Σ weighted components = '+fmt(Math.round(total))+(reported&&Math.abs(Math.round(total)-reported)>1?' · reported total = '+fmt(reported):'')+'</div>'+
+        '</div>'+
+      '</section>'+
+
+      // facts
+      '<section class="card" aria-label="Facts">'+
+        '<div class="card-head"><span class="card-title">Facts</span></div>'+
+        '<div class="card-body">'+
+          '<div class="facts">'+factsHTML+'</div>'+
+          extRow+
+        '</div>'+
+      '</section>'+
+
+      // task text
+      '<details class="task"'+(taskText.length<=320?' open':'')+'>'+
+        '<summary><span class="task-caret">▶</span><span class="card-title">task_text</span>'+
+          '<span class="task-role">'+roleTag+skillTag+'</span>'+
+          '<span class="task-meta">'+(taskLen!==null?taskLen+' chars':taskText.length+' chars')+'</span></summary>'+
+        '<div class="task-preview">'+(taskText?esc(taskText):'<span style="color:var(--ink-mut)">— no task_text —</span>')+'</div>'+
+      '</details>';
+  }
+
+  function compactionBadge(r){
+    const obs = r.compaction_observed;
+    if(obs===true){
+      return '<span class="badge warn">observed'+(r.compaction_trigger?' · '+esc(r.compaction_trigger):'')+'</span>';
+    }
+    if(obs===false){ return '<span class="badge dim">none</span>'; }
+    return "—";
+  }
+  function boolBadge(v){
+    if(v===true) return '<span class="badge warn">true</span>';
+    if(v===false) return '<span class="badge ok">false</span>';
+    return "—";
+  }
+
+  function renderAllDone(){
+    $("#record-view").innerHTML =
+      '<div class="all-done">'+
+        '<div class="big">// queue complete</div>'+
+        '<h2>All '+queue.length+' records reviewed</h2>'+
+        '<p style="color:var(--ink-dim)">Open <b>Summary</b> to see the distribution, or <b>Export resolved</b> to download. You can still revisit any record with ← / →.</p>'+
+        '<div style="display:flex;gap:10px;justify-content:center;margin-top:18px">'+
+          '<button class="btn primary" id="done-export" type="button">Export resolved</button>'+
+          '<button class="btn" id="done-summary" type="button">Summary</button>'+
+          '<button class="btn" id="done-review" type="button">Re-review from start</button>'+
+        '</div>'+
+      '</div>';
+    $("#done-export").onclick=exportResolved;
+    $("#done-summary").onclick=openSummary;
+    $("#done-review").onclick=()=>{ idx=0; render(); };
+    $("#verdict-dock").style.display="none";
+  }
+
+  /* ---------------- verdict dock ---------------- */
+  function buildDock(){
+    const wrap=$("#verdicts");
+    wrap.innerHTML = OUTCOMES.map(o=>
+      '<button class="verdict" type="button" data-oc="'+o+'" data-outcome="'+o+'" aria-label="Mark outcome '+o+' ('+(OUTCOMES.indexOf(o)+1)+')">'+
+        '<span class="v-key">'+(OUTCOMES.indexOf(o)+1)+'</span>'+
+        '<span class="v-name">'+o+'</span>'+
+        '<span class="v-desc">'+OUTCOME_DESC[o]+'</span>'+
+      '</button>'
+    ).join("");
+    wrap.querySelectorAll(".verdict").forEach(b=>{
+      b.addEventListener("click",()=>setVerdict(b.dataset.outcome));
+    });
+  }
+
+  function updateDock(r){
+    $("#verdict-dock").style.display="";
+    const harv = OUTCOMES.includes(r.outcome)?r.outcome:"unknown";
+    const existing = verdicts[r.dispatch_id];
+    $("#verdicts").querySelectorAll(".verdict").forEach(b=>{
+      const o=b.dataset.outcome;
+      b.classList.toggle("guess", o===harv);
+      b.classList.toggle("chosen", !!existing && existing.human_outcome===o);
+    });
+    const ni=$("#note-input");
+    ni.value = existing && existing.note ? existing.note : "";
+  }
+
+  /* ---------------- actions ---------------- */
+  function setVerdict(outcome){
+    if(!queue.length) return;
+    const r=queue[idx];
+    const harv = OUTCOMES.includes(r.outcome)?r.outcome:"unknown";
+    const note = $("#note-input").value.trim();
+    verdicts[r.dispatch_id] = {
+      human_outcome: outcome,
+      harvester_outcome: harv,
+      confirmed: outcome===harv,
+      note: note,
+      reviewed_at: new Date().toISOString()
+    };
+    saveVerdicts();
+    const verb = outcome===harv ? "confirmed" : "overrode → "+outcome;
+    toast(verb+"  ·  "+r.dispatch_id);
+    announce("Recorded "+outcome+" for "+r.dispatch_id);
+    advance();
+  }
+
+  function confirmGuess(){
+    if(!queue.length) return;
+    const r=queue[idx];
+    const harv = OUTCOMES.includes(r.outcome)?r.outcome:"unknown";
+    setVerdict(harv);
+  }
+
+  function advance(){
+    // next un-reviewed after current
+    for(let i=idx+1;i<queue.length;i++){ if(!isReviewed(queue[i])){ idx=i; render(); return; } }
+    for(let i=0;i<idx;i++){ if(!isReviewed(queue[i])){ idx=i; render(); return; } }
+    // none left
+    render(); // will show all-done
+  }
+
+  function skip(){
+    if(idx<queue.length-1){ idx++; render(); }
+    else { toast("end of queue"); }
+  }
+  function prev(){
+    if(idx>0){ idx--; render(); }
+    else { toast("start of queue"); }
+  }
+
+  /* ---------------- export ---------------- */
+  function buildResolved(){
+    const out=[];
+    for(const r of queue){
+      const v=verdicts[r.dispatch_id];
+      if(!v) continue;
+      out.push({
+        dispatch_id: r.dispatch_id,
+        harvester_outcome: v.harvester_outcome,
+        human_outcome: v.human_outcome,
+        confirmed: v.human_outcome===v.harvester_outcome,
+        note: v.note || "",
+        reviewed_at: v.reviewed_at,
+        reviewer: reviewer || ""
+      });
+    }
+    return out;
+  }
+
+  function exportResolved(){
+    const rows=buildResolved();
+    if(!rows.length){ toast("nothing reviewed yet"); return; }
+    const text = rows.map(o=>JSON.stringify(o)).join("\n")+"\n";
+    const blob=new Blob([text],{type:"application/x-ndjson"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url; a.download="exam_resolved.jsonl";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast("exported "+rows.length+" record"+(rows.length===1?"":"s")+" → exam_resolved.jsonl");
+  }
+
+  /* ---------------- summary ---------------- */
+  function openSummary(){
+    const rows=buildResolved();
+    const c=counts();
+    const dist={}; OUTCOMES.forEach(o=>dist[o]=0);
+    rows.forEach(o=>{ if(dist[o.human_outcome]!==undefined) dist[o.human_outcome]++; });
+    const maxd=Math.max(1,...Object.values(dist));
+    const colors={success:"var(--success)",starved:"var(--starved)",wasteful:"var(--wasteful)",failed:"var(--failed)",unknown:"var(--unknown)"};
+
+    let distHTML="";
+    for(const o of OUTCOMES){
+      const n=dist[o]; const pct=rows.length?Math.round(n/rows.length*100):0;
+      distHTML+='<div class="dist-row"><span class="dl" style="color:'+colors[o]+'">'+o+'</span>'+
+        '<span class="db"><div style="width:'+(n/maxd*100)+'%;background:'+colors[o]+'"></div></span>'+
+        '<span class="dn">'+n+'</span></div>';
+    }
+
+    $("#summary-body").innerHTML=
+      '<div class="sum-row">'+
+        '<div class="sum-stat"><div class="n">'+rows.length+'</div><div class="l">reviewed</div></div>'+
+        '<div class="sum-stat confirmed"><div class="n">'+c.confirmed+'</div><div class="l">confirmed</div></div>'+
+        '<div class="sum-stat overridden"><div class="n">'+c.overridden+'</div><div class="l">overridden</div></div>'+
+        '<div class="sum-stat"><div class="n">'+c.left+'</div><div class="l">remaining</div></div>'+
+      '</div>'+
+      '<div class="dist"><h4>human_outcome distribution</h4>'+(rows.length?distHTML:'<div style="color:var(--ink-mut);font-family:var(--mono);font-size:12px">No records reviewed yet.</div>')+'</div>';
+    $("#summary-overlay").removeAttribute("hidden");
+  }
+  function closeSummary(){ $("#summary-overlay").setAttribute("hidden",""); }
+
+  /* ---------------- file input ---------------- */
+  function pickFile(){ $("#file-input").click(); }
+  $("#file-input").addEventListener("change",e=>{
+    const f=e.target.files && e.target.files[0];
+    if(!f) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const {records, skipped}=parseJSONL(String(ev.target.result||""));
+      loadQueue(records, skipped, f.name);
+    };
+    reader.onerror=()=>showSkip("Could not read file.");
+    reader.readAsText(f);
+    e.target.value=""; // allow re-loading same file
+  });
+
+  /* ---------------- keyboard ---------------- */
+  document.addEventListener("keydown",e=>{
+    // summary open: esc closes
+    if(!$("#summary-overlay").hasAttribute("hidden")){
+      if(e.key==="Escape"){ closeSummary(); }
+      return;
+    }
+    if(!$("#empty-overlay").hasAttribute("hidden")) return; // not loaded yet
+    const tag=(e.target.tagName||"").toUpperCase();
+    const typing = tag==="INPUT" || tag==="TEXTAREA";
+    if(typing){
+      if(e.key==="Escape" || (e.key==="Enter" && e.target.id==="note-input")){ e.target.blur(); }
+      return;
+    }
+    switch(e.key){
+      case "Enter": case "c": case "C": e.preventDefault(); confirmGuess(); break;
+      case "1": setVerdict("success"); break;
+      case "2": setVerdict("starved"); break;
+      case "3": setVerdict("wasteful"); break;
+      case "4": setVerdict("failed"); break;
+      case "5": setVerdict("unknown"); break;
+      case "n": case "N": e.preventDefault(); $("#note-input").focus(); break;
+      case "ArrowRight": e.preventDefault(); skip(); break;
+      case "ArrowLeft": e.preventDefault(); prev(); break;
+      case "?": toggleLegend(); break;
+    }
+  });
+
+  function toggleLegend(){ $("#legend").classList.toggle("show"); }
+
+  /* ---------------- reviewer name ---------------- */
+  const revInput=$("#reviewer");
+  reviewer = localStorage.getItem(LS_REVIEWER) || "";
+  revInput.value=reviewer;
+  revInput.addEventListener("input",()=>{
+    reviewer=revInput.value;
+    try{ localStorage.setItem(LS_REVIEWER, reviewer); }catch(e){}
+  });
+
+  /* ---------------- wire buttons ---------------- */
+  $("#btn-load").onclick=pickFile;
+  $("#btn-load-2").onclick=pickFile;
+  $("#btn-demo").onclick=()=>loadQueue(DEMO.map(x=>JSON.parse(JSON.stringify(x))),0,"Demo queue");
+  $("#btn-export").onclick=exportResolved;
+  $("#btn-summary").onclick=openSummary;
+  $("#btn-summary-close").onclick=closeSummary;
+  $("#btn-summary-export").onclick=exportResolved;
+  $("#summary-overlay").addEventListener("click",e=>{ if(e.target.id==="summary-overlay") closeSummary(); });
+  $("#legend-toggle").onclick=toggleLegend;
+
+  buildDock();
+
+  /* boot: if there were prior verdicts, hint at resume but still require load */
+  const priorCount = Object.keys(verdicts).length;
+  if(priorCount){
+    showSkip("Resuming — "+priorCount+" verdict"+(priorCount===1?"":"s")+" saved in this browser. Load a queue to continue.");
+  }
+})();
+</script>
+</body>
+</html>
