@@ -1,0 +1,143 @@
+"""Self-tests / receipts for the harvester. Proves the ANDON gates fire and the
+fuzzy join does not over-claim. These are the receipts behind the standards-#2 and
+join-correctness claims in DESIGN.md.
+
+Run:  python test_harvester.py    (from tools/token-budget-dataset/)
+Exit 0 = all pass; non-zero = a gate is broken (treat as build-blocking).
+All secret literals below are OBVIOUSLY fake placeholders.
+"""
+import sys
+
+from harvester import scrub, manifest, join, config, label
+
+FAILS = []
+
+
+def check(name, cond):
+    print(("  PASS " if cond else "  FAIL ") + name)
+    if not cond:
+        FAILS.append(name)
+
+
+def test_scrub_redacts_real_secrets():
+    print("test_scrub_redacts_real_secrets")
+    samples = {
+        "GH_TOKEN": "token ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA here",
+        "OPENAI_KEY": "key sk-AAAAAAAAAAAAAAAAAAAAAAAA done",
+        "AWS_KEY": "id AKIAAAAAAAAAAAAAAAAA end",
+        "GOOGLE_KEY": "g AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA z",
+        "BEARER": "Authorization: Bearer abcdefghijklmnopqrstuvwxyz12",
+        "ASSIGNED_SECRET": 'password = "hunter2hunter2hunter2"',
+        "CONN_STRING_CRED": "postgres://user:secretpw@host/db",
+    }
+    counts = {}
+    for label_name, text in samples.items():
+        out = scrub.scrub_text(text, counts)
+        # the raw secret body must be gone
+        leftover = scrub.andon_rescan([{"dispatch_id": "t", "task_text": out, "source_file": ""}])
+        check(f"{label_name} redacted (no andon survivor)", not leftover)
+
+
+def test_andon_catches_unscrubbed_secret():
+    print("test_andon_catches_unscrubbed_secret")
+    # a record that BYPASSED scrub still gets caught by the re-scan gate
+    bad = [{"dispatch_id": "leak1", "task_text": "ghp_BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", "source_file": ""}]
+    survivors = scrub.andon_rescan(bad)
+    check("andon flags an un-scrubbed GH token", len(survivors) == 1)
+    check("survivor names the dispatch", survivors and survivors[0][0] == "leak1")
+
+
+def test_contamination_check_raises():
+    print("test_contamination_check_raises")
+    splits = {
+        "exam_pool": [{"dispatch_id": "X"}],
+        "train": [{"dispatch_id": "X"}],   # same id in exam AND train = contamination
+        "audit": [],
+    }
+    raised = False
+    try:
+        manifest.contamination_check(splits)
+    except manifest.AndonHalt:
+        raised = True
+    check("contamination across exam/train hard-fails", raised)
+    # clean splits do not raise
+    ok = {"exam_pool": [{"dispatch_id": "A"}], "train": [{"dispatch_id": "B"}], "audit": []}
+    no_raise = True
+    try:
+        manifest.contamination_check(ok)
+    except manifest.AndonHalt:
+        no_raise = False
+    check("disjoint splits pass", no_raise)
+
+
+def test_canon_truncation():
+    print("test_canon_truncation")
+    rec = {"task_text": "Secret plot beat: the captain betrays the crew. " * 50,
+           "cwd": "E:/AI/star-freight", "source_file": "E:/AI/star-freight/x.jsonl"}
+    out = scrub.scrub_record(rec, {})
+    check("canon repo body redacted", "[CANON_REDACTED]" in out["task_text"])
+    check("canon body short", len(out["task_text"]) <= config.CANON_TASK_TEXT_PREVIEW + 40)
+    check("cwd_repo derived", out["cwd_repo"] == "star-freight")
+
+
+def test_path_email_redaction():
+    print("test_path_email_redaction")
+    c = {}
+    out = scrub.scrub_text(r"see C:\Users\mikey\secret.txt and mail me@example.com", c)
+    check("windows user path redacted", "Users" not in out and "<PATH>" in out)
+    check("email redacted", "<EMAIL>" in out and "example.com" not in out)
+
+
+def test_baseline():
+    print("test_baseline")
+    check("baseline floor 50k", config.baseline_budget(1000) == 50_000)
+    check("baseline scales", config.baseline_budget(100_000) == 150_000)
+    check("tiny ctx -> haiku", config.baseline_tier(5000, None) == "haiku")
+    check("huge ctx -> opus", config.baseline_tier(200_000, None) == "opus")
+
+
+def test_join_does_not_overclaim():
+    print("test_join_does_not_overclaim")
+    # two runs of the SAME repo, both with a wave1/tests agent_run. A dispatch whose
+    # timestamp is INSIDE run-B's window must NOT exact-match run-A's wave1/tests.
+    rows = [
+        {"source": "dogfood", "agent_run_id": 1, "outcome": "success", "raw_status": "complete",
+         "build_passed": None, "run_id": "runA", "repo_base": "demo", "branch": "main", "commit_sha": None,
+         "phase": "health-audit-a", "wave_number": 1, "domain_name": "tests",
+         "window_start": "2026-05-01 10:00:00", "window_end": "2026-05-01 10:30:00",
+         "run_window_start": "2026-05-01 10:00:00", "run_window_end": "2026-05-01 10:30:00"},
+        {"source": "dogfood", "agent_run_id": 2, "outcome": "failed", "raw_status": "invalid_output",
+         "build_passed": None, "run_id": "runB", "repo_base": "demo", "branch": "main", "commit_sha": None,
+         "phase": "health-audit-a", "wave_number": 1, "domain_name": "tests",
+         "window_start": "2026-05-20 10:00:00", "window_end": "2026-05-20 10:30:00",
+         "run_window_start": "2026-05-20 10:00:00", "run_window_end": "2026-05-20 10:30:00"},
+    ]
+    idx = join.build_swarm_index(rows)
+    disp = {"cwd": "E:/AI/demo", "git_branch": "main", "role": "tests",
+            "timestamp": "2026-05-20T10:15:00Z",
+            "complexity_signals": {"wave": "1", "phase": "health-audit-a"}}
+    res = join.join_dispatch(disp, idx)
+    check("matches run-B (the time-pinned run), not run-A",
+          res["matched"] and res["matched"]["agent_run_id"] == 2)
+    check("confident because run is time-pinned", res["join_confidence"] in ("exact", "probable"))
+
+    # a dispatch far from BOTH windows must not exact-match on wave/domain coincidence
+    disp_far = dict(disp, timestamp="2026-08-01T10:15:00Z")
+    res_far = join.join_dispatch(disp_far, idx)
+    check("out-of-window dispatch is not exact", res_far["join_confidence"] != "exact")
+
+
+def main():
+    for t in (test_scrub_redacts_real_secrets, test_andon_catches_unscrubbed_secret,
+              test_contamination_check_raises, test_canon_truncation,
+              test_path_email_redaction, test_baseline, test_join_does_not_overclaim):
+        t()
+    print()
+    if FAILS:
+        print(f"FAILED ({len(FAILS)}): {FAILS}")
+        sys.exit(1)
+    print("ALL PASS")
+
+
+if __name__ == "__main__":
+    main()

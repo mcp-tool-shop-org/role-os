@@ -3,3 +3,12 @@ node_modules
 site/.astro/
 site/dist/
 site/node_modules/
+
+# Token Budget Analyst dataset: harvested corpus is local + regenerable from the
+# harvester; it is NOT committed to this public repo (even scrubbed, it is internal
+# operational data). The harvester CODE is tracked; the DATA stays local.
+tools/token-budget-dataset/dataset/
+
+# Python bytecode (the harvester is stdlib Python)
+__pycache__/
+*.pyc
