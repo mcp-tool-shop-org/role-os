@@ -16,6 +16,7 @@ import { auditCommand } from "../src/audit-cmd.mjs";
 import { swarmCommand } from "../src/swarm-cmd.mjs";
 import { startCommand } from "../src/entry-cmd.mjs";
 import { verifyCitationsCommand } from "../src/verify-citations-cmd.mjs";
+import { specialistCommand } from "../src/specialist-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
@@ -75,6 +76,12 @@ Usage:
   roleos swarm approve                Approve the current feature gate
   roleos swarm verify                 Verify manifest and run state
   roleos verify-citations <dispatch>  Verify a research dispatch's citations via prism (gate)
+  roleos specialist list              List all specialists in the registry (active version + cert)
+  roleos specialist status [--role]   Show registry + halt + quota state per role
+  roleos specialist register <r> <f>  Register a new version for a role
+  roleos specialist promote <r> <v>   Promote a certified version to active (refused on L0)
+  roleos specialist rollback <r> <v>  NAMED COMPENSATOR — pointer-swap to a prior certified version
+  roleos specialist clear-halt <r>    Clear a shadow-probe halt on a role
   roleos mission list                List all missions
   roleos mission show <key>          Show full mission detail
   roleos mission suggest <text>      Suggest a mission for a task
@@ -205,6 +212,9 @@ try {
       break;
     case "verify-citations":
       await verifyCitationsCommand(args);
+      break;
+    case "specialist":
+      await specialistCommand(args);
       break;
     case "mission":
       await missionCommand(args);
