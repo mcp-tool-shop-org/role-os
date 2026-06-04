@@ -67,7 +67,33 @@ def apply_label(rec: dict, join_result: dict) -> dict:
     # cost asymmetry: starved records are the false-"enough" risk class -> up-weight 5x
     rec["cost_weight"] = config.COST_WEIGHT_STARVED if outcome == "starved" else config.COST_WEIGHT_DEFAULT
 
+    # short human-readable rationale for the contrastive review UI (standard #5)
+    rec["label_reason"] = _reason(rec, outcome, source)
+
     # deterministic baseline (the sanity gate) — predicts cost_weighted_spend
     ctx = rec.get("context_tokens") or 0
     rec["baseline_spend"] = config.baseline_spend(ctx)
     return rec
+
+
+def _reason(rec, outcome, source) -> str:
+    spend = rec.get("cost_weighted_spend") or 0
+    out_t = rec.get("output_tokens_total") or 0
+    if outcome == "starved":
+        bits = []
+        if rec.get("final_stop_reason") == "max_tokens":
+            bits.append("hit max_tokens")
+        if rec.get("compaction_observed") and rec.get("compaction_trigger") == "auto":
+            bits.append("forced an auto-compaction")
+        if (rec.get("peak_context_tokens") or 0) >= config.STARVE_PEAK_CTX:
+            bits.append("peak context near the 1M ceiling")
+        return "observed spend is a LOWER bound — " + (", ".join(bits) or "ran to the limit")
+    if outcome == "wasteful":
+        return f"{spend:,} weighted spend for only {out_t:,} output tokens (cache churn / overhead)"
+    if outcome == "failed":
+        return f"external {source} receipt marked the task failed — spend is noise"
+    if outcome == "success" and source != "transcript":
+        return f"external {source} receipt confirmed success at {spend:,} weighted spend"
+    if outcome == "success":
+        return f"ended cleanly (end_turn) at {spend:,} weighted spend — completion only, task quality unverified"
+    return "no completion or outcome signal"

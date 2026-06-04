@@ -17,6 +17,7 @@ FIELDS = [
     "input_tokens_total", "cache_creation_total", "cache_read_total", "output_tokens_total",
     # outcome (counterfactual-honest annotation of the spend target)
     "outcome", "outcome_source", "join_confidence", "weak_label", "cost_weight",
+    "label_reason",                     # short human-readable rationale (contrastive review)
     # deterministic baseline (sanity gate) — predicts cost_weighted_spend
     "baseline_spend",
     # === RECORDED METADATA (not a v0.1 target; kept for later use) ===
