@@ -2,9 +2,9 @@
 
 Builds the training **dataset** for specialist #2 (the Token Budget Analyst) of the
 [specialist tier](../../../). The analyst backs role-os's dispatcher: given
-`(task, role, context size, complexity signals)` it predicts a token-budget interval, a model
-tier, a cascade decision, and a compaction flag. **This directory is dataset-only** — no training,
-no gate wiring, no live token accounting (those are later kickoffs).
+`(task, role, context size, complexity signals)` it predicts the **cost-weighted token spend** of a
+dispatch (with an interval) — token *economics*, model held fixed (not model-tier selection). **This
+directory is dataset-only** — no training, no gate wiring, no live token accounting (later kickoffs).
 
 Not shipped in the npm package (role-os `files` excludes `tools/`). Stdlib-only Python (no pip,
 no GPU). All sources are read **read-only**.

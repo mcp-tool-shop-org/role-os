@@ -7,7 +7,7 @@ Precedence for `outcome` (budget-relevant):
                  invalidates the observed count.
   2. failed    — external receipt says the task failed (tokens_used is noise).
   3. success   — external receipt says the task succeeded (count is a usable target).
-  4. wasteful  — a top tier ran a trivially small job.
+  4. wasteful  — large cost-weighted spend, tiny output (cache churn / overhead).
   5. success*  — clean end_turn, no external check (WEAK success).
   6. unknown   — no signal.
 """
@@ -25,18 +25,15 @@ def _starved(rec) -> bool:
 
 
 def _wasteful(rec) -> bool:
-    sig = rec.get("complexity_signals") or {}
-    return (
-        rec.get("tier_used") == config.WASTE_TIER
-        and (rec.get("tokens_used") or 0) < config.WASTE_MAX_TOKENS
-        and (rec.get("peak_context_tokens") or 0) < config.WASTE_MAX_CTX
-        and (sig.get("num_turns") or 0) <= config.WASTE_MAX_TURNS
-    )
+    # economic waste: a large cost-weighted spend with tiny output to show for it
+    # (cache churn / context overhead burned without producing results).
+    return ((rec.get("output_tokens_total") or 0) < config.WASTE_OUTPUT_MAX
+            and (rec.get("cost_weighted_spend") or 0) > config.WASTE_SPEND_MIN)
 
 
 def apply_label(rec: dict, join_result: dict) -> dict:
     """Mutate rec in place: set outcome, outcome_source, join_confidence, weak_label,
-    cost_weight, baseline_budget, baseline_tier. join_result is from join.join_dispatch."""
+    cost_weight, baseline_spend. join_result is from join.join_dispatch."""
     conf = join_result.get("join_confidence", "none")
     ext_outcome = join_result.get("outcome")
     ext_source = join_result.get("outcome_source", "none")
@@ -70,32 +67,7 @@ def apply_label(rec: dict, join_result: dict) -> dict:
     # cost asymmetry: starved records are the false-"enough" risk class -> up-weight 5x
     rec["cost_weight"] = config.COST_WEIGHT_STARVED if outcome == "starved" else config.COST_WEIGHT_DEFAULT
 
-    # deterministic baseline (the sanity gate)
+    # deterministic baseline (the sanity gate) — predicts cost_weighted_spend
     ctx = rec.get("context_tokens") or 0
-    rec["baseline_budget"] = config.baseline_budget(ctx)
-    rec["baseline_tier"] = config.baseline_tier(ctx, rec.get("role"))
+    rec["baseline_spend"] = config.baseline_spend(ctx)
     return rec
-
-
-def detect_cascades(records: list[dict]) -> None:
-    """Cross-dispatch: if the SAME task ran on >1 tier and a cheaper tier completed
-    cleanly, mark cascade_observed + cheapest_sufficient_tier. Rare in practice; this
-    just captures it honestly where it exists (DESIGN.md §1c)."""
-    tier_rank = {"haiku": 0, "sonnet": 1, "opus": 2}
-    groups = {}
-    for r in records:
-        key = (r.get("task_text_len"), (r.get("task_text") or "")[:120])
-        groups.setdefault(key, []).append(r)
-    for key, grp in groups.items():
-        tiers = {r.get("tier_used") for r in grp if r.get("tier_used") in tier_rank}
-        if len(tiers) < 2:
-            continue
-        # cheapest tier that completed cleanly (end_turn, not starved)
-        ok = [r for r in grp if r.get("final_stop_reason") == "end_turn"
-              and r.get("outcome") != "starved" and r.get("tier_used") in tier_rank]
-        if not ok:
-            continue
-        cheapest = min(ok, key=lambda r: tier_rank[r["tier_used"]])
-        for r in grp:
-            r["cascade_observed"] = True
-            r["cheapest_sufficient_tier"] = cheapest["tier_used"]

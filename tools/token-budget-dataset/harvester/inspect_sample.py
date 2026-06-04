@@ -51,8 +51,9 @@ def main(n=150):
     for d, jr in examples:
         print(f"  dispatch={d['dispatch_id'][:18]} repo={_repo_base(d.get('cwd'))} "
               f"role={d.get('role')} sig={d['complexity_signals']}")
-        print(f"     tokens_used={d['tokens_used']} ctx={d['context_tokens']} "
-              f"peak={d['peak_context_tokens']} tier={d['tier_used']} stop={d['final_stop_reason']}")
+        print(f"     spend={d['cost_weighted_spend']} (out={d['output_tokens_total']} "
+              f"cc={d['cache_creation_total']} cr={d['cache_read_total']}) ctx={d['context_tokens']} "
+              f"tier={d['tier_used']} stop={d['final_stop_reason']}")
         print(f"     -> outcome={jr['outcome']} conf={jr['join_confidence']} matched={jr['matched']}")
         print(f"     task: {d['task_text'][:80]!r}")
 

@@ -78,7 +78,7 @@ def parse_agent_transcript(path: str) -> dict | None:
     task_text = None
     attr_agent = attr_skill = None
     init_ctx = None
-    total_out = 0
+    total_out = total_in = total_cc = total_cr = 0
     peak_ctx = 0
     num_turns = 0
     num_tool_results = 0
@@ -126,11 +126,14 @@ def parse_agent_transcript(path: str) -> dict | None:
                 tier_counts[model] = tier_counts.get(model, 0) + 1
             last_stop = msg.get("stop_reason", last_stop)
             u = msg.get("usage") or {}
-            out = u.get("output_tokens", 0) or 0
-            total_out += out
-            ctx = ((u.get("input_tokens", 0) or 0)
-                   + (u.get("cache_read_input_tokens", 0) or 0)
-                   + (u.get("cache_creation_input_tokens", 0) or 0))
+            ui = u.get("input_tokens", 0) or 0
+            ucc = u.get("cache_creation_input_tokens", 0) or 0
+            ucr = u.get("cache_read_input_tokens", 0) or 0
+            total_out += u.get("output_tokens", 0) or 0
+            total_in += ui
+            total_cc += ucc
+            total_cr += ucr
+            ctx = ui + ucr + ucc
             if init_ctx is None and ctx > 0:
                 init_ctx = ctx
             peak_ctx = max(peak_ctx, ctx)
@@ -163,7 +166,11 @@ def parse_agent_transcript(path: str) -> dict | None:
             "wave": sigs["wave"],
             "action": sigs["action"],
         },
-        "tokens_used": total_out,
+        "cost_weighted_spend": config.cost_weighted_spend(total_in, total_cc, total_cr, total_out),
+        "input_tokens_total": total_in,
+        "cache_creation_total": total_cc,
+        "cache_read_total": total_cr,
+        "output_tokens_total": total_out,
         "peak_context_tokens": peak_ctx,
         "final_stop_reason": last_stop,
         "tier_used": config.normalize_tier(dominant_model),
@@ -181,7 +188,7 @@ def parse_session_transcript(path: str) -> dict | None:
     cwd = git_branch = session_id = None
     task_text = None
     init_ctx = None
-    total_out = 0
+    total_out = total_in = total_cc = total_cr = 0
     peak_ctx = 0
     num_turns = 0
     last_stop = None
@@ -216,10 +223,14 @@ def parse_session_transcript(path: str) -> dict | None:
                 tier_counts[model] = tier_counts.get(model, 0) + 1
             last_stop = msg.get("stop_reason", last_stop)
             u = msg.get("usage") or {}
+            ui = u.get("input_tokens", 0) or 0
+            ucc = u.get("cache_creation_input_tokens", 0) or 0
+            ucr = u.get("cache_read_input_tokens", 0) or 0
             total_out += u.get("output_tokens", 0) or 0
-            ctx = ((u.get("input_tokens", 0) or 0)
-                   + (u.get("cache_read_input_tokens", 0) or 0)
-                   + (u.get("cache_creation_input_tokens", 0) or 0))
+            total_in += ui
+            total_cc += ucc
+            total_cr += ucr
+            ctx = ui + ucr + ucc
             if init_ctx is None and ctx > 0:
                 init_ctx = ctx
             peak_ctx = max(peak_ctx, ctx)
@@ -251,7 +262,11 @@ def parse_session_transcript(path: str) -> dict | None:
             "wave": sigs["wave"],
             "action": sigs["action"],
         },
-        "tokens_used": total_out,
+        "cost_weighted_spend": config.cost_weighted_spend(total_in, total_cc, total_cr, total_out),
+        "input_tokens_total": total_in,
+        "cache_creation_total": total_cc,
+        "cache_read_total": total_cr,
+        "output_tokens_total": total_out,
         "peak_context_tokens": peak_ctx,
         "final_stop_reason": last_stop,
         "tier_used": config.normalize_tier(dominant_model),

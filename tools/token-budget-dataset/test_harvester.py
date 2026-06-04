@@ -90,10 +90,18 @@ def test_path_email_redaction():
 
 def test_baseline():
     print("test_baseline")
-    check("baseline floor 50k", config.baseline_budget(1000) == 50_000)
-    check("baseline scales", config.baseline_budget(100_000) == 150_000)
-    check("tiny ctx -> haiku", config.baseline_tier(5000, None) == "haiku")
-    check("huge ctx -> opus", config.baseline_tier(200_000, None) == "opus")
+    check("baseline floor 50k", config.baseline_spend(1000) == 50_000)
+    check("baseline scales", config.baseline_spend(100_000) == 150_000)
+
+
+def test_cost_weighting():
+    print("test_cost_weighting")
+    # weights: input 1x, output 5x, cache_creation 1.25x, cache_read 0.1x
+    check("output 5x", config.cost_weighted_spend(0, 0, 0, 100) == 500)
+    check("cache_read 0.1x", config.cost_weighted_spend(0, 0, 1000, 0) == 100)
+    check("cache_creation 1.25x", config.cost_weighted_spend(0, 400, 0, 0) == 500)
+    check("input 1x", config.cost_weighted_spend(100, 0, 0, 0) == 100)
+    check("combined", config.cost_weighted_spend(100, 400, 1000, 100) == 100 + 500 + 100 + 500)
 
 
 def test_join_does_not_overclaim():
@@ -130,7 +138,8 @@ def test_join_does_not_overclaim():
 def main():
     for t in (test_scrub_redacts_real_secrets, test_andon_catches_unscrubbed_secret,
               test_contamination_check_raises, test_canon_truncation,
-              test_path_email_redaction, test_baseline, test_join_does_not_overclaim):
+              test_path_email_redaction, test_baseline, test_cost_weighting,
+              test_join_does_not_overclaim):
         t()
     print()
     if FAILS:

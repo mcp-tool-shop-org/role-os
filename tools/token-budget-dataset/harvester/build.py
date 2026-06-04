@@ -16,10 +16,7 @@ from . import (config, locate, parse_transcripts, parse_outcomes, join,
 
 
 def _finalize(rec: dict) -> dict:
-    out = {f: rec.get(f) for f in schema.FIELDS}
-    if out.get("cascade_observed") is None:
-        out["cascade_observed"] = False
-    return out
+    return {f: rec.get(f) for f in schema.FIELDS}
 
 
 def _write_jsonl(path, records):
@@ -59,7 +56,6 @@ def run(sample=None, out_dir=None):
     for r in records:
         jr = join.join_dispatch(r, idx)
         label.apply_label(r, jr)
-    label.detect_cascades(records)
 
     # --- scrub (in memory) ---
     scrub_counts = {}

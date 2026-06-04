@@ -9,18 +9,20 @@ FIELDS = [
     # identity / provenance
     "dispatch_id", "grain", "source_file", "harvester_version", "timestamp",
     "cwd_repo", "git_branch",
-    # features (input, no join needed)
+    # features (input, known pre-dispatch)
     "task_text", "task_text_len", "role", "attribution_agent", "attribution_skill",
     "context_tokens", "complexity_signals",
-    # observed budget / tier
-    "tokens_used", "peak_context_tokens", "final_stop_reason", "tier_used",
-    "cascade_observed", "cheapest_sufficient_tier",
-    # compaction
-    "compaction_observed", "compaction_trigger", "pre_compaction_tokens",
-    # outcome (counterfactual-honest)
+    # === v0.1 PREDICTION TARGET: cost-weighted token spend ===
+    "cost_weighted_spend",              # the budget the analyst predicts (conformal at train time)
+    "input_tokens_total", "cache_creation_total", "cache_read_total", "output_tokens_total",
+    # outcome (counterfactual-honest annotation of the spend target)
     "outcome", "outcome_source", "join_confidence", "weak_label", "cost_weight",
-    # deterministic baseline (sanity gate)
-    "baseline_budget", "baseline_tier",
+    # deterministic baseline (sanity gate) — predicts cost_weighted_spend
+    "baseline_spend",
+    # === RECORDED METADATA (not a v0.1 target; kept for later use) ===
+    "peak_context_tokens", "final_stop_reason",
+    "tier_used",                        # metadata: enables a future Claude-vs-local lever
+    "compaction_observed", "compaction_trigger", "pre_compaction_tokens",  # future v2 target
 ]
 
 OUTCOME_VALUES = {"success", "starved", "wasteful", "failed", "unknown"}

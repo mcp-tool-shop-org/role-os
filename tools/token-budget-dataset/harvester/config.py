@@ -35,27 +35,44 @@ LARGE_ARTIFACT_CHARS = 2000   # an embedded block over this is stripped to a pla
 TASK_TEXT_MAX_CHARS = 8000    # hard cap on retained task_text (post-scrub)
 CANON_TASK_TEXT_PREVIEW = 200 # canon repos keep only this many scrubbed chars
 
+# --- token ECONOMICS: cost-weighted spend (the v0.1 prediction target) ---
+# The budget is SPEND, model fixed (not tier selection). Raw output tokens hide the
+# real cost: a dispatch can be cheap on output but expensive on cache_creation, or
+# nearly free if it is mostly cache_read (~10x cheaper than a cache write). We weight
+# each usage component by Anthropic's STRUCTURAL price ratios (relative to input=1):
+#   output 5x, cache_creation (write) 1.25x, cache_read 0.1x.
+# Result = "cost-weighted tokens" in input-token-equivalents (model-agnostic in ratio;
+# multiply by the model's $/Mtok-input later to get dollars).
+# NOTE: confirm absolute Opus $/Mtok before dollarizing; the RATIOS below are the stable
+# part and are what the cost-weighting needs.
+PRICE_WEIGHTS = {"input": 1.0, "output": 5.0, "cache_creation": 1.25, "cache_read": 0.1}
+
+def cost_weighted_spend(input_t: int, cache_creation_t: int, cache_read_t: int, output_t: int) -> int:
+    w = PRICE_WEIGHTS
+    return int((input_t or 0) * w["input"]
+               + (cache_creation_t or 0) * w["cache_creation"]
+               + (cache_read_t or 0) * w["cache_read"]
+               + (output_t or 0) * w["output"])
+
 # --- cost asymmetry (Wang 2025, arXiv:2510.22016) ---
 COST_WEIGHT_STARVED = 5.0     # false-"enough": predicted sufficient, actually starved
 COST_WEIGHT_DEFAULT = 1.0
 
 # --- deterministic baseline (the sanity gate, DESIGN.md §7) ---
+# Predicts the cost-weighted SPEND from the pre-dispatch context size. Deliberately
+# simple; the bar the learned budgeter must beat by >=10% at equal quality. Likely
+# needs recalibration once the spend distribution is observed (manifest reports it).
 BASELINE_FLOOR_TOKENS = 50_000
 BASELINE_CONTEXT_MULT = 1.5
 
-def baseline_budget(context_tokens: int) -> int:
+def baseline_spend(context_tokens: int) -> int:
     return int(max(context_tokens * BASELINE_CONTEXT_MULT, BASELINE_FLOOR_TOKENS))
 
-def baseline_tier(context_tokens: int, role: str | None) -> str:
-    """Small rule table: context/role -> tier. Deliberately simple; this is the
-    bar the learned budgeter must beat by >=10% cost at equal quality."""
-    if context_tokens < 20_000:
-        return "haiku"
-    if context_tokens < 80_000:
-        return "sonnet"
-    return "opus"
+# --- waste (economic): high spend, little to show for it (cache churn / overhead) ---
+WASTE_OUTPUT_MAX = 800        # tiny output ...
+WASTE_SPEND_MIN = 50_000      # ... yet a large cost-weighted spend => wasteful
 
-# --- tier normalization: model id -> coarse tier ---
+# --- tier normalization: model id -> coarse tier (RECORDED METADATA, not a target) ---
 def normalize_tier(model: str | None) -> str | None:
     if not model:
         return None
@@ -77,8 +94,4 @@ AUDIT_FRACTION = 0.10         # next-newest 10% -> field audit
 # --- transcript-internal outcome thresholds (DESIGN.md §4/§2) ---
 # starvation: auto-compaction near the 1M ceiling, or output hard-stop
 STARVE_PEAK_CTX = 900_000     # peak context this close to 1M => context-starved
-# waste: a top tier ran a trivially small job
-WASTE_TIER = "opus"
-WASTE_MAX_TOKENS = 1500
-WASTE_MAX_CTX = 60_000
-WASTE_MAX_TURNS = 3
+# (economic waste thresholds WASTE_OUTPUT_MAX / WASTE_SPEND_MIN are defined above)

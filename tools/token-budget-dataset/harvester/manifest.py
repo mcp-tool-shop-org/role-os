@@ -4,8 +4,21 @@ Hides one concern: PIN_PER_STEP provenance and the ANDON contamination gate (#1,
 import collections
 import hashlib
 import json
+import statistics
 
 from . import config, schema
+
+
+def _pct(values):
+    xs = sorted(v for v in values if v is not None)
+    if not xs:
+        return {}
+    return {
+        "min": xs[0], "p50": int(statistics.median(xs)),
+        "p90": xs[min(len(xs) - 1, int(len(xs) * 0.9))],
+        "p99": xs[min(len(xs) - 1, int(len(xs) * 0.99))],
+        "max": xs[-1], "mean": int(statistics.mean(xs)),
+    }
 
 
 class AndonHalt(RuntimeError):
@@ -75,11 +88,27 @@ def build_manifest(all_records, splits, scrub_counts, locate_summary, build_time
             "wasteful": sum(1 for r in all_records if r.get("outcome") == "wasteful"),
             "cost_weighted_5x": sum(1 for r in all_records if r.get("cost_weight") == config.COST_WEIGHT_STARVED),
         },
+        "target": {
+            "name": "cost_weighted_spend",
+            "definition": "input*1 + cache_creation*1.25 + cache_read*0.1 + output*5 "
+                          "(input-token-equivalents; model fixed, not tier selection)",
+            "cost_model_weights": config.PRICE_WEIGHTS,
+            "cost_model_note": "structural Anthropic ratios; confirm absolute $/Mtok before dollarizing",
+            "prediction_target_grain": "subagent (per-dispatch); session-grain kept as metadata",
+            "spend_stats_all": _pct([r.get("cost_weighted_spend") for r in all_records]),
+            "spend_stats_subagent": _pct([r["cost_weighted_spend"] for r in all_records if r.get("grain") == "subagent"]),
+            "spend_stats_session": _pct([r["cost_weighted_spend"] for r in all_records if r.get("grain") == "session"]),
+            "raw_output_stats": _pct([r.get("output_tokens_total") for r in all_records]),
+            "modeling_note": "heavy-tailed (~2 orders of magnitude) -> regress in log space; conformal interval in log space (train-time)",
+            "cache_read_note": "cache_read (context re-read each turn) is ~half of weighted spend at p50 and dominates the tail "
+                               "-- the main economic driver, invisible in raw output counts",
+        },
         "baseline": {
-            "rule": "baseline_budget = max(context*1.5, 50000); baseline_tier = rule table",
-            "ship_gate": "learned budgeter must beat baseline by >=10% cost at equal quality on the exam, "
+            "rule": "baseline_spend = max(context*1.5, 50000)  # predicts cost_weighted_spend",
+            "ship_gate": "learned budgeter must beat baseline by >=10% at equal quality on the exam, "
                          "or v0.1 ships the deterministic policy (experimental hygiene, not a cited result)",
-            "coverage": sum(1 for r in all_records if r.get("baseline_budget")),
+            "spend_stats": _pct([r.get("baseline_spend") for r in all_records]),
+            "coverage": sum(1 for r in all_records if r.get("baseline_spend")),
         },
         "scrub_report": scrub_counts,
         "andon": {
