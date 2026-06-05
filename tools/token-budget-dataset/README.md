@@ -44,6 +44,16 @@ python test_harvester.py                   # self-tests / ANDON + join receipts 
 | manifest | `harvester/manifest.py` | provenance, hashes, contamination hard-fail |
 | build | `harvester/build.py` | orchestration; writes nothing until both ANDON gates pass |
 | freeze | `harvester/freeze.py` | fold human-review verdicts -> the gold exam |
+| puzzles | `harvester/puzzles.py` | turn the corpus into the self-checkable puzzle curriculum |
+
+## Puzzle curriculum (the training format)
+
+The corpus is the **scenario bank** for a puzzle curriculum that teaches the *principles* of token
+economics, not a regression table. `python -m harvester.puzzles build` writes `dataset/v0.1/puzzles/`
+(self-checkable challenges across 5 difficulty rungs: spot-the-driver, which-costs-more, fit-or-split,
+spot-the-failure, what-if). Every answer is **computable — no human grading**. The rungs are the
+progression the model works up to, and map to the specialist's certification levels.
+`python -m harvester.puzzles` prints one example per rung.
 
 ## Human-review pass (exam gold — UNCERTAINTY_GATED_HUMANS)
 

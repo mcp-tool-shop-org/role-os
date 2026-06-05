@@ -35,6 +35,29 @@ from a calibration split. The corpus ships what is needed to compute the interva
 
 ---
 
+## 1c. Training format — a puzzle curriculum (Mike's design)
+
+The corpus is not trained as a raw `(features → spend)` regression table. It is the **scenario
+bank** for a **puzzle curriculum** that teaches the model the *principles* of token economics — the
+reasoning muscle — instead of memorizing numbers. `harvester/puzzles.py` turns real dispatches into
+**self-checkable** puzzles across difficulty **rungs**, each with a computable answer + worked
+reasoning + the real prediction that follows:
+
+- **L1 spot-the-driver** — read the bill, name the dominant cost (warm-up)
+- **L2 which-costs-more** — compare two real tasks; raw output is a red herring (the trap)
+- **L3 fit-or-split** — will this task fit a budget, or must it be split? (the decision)
+- **L4 spot-the-failure** — diagnose a starved/compacted run, say what to predict up front (diagnosis)
+- **L5 what-if** — how does cost move as step count grows? (dynamics)
+
+The rungs are the **progression an AI works up to**, and map directly onto the specialist's
+**certification levels** (architecture lock). Because every answer is **computable** (which costs
+more *is* a fact; the dominant driver *is* a fact), there is **no human grading** — this resolves the
+unanswerable "is this spend right-sized?" labeling task. The human (director) eyeballs a few puzzles
+to confirm they teach the right principle; the answers check themselves. More rungs are added over
+time (harder multi-step reasoning, tighter estimates). Build: `python -m harvester.puzzles build`.
+
+---
+
 ## 2. The target: cost-weighted spend (not raw output)
 
 Raw output-token count hides the real economics. A dispatch can be cheap on output but expensive on

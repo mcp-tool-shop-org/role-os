@@ -11,7 +11,7 @@ import os
 import sys
 import tempfile
 
-from harvester import scrub, manifest, join, config, label, freeze
+from harvester import scrub, manifest, join, config, label, freeze, puzzles
 
 FAILS = []
 
@@ -178,11 +178,35 @@ def test_freeze_folds_human_verdicts():
     check("certifying a train record hard-fails", raised)
 
 
+def test_puzzles_self_check():
+    print("test_puzzles_self_check")
+    # L1: the answer must be the actual dominant WEIGHTED component
+    r = {"dispatch_id": "d1", "output_tokens_total": 100, "cache_creation_total": 0,
+         "cache_read_total": 100000, "input_tokens_total": 0}  # cache_read 10000 > output 500
+    check("L1 names the true driver", puzzles.level1_spot_driver(r)["answer"] == "cache read")
+
+    # L2: answer = higher spend; is_trap when output ranking disagrees
+    a = {"dispatch_id": "a", "cost_weighted_spend": 900000, "output_tokens_total": 31000,
+         "context_tokens": 44000, "complexity_signals": {"num_turns": 49}, "task_text": "A task."}
+    b = {"dispatch_id": "b", "cost_weighted_spend": 1600000, "output_tokens_total": 3000,
+         "context_tokens": 18000, "complexity_signals": {"num_turns": 61}, "task_text": "B task."}
+    p2 = puzzles.level2_which_costs_more(a, b)
+    check("L2 picks the costlier task", p2["answer"] == "B")
+    check("L2 flags the trap (more output, less cost)", p2["is_trap"] is True)
+
+    # L3: fit when cost <= budget, split otherwise
+    r3 = {"dispatch_id": "d3", "cost_weighted_spend": 50000, "context_tokens": 38000,
+          "complexity_signals": {"num_turns": 5}, "task_text": "x task."}
+    check("L3 fit", puzzles.level3_fit_or_split(r3, 100000)["answer"] == "fit")
+    check("L3 split", puzzles.level3_fit_or_split(r3, 10000)["answer"] == "split")
+
+
 def main():
     for t in (test_scrub_redacts_real_secrets, test_andon_catches_unscrubbed_secret,
               test_contamination_check_raises, test_canon_truncation,
               test_path_email_redaction, test_baseline, test_cost_weighting,
-              test_join_does_not_overclaim, test_freeze_folds_human_verdicts):
+              test_join_does_not_overclaim, test_freeze_folds_human_verdicts,
+              test_puzzles_self_check):
         t()
     print()
     if FAILS:
