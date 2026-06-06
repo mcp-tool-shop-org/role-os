@@ -1,0 +1,59 @@
+{
+  "id": "conformance-14b-soup-v0.2 (dataset; adapter id assigned at retrain)",
+  "supersedes": "conformance-v1.json (conformance-14b-soup-20260606, currently served)",
+  "role": "Tool-Call Conformance",
+  "duty": "tool-call / schema-and-contract conformance (oversight wedge #1)",
+  "base_model": "Qwen/Qwen3-14B",
+  "architecture": "deterministic schema-validator floor (L1 type / L2 required / L3 enum-range-format) + LLM ceiling (L4 semantic-contract, L5 intent-vs-action). The floor is mechanical + infallible at serve time; the LLM does the reasoning rungs. v0.2 adds an optional STATE block to the evidence so REFERENTIAL contracts ('amount <= remaining balance', 'id references an existing resource', 'later than now') are self-checkable from (contract + state + call) instead of asking the model to bluff about invisible state.",
+  "status": "TRAINED + CERTIFIED + OOD-DOGFOODED. VERDICT: do NOT promote — the exam lift did not generalize. v1 (conformance-14b-soup) STAYS the served adapter.",
+  "results": {
+    "exam": {
+      "note": "tool-atomic held-out exam (144 records, L4 at-risk 16). v0.2 clearly beat v1 HERE.",
+      "overall_acc": 0.986, "flip_overall": 0.972, "false_conformant_total": 1, "cost_weighted_error": 0.0405,
+      "L4": {"acc": 0.969, "flip": 0.938, "false_conformant": 1, "at_risk": 16},
+      "L5": {"acc": 0.964, "flip": 0.929, "false_conformant": 0},
+      "vs_v1_L4": "v1 was 0.90 acc / 0.80 flip / 2 FC of 10; v0.2 0.969 / 0.938 / 1 FC of 16"
+    },
+    "ood_dogfood": {
+      "note": "49 FRESH cases authored by an independent 60-agent fan-out (novel tools/domains, cross-adjudicated), distributionally independent of corpus_l4.json. The TRUE generalization test (the verifier-v2 lesson). Both adapters scored on the SAME cases.",
+      "v0.2": {"acc": 0.924, "flip": 0.837, "false_conformant": 9, "at_risk": 83},
+      "v1":   {"acc": 0.924, "flip": 0.837, "false_conformant": 7, "at_risk": 83},
+      "verdict": "v0.2 == v1 (identical 0.924/0.837); v0.2 has 2 MORE false-conformants (noise-level, n=8/class). The exam gain was authoring-distribution fit, not principle-learning.",
+      "perfect_both": ["ordering", "distinctness", "mutual_exclusion", "cardinality", "conditional", "monotonic", "stateful_balance"],
+      "shared_failures": ["sum_total (sum a list, compare to cap)", "bounds_in_call (add args, compare to a third)", "cross_field_consistency (index a string at a position)"]
+    },
+    "diagnosis": "The residual failures are COMPUTABLE-ARITHMETIC contracts (summation, additive bounds, string-index lookup) — exactly what a deterministic checker does perfectly and a 14B LLM at temp 0.1 does unreliably at ANY training volume. The classes that require world-knowledge/intent (conditional, mutual-exclusion, distinctness, referential-with-STATE) are already at ceiling for both. So more L4 training data has hit diminishing returns; the bottleneck is architectural.",
+    "decision": "KEEP v1 served. Do not flip ROLEOS_CONFORMANCE_CONSULT to v0.2. v0.3 direction = grow the DETERMINISTIC FLOOR (schemaFloor in role-os/src/specialist/conformance-consult.mjs) to cover COMPUTABLE relational contracts — sum-to-cap, additive in-bounds, length-equality, set-membership-given-STATE — so the LLM rung only handles genuinely-semantic contracts. This is the deterministic-floor + LLM-ceiling design taken one rung further, not another finetune."
+  },
+  "motivation": "v1 certified 0.98 acc / 0.96 flip overall but L4 (semantic-contract) was the soft rung: 0.9 acc / 0.8 flip / 2 false-conformants of 10 at-risk. The misses concentrate in (1) cross-field RELATIONAL contracts (verdict depends on comparing two args both present in the call) and (2) REFERENTIAL contracts that were not self-checkable from the call alone (refund_charge — one of the two false-conformants — is exactly this: the 'remaining balance' the verdict hinged on was invisible).",
+  "changes_v0.2": [
+    "Generator (conformance_puzzles.py): contract_group now fans out over a list `l4_violations` (one flip-consistency contrast group per clause, distinct pair_ids) alongside back-compat `l4_violation`; `_tool_evidence` renders an optional per-tool `state` as a STATE: line.",
+    "Build (build_conformance_dataset.py): loads corpus_tools.json then applies corpus_l4.json with override-in-place (preserves tool index -> tool-atomic split unchanged) + append-new. All v0.2 deltas live in one reviewable file; the canonical corpus is untouched.",
+    "Corpus (corpus_l4.json, authored by author_l4.py): 24 NEW tools carrying 40 self-contained cross-field RELATIONAL L4 clauses (ordering a<b, cardinality len==n / k<=len, distinctness a!=b, sum==cap, mutual exclusion, conditional co-requirement, in-bounds, monotonic tiers, currency-consistency), of which 5 are STATEFUL (transfer_funds, reserve_inventory, apply_order_coupon, promote_release, assign_seat) and teach the STATE-reading pattern.",
+    "Referential STATE-fixes (8 overrides): refund_charge, stat_path, post_channel_message, git_revert_commit, snooze_notification, paginate_rest_collection, secret_rotate_version, create_oauth_token each gain a STATE line carrying the operative fact, turning previously-unfair (bluff-bait) items into derivable ones. refund_charge stays in the held-out exam, now repaired."
+  ],
+  "dataset": {
+    "tools": 90,
+    "tools_base": 66,
+    "tools_new": 24,
+    "tools_state_fixed": 8,
+    "records": 898,
+    "train_sft": 754,
+    "exam": 144,
+    "exam_unseen_tools": 14,
+    "exam_split": "tool-atomic (the 14 exam tools never appear in training) — measures GENERALIZATION; the 9 v1 L4 exam tools remain held out, so v0.2 is directly comparable plus broader",
+    "level_dist": {"L1": 180, "L2": 180, "L3": 146, "L4": 212, "L5": 180},
+    "exam_level_dist": {"L1": 28, "L2": 28, "L3": 28, "L4": 32, "L5": 28},
+    "l4_groups": 106,
+    "l4_groups_new": 40,
+    "l4_exam_at_risk": 16,
+    "exam_hash_sha256": "cb6de192ca799f7bb604a0dacd513d44dada9ff22eb3229188108422c75b8dd3",
+    "audit": "PASS (verdict balance 50/50, flip-ready 449/449, torn groups 0, evidence leaked 0)",
+    "max_seq_est_tokens": 609,
+    "p99_seq_est_tokens": 564
+  },
+  "recipe": "unchanged from v1 — Qwen3-14B QLoRA, rsLoRA r16/alpha32, lr 1e-4, 600 steps, BUDGETER_BATCH=2 BUDGETER_ACCUM=8 (eff batch 16; the ~600-tok tool-schema sequences OOM at batch4), soup of seeds 42+1337, served llama.cpp --lora scale 4. Seq length unchanged from v1 (STATE adds ~1 line), so batch2/accum8 still fits (~88% VRAM peak).",
+  "target": "Lift L4 to >= 0.97 acc / >= 0.94 flip with 0 false-conformants on the new 16-at-risk L4 exam, WITHOUT regressing L1-L3 (1.0) or L5 (1.0). Honest bar: even partial lift (false-conformants 2 -> 0, flip 0.8 -> 0.9+) is a ship if L1-L3/L5 hold.",
+  "build": "python author_l4.py && python build_conformance_dataset.py   (CPU, re-runnable, audit hard-gates)",
+  "next": "Mike-gated retrain -> soup -> certify_conformance.py on conformance_exam_records.jsonl; on a confirmed L4 lift with no regression, re-mint the adapter, bump specialists.json active_version, and update conformance-v1.json -> the v0.2 served record. The watcher stays advisory + fail-open-to-ABSTAIN throughout; rollback = the v1 adapter (still on disk) or disable the consult flag."
+}

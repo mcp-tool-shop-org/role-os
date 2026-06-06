@@ -12,3 +12,10 @@ tools/token-budget-dataset/dataset/
 # Python bytecode (the harvester is stdlib Python)
 __pycache__/
 *.pyc
+
+# Specialist runtime state (mutates at runtime; the registry specialists.json IS tracked)
+.role-os/specialist-state.json
+.role-os/specialist-events.jsonl
+
+# Conformance training run logs/peaks (local; the dataset, scripts + certify receipts ARE tracked)
+tools/conformance-dataset/*.log

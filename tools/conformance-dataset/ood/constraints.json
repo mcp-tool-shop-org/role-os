@@ -1,0 +1,1047 @@
+{
+  "cdn.purge_window_schedule": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "purge_start_epoch",
+        "right": "purge_end_epoch"
+      },
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "max_objects",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "robotics.joint_sweep_command": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "angle_min_deg",
+        "right": "angle_max_deg"
+      },
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "velocity_deg_s",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "genomics.region_coverage_query": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "start_pos",
+        "right": "end_pos"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "min_mapq",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "min_mapq",
+        "right": {
+          "value": 60
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "telephony.tiered_rate_band_define": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "band_floor_min",
+        "right": "band_ceiling_min"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "price_per_min",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "gameserver.matchmaking_skill_bracket_open": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "mmr_lower",
+        "right": "mmr_upper"
+      },
+      {
+        "kind": "member",
+        "field": "region",
+        "in": {
+          "enum": [
+            "na",
+            "eu",
+            "apac",
+            "sa"
+          ]
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "swarm_drone_assign_waypoints": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "drone_ids"
+        },
+        "right": {
+          "len": "waypoints"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn_purge_paths_with_etags": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "verify_etags",
+          "equals": true
+        },
+        "require": [
+          "expected_etags"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "expected_etags"
+        },
+        "right": {
+          "len": "paths"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "phone_ring_group_set_weights": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "weights"
+        },
+        "right": {
+          "len": "extensions"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "genome_variant_batch_annotate": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "max_effects_per_variant",
+        "right": {
+          "len": "transcript_set"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "warehouse_pick_wave_release": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "picker_count",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "picker_count",
+        "right": {
+          "len": "zones"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "telephony.bridgeCallLegs": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "leg_a_id",
+          "leg_b_id"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "genomics.alignPairwiseSequences": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "query_seq_id",
+          "subject_seq_id"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn.promoteOriginFailover": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "primary_origin_id",
+          "failover_origin_id"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "featureflags.copyVariantTargeting": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "source_variant_key",
+          "dest_variant_key"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "gameserver.migratePartyShard": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "from_shard_id",
+          "to_shard_id"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn.shard_edge_traffic": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "eq",
+        "of": "weights",
+        "vs": {
+          "value": 100
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "weights"
+        },
+        "right": {
+          "len": "pops"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "genome.assign_sequencing_lanes": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": "sample_fractions",
+        "vs": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "sample_fractions"
+        },
+        "right": {
+          "len": "sample_ids"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "gameserver.allocate_match_slots": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "eq",
+        "of": "team_sizes",
+        "vs": "total_slots"
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "team_sizes"
+        },
+        "right": {
+          "len": "team_names"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "total_slots",
+        "right": {
+          "value": 1
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "logistics.plan_pallet_loadout": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": "item_weights_kg",
+        "vs": "max_payload_kg"
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "item_weights_kg"
+        },
+        "right": {
+          "len": "item_ids"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "max_payload_kg",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "telephony.split_trunk_channels": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": "tenant_channels",
+        "vs": "trunk_capacity"
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "tenant_channels"
+        },
+        "right": {
+          "len": "tenant_ids"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "trunk_capacity",
+        "right": {
+          "value": 1
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn.purge_cache_target": {
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "url_prefix",
+          "cache_tag"
+        ],
+        "count": 1
+      }
+    ],
+    "state_struct": null
+  },
+  "telephony.route_inbound_did": {
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "forward_extension",
+          "sip_uri"
+        ],
+        "count": 1
+      }
+    ],
+    "state_struct": null
+  },
+  "robotics.set_joint_command": {
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "target_angle_deg",
+          "target_velocity_dps"
+        ],
+        "count": 1
+      }
+    ],
+    "state_struct": null
+  },
+  "featureflag.set_rollout_rule": {
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "percentage_rollout",
+          "segment_id"
+        ],
+        "count": 1
+      }
+    ],
+    "state_struct": null
+  },
+  "genomics.fetch_variant_window": {
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "region_coords",
+          "gene_symbol"
+        ],
+        "count": 1
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn_purge_create": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "scope",
+          "equals": "paths"
+        },
+        "require": [
+          "paths"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": {
+          "len": "paths"
+        },
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "paths"
+        },
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "telephony_outbound_call": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "record",
+          "equals": true
+        },
+        "require": [
+          "retention_days"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "retention_days",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "retention_days",
+        "right": {
+          "value": 90
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "warehouse_robot_dispatch": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "gripper",
+        "in": {
+          "enum": [
+            "suction",
+            "clamp"
+          ]
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "payload_kg",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "payload_kg",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "gripper",
+        "right": {
+          "value": "none"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "feature_flag_rollout_set": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "strategy",
+          "equals": "percentage"
+        },
+        "require": [
+          "percentage"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "percentage",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "percentage",
+        "right": {
+          "value": 100
+        }
+      },
+      {
+        "kind": "requires",
+        "when": {
+          "field": "strategy",
+          "equals": "segment"
+        },
+        "require": [
+          "segment_id"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "genome_variant_call_submit": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "reference_build",
+          "equals": "GRCh38"
+        },
+        "require": [
+          "chrom_naming"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "chrom_naming",
+        "right": {
+          "value": "chr_prefixed"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "chrom_naming",
+        "right": {
+          "value": "numeric"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn_purge_range": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": [
+          "start_byte",
+          "length"
+        ],
+        "vs": "object_size"
+      }
+    ],
+    "state_struct": null
+  },
+  "genome_slice_extract": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": [
+          "position",
+          "window_size"
+        ],
+        "vs": "chromosome_length"
+      }
+    ],
+    "state_struct": null
+  },
+  "warehouse_pick_reserve": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": [
+          "reserve_qty",
+          "already_committed"
+        ],
+        "vs": "bin_on_hand"
+      }
+    ],
+    "state_struct": null
+  },
+  "telephony_did_block_allocate": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": [
+          "start_offset",
+          "block_count"
+        ],
+        "vs": "range_capacity"
+      }
+    ],
+    "state_struct": null
+  },
+  "game_server_shard_assign": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": [
+          "party_size",
+          "current_players"
+        ],
+        "vs": "shard_capacity"
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn_purge_quota_consume": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "url_count",
+        "right": {
+          "state": "remaining_credits"
+        }
+      },
+      {
+        "kind": "member",
+        "field": "zone_id",
+        "in": {
+          "state": "known_zones"
+        }
+      }
+    ],
+    "state_struct": {
+      "remaining_credits": 120,
+      "known_zones": [
+        "edge-fra-07",
+        "edge-iad-02"
+      ]
+    }
+  },
+  "warehouse_robot_pick_reserve": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "qty",
+        "right": {
+          "state": "on_hand"
+        }
+      }
+    ],
+    "state_struct": {
+      "on_hand": 8
+    }
+  },
+  "telephony_did_assign": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "did_number",
+        "in": {
+          "state": "available_dids"
+        }
+      }
+    ],
+    "state_struct": {
+      "available_dids": [
+        "+14155550101",
+        "+14155550102",
+        "+14155550199"
+      ]
+    }
+  },
+  "feature_flag_rollout_increment": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "target_percent",
+        "right": {
+          "state": "max_approved_percent"
+        }
+      }
+    ],
+    "state_struct": {
+      "max_approved_percent": 50
+    }
+  },
+  "game_server_slot_join": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "party_size",
+        "right": {
+          "state": "open_slots"
+        }
+      },
+      {
+        "kind": "member",
+        "field": "match_id",
+        "in": {
+          "state": "active_matches"
+        }
+      }
+    ],
+    "state_struct": {
+      "open_slots": 3,
+      "active_matches": [
+        "m-7742",
+        "m-7743"
+      ]
+    }
+  },
+  "cdn_cache_tier_promote": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "target_tier",
+        "in": {
+          "state": "colder_than_current_tiers"
+        }
+      },
+      {
+        "kind": "member",
+        "field": "target_tier",
+        "in": {
+          "enum": [
+            "hot",
+            "warm",
+            "cold",
+            "frozen"
+          ]
+        }
+      }
+    ],
+    "state_struct": {
+      "current_tier": "warm",
+      "tier_order": [
+        "hot",
+        "warm",
+        "cold",
+        "frozen"
+      ],
+      "colder_than_current_tiers": [
+        "cold",
+        "frozen"
+      ]
+    }
+  },
+  "firmware_ota_stage": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "target_version",
+        "right": {
+          "state": "next_version"
+        }
+      }
+    ],
+    "state_struct": {
+      "installed_version": 14,
+      "next_version": 15
+    }
+  },
+  "loan_repayment_stage_advance": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "new_stage",
+        "in": {
+          "state": "allowed_stages"
+        }
+      },
+      {
+        "kind": "member",
+        "field": "new_stage",
+        "in": {
+          "enum": [
+            "current",
+            "grace",
+            "late",
+            "collections",
+            "charged_off"
+          ]
+        }
+      }
+    ],
+    "state_struct": {
+      "current_stage": "grace",
+      "severity_order": [
+        "current",
+        "grace",
+        "late",
+        "collections",
+        "charged_off"
+      ],
+      "allowed_stages": [
+        "grace",
+        "late",
+        "collections",
+        "charged_off"
+      ]
+    }
+  },
+  "telco_number_porting_state_set": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "next_state",
+        "in": {
+          "state": "allowed_next_states"
+        }
+      },
+      {
+        "kind": "member",
+        "field": "next_state",
+        "in": {
+          "enum": [
+            "submitted",
+            "validated",
+            "accepted",
+            "activated",
+            "completed"
+          ]
+        }
+      }
+    ],
+    "state_struct": {
+      "current_state": "validated",
+      "lifecycle_chain": [
+        "submitted",
+        "validated",
+        "accepted",
+        "activated",
+        "completed"
+      ],
+      "allowed_next_states": [
+        "accepted"
+      ]
+    }
+  },
+  "feature_flag_rollout_widen": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "rollout_percent",
+        "right": {
+          "state": "current_percent"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "rollout_percent",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "rollout_percent",
+        "right": {
+          "value": 100
+        }
+      }
+    ],
+    "state_struct": {
+      "current_percent": 25
+    }
+  },
+  "genomics.register_variant_call": {
+    "constraints": [
+      {
+        "kind": "char_at",
+        "string": "reference_sequence",
+        "index": "position",
+        "equals": "reference_allele",
+        "offset": -1
+      }
+    ],
+    "state_struct": null
+  },
+  "cdn.create_signed_cache_purge": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "robotics.commit_joint_trajectory": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "dof",
+        "right": {
+          "len": "joint_positions"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "logistics.book_reefer_shipment": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "setpoint_celsius",
+        "right": {
+          "state": "window_min_for_commodity"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "setpoint_celsius",
+        "right": {
+          "state": "window_max_for_commodity"
+        }
+      },
+      {
+        "kind": "member",
+        "field": "commodity_code",
+        "in": {
+          "state": "known_commodities"
+        }
+      }
+    ],
+    "state_struct": {
+      "commodity_windows": {
+        "FROZEN-SEAFOOD": {
+          "min_celsius": -25,
+          "max_celsius": -18
+        },
+        "FRESH-PRODUCE": {
+          "min_celsius": 2,
+          "max_celsius": 8
+        },
+        "PHARMA-2-8": {
+          "min_celsius": 2,
+          "max_celsius": 8
+        },
+        "BANANAS": {
+          "min_celsius": 12,
+          "max_celsius": 14
+        }
+      },
+      "known_commodities": [
+        "FROZEN-SEAFOOD",
+        "FRESH-PRODUCE",
+        "PHARMA-2-8",
+        "BANANAS"
+      ],
+      "window_min_for_commodity": "commodity_windows[commodity_code].min_celsius",
+      "window_max_for_commodity": "commodity_windows[commodity_code].max_celsius"
+    }
+  }
+}

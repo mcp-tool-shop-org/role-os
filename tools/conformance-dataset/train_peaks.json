@@ -1,0 +1,22 @@
+{
+  "samples": 809,
+  "peak_gpu_power_pct": 94.7,
+  "peak_gpu_power_w": 544.56,
+  "peak_gpu_temp_c": 74.0,
+  "peak_gpu_vram_used_mib": 28660.0,
+  "peak_gpu_vram_pct": 87.9,
+  "peak_gpu_util_pct": 96.0,
+  "peak_host_mem_pct": 67.9,
+  "min_host_avail_mib": 20837.5,
+  "breached": false,
+  "stayed_within_envelope": true,
+  "on_breach": "wsl-shutdown",
+  "thresholds": {
+    "power_pct_max": 100.0,
+    "gpu_temp_c_max": 87.0,
+    "vram_pct_max": 98.0,
+    "host_mem_pct_max": 80.0,
+    "host_avail_mib_min": 2000.0,
+    "warn_fraction": 0.9
+  }
+}

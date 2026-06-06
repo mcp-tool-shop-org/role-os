@@ -1,0 +1,32 @@
+{
+  "id": "conformance-14b-soup-20260606",
+  "role": "Tool-Call Conformance",
+  "duty": "tool-call / schema-and-contract conformance (oversight wedge #1)",
+  "adapter_id": "conformance-14b-soup",
+  "base_model": "Qwen/Qwen3-14B",
+  "architecture": "deterministic schema-validator floor (L1 type / L2 required / L3 enum-range-format) + LLM ceiling (L4 semantic-contract, L5 intent-vs-action). The floor is mechanical + infallible at serve time; the LLM does the reasoning rungs.",
+  "gate_threshold": 0.6,
+  "exam_n": 100,
+  "exam_unseen_tools": 10,
+  "exam_split": "tool-atomic (the 10 exam tools never appear in training) — measures GENERALIZATION, not memorization",
+  "created_at": "2026-06-06",
+  "serve": "llama.cpp --lora scale 4 (rsLoRA); -m Qwen3-14B-Q4_K_M.gguf --lora conformance-14b-soup.gguf",
+  "scores": {
+    "overall_acc": 0.98,
+    "flip_consistency_overall": 0.96,
+    "false_conformant_total": 2,
+    "false_conformant_rate_overall": 0.04,
+    "cost_weighted_error": 0.0926,
+    "per_rung": {
+      "L1": {"acc": 1.0, "flip": 1.0, "false_conformant": 0},
+      "L2": {"acc": 1.0, "flip": 1.0, "false_conformant": 0},
+      "L3": {"acc": 1.0, "flip": 1.0, "false_conformant": 0},
+      "L4": {"acc": 0.9, "flip": 0.8, "false_conformant": 2},
+      "L5": {"acc": 1.0, "flip": 1.0, "false_conformant": 0}
+    }
+  },
+  "verdict_map": {"conformant": "accept", "nonconformant": "revise/block", "abstain": "escalate"},
+  "caveat": "GENERALIZES to unseen tools (0.98/0.96 on a tool-atomic held-out exam) — the first new mint that did (contrast with verifier-v2's voice fix, which did not transfer OOD). Weak spot: L4 semantic-contract (0.9 acc / 0.8 flip / 2 false-conformants of 10 at-risk) — the pure-reasoning rung the deterministic floor can't cover, and where the safety-critical misses concentrate. v0.2 target = more + more-diverse L4 (semantic-contract) data. Deploy INTERNAL-FIRST, advisory + fail-open, PAIRED with the deterministic schema-validator floor (which catches all L1-L3 mechanically).",
+  "rollback": "v1 (no prior version); compensator = disable the consult flag (the watcher is advisory + fail-open, so it cannot block a dispatch).",
+  "notes": "Minted via the proven recipe (Qwen3-14B QLoRA, rsLoRA r16/alpha32, lr 1e-4, batch2/accum8 — halved from batch4 for the long tool-schema sequences that OOM'd at 98% VRAM; soup of seeds 42+1337). Dataset: role-os/tools/conformance-dataset/ (66 tools across 8 domains, contrast-group + flip-consistency, audit-gated, exam=100). Corpus scaled via wf_c890b004-c8f (cross-family-verified). The first oversight specialist off the mint to generalize. Next: wire into role-os's fail-open dispatcher gate (same slot as the budgeter)."
+}
