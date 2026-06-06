@@ -13,6 +13,8 @@ import {
   onSubagentStart,
   onStop,
   scaffoldHooks,
+  loadToolContracts,
+  conformanceAdvisory,
 } from "../src/hooks.mjs";
 
 const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
@@ -175,6 +177,101 @@ describe("onPreToolUse", () => {
     saveSessionState(TEST_DIR, { toolsUsed: [], routeCardPresent: false, activeRole: "Test", activePack: "feature", substantivePrompts: 3 });
     const result = onPreToolUse({ cwd: TEST_DIR, tool_name: "Read" });
     assert.ok(!result.addContext || result.allow);
+  });
+});
+
+// ── PreToolUse — Tool-Call Conformance floor (wedge #1 live seam) ───────────────
+
+describe("onPreToolUse conformance floor", () => {
+  before(setup);
+  afterEach(cleanup);
+
+  const catalog = {
+    split_traffic: {
+      contract: "weights must sum to 100",
+      params: [{ name: "weights", type: "array", required: true }],
+      constraints: [{ kind: "sum", op: "eq", of: "weights", vs: { value: 100 } }],
+    },
+    assign_seat: {
+      contract: "seat must be available",
+      params: [{ name: "seat", type: "string", required: true }],
+      constraints: [{ kind: "member", field: "seat", in: { state: "available" } }],
+      state_struct: { available: ["12A", "12B"] },
+    },
+  };
+
+  it("attaches an advisory when a catalogued call violates the floor", () => {
+    setup();
+    saveSessionState(TEST_DIR, { toolsUsed: [], substantivePrompts: 0 });
+    const r = onPreToolUse({ cwd: TEST_DIR, tool_name: "split_traffic", tool_input: { weights: [60, 30] } }, { toolContracts: catalog });
+    assert.ok(r.addContext && r.addContext.includes("NONCONFORMANT"), "should flag the sum violation");
+    assert.ok(r.addContext.includes("split_traffic"));
+  });
+
+  it("stays quiet on a conformant call", () => {
+    setup();
+    saveSessionState(TEST_DIR, { toolsUsed: [], substantivePrompts: 0 });
+    const r = onPreToolUse({ cwd: TEST_DIR, tool_name: "split_traffic", tool_input: { weights: [60, 40] } }, { toolContracts: catalog });
+    assert.equal(r.addContext, undefined);
+  });
+
+  it("uses state_struct for member/STATE checks", () => {
+    setup();
+    saveSessionState(TEST_DIR, { toolsUsed: [] });
+    const bad = onPreToolUse({ cwd: TEST_DIR, tool_name: "assign_seat", tool_input: { seat: "30F" } }, { toolContracts: catalog });
+    assert.ok(bad.addContext && bad.addContext.includes("NONCONFORMANT"));
+    const ok = onPreToolUse({ cwd: TEST_DIR, tool_name: "assign_seat", tool_input: { seat: "12A" } }, { toolContracts: catalog });
+    assert.equal(ok.addContext, undefined);
+  });
+
+  it("is a no-op for uncatalogued tools", () => {
+    setup();
+    saveSessionState(TEST_DIR, { toolsUsed: [] });
+    const r = onPreToolUse({ cwd: TEST_DIR, tool_name: "SomeUnknownTool", tool_input: { x: 1 } }, { toolContracts: catalog });
+    assert.equal(r.addContext, undefined);
+  });
+
+  it("NEVER denies — advisory only", () => {
+    setup();
+    saveSessionState(TEST_DIR, { toolsUsed: [] });
+    const r = onPreToolUse({ cwd: TEST_DIR, tool_name: "split_traffic", tool_input: { weights: [1, 2] } }, { toolContracts: catalog });
+    assert.equal(r.deny, undefined);
+  });
+});
+
+describe("loadToolContracts + conformanceAdvisory", () => {
+  before(setup);
+  afterEach(cleanup);
+
+  it("loadToolContracts returns {} when the catalog is absent", () => {
+    setup();
+    assert.deepEqual(loadToolContracts(TEST_DIR), {});
+  });
+
+  it("loadToolContracts reads a written catalog", () => {
+    setup();
+    mkdirSync(join(TEST_DIR, ".claude", "role-os"), { recursive: true });
+    writeFileSync(join(TEST_DIR, ".claude", "role-os", "tool-contracts.json"), JSON.stringify({ t: { contract: "c", params: [], constraints: [] } }));
+    assert.ok(loadToolContracts(TEST_DIR).t);
+  });
+
+  it("conformanceAdvisory is fail-safe and returns null off-catalog", () => {
+    assert.equal(conformanceAdvisory(TEST_DIR, "x", {}, { toolContracts: {} }), null);
+    assert.equal(conformanceAdvisory(TEST_DIR, "x", null, { toolContracts: null }), null);
+  });
+});
+
+describe("generatePreToolUseScript wiring", () => {
+  before(setup);
+  afterEach(cleanup);
+
+  it("the scaffolded pre-tool-use hook wires the deterministic conformance floor", () => {
+    setup();
+    scaffoldHooks(TEST_DIR);
+    const script = readFileSync(join(TEST_DIR, ".claude", "hooks", "pre-tool-use.mjs"), "utf-8");
+    assert.ok(script.includes("tool-contracts.json"), "reads the contract catalog");
+    assert.ok(script.includes("contractFloor"), "runs the contract floor");
+    assert.ok(script.includes("NONCONFORMANT"), "emits an advisory verdict");
   });
 });
 
