@@ -13,7 +13,7 @@
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-A multi-Claude operating system that staffs, routes, validates, and runs work through 61 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict. Includes dynamic dispatch for manifest-scaled missions — a 10-component repo automatically becomes 28 auditor steps, not 6. The dogfood swarm mission runs multi-pass convergence: three health stages then iterative feature delivery with exclusive file ownership and build gates.
+A multi-Claude operating system that staffs, routes, validates, and runs work through 61 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict. Includes dynamic dispatch for manifest-scaled missions — a 10-component repo automatically becomes 28 auditor steps, not 6.
 
 ## What it does
 
@@ -84,6 +84,10 @@ Runs persist to disk (`.claude/runs/`), so interrupted sessions resume cleanly. 
 1. **Each role produces a handoff** — structured output with evidence items that reduce ambiguity for the next role
 2. **Critic reviews against contract** — accepts, rejects, or blocks based on structured evidence, not impression
 3. **Recovery routes automatically** — blocked or rejected work gets routed to the right resolver with a reason, recovery type, and required artifact
+
+## Budget-aware dispatch
+
+Role OS can consult a local **Token Budget Analyst** for each dispatch step and attach an advisory spend forecast to the manifest — opt-in (`ROLEOS_BUDGET_CONSULT`), advisory (it never blocks a dispatch), and fail-open to a deterministic baseline. Off by default; the forecast is local and free to run. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/specialist-budget/).
 
 ## Org rollout state
 
@@ -360,23 +364,7 @@ roleos swarm
 
 ## Status
 
-- v0.1–v0.4: Foundation — trials, adoption, treatment pack, starter pack
-- v1.0.0: 32 roles, full CLI, proven treatment, multi-repo portability
-- v1.0.2: Role OS lockdown (bootstrap truth fixes, init --force)
-- v1.1.0: 31 roles, full routing spine, conflict detection, escalation, evidence, dispatch, 7 proven team packs. 35 execution trials. 212 tests.
-- v1.2.0: Calibrated packs promoted to default entry. Auto-selection, mismatch detection, alternative suggestion, free-routing fallback. 246 tests.
-- v1.3.0: Outcome calibration, mixed-task decomposition, composite execution, adaptive replanning. 317 tests.
-- v1.4.0: Session spine — `roleos init claude`, `roleos doctor`, route cards, /roleos-route + /roleos-review + /roleos-status commands. 335 tests.
-- v1.5.0: Hook spine — 5 lifecycle hooks for runtime enforcement. 358 tests.
-- v1.6.0: Artifact spine — 20 per-role artifact contracts, 7 pack handoff contracts, structural validation. 385 tests.
-- v1.7.0: Completion proof — real tasks run through the full stack. `roleos artifacts` CLI. Honest escalation on structural fixes. 398 tests.
-- v1.8.0: Mission library (Phase S) — 6 named missions, runner engine, completion reports. Hardened from 6 real trial runs. 481 tests.
-- v1.9.0: Unified entry path (Phase T) — `roleos start` auto-decides mission vs pack vs free routing. Fallback ladder, composite detection, entry-path comparison trials. 527 tests.
-- **v2.0.0**: Operator friction pass (Phase U) — `roleos run` creates persistent disk-backed runs. Resume, next, explain, complete, fail. Interventions: reroute, escalate, retry, block, reopen. Step-local guidance at every step. Friction measurement. 6 friction trials. 613 tests.
-- **v2.0.1**: Handbook audit, beginner docs, test count corrections. 617 tests.
-- **v2.1.0**: Brainstorm mission (v0.4) — specialized roles under law, traceable disagreement, verdict-bearing output. Two-layer architecture (truth + render), cross-exam permission matrix, dispute graph, golden run proof. 7 missions, 50 roles, 8 packs. 894 tests.
-- **v2.2.0**: Deep Audit mission — manifest-scaled repo audit with dynamic dispatch. 4 new audit roles (Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer). Worker count scales with repo graph (2N + K + 3 formula). Artifact validation wired at both execution boundaries. Runner-native proof run green. accept/approve truth fix in evidence layer. 8 missions, 54 roles, 9 packs. 936 tests.
-- **v2.3.0**: Dogfood Swarm mission — multi-pass convergence (health-a → health-b → health-c → feature → final). 7 new swarm roles (Swarm Coordinator, 5 domain agents, Swarm Synthesizer). Two new mission primitives: waveLoops (iterative convergence) and exclusiveOwnership (domain file boundaries). Dynamic domain dispatch, build gates, `roleos swarm` CLI, domain auto-detection, evidence persistence bridge. 9 missions, 61 roles, 10 packs. 1150 tests.
+Stable and shipping. See the [CHANGELOG](CHANGELOG.md) for full version history and what changed in each release.
 
 ## License
 

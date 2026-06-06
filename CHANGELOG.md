@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.7.1
+
+### Docs
+- **README + handbook for the production budget consult.** The README gains a "Budget-aware dispatch"
+  note (opt-in `ROLEOS_BUDGET_CONSULT`, advisory, fail-open to a deterministic baseline) and a new
+  handbook page documents the consult — `consultBudgetForManifest` / `buildDispatchManifestWithBudget`,
+  the per-step forecast + receipt, and the `roleos specialist rollback` compensator — wired to the
+  landing page. Re-translated across all 8 locales.
+- **README front-door cleanup** — the per-version history block moved to this CHANGELOG; the README
+  keeps the value proposition.
+
+(Docs only — no code changes from 2.7.0.)
+
 ## 2.7.0
 
 ### Added

@@ -13,20 +13,20 @@
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-Un sistema operativo multi-Claude che assegna personale, definisce i percorsi, convalida e gestisce i processi attraverso 50 contratti di ruolo specializzati. Crea pacchetti di attività, assembla il team giusto in base alla corrispondenza dei ruoli, rileva eventuali problemi prima dell'esecuzione, reindirizza automaticamente le attività in caso di blocco o rifiuto e richiede prove strutturate in ogni decisione.
+Un sistema operativo multi-Claude che gestisce il personale, indirizza, convalida ed esegue il lavoro attraverso 61 contratti di ruolo specializzati. Crea pacchetti di attività, assembla il team giusto in base a una valutazione dei ruoli, rileva eventuali problemi prima dell'esecuzione, indirizza automaticamente le azioni correttive quando il lavoro è bloccato o rifiutato e richiede prove strutturate per ogni decisione. Include una distribuzione dinamica per missioni di dimensioni variabili: un repository di 10 componenti diventa automaticamente 28 fasi di audit, anziché 6.
 
-## Cosa fa
+## A cosa serve
 
-Role OS è il modo professionale di utilizzare multi-Claude. Previene i problemi specifici che i flussi di lavoro AI generici possono causare:
+Role OS è il modo professionale per utilizzare multi-Claude. Previene i problemi specifici che i flussi di lavoro AI generici causano:
 
-- **Deviazioni (Drift)**: i ruoli rimangono nel loro ambito. Il prodotto non viene ridisegnato. L'interfaccia utente non ridefinisce l'ambito. Il backend non inventa la direzione del prodotto.
-- **Completamenti errati (False completion)**: la definizione di "completato" è concreta. Il lavoro che nasconde lacune, omette verifiche o risolve un problema diverso viene rifiutato.
-- **Contaminazione (Contamination)**: i progetti derivati o ereditati contengono residui di identità. Role OS rileva e rifiuta le deviazioni cross-progetto in termini, elementi visivi e modelli mentali.
-- **Avanzamento basato su impressioni (Vibes-based progress)**: ogni passaggio è strutturato. Ogni decisione si basa su prove. "Sembra fatto" non è uno stato valido.
+- **Deriva:** i ruoli rimangono all'interno dei loro ambiti. Il prodotto non viene riprogettato. Il frontend non ridefinisce l'ambito. Il backend non inventa la direzione del prodotto.
+- **Completamento errato:** la definizione di "completato" è precisa. Il lavoro che nasconde lacune, omette la verifica o risolve un problema diverso viene rifiutato.
+- **Contaminazione:** i progetti derivati o ereditati conservano residui di identità. Role OS rileva e rifiuta la deriva tra progetti in termini di terminologia, elementi visivi e modelli mentali.
+- **Progressi basati su "sensazioni":** ogni passaggio è strutturato. Ogni decisione è collegata a prove. "Sembra completato" non è uno stato valido.
 
 ## Come funziona
 
-Descrivi la tua attività. Role OS decide automaticamente il livello di orchestrazione appropriato.
+Descrivi la tua attività. Role OS determina automaticamente il livello di orchestrazione appropriato.
 
 ```bash
 roleos start "fix the crash in save handler"
@@ -42,15 +42,15 @@ roleos start "something completely novel"
 #   Hint: Create a packet and run `roleos route` for role-level routing
 ```
 
-**La gerarchia di fallback:**
+**La scala di fallback:**
 
-1. **Missione** — quando l'attività corrisponde a un flusso di lavoro ricorrente consolidato (correzione di bug, trattamento, rilascio di funzionalità, documentazione, sicurezza, ricerca). Catena di ruoli nota, flusso di artefatti, rami di escalation e definizioni parziali chiare.
-2. **Pacchetto** — quando l'attività appartiene a una famiglia nota ma non ha una struttura di missione completa. 7 pacchetti di team calibrati con selezione automatica e protezioni contro errori.
-3. **Routing libero** — quando l'attività è nuova, complessa o incerta. Valuta tutti i 31 ruoli in base al contenuto del pacchetto e crea una catena dinamica.
+1. **Missione:** quando l'attività corrisponde a un flusso di lavoro ricorrente comprovato (correzione di bug, trattamento, rilascio di funzionalità, documentazione, sicurezza, ricerca, brainstorming, audit approfondito, test su larga scala). Catena di ruoli nota, flusso di artefatti, rami di escalation e definizioni parziali chiare.
+2. **Pacchetto:** quando l'attività appartiene a una famiglia nota, ma non ha la forma completa di una missione. 10 pacchetti di team calibrati con selezione automatica e protezioni contro incongruenze.
+3. **Instradamento libero:** quando l'attività è nuova, mista o incerta. Valuta tutti i 61 ruoli in base al contenuto del pacchetto e assembla una catena dinamica.
 
-Il sistema non forza mai l'esecuzione di un'attività attraverso un livello di astrazione errato. Spiega perché ha scelto ogni livello e offre alternative.
+Il sistema non forza mai l'esecuzione del lavoro attraverso un livello di astrazione errato. Spiega perché ha scelto ogni livello e offre alternative.
 
-**Un comando per avviare l'esecuzione:**
+**Un singolo comando per avviare l'esecuzione:**
 
 ```bash
 roleos run "fix the crash in save handler"
@@ -77,48 +77,54 @@ roleos block 2 "waiting for API spec"
 roleos reopen 0 "found issue in review"
 ```
 
-I processi vengono salvati su disco (`.claude/runs/`), quindi le sessioni interrotte possono essere riprese correttamente. Ogni fase include una guida per l'operatore: cosa produrre, sezioni richieste e condizioni di arresto.
+Le esecuzioni vengono salvate su disco (`.claude/runs/`), in modo che le sessioni interrotte riprendano senza problemi. Ogni fase include indicazioni per l'operatore: cosa produrre, sezioni richieste e condizioni di arresto.
 
-**Una volta definito il percorso:**
+**Una volta instradato:**
 
-1. **Ogni ruolo produce un passaggio** — output strutturato con elementi di prova che riducono l'ambiguità per il ruolo successivo.
-2. **La revisione verifica rispetto al contratto** — accetta, rifiuta o blocca in base a prove strutturate, non a impressioni.
-3. **Il percorso di ripristino viene attivato automaticamente** — le attività bloccate o rifiutate vengono reindirizzate al risolutore appropriato, con una motivazione, il tipo di ripristino e l'artefatto richiesto.
+1. **Ogni ruolo produce un passaggio:** output strutturato con elementi di prova che riducono l'ambiguità per il ruolo successivo.
+2. **La revisione critica avviene in base al contratto:** accetta, rifiuta o blocca in base a prove strutturate, non a impressioni.
+3. **L'instradamento per la correzione avviene automaticamente:** il lavoro bloccato o rifiutato viene indirizzato al risolutore corretto con una motivazione, il tipo di correzione e l'artefatto richiesto.
+
+## Distribuzione consapevole del budget
+
+Role OS può consultare un **analista del budget dei token** locale per ogni fase di distribuzione e allegare una previsione di spesa indicativa al manifesto: opzionale (`ROLEOS_BUDGET_CONSULT`), indicativa (non blocca mai una distribuzione) e con fallback a una base di riferimento deterministica. Disattivata per impostazione predefinita; la previsione è locale e gratuita. Consulta il [manuale](https://mcp-tool-shop-org.github.io/role-os/handbook/specialist-budget/).
 
 ## Stato di implementazione a livello di organizzazione
 
-Lo stato di implementazione a livello di organizzazione (coda, decisioni, registri di controllo, pacchetti di blocco per repository) è contenuto in un repository privato separato: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Questo repository contiene il prodotto; quello è lo stato operativo.
+Lo stato di implementazione a livello di organizzazione (coda, decisioni, registri di audit, pacchetti di blocco per repository) è memorizzato in un repository privato separato: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Questo repository è il prodotto; l'altro repository è lo stato operativo.
 
 ## Memoria e continuità
 
-Role OS non possiede né duplica il livello di memoria. Quando esiste la memoria del progetto Claude, questa è il sistema di continuità canonico: i fatti del repository, le decisioni, i problemi aperti e la cronologia delle modifiche sono memorizzati lì.
+Role OS non possiede né duplica il livello di memoria. Laddove esiste la memoria del progetto Claude, essa è il sistema di continuità canonico: i fatti del repository, le decisioni, i problemi irrisolti e la cronologia del trattamento sono memorizzati lì.
 
 Role OS si integra con la memoria del progetto Claude. Non la sostituisce.
 
-## Elaborazione completa e controllo di qualità
+## Trattamento completo e controllo finale
 
-L'elaborazione completa è un protocollo canonico di 7 fasi definito nella memoria del progetto Claude (`memory/full-treatment.md`). Role OS indirizza e valuta le elaborazioni utilizzando contratti di ruolo, passaggi e controlli, ma non ridefinisce il protocollo.
+Il trattamento completo è un protocollo canonico di 7 fasi definito nella memoria del progetto Claude (`memory/full-treatment.md`). Role OS instrada e rivede i trattamenti utilizzando contratti di ruolo, passaggi e porte di controllo: non ridefinisce il protocollo.
 
-Il **controllo di qualità (shipcheck)** è il sistema di controllo di 31 elementi che viene eseguito prima dell'elaborazione completa. I controlli obbligatori A-D devono essere superati prima che qualsiasi elaborazione possa iniziare. Riferimento canonico: `memory/shipcheck.md`.
+**Il controllo finale** è la serie di 31 elementi che costituisce la fase di controllo della qualità che viene eseguita prima del trattamento completo. Le porte rigide A-D devono essere superate prima che possa iniziare qualsiasi trattamento. Riferimento canonico: `memory/shipcheck.md`.
 
-Ordine: controllo di qualità, quindi elaborazione completa. Nessuna versione 1.0.0 senza aver superato i controlli obbligatori.
+Ordine: prima il controllo finale, poi il trattamento completo. Nessuna versione 1.0.0 senza il superamento delle porte rigide.
 
-## 32 ruoli in 8 pacchetti
+## 61 ruoli suddivisi in 10 pacchetti
 
 | Pacchetto | Ruoli |
 |------|-------|
-| **Core** (3) | Orchestratore, Product Strategist, Recensore |
-| **Engineering** (7) | Sviluppatore Frontend, Ingegnere Backend, Ingegnere di Test, Ingegnere di Refactoring, Ingegnere delle Prestazioni, Revisore delle Dipendenze, Revisore di Sicurezza |
-| **Design** (2) | UI Designer, Responsabile del Brand |
+| **Core** (3) | Orchestratore, stratega del prodotto, revisore critico |
+| **Engineering** (7) | Sviluppatore frontend, ingegnere backend, ingegnere di test, ingegnere di refactoring, ingegnere delle prestazioni, revisore delle dipendenze, revisore della sicurezza |
+| **Design** (2) | Designer dell'interfaccia utente, responsabile del marchio |
 | **Marketing** (1) | Copywriter per il lancio |
-| **Treatment** (7) | Ricercatore di Repository, Traduttore di Repository, Architetto della Documentazione, Curatore dei Metadati, Revisore della Copertura, Verificatore del Deployment, Ingegnere del Rilascio |
-| **Product** (3) | Generatore di feedback, Prioritizzatore di roadmap, Redattore di specifiche. |
-| **Research** (4) | Ricercatore UX, Analista della Concorrenza, Ricercatore di Tendenze, Sintetizzatore di Interviste con gli Utenti |
-| **Growth** (4) | Strategista per il lancio, Strategista dei Contenuti, Community Manager, Responsabile del Supporto |
+| **Treatment** (7) | Ricercatore del repository, traduttore del repository, architetto della documentazione, curatore dei metadati, revisore della copertura, verificatore della distribuzione, ingegnere del rilascio |
+| **Product** (3) | Sintetizzatore di feedback, prioritizzatore della roadmap, scrittore di specifiche |
+| **Research** (4) | Ricercatore UX, analista della concorrenza, ricercatore di tendenze, sintetizzatore di interviste con gli utenti |
+| **Growth** (4) | Stratega del lancio, stratega dei contenuti, responsabile della community, responsabile del triage del supporto |
+| **Deep Audit** (4) | Revisore dei componenti, revisore della verità dei test, revisore dei punti di connessione, sintetizzatore di audit |
+| **Swarm** (7) | Coordinatore dello swarm, agente backend dello swarm, agente di collegamento dello swarm, agente di test dello swarm, agente dell'infrastruttura dello swarm, agente frontend dello swarm, sintetizzatore dello swarm |
 
-Ogni ruolo ha un contratto completo: missione, quando utilizzarlo, quando non utilizzarlo, input richiesti, output necessari, standard di qualità e trigger di escalation. Ogni ruolo può essere indirizzato — `roleos route` può suggerirne uno qualsiasi in base al contenuto del pacchetto.
+Ogni ruolo ha un contratto completo: missione, quando usarlo, quando non usarlo, input previsti, output richiesti, standard di qualità e fattori scatenanti per l'escalation. Ogni ruolo è instradabile: `roleos route` può raccomandarne uno qualsiasi in base al contenuto del pacchetto.
 
-## Guida rapida
+## Avvio rapido
 
 ```bash
 npx role-os init
@@ -133,6 +139,19 @@ roleos complete artifact.md    # Complete with artifact
 roleos explain                 # Show full state
 roleos report                  # Completion report
 
+# Deep audit:
+roleos audit manifest --generate   # Create audit-manifest.json
+roleos audit                       # Start component-level deep audit
+roleos audit status                # Check audit progress
+roleos audit verify                # Verify manifest and outputs
+
+# Dogfood swarm:
+roleos swarm manifest --generate   # Auto-detect domains from repo structure
+roleos swarm                       # Start multi-pass convergence swarm
+roleos swarm status                # Check swarm progress by stage
+roleos swarm findings              # List findings by severity
+roleos swarm approve               # Approve feature gate
+
 # Or go manual:
 roleos start "fix the crash"   # Entry decision only (no run)
 roleos packet new feature
@@ -144,57 +163,57 @@ roleos mission list
 roleos packs list
 ```
 
-## Quando non utilizzare Role OS
+## Quando non usare Role OS
 
-- Correzioni di una sola riga, errori di battitura o bug evidenti
-- Ricerche esplorative senza un output definito
-- Lavori che possono essere completati nella mente di una persona in 5 minuti
-- Correzioni urgenti che devono essere rilasciate prima che la catena di revisione sia completa
+- Correzioni di singole righe, errori di battitura o bug evidenti
+- Ricerca esplorativa senza risultati definiti
+- Lavoro che può essere svolto da una sola persona in 5 minuti
+- Correzioni urgenti che devono essere implementate prima del completamento del processo di revisione
 - Progetti in cui si privilegia la velocità rispetto alla struttura
 
-## Prove
+## Evidenza
 
-Role OS è stato testato in tre scenari diversi in due repository strutturalmente diversi:
+Role OS è stato testato con tre diverse configurazioni in due repository strutturalmente differenti:
 
-**Test 001 — Sviluppo funzionalità** (Schermata Crew, Star Freight)
-- Catena di 7 ruoli, 45 scenari di test, 0 conflitti di ruolo.
-- Ha prevenuto la contaminazione da un progetto antenato, ha rilevato modifiche non autorizzate e ha evidenziato i blocchi reali.
+**Test 001 — Lavoro sulle funzionalità** (Schermata dell'equipaggio, Trasporto di merci)
+- Catena di 7 ruoli, 45 scenari di test, 0 conflitti di ruolo
+- Prevenzione di contaminazioni da rami precedenti, individuazione di invenzioni in corso, evidenziazione di ostacoli reali
 
-**Test 002 — Integrazione** (Collegamento CampaignState, Star Freight)
-- Catena di 5 ruoli, ha risolto la connessione architetturale senza soluzioni di ripiego.
-- I test anti-fallback hanno dimostrato che il percorso attivo è reale, non un segnaposto.
+**Test 002 — Lavoro di integrazione** (Collegamento CampaignState, Trasporto di merci)
+- Catena di 5 ruoli, risoluzione di un problema architettonico senza ricorrere a soluzioni di ripiego
+- I test anti-ripiego hanno dimostrato che il percorso attivo è reale, non un segnaposto
 
-**Test 003 — Correzione di identità** (Pulizia della contaminazione, Star Freight)
-- Catena di 6 ruoli, 51 scenari di test, inclusa la difesa duratura contro la contaminazione del sistema di integrazione continua.
-- Ha corretto le incongruenze ereditate senza dover rifare completamente il progetto.
+**Test 003 — Lavoro sull'identità** (Eliminazione delle contaminazioni, Trasporto di merci)
+- Catena di 6 ruoli, 51 scenari di test, inclusa una difesa robusta contro le contaminazioni nel processo di integrazione continua
+- Riparazione di incongruenze ereditate senza sfociare in una riprogettazione radicale
 
-**Prova di portabilità** (Coerenza della persona, sensibilità al contesto)
-- Stessa struttura di base, ma con linguaggio/ambito/stack diversi.
-- Adattamento solo al contesto, senza modifiche al contratto principale.
+**Test di portabilità** (Coerenza della persona, umorismo sensoriale)
+- Stessa struttura di base, linguaggio/dominio/stack diversi
+- Adottato con modifiche al contesto, senza modifiche al contratto principale
 
 **Trattamento completo FT-001** (portlight-desktop)
-- Trattamento con personale dedicato in 7 fasi, con ruoli del pacchetto di trattamento
-- Controllo di spedizione dimostrato, zero conflitti tra ruoli
+- Trattamento in 7 fasi con ruoli definiti nel Treatment Pack
+- Il controllo Shipcheck è stato verificato, zero conflitti di ruolo
 
 **Trattamento completo FT-002** (studioflow)
-- Stesso pacchetto di trattamento, repository strutturalmente diverso (spazio di lavoro creativo vs gioco)
-- Pacchetto di trattamento portatile: non sono necessarie modifiche al contratto
+- Stesso Treatment Pack, repository strutturalmente diverso (spazio di lavoro creativo rispetto al gioco)
+- Il Treatment Pack è portabile, non sono necessarie modifiche al contratto
 
-**Esempio di esecuzione ottimale** (argomento del marketplace dei server MCP)
-- Catena di 9 ruoli, 4 analisti in parallelo, esame incrociato + grafico di contestazione e replica.
-- 4 sfide proposte, 3 affermazioni raffinate, 1 irrisolta — pressione sana, non stallo.
-- Oltre 16 collegamenti di tracciamento dagli artefatti generati agli elementi fondamentali di verità.
-- Catena di custodia completa dimostrata: verità → elementi → contestazione → sintesi → espansione → giudizio → rendering → tracciamento.
+**Sessione di brainstorming** (argomento del marketplace del server MCP)
+- Catena di 9 ruoli, 4 analisti in parallelo, esame incrociato + confutazione del grafico delle controversie
+- Sono state sollevate 4 sfide, 3 affermazioni sono state ridotte, 1 è rimasta irrisolta: una pressione sana, non uno stallo
+- Più di 16 collegamenti di traccia dagli artefatti renderizzati agli atomi del livello di verità
+- È stata dimostrata la completa catena di custodia: verità → atomi → controversia → sintesi → espansione → giudizio → renderizzazione → traccia
 
 ## Proprietà fondamentali
 
-Queste sono non negoziabili. Se una modifica ne indebolisce una, rifiutarla.
+Queste sono innegociabili. Se una modifica le indebolisce, rifiutarla.
 
-- I confini dei ruoli rimangono validi.
-- La revisione è efficace.
-- L'escalation rimane trasparente.
-- I pacchetti rimangono testabili.
-- La portabilità richiede adattamento al contesto, non modifiche radicali.
+- I confini dei ruoli sono mantenuti
+- La revisione è efficace
+- L'escalation rimane trasparente
+- I pacchetti rimangono testabili
+- La portabilità richiede un adattamento al contesto, non un intervento radicale
 
 ## Struttura del progetto
 
@@ -206,18 +225,23 @@ role-os/
     entry-cmd.mjs              ← `roleos start` CLI command
     run.mjs                    ← Persistent run engine: create → step → pause → resume → report
     run-cmd.mjs                ← `roleos run/resume/next/explain/complete/fail` + interventions
-    mission.mjs                ← 7 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm)
+    mission.mjs                ← 9 named mission types (feature, bugfix, treatment, docs, security, research, brainstorm, deep-audit, dogfood-swarm)
     mission-run.mjs            ← Mission runner: create → step → complete → report
     mission-cmd.mjs            ← `roleos mission` CLI commands
-    route.mjs                  ← 31-role routing + dynamic chain builder
-    packs.mjs                  ← 7 calibrated team packs + auto-selection
+    audit-cmd.mjs              ← `roleos audit` — deep audit entry point with manifest generation
+    swarm-cmd.mjs              ← `roleos swarm` — dogfood swarm entry point with domain detection
+    swarm/                     ← Domain detection, build gate, evidence persistence bridge
+    route.mjs                  ← 61-role routing + dynamic chain builder
+    packs.mjs                  ← 10 calibrated team packs + auto-selection
     conflicts.mjs              ← 4-pass conflict detection
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
     dispatch.mjs               ← Runtime dispatch manifests for multi-claude
-    artifacts.mjs              ← 30 per-role artifact contracts + 7 pack handoffs
+    tool-profiles.mjs          ← Per-role tool sandboxing (shared by dispatch + trial)
+    state-machine.mjs          ← Canonical step/run transition maps
+    artifacts.mjs              ← Per-role artifact contracts + pack handoffs
     decompose.mjs              ← Composite task detection + splitting
-    composite.mjs              ← Dependency-ordered execution + recovery
+    composite.mjs              ← Dependency-ordered execution + recovery + cycle detection
     replan.mjs                 ← Mid-run adaptive replanning
     calibration.mjs            ← Outcome recording + weight tuning
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
@@ -225,56 +249,60 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 894 tests across 30 test files
+  test/                        ← 1150 tests across 37 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Sicurezza
 
-Il sistema operativo del ruolo opera **solo localmente**. Copia i modelli Markdown e scrive i file dei pacchetti/verdetto nella directory `.claude/` del tuo repository. Non accede alla rete, non gestisce segreti e non raccoglie dati di telemetria. Nessuna operazione pericolosa: tutte le scritture di file utilizzano la funzione "skip-if-exists" per impostazione predefinita. Consultare il file [SECURITY.md](SECURITY.md) per la politica completa.
+Role OS opera **solo a livello locale**. Copia i modelli Markdown e scrive i file di pacchetto/verdetto nella directory `.claude/` del repository. Non accede alla rete, non gestisce segreti e non raccoglie dati di telemetria. Non esegue operazioni pericolose: tutte le scritture di file utilizzano di default l'opzione "salta se esiste". Consultare [SECURITY.md](SECURITY.md) per la politica completa.
 
 ## Il sistema operativo
 
-| Livello | Cosa fa | Stato |
+| Livello | A cosa serve | Stato |
 |-------|-------------|--------|
-| **Routing** | Valuta tutti i 31 ruoli in base al contenuto del pacchetto, spiega le raccomandazioni, valuta la confidenza. | ✓ Implementato |
-| **Chain builder** | Assembla catene ordinate per fase dai ruoli valutati, orientato al tipo di pacchetto, non vincolato a modelli. | ✓ Implementato |
-| **Conflict detection** | Convalida in 4 passaggi: conflitti evidenti, sequenza, ridondanza, lacune di copertura. Suggerimenti per la correzione. | ✓ Implementato |
-| **Escalation** | Reindirizza automaticamente le attività bloccate/rifiutate/divise al risolutore appropriato con motivazione e artefatto richiesto. | ✓ Implementato |
-| **Evidence** | Prove strutturate e specifiche per il ruolo nelle decisioni. Controlli di completezza. 12 tipi di prove. | ✓ Implementato |
+| **Routing** | Valuta tutti i 61 ruoli in base al contenuto del pacchetto, spiega le raccomandazioni, valuta il livello di confidenza | ✓ Implementato |
+| **Chain builder** | Assembla catene ordinate per fasi dai ruoli valutati, con una preferenza per il tipo di pacchetto, ma non vincolato al modello | ✓ Implementato |
+| **Conflict detection** | Validazione in 4 fasi: conflitti, sequenza, ridondanza, lacune nella copertura. Suggerimenti per la correzione. | ✓ Implementato |
+| **Escalation** | Instrada automaticamente il lavoro bloccato/rifiutato/diviso verso il resolver corretto, con motivazione + artefatto richiesto | ✓ Implementato |
+| **Evidence** | Evidenza strutturata e specifica per il ruolo nei verdetti. Controlli di sufficienza. 12 tipi di evidenza. | ✓ Implementato |
 | **Dispatch** | Genera manifesti di esecuzione per multi-claude. Profili degli strumenti per ruolo, prompt di sistema, budget. | ✓ Implementato |
-| **Trials** | Roster completo dimostrato: 30/30 attività di successo + 5/5 test negativi. 7 test di pacchetto completati. | ✓ Completo |
-| **Team Packs** | 7 pacchetti calibrati con selezione automatica, protezioni contro errori e fallback con routing libero. | ✓ Implementato |
-| **Outcome calibration** | Registra i risultati delle esecuzioni, regola i pesi dei pacchetti/ruoli in base ai risultati e adatta le soglie di confidenza. | ✓ Implementato |
-| **Mixed-task decomposition** | Rileva attività complesse, le suddivide in pacchetti secondari, assegna i pacchetti e preserva le dipendenze. | ✓ Implementato |
-| **Composite execution** | Esegue i pacchetti secondari in ordine di dipendenza, trasferendo gli artefatti, gestendo il ripristino dei rami e la sintesi. | ✓ Implementato |
-| **Adaptive replanning** | Modifiche, scoperte o nuovi requisiti durante l'esecuzione aggiornano il piano senza doverlo riavviare. | ✓ Implementato |
-| **Session spine** | `roleos init claude` crea i file CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifica la configurazione. Le schede di routing indicano l'impegno. | ✓ Implementato |
-| **Hook spine** | 5 hook del ciclo di vita (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Applicazione di regole: promemoria sulle schede di routing, controllo sull'uso degli strumenti, assegnazione di ruoli ai subagent e verifica della completezza. | ✓ Implementato |
-| **Artifact spine** | 30 contratti per ruolo relativi agli artefatti. 7 contratti di passaggio dei pacchetti. Validazione strutturale. Controlli di completezza della catena. Gli altri ruoli non devono mai indovinare cosa hanno ricevuto. | ✓ Implementato |
-| **Mission library** | 7 missioni denominate (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm). Ognuna definisce pacchetti, catena di ruoli, flusso di artefatti, rami di escalation e una definizione parziale e onesta. Tutte e 7 sono state testate. | ✓ Implementato |
-| **Mission runner** | Crea esecuzioni, esegui passo dopo passo con tracciamento dello stato, completa o fallisci con reportistica onesta. Propagazione dei passaggi bloccati, avvisi di escalation fuori catena, riapertura dell'ultimo passaggio. | ✓ Implementato |
-| **Unified entry** | `roleos start` decide automaticamente tra missione, pacchetto o routing libero. Sistema di fallback con punteggi di confidenza, alternative e rilevamento di attività complesse. | ✓ Implementato |
-| **Persistent runs** | `roleos run` crea esecuzioni basate su file. Comandi: `resume`, `next`, `explain`, `complete`, `fail`. Interventi: reindirizzamento, escalation, riprova, blocco, riapertura. Guida specifica per ogni passaggio. Misurazione dell'attrito. | ✓ Implementato |
-| **Brainstorm** | Architettura a due livelli: verità (schemi nativi per ruolo, atomi di provenienza, grafo di contestazione incrociata) + rendering (5 voci distinte, divieti lessicali, trascrizione del dibattito). I collegamenti di traccia dimostrano che ogni affermazione resa corrisponde a un atomo di verità. Esecuzione di riferimento: 894 test. | ✓ Implementato |
+| **Trials** | Roster completo verificato: 30/30 attività principali + 5/5 test negativi. 7 test di pacchetto completati. | ✓ Completato |
+| **Team Packs** | 10 pacchetti calibrati con selezione automatica, protezioni contro le incongruenze e fallback con instradamento libero. | ✓ Implementato |
+| **Outcome calibration** | Registra i risultati dell'esecuzione, ottimizza i pesi dei pacchetti/ruoli in base ai risultati, regola le soglie di confidenza. | ✓ Implementato |
+| **Mixed-task decomposition** | Rileva il lavoro composito, lo suddivide in pacchetti secondari, assegna i pacchetti, preserva le dipendenze. | ✓ Implementato |
+| **Composite execution** | Esegue i pacchetti secondari in ordine di dipendenza con passaggio di artefatti, ripristino dei rami e sintesi. | ✓ Implementato |
+| **Adaptive replanning** | Le modifiche all'ambito, le scoperte o i nuovi requisiti a metà dell'esecuzione aggiornano il piano senza riavviare. | ✓ Implementato |
+| **Session spine** | `roleos init claude` crea i file CLAUDE.md, /roleos-route, /roleos-review, /roleos-status. `roleos doctor` verifica il collegamento. Le schede di instradamento dimostrano l'impegno. | ✓ Implementato |
+| **Hook spine** | 5 hook del ciclo di vita (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Applicazione di consigli: promemoria della scheda di instradamento, controllo dell'utilizzo degli strumenti, iniezione del ruolo del subagente, audit del completamento. | ✓ Implementato |
+| **Artifact spine** | Contratti sugli artefatti per ruolo. Contratti di passaggio dei pacchetti. Validazione strutturale. Controlli di completezza della catena. I ruoli a valle non devono mai indovinare cosa hanno ricevuto. | ✓ Implementato |
+| **Mission library** | 9 missioni nominate (feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm, deep-audit, dogfood-swarm). Ognuna dichiara il pacchetto, la catena di ruoli, il flusso di artefatti, i rami di escalation, una definizione onesta e parziale. | ✓ Implementato |
+| **Mission runner** | Crea esecuzioni, esegue i passaggi con lo stato tracciato, completa/fallisce con una segnalazione trasparente. Propagazione dei passaggi bloccati, avvisi di escalation al di fuori della catena, riapertura dell'ultimo passaggio. | ✓ Implementato |
+| **Unified entry** | `roleos start` decide automaticamente se utilizzare una missione, un pacchetto o un instradamento libero. Scala di fallback con punteggi di confidenza, alternative e rilevamento di elementi compositi. | ✓ Implementato |
+| **Persistent runs** | `roleos run` crea esecuzioni archiviate su disco. `resume`, `next`, `explain`, `complete`, `fail`. Interventi: reindirizzamento, escalation, riprova, blocco, riapertura. Guida specifica per ogni passaggio. Misurazione dell'attrito. | ✓ Implementato |
+| **Brainstorm** | Architettura a due livelli: verità (schemi nativi del ruolo, atomi di provenienza, grafico delle controversie di esame incrociato) + renderizzazione (5 voci distinte, divieti lessicali, trascrizione del dibattito). I collegamenti di traccia dimostrano che ogni affermazione renderizzata corrisponde a un atomo di verità. Esecuzione di successo dimostrata. | ✓ Implementato |
+| **Deep Audit** | Audit del repository basato sul manifest: scomporre il repository in componenti, assegnare N auditor + M auditor per la verifica dei test + K auditor per le interfacce dal grafico delle dipendenze, sintetizzare in una valutazione classificata e in un piano d'azione. L'assegnazione dinamica si adatta alle dimensioni del repository (formula 2N + K + 3). Esecuzione nativa con convalida degli artefatti a ogni passaggio. | ✓ Implementato |
+| **Dogfood Swarm** | Convergenza multi-pass: tre fasi di verifica (bug/sicurezza → proattiva → umanizzazione) quindi fase delle funzionalità. Proprietà esclusiva dei file, controlli di build dopo ogni iterazione, checkpoint utente. Il rilevamento automatico del dominio genera i manifest. Collegamento alle prove per i test interni. | ✓ Implementato |
 
-## 7 missioni
+## 9 missioni
 
-| Missione | Pacchetto | Ruoli | Quando utilizzarla |
+| Missione | Pacchetto | Ruoli | Quando utilizzare |
 |---------|------|-------|-------------|
-| `feature-ship` | funzionalità | 5 | Consegna completa della funzionalità: ambito → specifica → implementazione → test → revisione |
-| `bugfix` | correzione di bug | 4 | Diagnosi della causa principale, correzione, test, verifica |
-| `treatment` | ottimizzazione | 4 | Controllo + rifinitura + documentazione + verifica CI + revisione |
-| `docs-release` | documentazione | 2 | Scrittura/aggiornamento della documentazione, note di rilascio |
-| `security-hardening` | Sicurezza | 4 | Modello delle minacce, audit, correzione delle vulnerabilità, nuovo audit, verifica |
-| `research-launch` | ricerca | 4 | Formulazione della domanda, ricerca, documentazione dei risultati, decisione |
-| `brainstorm` | brainstorming | 9 | Indagine strutturata con molteplici prospettive, con disaccordo tracciabile e output con verdetto |
+| `feature-ship` | Funzionalità | 5 | Consegna completa della funzionalità: ambito → specifiche → implementazione → test → revisione |
+| `bugfix` | Correzione di bug | 4 | Diagnosticare la causa principale, correggere, testare, verificare |
+| `treatment` | Intervento | 4 | Verifica prima della pubblicazione + rifinitura + documentazione + verifica CI + revisione |
+| `docs-release` | Documentazione | 2 | Scrivere/aggiornare la documentazione, le note di rilascio |
+| `security-hardening` | Sicurezza | 4 | Modello delle minacce, audit, correzione delle vulnerabilità, ri-audit, verifica |
+| `research-launch` | Ricerca | 4 | Formulare la domanda, effettuare la ricerca, documentare i risultati, decidere |
+| `brainstorm` | Brainstorming | 9 | Indagine strutturata e multi-prospettica con disaccordo e valutazione tracciabili |
+| `deep-audit` | Audit approfondito | 5 (livelli) | Audit del repository basato sul manifest: il numero di worker si adatta al grafico del repository tramite l'assegnazione dinamica |
+| `dogfood-swarm` | Swarm | 8 (livelli) | Convergenza multi-pass: health-a → health-b → health-c → funzionalità → sintesi finale |
 
-Ogni missione include definizioni parziali e oneste: quando il lavoro si blocca, il sistema documenta ciò che è stato completato e ciò che rimane, invece di dichiarare falsamente il completamento.
+Ogni missione include definizioni parziali e oneste: quando il lavoro si interrompe, il sistema documenta ciò che è stato completato e ciò che rimane, invece di fingere di aver completato tutto.
 
 ### Missione di brainstorming
 
-Non "brainstorming dell'IA". La missione di brainstorming è **un insieme di ruoli specializzati, con disaccordo tracciabile e output con verdetto.**
+Non si tratta di "brainstorming con l'IA". La missione di brainstorming prevede **ruoli specializzati definiti dalla legge, con disaccordo e risultati valutabili tracciabili.**
 
 ```bash
 roleos run "explore product directions for a developer tool discovery platform"
@@ -284,31 +312,59 @@ roleos run "explore product directions for a developer tool discovery platform"
 
 **Cosa la rende diversa:**
 
-- **Livello 1 (verità):** Quattro analisti emettono schemi nativi per ruolo (ContextMap, UserValueMap, MechanicsMap, PositioningMap) — non prosa condivisa. Ogni ruolo è soggetto a controlli per evitare punti ciechi: frasi vietate, tipi di affermazioni vietate, partizioni di input filtrate. Gli atomi contengono informazioni sulla provenienza. Un grafo di contestazione incrociata genera sfide mirate. Gli analisti originali difendono, restringono o ritraggono le loro affermazioni sotto pressione.
+- **Livello 1 (verità):** Quattro analisti emettono schemi specifici per il ruolo (ContextMap, UserValueMap, MechanicsMap, PositioningMap) – non si tratta di prosa condivisa. Ogni ruolo applica un filtro per evitare punti ciechi: frasi proibite, tipi di affermazioni proibite, partizioni di input filtrate. Gli atomi contengono informazioni sulla provenienza. Un grafico di controinterrogatorio diretto produce sfide mirate. Gli analisti originali difendono, restringono o ritrattano sotto pressione.
 
-- **Livello 2 (rendering):** Cinque voci umane distinte (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) con restrizioni lessicali che impediscono la convergenza delle voci. La sintesi utilizza informazioni verificate, ma non produce testo. Entrambi i livelli sono sempre disponibili.
+- **Livello 2 (rendering):** Cinque voci umane distinte (Boundary Memo, Field Notes, System Sketch, Claim Brief, Cross-Exam Transcript) con divieti lessicali che impediscono la convergenza delle voci. La sintesi utilizza la verità, non la prosa resa. Entrambi i livelli sono sempre disponibili.
 
-- **Catena di custodia:** Ogni frase generata può essere ricondotta a un elemento del livello di verità. Le istruzioni di sintesi fanno riferimento a questi elementi. Le domande di controinterrogatorio si basano su identificativi di pretese reali. Il grafo delle controversie è il risultato, non il testo.
+- **Catena di custodia:** Ogni frase resa può essere fatta risalire a un atomo del livello di verità. Le direttive di sintesi citano gli atomi. I target del controinterrogatorio sono ID di affermazioni reali. Il grafico delle controversie è il prodotto, non la prosa.
 
-**Verificato:** Versione 0.4, test completi — 894 test, catena di custodia completamente verificata. Consultare [`examples/golden-run.md`](examples/golden-run.md) per la catena completa degli artefatti.
+**Provato:** Esecuzione di riferimento v0.4: catena di custodia completa verificata. Consultare [`examples/golden-run.md`](examples/golden-run.md) per la catena completa degli artefatti.
+
+### Missione di audit approfondito
+
+Non si tratta di una scansione superficiale. La missione di audit approfondito **scompone un repository in componenti delimitati e assegna auditor specializzati in base a una scala determinata dal grafico delle dipendenze del repository stesso.**
+
+```bash
+roleos run "deep audit this repo" --manifest=audit-manifest.json
+# → MISSION: Deep Audit (Manifest-Scaled)
+#   Steps: Component Auditor ×6 + Test Truth Auditor ×6 + Seam Auditor ×8 + Synthesizer + Action Plan + Critic = 23 steps
+```
+
+**Cosa la rende diversa:**
+
+- **Assegnazione dinamica:** il numero di worker non è fisso. Un repository con 10 componenti e 5 cluster di confine produce 28 passaggi (2 × 10 + 5 + 3). Un repository con 3 componenti produce 12 passaggi. La formula di scalabilità è `2N + K + 3`, dove N = componenti, K = confini.
+- **Pacchetti basati sul manifest:** un file `audit-manifest.json` definisce i componenti (con percorsi dei file, conteggi delle righe, descrizioni) e i confini (da/a con descrizioni dell'interfaccia). Ogni auditor riceve solo il proprio pacchetto.
+- **Quattro archetipi di ruolo:** Auditor dei componenti (verità del codice per modulo), Auditor della verifica dei test (test che dimostrano vs test che esistono), Auditor delle interfacce (confini di integrazione dal grafico delle dipendenze), Sintetizzatore dell'audit (valutazione classificata + piano d'azione da tutti i pacchetti).
+- **Convalida degli artefatti a ogni passaggio:** `validateArtifact()` viene eseguito al termine di ogni passaggio in entrambi i percorsi di esecuzione. I risultati vengono allegati agli oggetti di passaggio. Il sistema sa se ogni artefatto ha soddisfatto il suo contratto.
+- **Onestà parziale:** quando il budget o l'ambito impediscono il completamento, i risultati per componente sono validi individualmente. Il sistema sintetizza ciò che è stato completato, senza mai fingere di aver coperto tutto.
+
+**Provato:** Esecuzione nativa di Runner: 18 test su un manifest reale, ciclo di vita completo verificato, inclusa la riapertura in caso di escalation e il fallimento parziale. La formula di scalabilità è stata verificata per manifest con 3/6/10/15 componenti.
+
+### Missione di swarm per i test interni
+
+Non si tratta di un linting a passaggio singolo. La missione di swarm per i test interni **esegue un protocollo di convergenza multi-pass che porta un repository da "funzionante" a "pronto per la produzione" attraverso tre fasi di verifica e la consegna iterativa delle funzionalità.**
+
+```bash
+roleos swarm
+# → MISSION: Dogfood Swarm (Multi-Pass Convergence)
+#   Stages: Health-A → Health-B → Health-C → Feature → Final
+#   Domain agents: 3-5 parallel per wave (exclusive file ownership)
+```
+
+**Cosa la rende diversa:**
+
+- **Sistema di controllo a tre fasi** — La fase A corregge bug e problemi di sicurezza (il ciclo continua finché non vengono risolti 0 problemi CRITICI e 0 problemi ALTI). La fase B applica misure di sicurezza proattive (gli utenti esaminano i risultati). La fase C rende il codice più intuitivo — messaggi di errore che aiutano gli utenti, feedback sulla riconnessione, indicatori di caricamento, accessibilità. Ogni fase rappresenta una prospettiva distinta e non è una semplice ripetizione della stessa scansione.
+- **Proprietà esclusiva dei file** — ogni agente di dominio possiede file specifici tramite `swarm-manifest.json`. Nessun agente modifica lo stesso file. Nessun conflitto di unione. Nessun sovraccarico di coordinamento.
+- **Controlli di build** — lint, controllo dei tipi e test devono essere superati dopo ogni ciclo. Il sistema rileva automaticamente il sistema di build (Node, Rust, Python, Go) ed esegue i comandi appropriati.
+- **Punti di controllo utente** — Health-B e la fase di test delle funzionalità richiedono l'approvazione esplicita dell'utente prima dell'esecuzione. Il sistema presenta i risultati e l'utente decide cosa costruire.
+- **Convergenza iterativa** — le fasi si ripetono in cicli finché non vengono soddisfatte le condizioni di uscita o raggiunto il numero massimo di iterazioni. Ogni ciclo riesamina tutto da zero per individuare eventuali regressioni introdotte dalle correzioni precedenti.
+- **Rilevamento automatico del dominio** — `roleos swarm manifest --generate` rileva il tipo di repository (CLI, web, desktop, MCP, monorepo) e genera assegnazioni di dominio non sovrapposte.
+
+**Dimostrato:** claude-collaborate (2026-03-28) — 35→129 test, 106 problemi di controllo risolti, versione v1.1.0 rilasciata. Protocollo v2.0 con 9 fasi.
 
 ## Stato
 
-- v0.1–v0.4: Fondamenta — test, adozione, pacchetto di trattamento, pacchetto di avvio
-- v1.0.0: 32 ruoli, interfaccia a riga di comando completa, trattamento verificato, portabilità multi-repository
-- v1.0.2: Blocco del sistema operativo dei ruoli (correzioni iniziali della verità, init --force)
-- v1.1.0: 31 ruoli, infrastruttura di routing completa, rilevamento dei conflitti, escalation, prove, dispatch, 7 pacchetti di team verificati. 35 esecuzioni di prova. 212 test.
-- v1.2.0: Pacchetti calibrati promossi a impostazione predefinita. Selezione automatica, rilevamento delle incongruenze, suggerimenti alternativi, fallback di routing libero. 246 test.
-- v1.3.0: Calibrazione dei risultati, decomposizione di attività complesse, esecuzione composita, riprogrammazione adattiva. 317 test.
-- v1.4.0: Infrastruttura delle sessioni — `roleos init claude`, `roleos doctor`, schede di routing, comandi /roleos-route + /roleos-review + /roleos-status. 335 test.
-- v1.5.0: Infrastruttura degli hook — 5 hook del ciclo di vita per l'applicazione in fase di esecuzione. 358 test.
-- v1.6.0: Infrastruttura degli artefatti — 20 contratti di artefatti specifici per ruolo, 7 contratti di trasferimento di pacchetti, convalida strutturale. 385 test.
-- v1.7.0: Dimostrazione del completamento — attività reali eseguite sull'intera piattaforma. Interfaccia a riga di comando `roleos artifacts`. Escalation trasparente per le correzioni strutturali. 398 test.
-- v1.8.0: Libreria di missioni (Fase S) — 6 missioni denominate, motore di esecuzione, report di completamento. Rafforzata da 6 esecuzioni di prova reali. 481 test.
-- v1.9.0: Percorso di accesso unificato (Fase T) — `roleos start` decide automaticamente tra missione, pacchetto o routing libero. Scala di fallback, rilevamento composito, test di confronto del percorso di accesso. 527 test.
-- **v2.0.0**: Ottimizzazione dell'esperienza utente (Fase U) — `roleos run` crea esecuzioni persistenti supportate dal disco. Riprendi, successivo, spiega, completa, fallisci. Interventi: reindirizza, aumenta, riprova, blocca, riapri. Guida specifica per ogni passaggio. Misurazione dell'attrito. 6 test di attrito. 613 test.
-- **v2.0.1**: Revisione del manuale, documentazione per principianti, correzioni del conteggio dei test. 617 test.
-- **v2.1.0**: Missione di brainstorming (v0.4) — ruoli specializzati nel campo legale, disaccordo tracciabile, output con valore probatorio. Architettura a due livelli (verità + rendering), matrice di autorizzazioni per il controinterrogatorio, grafo delle controversie, prova di esecuzione completa. 7 missioni, 50 ruoli, 8 pacchetti. 894 test.
+Stabile e pronto per il rilascio. Consultare il [REGISTRO DELLE MODIFICHE](CHANGELOG.md) per la cronologia completa delle versioni e le modifiche apportate in ogni rilascio.
 
 ## Licenza
 
@@ -316,4 +372,4 @@ MIT
 
 ---
 
-Creato da <a href="https://mcp-tool-shop.github.io/">MCP Tool Shop</a
+Realizzato da <a href="https://mcp-tool-shop.github.io/">MCP Tool Shop</a>
