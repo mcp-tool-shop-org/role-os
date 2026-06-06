@@ -21,6 +21,7 @@
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { schemaFloor, contractFloor } from "./specialist/conformance-consult.mjs";
 
 // ── Hook script generators ────────────────────────────────────────────────────
 
@@ -188,14 +189,57 @@ export function onPromptSubmit(input) {
   return {};
 }
 
+const TOOL_CONTRACTS_FILE = ".claude/role-os/tool-contracts.json";
+
+/**
+ * Load the Tool-Call Conformance contract catalog from the repo (the rollout's per-tool knowledge base):
+ * { "<tool_name>": { contract, params, constraints, state_struct? } }. Fail-safe — a missing or malformed
+ * file yields {} (conformance simply does not run), so this never breaks a tool call.
+ * @param {string} cwd
+ * @returns {Record<string, object>}
+ */
+export function loadToolContracts(cwd) {
+  try {
+    const p = join(cwd, TOOL_CONTRACTS_FILE);
+    if (!existsSync(p)) return {};
+    return JSON.parse(readFileSync(p, "utf-8")) || {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Deterministic conformance ADVISORY for a tool call — wedge #1's live seam. Runs the schema floor
+ * (L1-L3) + the computable contract floor (L4) against the catalogued tool. Returns an advisory string
+ * only when the floor PROVES a violation; otherwise null. Never throws, never denies — the watcher is
+ * advisory + fail-open by design (a false "conformant" is the costly error, never a blocked good call).
+ */
+export function conformanceAdvisory(cwd, toolName, toolInput, opts = {}) {
+  try {
+    const catalog = opts.toolContracts || loadToolContracts(cwd);
+    const entry = catalog && catalog[toolName];
+    if (!entry) return null;
+    const tool = { name: toolName, contract: entry.contract, params: entry.params || [], constraints: entry.constraints || [] };
+    const call = toolInput && typeof toolInput === "object" ? toolInput : {};
+    const v = [...schemaFloor(tool, call).violations, ...contractFloor(tool, call, entry.state_struct || null).violations];
+    if (!v.length) return null;
+    return `Tool-Call Conformance (advisory): the "${toolName}" call appears NONCONFORMANT — ${v.join("; ")}. The deterministic floor proved this; review before relying on the result.`;
+  } catch {
+    return null; // a hook must never break a tool call
+  }
+}
+
 /**
  * PreToolUse hook logic.
- * Checks tool usage against active role envelope.
+ * Records tool usage, flags write tools without a route card, and (wedge #1) attaches an ADVISORY
+ * Tool-Call Conformance verdict from the deterministic floor when the tool is catalogued. Advisory only
+ * — it never denies a call.
  *
  * @param {object} input - { tool_name, tool_input, session_id, cwd }
+ * @param {object} [opts] - { toolContracts } to inject a catalog (tests); defaults to loadToolContracts(cwd)
  * @returns {{ allow?: boolean, deny?: { reason: string }, addContext?: string }}
  */
-export function onPreToolUse(input) {
+export function onPreToolUse(input, opts = {}) {
   const cwd = input.cwd || process.cwd();
   const state = getSessionState(cwd);
   const toolName = input.tool_name || "";
@@ -206,23 +250,27 @@ export function onPreToolUse(input) {
     saveSessionState(cwd, state);
   }
 
+  const notes = [];
+
   // Advisory: flag write tools without route card after substantial prompts
   const writeTools = ["Bash", "Write", "Edit", "NotebookEdit"];
   if (writeTools.includes(toolName) && !state.routeCardPresent && (state.substantivePrompts || 0) >= 2) {
-    return {
-      addContext: `Write tool "${toolName}" used without a route card. If this is substantial work, consider routing first.`,
-    };
+    notes.push(`Write tool "${toolName}" used without a route card. If this is substantial work, consider routing first.`);
   }
+
+  // Wedge #1: deterministic conformance floor (advisory, fail-open) on the proposed call
+  const conf = conformanceAdvisory(cwd, toolName, input.tool_input, opts);
+  if (conf) notes.push(conf);
 
   // If a role is active, read-only tools are always fine
   if (state.activeRole && state.activePack) {
     const readOnlyTools = ["Read", "Glob", "Grep", "WebSearch", "WebFetch"];
     if (readOnlyTools.includes(toolName)) {
-      return { allow: true };
+      return notes.length ? { allow: true, addContext: notes.join(" ") } : { allow: true };
     }
   }
 
-  return {};
+  return notes.length ? { addContext: notes.join(" ") } : {};
 }
 
 /**
@@ -385,7 +433,7 @@ if (isSubstantial && (state.substantivePrompts || 0) >= 2 && !state.routeCardPre
 
 function generatePreToolUseScript() {
   return `#!/usr/bin/env node
-// Role OS PreToolUse hook — enforce role-specific tool law
+// Role OS PreToolUse hook — enforce role-specific tool law + Tool-Call Conformance floor (advisory)
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -405,13 +453,31 @@ if (!state.toolsUsed.includes(toolName)) {
   writeFileSync(statePath, JSON.stringify(state, null, 2));
 }
 
-// Advisory: flag write tools without route card
+const notes = [];
 const writeTools = ["Bash", "Write", "Edit", "NotebookEdit"];
 if (writeTools.includes(toolName) && !state.routeCardPresent && (state.substantivePrompts || 0) >= 2) {
-  console.log(JSON.stringify({
-    addContext: \`Write tool "\${toolName}" used without route card. Consider /roleos-route.\`,
-  }));
+  notes.push(\`Write tool "\${toolName}" used without route card. Consider /roleos-route.\`);
 }
+
+// Tool-Call Conformance floor (advisory, deterministic). Best-effort: runs only when this tool has a
+// .claude/role-os/tool-contracts.json catalog entry AND the role-os library is resolvable. ANY failure
+// is a silent no-op — a hook must never break a tool call; the watcher is advisory + fail-open.
+try {
+  const catPath = join(cwd, ".claude", "role-os", "tool-contracts.json");
+  if (existsSync(catPath)) {
+    const catalog = JSON.parse(readFileSync(catPath, "utf-8"));
+    const entry = catalog && catalog[toolName];
+    if (entry) {
+      const { schemaFloor, contractFloor } = await import("role-os/src/specialist/conformance-consult.mjs");
+      const tool = { name: toolName, contract: entry.contract, params: entry.params || [], constraints: entry.constraints || [] };
+      const call = (input.tool_input && typeof input.tool_input === "object") ? input.tool_input : {};
+      const v = [...schemaFloor(tool, call).violations, ...contractFloor(tool, call, entry.state_struct || null).violations];
+      if (v.length) notes.push(\`Tool-Call Conformance (advisory): "\${toolName}" appears NONCONFORMANT — \${v.join("; ")}.\`);
+    }
+  }
+} catch { /* role-os not resolvable here, or internal error -> no-op (never block a tool call) */ }
+
+if (notes.length) console.log(JSON.stringify({ addContext: notes.join(" ") }));
 `;
 }
 
