@@ -1,0 +1,2990 @@
+[
+  {
+    "tool_name": "read_file",
+    "domain": "",
+    "contract": "Reads a UTF-8 text file and returns its contents. `path` MUST be an absolute path; relative paths are rejected.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "read the system hosts file"
+  },
+  {
+    "tool_name": "http_fetch",
+    "domain": "",
+    "contract": "Fetches a URL. `url` MUST be https. Use `method` GET for reads; mutating methods change server state.",
+    "params": [
+      {
+        "name": "url",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "method",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "fetch the status page"
+  },
+  {
+    "tool_name": "db_query",
+    "domain": "",
+    "contract": "Runs a read-only SELECT against a table. Mutating statements are forbidden. `limit` must be <= 1000.",
+    "params": [
+      {
+        "name": "table",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sql",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "required": false,
+        "max": 1000
+      }
+    ],
+    "state": null,
+    "intent": "list 10 users"
+  },
+  {
+    "tool_name": "charge_card",
+    "domain": "",
+    "contract": "Charges a card. `amount` is in minor units (cents). Any charge over 10000 (i.e. > $100) REQUIRES an `idempotency_key`.",
+    "params": [
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "idempotency_key",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "charge the customer $25"
+  },
+  {
+    "tool_name": "create_event",
+    "domain": "",
+    "contract": "Creates a calendar event. `start` and `end` are ISO-8601 datetimes; `end` MUST be after `start`.",
+    "params": [
+      {
+        "name": "title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "start",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "end",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "block 2-3pm on the 7th for standup"
+  },
+  {
+    "tool_name": "send_message",
+    "domain": "",
+    "contract": "Posts a message to a channel. `channel` MUST start with '#'. `text` is at most 4000 characters.",
+    "params": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "post 'deploy finished' to the #ops channel"
+  },
+  {
+    "tool_name": "s3_upload",
+    "domain": "",
+    "contract": "Uploads an object. `key` MUST NOT start with '/'. `acl` controls visibility.",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "acl",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "private",
+          "public-read"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "upload the logo privately"
+  },
+  {
+    "tool_name": "run_shell",
+    "domain": "",
+    "contract": "Runs a SINGLE command. Shell operators (';', '|', '&&', '>') are forbidden. `timeout` <= 300 seconds.",
+    "params": [
+      {
+        "name": "cmd",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timeout",
+        "type": "integer",
+        "required": false,
+        "max": 300
+      }
+    ],
+    "state": null,
+    "intent": "list the contents of /var/log"
+  },
+  {
+    "tool_name": "git_commit",
+    "domain": "",
+    "contract": "Commits staged changes. `message` is required, non-empty, and its first line must be <= 72 characters.",
+    "params": [
+      {
+        "name": "message",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "commit the staged fix with a clear message"
+  },
+  {
+    "tool_name": "search_web",
+    "domain": "",
+    "contract": "Web search. `query` must be non-empty and MUST NOT contain personal data (emails, phone numbers, SSNs). `top_k` in 1..50.",
+    "params": [
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "top_k",
+        "type": "integer",
+        "required": false,
+        "max": 50
+      }
+    ],
+    "state": null,
+    "intent": "find docs on serving rsLoRA adapters"
+  },
+  {
+    "tool_name": "schedule_task",
+    "domain": "",
+    "contract": "Schedules a recurring job. `cron` MUST be a valid 5-field cron expression (minute hour day month weekday).",
+    "params": [
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "command",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "run backup.sh nightly at 2am"
+  },
+  {
+    "tool_name": "set_config",
+    "domain": "",
+    "contract": "Sets a configuration value. `scope` 'global' REQUIRES `admin` to be true; otherwise the change is rejected.",
+    "params": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "user",
+          "project",
+          "global"
+        ]
+      },
+      {
+        "name": "admin",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "set my personal editor theme to dark"
+  },
+  {
+    "tool_name": "write_file",
+    "domain": "",
+    "contract": "Writes content to a file at the given path. The path MUST be absolute (start with '/' on POSIX or a drive letter on Windows); relative paths are rejected. The parent directory MUST already exist.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "required": true,
+        "max": 1048576
+      },
+      {
+        "name": "encoding",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "utf-8",
+          "ascii",
+          "base64",
+          "latin1"
+        ]
+      },
+      {
+        "name": "create_parents",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Persist the settings.json contents to the app config directory"
+  },
+  {
+    "tool_name": "move_path",
+    "domain": "",
+    "contract": "Moves (renames) a filesystem entry from source to destination. Both paths MUST be absolute, and source MUST reference an existing file or directory. Destination MUST NOT be a subpath of source (cannot move a directory into itself).",
+    "params": [
+      {
+        "name": "source",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "destination",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "overwrite",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Relocate draft.md into the docs folder under the name final.md"
+  },
+  {
+    "tool_name": "chmod_path",
+    "domain": "",
+    "contract": "Sets the permission bits on a filesystem entry. The path MUST be absolute and reference an existing entry. The mode MUST be a 3- or 4-digit octal string where every digit is 0-7 (e.g. '755', '0644'); decimal or out-of-range digits are invalid.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "mode",
+        "type": "string",
+        "required": true,
+        "max": 4
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Make the deploy.sh script owner-executable and world-readable/executable"
+  },
+  {
+    "tool_name": "create_archive",
+    "domain": "",
+    "contract": "Bundles a list of source paths into a single archive file. The output_path MUST end with an extension matching the chosen format ('.zip' for zip, '.tar.gz' for targz). Every entry in sources MUST be an absolute path, and sources MUST contain at least one entry.",
+    "params": [
+      {
+        "name": "output_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sources",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "format",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "zip",
+          "targz"
+        ]
+      },
+      {
+        "name": "compression_level",
+        "type": "integer",
+        "required": false,
+        "max": 9
+      }
+    ],
+    "state": null,
+    "intent": "Package the dist folder and README into a single zip backup named release-2026.zip"
+  },
+  {
+    "tool_name": "stat_path",
+    "domain": "",
+    "contract": "Returns metadata (size, timestamps, mode, type) for a single filesystem entry. The path MUST be absolute and MUST reference an existing entry; the tool does not create anything. follow_symlinks controls whether a symlink target or the link itself is described.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "follow_symlinks",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "fields",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "state": "existing filesystem entries: /etc/hosts (file), /etc/passwd (file), /var/log (dir). No other paths exist.",
+    "intent": "Read the size and modification time of the /etc/hosts file"
+  },
+  {
+    "tool_name": "make_directory",
+    "domain": "",
+    "contract": "Creates a new directory at the given path. The path MUST be absolute. When recursive is false, the parent directory MUST already exist and the target MUST NOT already exist; the target's name MUST NOT contain path separators beyond the final component implied by the path.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "mode",
+        "type": "string",
+        "required": false,
+        "max": 4
+      }
+    ],
+    "state": null,
+    "intent": "Create the 'incoming' subdirectory under the already-existing /srv/data folder"
+  },
+  {
+    "tool_name": "watch_path",
+    "domain": "",
+    "contract": "Registers a filesystem watcher that emits change events for a path. The path MUST be absolute and reference an existing file or directory. debounce_ms MUST be less than timeout_ms (a debounce window cannot exceed the total watch lifetime), and at least one event in events MUST be selected.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "events",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "debounce_ms",
+        "type": "integer",
+        "required": false,
+        "max": 60000
+      },
+      {
+        "name": "timeout_ms",
+        "type": "integer",
+        "required": false,
+        "max": 600000
+      }
+    ],
+    "state": null,
+    "intent": "Watch the app log directory for file create/modify/delete events for 30 seconds"
+  },
+  {
+    "tool_name": "create_oauth_token",
+    "domain": "",
+    "contract": "Exchanges an authorization code for an access token. The redirect_uri must byte-for-byte match the redirect_uri used in the original authorization request, and grant_type 'authorization_code' requires the 'code' param to be present and unexpired.",
+    "params": [
+      {
+        "name": "grant_type",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "authorization_code",
+          "client_credentials",
+          "refresh_token"
+        ]
+      },
+      {
+        "name": "code",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "redirect_uri",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "client_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "client_secret",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": "the original authorization request for code 'ac_9f8b2c1d' used redirect_uri 'https://app.example.com/oauth/callback' (exact); the code is unexpired and unused.",
+    "intent": "Redeem a freshly issued authorization code for an access token to act on the user's behalf."
+  },
+  {
+    "tool_name": "register_webhook",
+    "domain": "",
+    "contract": "Registers an HTTPS endpoint to receive event callbacks. The url must use the https scheme (plaintext http is rejected for security), and every entry in events must be a subscribable event type from the provider's catalog.",
+    "params": [
+      {
+        "name": "url",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "events",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "secret",
+        "type": "string",
+        "required": false,
+        "max": 256
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "api_version",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Subscribe an HTTPS endpoint to invoice billing events so the system reacts to payment outcomes."
+  },
+  {
+    "tool_name": "set_rate_limit_policy",
+    "domain": "",
+    "contract": "Configures a token-bucket rate limit for an API key. The burst capacity (max_burst) must be greater than or equal to the steady refill rate (requests_per_second) so the bucket can actually hold one second of refill; window_seconds must evenly divide 3600 for clean hourly reporting.",
+    "params": [
+      {
+        "name": "api_key_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "requests_per_second",
+        "type": "integer",
+        "required": true,
+        "max": 10000
+      },
+      {
+        "name": "max_burst",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "window_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 3600
+      },
+      {
+        "name": "on_exceed",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "reject",
+          "throttle",
+          "queue"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "Cap a client API key at 50 req/s with a 100-request burst, throttling overflow."
+  },
+  {
+    "tool_name": "graphql_query",
+    "domain": "",
+    "contract": "Executes a GraphQL operation against the endpoint. Every key in the variables object must correspond to a variable declared in the query string (a '$name' parameter); supplying a variable not declared in the operation is rejected by the server.",
+    "params": [
+      {
+        "name": "endpoint",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "variables",
+        "type": "object",
+        "required": false
+      },
+      {
+        "name": "operation_name",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Fetch the name and price of a single product by its id."
+  },
+  {
+    "tool_name": "create_presigned_upload_url",
+    "domain": "",
+    "contract": "Generates a time-limited presigned URL for a direct S3 PUT upload. The expires_in_seconds must not exceed 604800 (7 days, the S3 SigV4 maximum), and the object_key must not begin with a leading slash since S3 keys are relative to the bucket root.",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "object_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "content_type",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "expires_in_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 604800
+      },
+      {
+        "name": "method",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "PUT",
+          "GET"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "Mint a 1-hour presigned PUT URL so the client can upload a user's avatar directly to S3."
+  },
+  {
+    "tool_name": "schedule_token_rotation",
+    "domain": "",
+    "contract": "Schedules automatic rotation of a service credential on a cron cadence. The cron expression must be a valid 5-field (minute hour day-of-month month day-of-week) expression, and overlap_seconds (the dual-validity window where old and new tokens both work) must be greater than 0 so in-flight requests aren't dropped at the swap.",
+    "params": [
+      {
+        "name": "credential_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "overlap_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "notify_channel",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Rotate a service credential every Sunday at 03:00 UTC with a 5-minute dual-validity overlap."
+  },
+  {
+    "tool_name": "paginate_rest_collection",
+    "domain": "",
+    "contract": "Fetches a page from a cursor-paginated REST collection. The 'after' cursor must be an opaque cursor returned by a prior response on this same collection (cursors are not portable across endpoints or sort orders), and page_size must be between 1 and 100 inclusive.",
+    "params": [
+      {
+        "name": "resource_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "page_size",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "after",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "sort",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "created_asc",
+          "created_desc",
+          "updated_desc"
+        ]
+      }
+    ],
+    "state": "the /v2/orders collection issues opaque cursors that base64-decode to an order id (id prefix 'ord_'); cursors minted by other collections decode to other id prefixes and are not valid here.",
+    "intent": "Fetch the next 50 orders after the previously returned orders-collection cursor, newest first."
+  },
+  {
+    "tool_name": "sql_query_run",
+    "domain": "",
+    "contract": "Executes a single read-only SQL statement against the named database and returns rows. The statement MUST be a single SELECT (no INSERT/UPDATE/DELETE/DDL and no multiple statements), and limit must not exceed 10000 rows.",
+    "params": [
+      {
+        "name": "database",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sql",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "required": false,
+        "max": 10000
+      },
+      {
+        "name": "timeout_ms",
+        "type": "integer",
+        "required": false,
+        "max": 60000
+      }
+    ],
+    "state": null,
+    "intent": "Read active users' ids and emails from the analytics database"
+  },
+  {
+    "tool_name": "kv_set",
+    "domain": "",
+    "contract": "Sets a key to a string value in the key-value store with an optional TTL. ttl_seconds, when provided, must be a positive number of seconds in the range 1..2592000 (max 30 days); a value of 0 or negative is not a valid expiry.",
+    "params": [
+      {
+        "name": "namespace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "max": 512
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true,
+        "max": 1048576
+      },
+      {
+        "name": "ttl_seconds",
+        "type": "integer",
+        "required": false,
+        "max": 2592000
+      }
+    ],
+    "state": null,
+    "intent": "Cache a user's session token for one hour"
+  },
+  {
+    "tool_name": "vector_upsert",
+    "domain": "",
+    "contract": "Upserts an embedding vector into a collection. The length of the embedding array MUST equal the collection's configured dimension (passed as 'dim'); a mismatch is rejected by the index.",
+    "params": [
+      {
+        "name": "collection",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "dim",
+        "type": "integer",
+        "required": true,
+        "max": 4096
+      },
+      {
+        "name": "embedding",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Store the 4-dimensional embedding for doc-001 in the docs collection"
+  },
+  {
+    "tool_name": "blob_upload",
+    "domain": "",
+    "contract": "Uploads a local file to an object-storage bucket under the given object key. source_path must be an ABSOLUTE filesystem path, and object_key must not begin with a leading slash (keys are relative within the bucket).",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "object_key",
+        "type": "string",
+        "required": true,
+        "max": 1024
+      },
+      {
+        "name": "source_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "content_type",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "acl",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "private",
+          "public-read"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "Upload the v1.0.0 build artifact privately to the release-artifacts bucket"
+  },
+  {
+    "tool_name": "cache_invalidate_range",
+    "domain": "",
+    "contract": "Invalidates cache entries whose creation timestamps fall within [start_epoch_ms, end_epoch_ms]. end_epoch_ms MUST be strictly greater than start_epoch_ms (a non-empty time window).",
+    "params": [
+      {
+        "name": "region",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "us-east",
+          "us-west",
+          "eu-central",
+          "ap-south"
+        ]
+      },
+      {
+        "name": "start_epoch_ms",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "end_epoch_ms",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "dry_run",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Invalidate us-east cache entries created during a one-day window"
+  },
+  {
+    "tool_name": "sql_schema_migrate",
+    "domain": "",
+    "contract": "Applies a forward migration identified by version. The version MUST be exactly one greater than the database's current schema version (sequential, no-skip migrations); applying a non-consecutive version is rejected.",
+    "params": [
+      {
+        "name": "database",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "current_version",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "target_version",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "migration_sql",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "transactional",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Apply the next sequential migration (v8) adding a refunded_at column to the orders database"
+  },
+  {
+    "tool_name": "vector_search",
+    "domain": "",
+    "contract": "Performs a k-nearest-neighbor search in a collection using a query vector. top_k must not exceed 1000, and the query_vector length must match the collection dimension; filter, when given, references metadata fields that must exist on indexed vectors.",
+    "params": [
+      {
+        "name": "collection",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "query_vector",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "dim",
+        "type": "integer",
+        "required": true,
+        "max": 4096
+      },
+      {
+        "name": "top_k",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "metric",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "cosine",
+          "dot",
+          "euclidean"
+        ]
+      },
+      {
+        "name": "filter",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Find the 10 nearest in-stock products to the query vector using cosine similarity"
+  },
+  {
+    "tool_name": "refund_charge",
+    "domain": "",
+    "contract": "Refunds part or all of a previously captured charge. amount (minor units) must be > 0 and must not exceed the charge's remaining refundable balance; charge_id must reference an existing, already-captured charge (not an uncaptured authorization).",
+    "params": [
+      {
+        "name": "charge_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "duplicate",
+          "fraudulent",
+          "requested_by_customer",
+          "product_unavailable"
+        ]
+      }
+    ],
+    "state": "charge ch_9Lm22aZ: status=captured, currency=USD, original_amount=1500, already_refunded=0, remaining_refundable=1500 (minor units).",
+    "intent": "Refund $15.00 of a captured charge at the customer's request."
+  },
+  {
+    "tool_name": "create_transfer",
+    "domain": "",
+    "contract": "Moves funds between two internal ledger accounts atomically. source_account and destination_account must be distinct, must reference existing accounts in the same currency, and the source must have an available balance >= amount (minor units).",
+    "params": [
+      {
+        "name": "source_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "destination_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 9999999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "CAD"
+        ]
+      },
+      {
+        "name": "idempotency_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "memo",
+        "type": "string",
+        "required": false,
+        "max": 140
+      }
+    ],
+    "state": null,
+    "intent": "Move $2,500.00 from the treasury account to the payout account to fund this week's payouts."
+  },
+  {
+    "tool_name": "create_invoice",
+    "domain": "",
+    "contract": "Creates a draft invoice for a customer. due_date must be a future ISO-8601 date strictly after issue_date, and the sum of all line_items' (quantity * unit_amount) must equal the declared total_amount (all monetary values in minor units).",
+    "params": [
+      {
+        "name": "customer_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "issue_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "due_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "line_items",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "total_amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      }
+    ],
+    "state": null,
+    "intent": "Draft a net-30 invoice for two Pro seats plus onboarding totaling $198.00."
+  },
+  {
+    "tool_name": "create_payout",
+    "domain": "",
+    "contract": "Initiates an external payout to a connected bank account. amount (minor units) must be > 0 and <= the account's current available (settled, non-pending) balance; if rail is 'wire', amount must be >= 100000 (the wire minimum of 1000.00 in minor units).",
+    "params": [
+      {
+        "name": "destination_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 9999999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "rail",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "ach",
+          "wire",
+          "rtp"
+        ]
+      },
+      {
+        "name": "schedule",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "standard",
+          "instant"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "Wire $1,500.00 of settled balance out to the connected bank account."
+  },
+  {
+    "tool_name": "quote_fx_conversion",
+    "domain": "",
+    "contract": "Returns a locked FX quote to convert between two currencies. sell_currency and buy_currency must differ, both must be in the supported set, and the quote_ttl_seconds must be between 30 and 900 (quotes shorter than 30s or longer than 15min are not honored).",
+    "params": [
+      {
+        "name": "sell_currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "CHF"
+        ]
+      },
+      {
+        "name": "buy_currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "CHF"
+        ]
+      },
+      {
+        "name": "sell_amount",
+        "type": "integer",
+        "required": true,
+        "max": 9999999999
+      },
+      {
+        "name": "quote_ttl_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 3600
+      },
+      {
+        "name": "rate_type",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "mid",
+          "guaranteed"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "Lock a 2-minute guaranteed quote to convert $10,000.00 USD into EUR."
+  },
+  {
+    "tool_name": "schedule_recurring_charge",
+    "domain": "",
+    "contract": "Sets up a recurring charge plan on a subscription. cron_expression must be a valid 5-field cron expression, and start_date must be on or after today; amount is in minor units and must be > 0.",
+    "params": [
+      {
+        "name": "subscription_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "cron_expression",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "start_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "max_cycles",
+        "type": "integer",
+        "required": false,
+        "max": 999
+      }
+    ],
+    "state": null,
+    "intent": "Bill $29.99 on the 1st of each month at 09:00 for 12 cycles on this subscription."
+  },
+  {
+    "tool_name": "k8s_scale_deployment",
+    "domain": "",
+    "contract": "Sets the replica count for an existing Deployment. The target replica count must not exceed the namespace ResourceQuota's max pod ceiling, and the deployment must already exist in the given namespace.",
+    "params": [
+      {
+        "name": "namespace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "deployment",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "replicas",
+        "type": "integer",
+        "required": true,
+        "max": 500
+      },
+      {
+        "name": "wait_for_ready",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Scale the checkout-api deployment up to 6 replicas to absorb peak traffic"
+  },
+  {
+    "tool_name": "dns_upsert_record",
+    "domain": "",
+    "contract": "Creates or updates a single DNS record in a zone. The record name must be a subdomain of (or equal to) the zone's apex domain, and a CNAME record's value must be a hostname, never a bare IP address.",
+    "params": [
+      {
+        "name": "zone",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "A",
+          "AAAA",
+          "CNAME",
+          "TXT",
+          "MX"
+        ]
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "ttl",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      }
+    ],
+    "state": null,
+    "intent": "Point api.example.com at the production load balancer hostname via CNAME"
+  },
+  {
+    "tool_name": "secret_rotate_version",
+    "domain": "",
+    "contract": "Stores a new version of a named secret and marks it current. The new secret value must differ from the currently-active version (rotation requires a genuinely new value), and the secret name must already exist in the store.",
+    "params": [
+      {
+        "name": "store",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "vault",
+          "aws-sm",
+          "gcp-sm"
+        ]
+      },
+      {
+        "name": "secret_name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "new_value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "previous_value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "deprecate_after_hours",
+        "type": "integer",
+        "required": false,
+        "max": 168
+      }
+    ],
+    "state": "secret 'prod/db/password' exists in store 'aws-sm'; its currently-active version value is 'aB3$kM1vQ8wE'.",
+    "intent": "Rotate the production DB password to a fresh credential and retire the old one within a day"
+  },
+  {
+    "tool_name": "ci_promote_artifact",
+    "domain": "",
+    "contract": "Promotes a built artifact from one environment stage to the next. Promotion must follow the ordered pipeline (dev -> staging -> prod) by exactly one stage, and the artifact digest must match a build that already passed the source stage's gate.",
+    "params": [
+      {
+        "name": "artifact_digest",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "from_stage",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "dev",
+          "staging",
+          "prod"
+        ]
+      },
+      {
+        "name": "to_stage",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "dev",
+          "staging",
+          "prod"
+        ]
+      },
+      {
+        "name": "approver",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Promote the staging-verified build to production as the next pipeline step"
+  },
+  {
+    "tool_name": "iac_apply_plan",
+    "domain": "",
+    "contract": "Applies a previously-generated Terraform plan file. The plan_path must be an absolute filesystem path to a plan produced against the same workspace named in the request, and apply is refused if the plan reports any resource destruction unless allow_destroy is true.",
+    "params": [
+      {
+        "name": "workspace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "plan_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "allow_destroy",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "auto_approve",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Apply the reviewed additive plan for the prod-us-east workspace with no resource deletions"
+  },
+  {
+    "tool_name": "container_set_resource_limits",
+    "domain": "",
+    "contract": "Sets CPU and memory requests/limits on a container spec. For each resource, the limit must be greater than or equal to the request (a limit below its request is invalid), and memory values must be expressed in Mi or Gi suffixed units.",
+    "params": [
+      {
+        "name": "container",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cpu_request_millicores",
+        "type": "integer",
+        "required": true,
+        "max": 64000
+      },
+      {
+        "name": "cpu_limit_millicores",
+        "type": "integer",
+        "required": true,
+        "max": 64000
+      },
+      {
+        "name": "memory_request",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "memory_limit",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Give the image-resizer container a 500m/2 CPU and 512Mi/2Gi request/limit envelope"
+  },
+  {
+    "tool_name": "deploy_canary_rollout",
+    "domain": "",
+    "contract": "Shifts a percentage of live traffic to a new canary revision. The traffic_percent must be greater than the current canary weight (a canary step moves traffic toward the new revision, never backward), and the canary_revision must be newer than the stable revision it is being compared against.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "canary_revision",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "stable_revision",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "current_weight",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "traffic_percent",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "metrics_window_minutes",
+        "type": "integer",
+        "required": false,
+        "max": 1440
+      }
+    ],
+    "state": null,
+    "intent": "Advance the search-frontend canary from 10% to 25% of live traffic after the first window looked healthy"
+  },
+  {
+    "tool_name": "send_sms",
+    "domain": "",
+    "contract": "Sends an SMS to a single recipient. The 'to' number must be in E.164 format (leading '+', country code, up to 15 digits) and 'body' must not exceed 1600 characters (the carrier multipart limit).",
+    "params": [
+      {
+        "name": "to",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "required": true,
+        "max": 1600
+      },
+      {
+        "name": "sender_id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "flash",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Deliver a one-time verification code to a user's phone via text message."
+  },
+  {
+    "tool_name": "schedule_calendar_event",
+    "domain": "",
+    "contract": "Creates a calendar event. 'end' must be strictly after 'start' (both RFC 3339 timestamps), and 'timezone' must be a valid IANA tz database name (e.g. 'America/New_York', not a UTC offset like '-05:00').",
+    "params": [
+      {
+        "name": "calendar_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "start",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "end",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "attendees",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Book a one-hour roadmap review on the primary calendar with two attendees."
+  },
+  {
+    "tool_name": "send_email",
+    "domain": "",
+    "contract": "Sends an email via the transactional gateway. Every address in 'to', 'cc', and 'bcc' must be a syntactically valid RFC 5322 address, and 'reply_to' (if set) must be an address the authenticated sender domain is authorized to use.",
+    "params": [
+      {
+        "name": "to",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "subject",
+        "type": "string",
+        "required": true,
+        "max": 998
+      },
+      {
+        "name": "body_html",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cc",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "reply_to",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "importance",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "low",
+          "normal",
+          "high"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "Notify the customer's billing contact that their June invoice is ready."
+  },
+  {
+    "tool_name": "create_recurring_reminder",
+    "domain": "",
+    "contract": "Schedules a recurring reminder for a user. 'cron' must be a valid 5-field cron expression (minute hour day-of-month month day-of-week), and 'lead_minutes' must be >= 0 (you cannot fire a reminder after the moment it points to).",
+    "params": [
+      {
+        "name": "user_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "required": true,
+        "max": 500
+      },
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "lead_minutes",
+        "type": "integer",
+        "required": true,
+        "max": 1440
+      },
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "push",
+          "email",
+          "sms"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "Remind a user via push notification every Friday at 4pm to submit their timesheet, 30 minutes ahead."
+  },
+  {
+    "tool_name": "post_channel_message",
+    "domain": "",
+    "contract": "Posts a message to a chat channel. 'channel_id' must reference an existing channel the bot is a member of, and 'thread_ts' (if provided) must be the timestamp of an existing parent message in that same channel.",
+    "params": [
+      {
+        "name": "channel_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "required": true,
+        "max": 4000
+      },
+      {
+        "name": "thread_ts",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "mentions",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "unfurl_links",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": "channel C04ABCD123: the bot is a member; existing thread-parent timestamps in this channel are [1718900000.001200, 1718900500.004500].",
+    "intent": "Reply in the deploy thread to confirm the v2.4.0 deploy finished."
+  },
+  {
+    "tool_name": "send_meeting_invite",
+    "domain": "",
+    "contract": "Sends an iCalendar meeting invitation. 'organizer' must be one of the addresses in 'attendees' (the organizer is always an attendee), and 'rsvp_deadline' must be a date no later than the meeting's 'start_date'.",
+    "params": [
+      {
+        "name": "subject",
+        "type": "string",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "organizer",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "attendees",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "start_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "rsvp_deadline",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "location",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Invite two guests plus the host to the Annual Partner Summit with an RSVP deadline a week prior."
+  },
+  {
+    "tool_name": "snooze_notification",
+    "domain": "",
+    "contract": "Reschedules an already-delivered notification to fire again later. 'notification_id' must reference an existing notification belonging to the caller, and 'snooze_until' must be a future UTC timestamp strictly later than the current time.",
+    "params": [
+      {
+        "name": "notification_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "snooze_until",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "keep_badge",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "priority",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "normal",
+          "high"
+        ]
+      }
+    ],
+    "state": "current_time=2026-06-06T12:00:00Z; the caller owns notification ntf_77b21 (already delivered).",
+    "intent": "Snooze an existing reminder notification until 6:30pm UTC today so it resurfaces later."
+  },
+  {
+    "tool_name": "embed_text_batch",
+    "domain": "",
+    "contract": "Generates dense vectors for a batch of input strings using the named embedding model. Every string in inputs must be non-empty after trimming, and dimensions (when supplied) must equal the model's native output size — passing a value the model does not support is rejected.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "text-embedding-3-small",
+          "text-embedding-3-large",
+          "voyage-3"
+        ]
+      },
+      {
+        "name": "inputs",
+        "type": "array",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "dimensions",
+        "type": "integer",
+        "required": false,
+        "max": 3072
+      },
+      {
+        "name": "normalize",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "embed a small batch of support queries for similarity search"
+  },
+  {
+    "tool_name": "chat_completion",
+    "domain": "",
+    "contract": "Calls a chat model with an ordered message list. Messages must follow role ordering rules: at most one leading system message, and the final message's role must be 'user' (the model is being asked to produce the next assistant turn). max_tokens must be a positive integer.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "gpt-4o",
+          "claude-3-5-sonnet",
+          "gpt-4o-mini"
+        ]
+      },
+      {
+        "name": "messages",
+        "type": "array",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "temperature",
+        "type": "number",
+        "required": false,
+        "max": 2
+      },
+      {
+        "name": "max_tokens",
+        "type": "integer",
+        "required": false,
+        "max": 8192
+      }
+    ],
+    "state": null,
+    "intent": "ask the model for a concise summary of the CAP theorem"
+  },
+  {
+    "tool_name": "register_mcp_tool",
+    "domain": "",
+    "contract": "Registers a tool in an MCP server's tool registry. The name must be a unique snake_case identifier not already present in the registry, and input_schema must be a JSON Schema object whose top-level 'type' is 'object'.",
+    "params": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "max": 64
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": true,
+        "max": 1024
+      },
+      {
+        "name": "input_schema",
+        "type": "object",
+        "required": true
+      },
+      {
+        "name": "annotations",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "register a new read-only weather-fetching tool on the MCP server"
+  },
+  {
+    "tool_name": "rerank_documents",
+    "domain": "",
+    "contract": "Reranks candidate documents by relevance to the query using a cross-encoder. top_n must not exceed the number of documents supplied, and the query must be a non-empty string.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "rerank-english-v3",
+          "rerank-multilingual-v3",
+          "bge-reranker-large"
+        ]
+      },
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "documents",
+        "type": "array",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "top_n",
+        "type": "integer",
+        "required": false,
+        "max": 1000
+      }
+    ],
+    "state": null,
+    "intent": "return the 2 most relevant docs about safe API key rotation"
+  },
+  {
+    "tool_name": "create_embedding_index",
+    "domain": "",
+    "contract": "Creates a new ANN index. The metric must be compatible with the dimension and intended use: cosine and dotproduct require pre-normalized vectors, and dimension must be a positive multiple of 8 for the quantized HNSW backend. name must not collide with an existing index.",
+    "params": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "max": 45
+      },
+      {
+        "name": "dimension",
+        "type": "integer",
+        "required": true,
+        "max": 4096
+      },
+      {
+        "name": "metric",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "cosine",
+          "euclidean",
+          "dotproduct"
+        ]
+      },
+      {
+        "name": "backend",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "flat",
+          "hnsw",
+          "quantized-hnsw"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "create a cosine-metric ANN index for 768-dim product embeddings on the quantized HNSW backend"
+  },
+  {
+    "tool_name": "schedule_agent_run",
+    "domain": "",
+    "contract": "Schedules a recurring autonomous agent run. cron must be a valid 5-field cron expression, and start_after (if provided) must be an ISO-8601 timestamp strictly earlier than end_before. The referenced agent_id must already exist.",
+    "params": [
+      {
+        "name": "agent_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "start_after",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "end_before",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "run the inbox-triage agent every weekday at 9am Eastern through year-end"
+  },
+  {
+    "tool_name": "git_create_branch",
+    "domain": "",
+    "contract": "Creates a new branch pointing at a given commit-ish. The branch name must not already exist in the repo, and the start_point must reference an existing commit, branch, or tag.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "branch_name",
+        "type": "string",
+        "required": true,
+        "max": 255
+      },
+      {
+        "name": "start_point",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "checkout",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Branch off main to start work on a rate limiter feature"
+  },
+  {
+    "tool_name": "git_merge_branch",
+    "domain": "",
+    "contract": "Merges source_branch into target_branch within the repo. source_branch and target_branch must both exist and must be different; merging a branch into itself is rejected.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "source_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "strategy",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "recursive",
+          "ours",
+          "theirs",
+          "octopus",
+          "fast-forward-only"
+        ]
+      },
+      {
+        "name": "commit_message",
+        "type": "string",
+        "required": false,
+        "max": 2000
+      }
+    ],
+    "state": null,
+    "intent": "Integrate the completed refunds feature into the main line"
+  },
+  {
+    "tool_name": "git_create_commit",
+    "domain": "",
+    "contract": "Records a commit from the currently staged changes. The staging area must be non-empty (there must be staged changes to commit), and the message must be non-blank.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "required": true,
+        "max": 5000
+      },
+      {
+        "name": "author_email",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "allow_empty",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "sign",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Commit the staged auth fix with a signed, conventional-commit message"
+  },
+  {
+    "tool_name": "git_create_tag",
+    "domain": "",
+    "contract": "Creates a tag at a target commit-ish. The tag name must follow semver with a leading 'v' (e.g. v1.4.0) and must not already exist; target must reference an existing commit.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "tag_name",
+        "type": "string",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "target",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "required": false,
+        "max": 2000
+      },
+      {
+        "name": "annotated",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Cut an annotated release tag v2.1.0 on the main line"
+  },
+  {
+    "tool_name": "git_revert_commit",
+    "domain": "",
+    "contract": "Creates a new commit that undoes the changes introduced by an existing commit. The commit_sha must reference an existing commit reachable from HEAD; it does not rewrite history.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "commit_sha",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "no_commit",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "mainline_parent",
+        "type": "integer",
+        "required": false,
+        "max": 8
+      }
+    ],
+    "state": "repo /srv/repos/api: commits reachable from HEAD include 9f3c1a7e2b8d4c5a6f0e1d2c3b4a5968d7e8f9a0 and 7b2e9c0a1f3d4e5b6c7a8d9e0f1a2b3c4d5e6f70. No other SHAs are reachable.",
+    "intent": "Safely undo a bad commit by adding an inverse commit on top of history"
+  },
+  {
+    "tool_name": "open_pull_request",
+    "domain": "",
+    "contract": "Opens a pull request from head_branch into base_branch in the named repository. head_branch and base_branch must differ, and head_branch must contain at least one commit not present on base_branch (otherwise there is nothing to review).",
+    "params": [
+      {
+        "name": "repo",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "head_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "base_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "required": false,
+        "max": 65536
+      },
+      {
+        "name": "draft",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "reviewers",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Open a review-ready PR for the webhooks feature targeting main"
+  },
+  {
+    "tool_name": "submit_pr_review",
+    "domain": "",
+    "contract": "Submits a code review verdict on an open pull request. The pr_number must reference an existing open PR, and when event is REQUEST_CHANGES or COMMENT the body must be non-empty (a blocking/comment review requires written rationale).",
+    "params": [
+      {
+        "name": "repo",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "pr_number",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "event",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "APPROVE",
+          "REQUEST_CHANGES",
+          "COMMENT"
+        ]
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "required": false,
+        "max": 65536
+      },
+      {
+        "name": "line_comments",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Block PR #412 with actionable change requests on the retry logic"
+  },
+  {
+    "tool_name": "http_paginate_range",
+    "domain": "http",
+    "contract": "Fetches a byte range of a remote resource. range_start must be < range_end (both >= 0), and the requested span (range_end - range_start) must not exceed max_chunk_bytes.",
+    "params": [
+      {
+        "name": "url",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "range_start",
+        "type": "integer",
+        "required": true,
+        "max": 1000000000
+      },
+      {
+        "name": "range_end",
+        "type": "integer",
+        "required": true,
+        "max": 1000000000
+      },
+      {
+        "name": "max_chunk_bytes",
+        "type": "integer",
+        "required": true,
+        "max": 1000000000
+      }
+    ],
+    "state": null,
+    "intent": "download the first ~1 MB chunk of a large remote file"
+  },
+  {
+    "tool_name": "schedule_maintenance_window",
+    "domain": "scheduling",
+    "contract": "Schedules a maintenance window. starts_at must be strictly before ends_at (both RFC 3339), and duration_minutes must equal the actual number of minutes between starts_at and ends_at.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "starts_at",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "ends_at",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "duration_minutes",
+        "type": "integer",
+        "required": true,
+        "max": 10080
+      }
+    ],
+    "state": null,
+    "intent": "book a one-hour maintenance window starting 02:00 UTC"
+  },
+  {
+    "tool_name": "set_price_filter",
+    "domain": "search",
+    "contract": "Sets a price-range search filter. min_price must be <= max_price, both must be >= 0, and the currency on both bounds must be the same ISO-4217 code.",
+    "params": [
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "min_price",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "max_price",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "currency_max",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "filter search results to the $50-$300 range"
+  },
+  {
+    "tool_name": "allocate_index_shards",
+    "domain": "search-infra",
+    "contract": "Allocates shards and replicas for a search index. replicas must be <= nodes (you cannot place more replica copies than there are nodes), and shard_count must be >= 1.",
+    "params": [
+      {
+        "name": "index",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "nodes",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "shard_count",
+        "type": "integer",
+        "required": true,
+        "max": 1024
+      },
+      {
+        "name": "replicas",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      }
+    ],
+    "state": null,
+    "intent": "create a products index with 2 replicas across the 5-node cluster"
+  },
+  {
+    "tool_name": "batch_embed_texts",
+    "domain": "ml",
+    "contract": "Embeds a batch of texts. inputs and ids must have the same length (one id per input), and batch_size must not exceed the number of inputs.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "inputs",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "ids",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "batch_size",
+        "type": "integer",
+        "required": true,
+        "max": 512
+      }
+    ],
+    "state": null,
+    "intent": "embed three documents, tagging each with its id"
+  },
+  {
+    "tool_name": "split_traffic",
+    "domain": "devops",
+    "contract": "Splits inbound traffic across deploy targets. weights must sum to exactly 100, each weight is in 0..100, and weights must have the same length as targets (one weight per target).",
+    "params": [
+      {
+        "name": "route",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "targets",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "weights",
+        "type": "array",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "send 60% of traffic to blue and 40% to green"
+  },
+  {
+    "tool_name": "db_select_window",
+    "domain": "db",
+    "contract": "Reads a window of rows. order_by must be one of the columns being selected, limit must be in 1..1000, and offset must be >= 0.",
+    "params": [
+      {
+        "name": "table",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "columns",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "order_by",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "offset",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      }
+    ],
+    "state": null,
+    "intent": "read the 50 most recent orders with id, total and created_at"
+  },
+  {
+    "tool_name": "upsert_dns_failover",
+    "domain": "dns",
+    "contract": "Creates or updates a failover DNS record. Exactly one of 'ip' (for an A record) or 'cname' (for a CNAME) must be provided — never both and never neither.",
+    "params": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "ttl",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "ip",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cname",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "point app.example.com at the IP 203.0.113.10"
+  },
+  {
+    "tool_name": "configure_autoscaler",
+    "domain": "k8s",
+    "contract": "Configures a horizontal autoscaler. min_replicas must be <= max_replicas, min_replicas must be >= 1, and target_cpu_percent must be in 1..100.",
+    "params": [
+      {
+        "name": "deployment",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "min_replicas",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "max_replicas",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "target_cpu_percent",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      }
+    ],
+    "state": null,
+    "intent": "autoscale web between 2 and 10 replicas at 70% CPU"
+  },
+  {
+    "tool_name": "apply_order_coupon",
+    "domain": "payments",
+    "contract": "Applies a fixed-amount coupon to an open order. discount_amount (minor units) must be > 0 and must not exceed the order's subtotal, and the coupon currency must match the order currency.",
+    "params": [
+      {
+        "name": "order_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "discount_amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "coupon_code",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": "order ord_5521: subtotal=4000 (minor units, USD), currency=USD, coupon_applied=false.",
+    "intent": "take $10 off order ord_5521"
+  },
+  {
+    "tool_name": "reserve_inventory",
+    "domain": "commerce",
+    "contract": "Reserves stock for an order line. quantity must be >= 1 and must not exceed the available stock for the sku.",
+    "params": [
+      {
+        "name": "sku",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "quantity",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "order_id",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": "sku SKU-42: available=12, reserved=3, warehouse=us-east. No backorders allowed.",
+    "intent": "reserve 5 units of SKU-42 for an order"
+  },
+  {
+    "tool_name": "transfer_funds",
+    "domain": "payments",
+    "contract": "Moves money between two accounts. amount (minor units) must be > 0 and must not exceed the source account's balance, source_account and destination_account must be different, and the transfer currency must match BOTH accounts' currency.",
+    "params": [
+      {
+        "name": "source_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "destination_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": "account acct_src: balance=25000 (minor units), currency=USD. account acct_dst: currency=USD. Both accounts are open.",
+    "intent": "move $50.00 from acct_src to acct_dst"
+  },
+  {
+    "tool_name": "promote_release",
+    "domain": "devops",
+    "contract": "Promotes a service to the next release version. target_version must equal the current_version + 1 (no skipping versions), and must not equal a version already deployed.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_version",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "stage",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "staging",
+          "production"
+        ]
+      }
+    ],
+    "state": "service checkout-api: current_version=7, current_stage=staging. Versions deploy in order.",
+    "intent": "promote checkout-api to the next version in production"
+  },
+  {
+    "tool_name": "assign_seat",
+    "domain": "travel",
+    "contract": "Assigns a seat to a passenger on a flight. seat must be one of the flight's currently available seats.",
+    "params": [
+      {
+        "name": "flight",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "seat",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "passenger_id",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": "flight UA482: available_seats=[12A, 12B, 14C, 21F]. All other seats are taken or blocked.",
+    "intent": "seat passenger pax_9931 in 12B"
+  },
+  {
+    "tool_name": "grant_role",
+    "domain": "iam",
+    "contract": "Grants a role to a principal. The 'admin' role may be granted ONLY when principal_tier is 'owner'; 'editor' and 'viewer' may be granted at any tier.",
+    "params": [
+      {
+        "name": "principal_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "principal_tier",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "member",
+          "manager",
+          "owner"
+        ]
+      },
+      {
+        "name": "role",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "viewer",
+          "editor",
+          "admin"
+        ]
+      }
+    ],
+    "state": null,
+    "intent": "make the owner-tier principal an admin"
+  },
+  {
+    "tool_name": "crop_image",
+    "domain": "media",
+    "contract": "Crops a rectangle from an image. The crop must stay in bounds: x + width must be <= image_width and y + height must be <= image_height (all >= 0).",
+    "params": [
+      {
+        "name": "image_width",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "image_height",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "x",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "y",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "width",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "height",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      }
+    ],
+    "state": null,
+    "intent": "crop an 800x600 region starting at (100,100) from a 1920x1080 image"
+  },
+  {
+    "tool_name": "merge_pdf_pages",
+    "domain": "media",
+    "contract": "Extracts an inclusive page range from a PDF. page_from must be <= page_to, and both must be within 1..total_pages.",
+    "params": [
+      {
+        "name": "source",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "total_pages",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "page_from",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "page_to",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      }
+    ],
+    "state": null,
+    "intent": "extract pages 5 through 10 of a 50-page PDF"
+  },
+  {
+    "tool_name": "distribute_budget",
+    "domain": "finance",
+    "contract": "Distributes a total budget across line items. The sum of the allocation values must equal total_budget exactly (no shortfall, no overflow), and every allocation must be >= 0.",
+    "params": [
+      {
+        "name": "total_budget",
+        "type": "integer",
+        "required": true,
+        "max": 999999999
+      },
+      {
+        "name": "allocations",
+        "type": "object",
+        "required": true
+      },
+      {
+        "name": "period",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "split a 1000 budget into 600 eng / 400 marketing"
+  },
+  {
+    "tool_name": "configure_mtls",
+    "domain": "security",
+    "contract": "Configures TLS for a listener. When mtls_enabled is true, client_ca_path is REQUIRED and must be an absolute path (the CA used to verify client certs); when mtls_enabled is false, client_ca_path must be omitted.",
+    "params": [
+      {
+        "name": "listener",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "mtls_enabled",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "client_ca_path",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "turn on mutual TLS on the ingress listener with the client CA bundle"
+  },
+  {
+    "tool_name": "set_storage_tiers",
+    "domain": "infra",
+    "contract": "Sets data lifecycle tiers. The thresholds must be monotonically non-decreasing: warm_days <= cold_days <= delete_days (data moves warm -> cold -> deleted), and all must be >= 1.",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "warm_days",
+        "type": "integer",
+        "required": true,
+        "max": 36500
+      },
+      {
+        "name": "cold_days",
+        "type": "integer",
+        "required": true,
+        "max": 36500
+      },
+      {
+        "name": "delete_days",
+        "type": "integer",
+        "required": true,
+        "max": 36500
+      }
+    ],
+    "state": null,
+    "intent": "keep logs warm 7 days, cold to 30 days, delete at 365"
+  },
+  {
+    "tool_name": "create_load_test",
+    "domain": "perf",
+    "contract": "Starts a load test. ramp_up_seconds must be <= duration_seconds (you cannot ramp for longer than the test runs), and target_rps must be >= 1.",
+    "params": [
+      {
+        "name": "endpoint",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "duration_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "ramp_up_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "target_rps",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      }
+    ],
+    "state": null,
+    "intent": "run a 5-minute load test ramping to 200 rps over the first minute"
+  },
+  {
+    "tool_name": "set_resource_quota",
+    "domain": "k8s",
+    "contract": "Sets a namespace resource quota. soft_limit must be <= hard_limit (the soft warning threshold cannot exceed the hard ceiling), and both must be >= 0.",
+    "params": [
+      {
+        "name": "namespace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "resource",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "cpu",
+          "memory",
+          "pods"
+        ]
+      },
+      {
+        "name": "soft_limit",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      },
+      {
+        "name": "hard_limit",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      }
+    ],
+    "state": null,
+    "intent": "warn team-a at 40 pods, hard-cap at 50"
+  },
+  {
+    "tool_name": "schedule_job_oneshot",
+    "domain": "scheduling",
+    "contract": "Schedules a job. Exactly one scheduling mode must be set: either 'run_at' (a single RFC 3339 timestamp for a one-shot run) OR 'cron_expression' (a 5-field cron for a recurring run) — never both and never neither.",
+    "params": [
+      {
+        "name": "job",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "run_at",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cron_expression",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "run nightly-export every day at 03:00"
+  },
+  {
+    "tool_name": "set_canary_slo",
+    "domain": "devops",
+    "contract": "Sets the SLO gate for a canary. latency_p99_ms must be >= latency_p50_ms (the 99th percentile cannot be lower than the median), and error_rate_max must be in 0..100.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "latency_p50_ms",
+        "type": "integer",
+        "required": true,
+        "max": 600000
+      },
+      {
+        "name": "latency_p99_ms",
+        "type": "integer",
+        "required": true,
+        "max": 600000
+      },
+      {
+        "name": "error_rate_max",
+        "type": "number",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "gate the search canary at p50<=120ms, p99<=450ms, <=1% errors"
+  }
+]

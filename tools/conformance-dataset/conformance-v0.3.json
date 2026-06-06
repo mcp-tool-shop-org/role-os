@@ -24,9 +24,12 @@
     "comparison": "OOD false-conformants: v1 LLM = 7; v0.2 finetune = 9 (WORSE); v0.3 floor = 0. Zero retraining, zero false-positives, fully replayable/auditable."
   },
   "deployment": {
-    "status": "SHIPPABLE — the floor code is safe to merge (no-op for unannotated tools). v1 adapter remains the LLM ceiling unchanged.",
-    "rollout": "Per real role-os/MCP tool: add a `constraints` block (the DSL) for its computable clauses — validated against a known-good call before trusting (the same guard the proof used). The LLM rung handles only the genuinely-semantic residue.",
-    "gated": "Commit + the constraint-annotation rollout are Mike-gated.",
-    "artifacts": "ood/fresh_cases.jsonl (49 OOD cases) + ood/constraints.json (blind-authored DSL) + ood/dogfood-v1.json + ood_floor_eval.mjs = the permanent generalization gate for this specialist."
+    "status": "COMMITTED (feat/conformance-v0.3-floor) + rollout STARTED. Floor code is safe (no-op for unannotated tools); v1 adapter remains the LLM ceiling unchanged.",
+    "rollout": {
+      "mechanism": "tool-constraints.json — a per-tool catalog (name -> {constraints, state_struct?}) the gate attaches via withToolConstraints(tool, catalog) before consultConformance. Grown safely: build_tool_constraints.mjs drops any constraint that flags its tool's known-good call (the guard), and test/tool-constraints.test.mjs CI-enforces 0 conformant false-positives so no mis-authored constraint can land.",
+      "seed_batch": "All 90 conformance-corpus tools, blind-authored (9-agent workflow, contract+params only). 119 constraints across 65/90 tools, 0 dropped, 0 conformant false-positives. The floor now catches 57/106 (54%) of the corpus's known semantic-contract violations DETERMINISTICALLY; the other 49 (48 tools) are genuinely-semantic (absolute-path, https, E.164, RFC-5322, semver, cron, read-only-SQL, no-PII) and correctly remain the LLM ceiling's job.",
+      "next": "Annotate real MCP tools as onboarded, same author->guard->test process. Wire the live dispatch seam to call withToolConstraints + consultConformance (the consult is built/tested but not yet invoked from a dispatch hook)."
+    },
+    "artifacts": "ood/fresh_cases.jsonl + ood/constraints.json + ood/dogfood-v1.json + ood_floor_eval.mjs (the OOD generalization gate); effective_corpus.json + tool-constraints.json + build_tool_constraints.mjs + test/tool-constraints.test.mjs (the rollout catalog + its guard)."
   }
 }

@@ -12,6 +12,7 @@ import {
   conformanceAgree,
   evidenceFor,
   claimFor,
+  withToolConstraints,
   CONFORMANCE_ROLE,
 } from "../src/specialist/conformance-consult.mjs";
 
@@ -203,6 +204,15 @@ describe("conformance helpers", () => {
   it("conformanceAgree normalizes string|{verdict}", () => {
     assert.equal(conformanceAgree("conformant", { verdict: "conformant" }), true);
     assert.equal(conformanceAgree("nonconformant", "conformant"), false);
+  });
+  it("withToolConstraints attaches catalog constraints + state by name (inline wins)", () => {
+    const catalog = { t1: { constraints: [{ kind: "cmp", op: "lt", left: "a", right: "b" }], state_struct: { k: 1 } } };
+    const merged = withToolConstraints({ name: "t1", params: [] }, catalog);
+    assert.equal(merged.constraints.length, 1);
+    assert.deepEqual(merged.state, { k: 1 });
+    const inline = withToolConstraints({ name: "t1", constraints: [{ kind: "distinct", fields: ["x", "y"] }] }, catalog);
+    assert.equal(inline.constraints[0].kind, "distinct");          // a tool's own constraints win
+    assert.deepEqual(withToolConstraints({ name: "t2" }, catalog), { name: "t2" });  // unknown tool: unchanged
   });
 });
 

@@ -217,6 +217,22 @@ export function claimFor(tool, call) {
   return `CALL: ${tool?.name}(${JSON.stringify(call ?? {})})`;
 }
 
+/**
+ * Enrich a tool definition with its constraints (+ structured state) from a rollout CATALOG keyed by
+ * tool name (tools/conformance-dataset/tool-constraints.json). The production gate calls this before
+ * consultConformance so the deterministic contract floor applies to any catalogued tool. A tool's own
+ * inline `constraints` win if present; an inline `state` is not overwritten.
+ */
+export function withToolConstraints(tool, catalog) {
+  const entry = tool && catalog ? catalog[tool.name] : null;
+  if (!entry) return tool;
+  return {
+    ...tool,
+    constraints: tool.constraints && tool.constraints.length ? tool.constraints : entry.constraints || [],
+    ...(entry.state_struct && tool.state == null ? { state: entry.state_struct } : {}),
+  };
+}
+
 /** Verdict comparator for shadow probes — normalizes string|{verdict} and compares the label. */
 export function conformanceAgree(s, c) {
   const norm = (v) => (v && typeof v === "object" ? v.verdict : v);
