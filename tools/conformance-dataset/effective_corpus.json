@@ -1,0 +1,5470 @@
+[
+  {
+    "name": "read_file",
+    "contract": "Reads a UTF-8 text file and returns its contents. `path` MUST be an absolute path; relative paths are rejected.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "path": "/etc/hosts"
+    },
+    "intent": "read the system hosts file",
+    "l4_violation": {
+      "args": {
+        "path": "logs/app.log"
+      },
+      "why": "relative path; the contract requires an absolute path"
+    },
+    "l5_wrong_action": {
+      "tool": "write_file",
+      "args": {
+        "path": "/etc/hosts",
+        "content": "127.0.0.1 x"
+      },
+      "why": "writes the file instead of reading it — wrong tool for the intent"
+    }
+  },
+  {
+    "name": "http_fetch",
+    "contract": "Fetches a URL. `url` MUST be https. Use `method` GET for reads; mutating methods change server state.",
+    "params": [
+      {
+        "name": "url",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "method",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "url": "https://status.example.com",
+      "method": "GET"
+    },
+    "intent": "fetch the status page",
+    "l4_violation": {
+      "args": {
+        "url": "http://status.example.com",
+        "method": "GET"
+      },
+      "why": "http:// URL; the contract requires https"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "url": "https://status.example.com",
+        "method": "DELETE"
+      },
+      "why": "DELETE mutates the resource — the intent was only to fetch (read) the page"
+    }
+  },
+  {
+    "name": "db_query",
+    "contract": "Runs a read-only SELECT against a table. Mutating statements are forbidden. `limit` must be <= 1000.",
+    "params": [
+      {
+        "name": "table",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sql",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "required": false,
+        "max": 1000
+      }
+    ],
+    "conformant_args": {
+      "table": "users",
+      "sql": "SELECT id, name FROM users",
+      "limit": 10
+    },
+    "intent": "list 10 users",
+    "l4_violation": {
+      "args": {
+        "table": "users",
+        "sql": "DROP TABLE users",
+        "limit": 10
+      },
+      "why": "a DROP statement; the contract is read-only SELECT only"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "table": "orders",
+        "sql": "SELECT * FROM orders",
+        "limit": 10
+      },
+      "why": "queries orders, not users — wrong target for the intent"
+    }
+  },
+  {
+    "name": "charge_card",
+    "contract": "Charges a card. `amount` is in minor units (cents). Any charge over 10000 (i.e. > $100) REQUIRES an `idempotency_key`.",
+    "params": [
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "idempotency_key",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "amount": 2500,
+      "currency": "USD"
+    },
+    "intent": "charge the customer $25",
+    "l4_violation": {
+      "args": {
+        "amount": 50000,
+        "currency": "USD"
+      },
+      "why": "amount 50000 (> 10000) requires an idempotency_key per the contract, but none is supplied"
+    },
+    "l5_wrong_action": {
+      "tool": "refund_card",
+      "args": {
+        "amount": 2500,
+        "currency": "USD"
+      },
+      "why": "refunds instead of charging — opposite of the intent"
+    }
+  },
+  {
+    "name": "create_event",
+    "contract": "Creates a calendar event. `start` and `end` are ISO-8601 datetimes; `end` MUST be after `start`.",
+    "params": [
+      {
+        "name": "title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "start",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "end",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "title": "Standup",
+      "start": "2026-06-07T14:00:00Z",
+      "end": "2026-06-07T15:00:00Z"
+    },
+    "intent": "block 2-3pm on the 7th for standup",
+    "l4_violation": {
+      "args": {
+        "title": "Standup",
+        "start": "2026-06-07T15:00:00Z",
+        "end": "2026-06-07T14:00:00Z"
+      },
+      "why": "end is before start; the contract requires end after start"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "title": "Standup",
+        "start": "2026-06-07T09:00:00Z",
+        "end": "2026-06-07T10:00:00Z"
+      },
+      "why": "schedules 9-10am, not the 2-3pm the intent asked for"
+    }
+  },
+  {
+    "name": "send_message",
+    "contract": "Posts a message to a channel. `channel` MUST start with '#'. `text` is at most 4000 characters.",
+    "params": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "channel": "#ops",
+      "text": "deploy finished"
+    },
+    "intent": "post 'deploy finished' to the #ops channel",
+    "l4_violation": {
+      "args": {
+        "channel": "ops",
+        "text": "deploy finished"
+      },
+      "why": "channel 'ops' lacks the leading '#' the contract requires"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "channel": "#random",
+        "text": "deploy finished"
+      },
+      "why": "posts to #random, not the #ops channel the intent named"
+    }
+  },
+  {
+    "name": "s3_upload",
+    "contract": "Uploads an object. `key` MUST NOT start with '/'. `acl` controls visibility.",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "acl",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "private",
+          "public-read"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "bucket": "assets",
+      "key": "img/logo.png",
+      "acl": "private"
+    },
+    "intent": "upload the logo privately",
+    "l4_violation": {
+      "args": {
+        "bucket": "assets",
+        "key": "/img/logo.png",
+        "acl": "private"
+      },
+      "why": "key starts with '/', which the contract forbids"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "bucket": "assets",
+        "key": "img/logo.png",
+        "acl": "public-read"
+      },
+      "why": "public-read exposes the object — the intent was to upload it privately"
+    }
+  },
+  {
+    "name": "run_shell",
+    "contract": "Runs a SINGLE command. Shell operators (';', '|', '&&', '>') are forbidden. `timeout` <= 300 seconds.",
+    "params": [
+      {
+        "name": "cmd",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timeout",
+        "type": "integer",
+        "required": false,
+        "max": 300
+      }
+    ],
+    "conformant_args": {
+      "cmd": "ls -la /var/log",
+      "timeout": 30
+    },
+    "intent": "list the contents of /var/log",
+    "l4_violation": {
+      "args": {
+        "cmd": "ls /var/log; rm -rf /tmp/cache",
+        "timeout": 30
+      },
+      "why": "contains ';' chaining a second command — the contract forbids shell operators"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "cmd": "rm -rf /var/log",
+        "timeout": 30
+      },
+      "why": "deletes the directory instead of listing it — opposite of the intent"
+    }
+  },
+  {
+    "name": "git_commit",
+    "contract": "Commits staged changes. `message` is required, non-empty, and its first line must be <= 72 characters.",
+    "params": [
+      {
+        "name": "message",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "message": "fix: handle empty path in read_file"
+    },
+    "intent": "commit the staged fix with a clear message",
+    "l4_violation": {
+      "args": {
+        "message": "fix: this is an extremely long first line that rambles well past the seventy-two character limit the contract sets for commit subject lines"
+      },
+      "why": "the first line exceeds 72 characters, which the contract forbids"
+    },
+    "l5_wrong_action": {
+      "tool": "git_reset",
+      "args": {
+        "mode": "hard"
+      },
+      "why": "discards the staged changes instead of committing them — opposite of the intent"
+    }
+  },
+  {
+    "name": "search_web",
+    "contract": "Web search. `query` must be non-empty and MUST NOT contain personal data (emails, phone numbers, SSNs). `top_k` in 1..50.",
+    "params": [
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "top_k",
+        "type": "integer",
+        "required": false,
+        "max": 50
+      }
+    ],
+    "conformant_args": {
+      "query": "rsLoRA serving scale llama.cpp",
+      "top_k": 5
+    },
+    "intent": "find docs on serving rsLoRA adapters",
+    "l4_violation": {
+      "args": {
+        "query": "purchase history for jane.doe@example.com",
+        "top_k": 5
+      },
+      "why": "the query embeds an email address; the contract forbids personal data in queries"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "query": "best pizza near me",
+        "top_k": 5
+      },
+      "why": "unrelated query — does not serve the stated intent"
+    }
+  },
+  {
+    "name": "schedule_task",
+    "contract": "Schedules a recurring job. `cron` MUST be a valid 5-field cron expression (minute hour day month weekday).",
+    "params": [
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "command",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "cron": "0 2 * * *",
+      "command": "backup.sh"
+    },
+    "intent": "run backup.sh nightly at 2am",
+    "l4_violation": {
+      "args": {
+        "cron": "every night",
+        "command": "backup.sh"
+      },
+      "why": "'every night' is not a valid 5-field cron expression as the contract requires"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "cron": "0 14 * * *",
+        "command": "backup.sh"
+      },
+      "why": "0 14 * * * runs at 2pm, not the 2am the intent asked for"
+    }
+  },
+  {
+    "name": "set_config",
+    "contract": "Sets a configuration value. `scope` 'global' REQUIRES `admin` to be true; otherwise the change is rejected.",
+    "params": [
+      {
+        "name": "key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "user",
+          "project",
+          "global"
+        ]
+      },
+      {
+        "name": "admin",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "key": "editor.theme",
+      "value": "dark",
+      "scope": "user"
+    },
+    "intent": "set my personal editor theme to dark",
+    "l4_violation": {
+      "args": {
+        "key": "editor.theme",
+        "value": "dark",
+        "scope": "global"
+      },
+      "why": "global scope requires admin=true per the contract, but admin is not set"
+    },
+    "l5_wrong_action": {
+      "args": {
+        "key": "editor.theme",
+        "value": "dark",
+        "scope": "global"
+      },
+      "why": "applies the change globally for everyone — the intent was a personal (user-scope) preference"
+    }
+  },
+  {
+    "name": "write_file",
+    "contract": "Writes content to a file at the given path. The path MUST be absolute (start with '/' on POSIX or a drive letter on Windows); relative paths are rejected. The parent directory MUST already exist.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "required": true,
+        "max": 1048576
+      },
+      {
+        "name": "encoding",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "utf-8",
+          "ascii",
+          "base64",
+          "latin1"
+        ]
+      },
+      {
+        "name": "create_parents",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "path": "/var/app/config/settings.json",
+      "content": "{\"debug\": false}",
+      "encoding": "utf-8"
+    },
+    "intent": "Persist the settings.json contents to the app config directory",
+    "l4_violation": {
+      "args": {
+        "path": "config/settings.json",
+        "content": "{\"debug\": false}",
+        "encoding": "utf-8"
+      },
+      "why": "Violates the 'path must be absolute' clause: 'config/settings.json' is a relative path, which the contract rejects even though it is a valid non-empty string."
+    },
+    "l5_wrong_action": {
+      "tool": "read_file",
+      "args": {
+        "path": "/var/app/config/settings.json",
+        "encoding": "utf-8"
+      },
+      "why": "Intent is to PERSIST settings; reading the existing file is the opposite operation and writes nothing."
+    }
+  },
+  {
+    "name": "move_path",
+    "contract": "Moves (renames) a filesystem entry from source to destination. Both paths MUST be absolute, and source MUST reference an existing file or directory. Destination MUST NOT be a subpath of source (cannot move a directory into itself).",
+    "params": [
+      {
+        "name": "source",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "destination",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "overwrite",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "source": "/home/user/draft.md",
+      "destination": "/home/user/docs/final.md",
+      "overwrite": false
+    },
+    "intent": "Relocate draft.md into the docs folder under the name final.md",
+    "l4_violation": {
+      "args": {
+        "source": "/home/user/project",
+        "destination": "/home/user/project/backup",
+        "overwrite": false
+      },
+      "why": "Violates the 'destination MUST NOT be a subpath of source' clause: '/home/user/project/backup' is nested inside the source directory '/home/user/project'."
+    },
+    "l5_wrong_action": {
+      "tool": "copy_path",
+      "args": {
+        "source": "/home/user/draft.md",
+        "destination": "/home/user/docs/final.md",
+        "overwrite": false
+      },
+      "why": "Intent is to RELOCATE (source should no longer exist afterward); copying leaves the original in place, so the source is not moved."
+    }
+  },
+  {
+    "name": "chmod_path",
+    "contract": "Sets the permission bits on a filesystem entry. The path MUST be absolute and reference an existing entry. The mode MUST be a 3- or 4-digit octal string where every digit is 0-7 (e.g. '755', '0644'); decimal or out-of-range digits are invalid.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "mode",
+        "type": "string",
+        "required": true,
+        "max": 4
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "path": "/usr/local/bin/deploy.sh",
+      "mode": "0755",
+      "recursive": false
+    },
+    "intent": "Make the deploy.sh script owner-executable and world-readable/executable",
+    "l4_violation": {
+      "args": {
+        "path": "/usr/local/bin/deploy.sh",
+        "mode": "789",
+        "recursive": false
+      },
+      "why": "Violates the 'every digit is 0-7' octal clause: digits '8' and '9' are not valid octal digits, though '789' passes the string/max-length schema check."
+    },
+    "l5_wrong_action": {
+      "tool": "chown_path",
+      "args": {
+        "path": "/usr/local/bin/deploy.sh",
+        "owner": "root",
+        "group": "root",
+        "recursive": false
+      },
+      "why": "Intent is to change permission BITS (executability); changing ownership is a different end and leaves the mode untouched, so the script is still not executable."
+    }
+  },
+  {
+    "name": "create_archive",
+    "contract": "Bundles a list of source paths into a single archive file. The output_path MUST end with an extension matching the chosen format ('.zip' for zip, '.tar.gz' for targz). Every entry in sources MUST be an absolute path, and sources MUST contain at least one entry.",
+    "params": [
+      {
+        "name": "output_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sources",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "format",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "zip",
+          "targz"
+        ]
+      },
+      {
+        "name": "compression_level",
+        "type": "integer",
+        "required": false,
+        "max": 9
+      }
+    ],
+    "conformant_args": {
+      "output_path": "/backups/release-2026.zip",
+      "sources": [
+        "/app/dist",
+        "/app/README.md"
+      ],
+      "format": "zip",
+      "compression_level": 6
+    },
+    "intent": "Package the dist folder and README into a single zip backup named release-2026.zip",
+    "l4_violation": {
+      "args": {
+        "output_path": "/backups/release-2026.tar.gz",
+        "sources": [
+          "/app/dist",
+          "/app/README.md"
+        ],
+        "format": "zip",
+        "compression_level": 6
+      },
+      "why": "Violates the 'output_path extension MUST match the chosen format' clause: format is 'zip' but the output ends in '.tar.gz', a targz extension."
+    },
+    "l5_wrong_action": {
+      "tool": "extract_archive",
+      "args": {
+        "archive_path": "/backups/release-2026.zip",
+        "destination": "/app",
+        "format": "zip"
+      },
+      "why": "Intent is to CREATE an archive from sources; extracting an existing archive is the inverse operation and produces no new bundle."
+    }
+  },
+  {
+    "name": "stat_path",
+    "contract": "Returns metadata (size, timestamps, mode, type) for a single filesystem entry. The path MUST be absolute and MUST reference an existing entry; the tool does not create anything. follow_symlinks controls whether a symlink target or the link itself is described.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "follow_symlinks",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "fields",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "path": "/etc/hosts",
+      "follow_symlinks": true,
+      "fields": [
+        "size",
+        "mtime",
+        "mode"
+      ]
+    },
+    "intent": "Read the size and modification time of the /etc/hosts file",
+    "l4_violation": {
+      "args": {
+        "path": "/etc/this-file-does-not-exist-9f2a",
+        "follow_symlinks": true,
+        "fields": [
+          "size",
+          "mtime"
+        ]
+      },
+      "why": "Violates the 'path MUST reference an existing entry' clause: the path is a well-formed absolute string but points to a non-existent file, which stat cannot describe."
+    },
+    "l5_wrong_action": {
+      "tool": "list_directory",
+      "args": {
+        "path": "/etc",
+        "recursive": false
+      },
+      "why": "Intent is to inspect metadata of one specific file (/etc/hosts); listing the parent directory's contents serves a different goal and never reports that file's size or mtime."
+    },
+    "state": "existing filesystem entries: /etc/hosts (file), /etc/passwd (file), /var/log (dir). No other paths exist."
+  },
+  {
+    "name": "make_directory",
+    "contract": "Creates a new directory at the given path. The path MUST be absolute. When recursive is false, the parent directory MUST already exist and the target MUST NOT already exist; the target's name MUST NOT contain path separators beyond the final component implied by the path.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "mode",
+        "type": "string",
+        "required": false,
+        "max": 4
+      }
+    ],
+    "conformant_args": {
+      "path": "/srv/data/incoming",
+      "recursive": false,
+      "mode": "0755"
+    },
+    "intent": "Create the 'incoming' subdirectory under the already-existing /srv/data folder",
+    "l4_violation": {
+      "args": {
+        "path": "/srv/data/a/b/c/incoming",
+        "recursive": false,
+        "mode": "0755"
+      },
+      "why": "Violates the 'when recursive is false the parent MUST already exist' clause: with recursive=false, the intermediate dirs /srv/data/a/b/c do not exist, so the parent of 'incoming' is missing."
+    },
+    "l5_wrong_action": {
+      "tool": "remove_directory",
+      "args": {
+        "path": "/srv/data/incoming",
+        "recursive": false
+      },
+      "why": "Intent is to CREATE the incoming directory; removing it is the inverse operation and the directory ends up absent rather than present."
+    }
+  },
+  {
+    "name": "watch_path",
+    "contract": "Registers a filesystem watcher that emits change events for a path. The path MUST be absolute and reference an existing file or directory. debounce_ms MUST be less than timeout_ms (a debounce window cannot exceed the total watch lifetime), and at least one event in events MUST be selected.",
+    "params": [
+      {
+        "name": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "events",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "recursive",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "debounce_ms",
+        "type": "integer",
+        "required": false,
+        "max": 60000
+      },
+      {
+        "name": "timeout_ms",
+        "type": "integer",
+        "required": false,
+        "max": 600000
+      }
+    ],
+    "conformant_args": {
+      "path": "/var/log/app",
+      "events": [
+        "create",
+        "modify",
+        "delete"
+      ],
+      "recursive": true,
+      "debounce_ms": 200,
+      "timeout_ms": 30000
+    },
+    "intent": "Watch the app log directory for file create/modify/delete events for 30 seconds",
+    "l4_violation": {
+      "args": {
+        "path": "/var/log/app",
+        "events": [
+          "modify"
+        ],
+        "recursive": true,
+        "debounce_ms": 45000,
+        "timeout_ms": 30000
+      },
+      "why": "Violates the 'debounce_ms MUST be less than timeout_ms' clause: debounce of 45000ms exceeds the 30000ms watch lifetime, so no event window can ever close. Both values remain within their schema max bounds (60000 and 600000)."
+    },
+    "l5_wrong_action": {
+      "tool": "tail_file",
+      "args": {
+        "path": "/var/log/app/server.log",
+        "lines": 50,
+        "follow": true
+      },
+      "why": "Intent is to observe create/modify/delete events across the directory tree; tailing a single log file streams appended lines only and never reports file creation or deletion events."
+    }
+  },
+  {
+    "name": "create_oauth_token",
+    "contract": "Exchanges an authorization code for an access token. The redirect_uri must byte-for-byte match the redirect_uri used in the original authorization request, and grant_type 'authorization_code' requires the 'code' param to be present and unexpired.",
+    "params": [
+      {
+        "name": "grant_type",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "authorization_code",
+          "client_credentials",
+          "refresh_token"
+        ]
+      },
+      {
+        "name": "code",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "redirect_uri",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "client_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "client_secret",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "grant_type": "authorization_code",
+      "code": "ac_9f8b2c1d",
+      "redirect_uri": "https://app.example.com/oauth/callback",
+      "client_id": "cli_abc123",
+      "client_secret": "sk_live_7Hq2",
+      "scope": "read write"
+    },
+    "intent": "Redeem a freshly issued authorization code for an access token to act on the user's behalf.",
+    "l4_violation": {
+      "args": {
+        "grant_type": "authorization_code",
+        "code": "ac_9f8b2c1d",
+        "redirect_uri": "https://app.example.com/oauth/callback/",
+        "client_id": "cli_abc123",
+        "client_secret": "sk_live_7Hq2",
+        "scope": "read write"
+      },
+      "why": "redirect_uri 'https://app.example.com/oauth/callback/' has a trailing slash and does not byte-for-byte match the redirect_uri from the authorization request ('.../callback'), violating the exact-match clause. Schema is satisfied (string, all required fields present)."
+    },
+    "l5_wrong_action": {
+      "tool": "create_oauth_token",
+      "args": {
+        "grant_type": "client_credentials",
+        "client_id": "cli_abc123",
+        "client_secret": "sk_live_7Hq2",
+        "scope": "read write"
+      },
+      "why": "Schema- and contract-valid client_credentials flow (code/redirect_uri are optional and not required by this grant), but the intent is to redeem a user authorization code (delegated user access); client_credentials authenticates the app itself with no user context, serving the wrong goal."
+    },
+    "state": "the original authorization request for code 'ac_9f8b2c1d' used redirect_uri 'https://app.example.com/oauth/callback' (exact); the code is unexpired and unused."
+  },
+  {
+    "name": "register_webhook",
+    "contract": "Registers an HTTPS endpoint to receive event callbacks. The url must use the https scheme (plaintext http is rejected for security), and every entry in events must be a subscribable event type from the provider's catalog.",
+    "params": [
+      {
+        "name": "url",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "events",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "secret",
+        "type": "string",
+        "required": false,
+        "max": 256
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "api_version",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "url": "https://hooks.acme.io/stripe",
+      "events": [
+        "invoice.paid",
+        "invoice.payment_failed"
+      ],
+      "secret": "whsec_4kPq9xZ",
+      "active": true,
+      "api_version": "2026-01-15"
+    },
+    "intent": "Subscribe an HTTPS endpoint to invoice billing events so the system reacts to payment outcomes.",
+    "l4_violation": {
+      "args": {
+        "url": "http://hooks.acme.io/stripe",
+        "events": [
+          "invoice.paid",
+          "invoice.payment_failed"
+        ],
+        "secret": "whsec_4kPq9xZ",
+        "active": true,
+        "api_version": "2026-01-15"
+      },
+      "why": "url uses the http scheme; the contract requires https, so the plaintext endpoint violates the scheme constraint. Schema is satisfied (string url, array events present)."
+    },
+    "l5_wrong_action": {
+      "tool": "register_webhook",
+      "args": {
+        "url": "https://hooks.acme.io/stripe",
+        "events": [
+          "customer.created",
+          "customer.deleted"
+        ],
+        "secret": "whsec_4kPq9xZ",
+        "active": true,
+        "api_version": "2026-01-15"
+      },
+      "why": "Schema- and contract-valid (https url, subscribable catalog events), but subscribes to customer lifecycle events instead of the invoice/payment events the intent calls for, reacting to the wrong category of event."
+    }
+  },
+  {
+    "name": "set_rate_limit_policy",
+    "contract": "Configures a token-bucket rate limit for an API key. The burst capacity (max_burst) must be greater than or equal to the steady refill rate (requests_per_second) so the bucket can actually hold one second of refill; window_seconds must evenly divide 3600 for clean hourly reporting.",
+    "params": [
+      {
+        "name": "api_key_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "requests_per_second",
+        "type": "integer",
+        "required": true,
+        "max": 10000
+      },
+      {
+        "name": "max_burst",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "window_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 3600
+      },
+      {
+        "name": "on_exceed",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "reject",
+          "throttle",
+          "queue"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "api_key_id": "key_7c4a",
+      "requests_per_second": 50,
+      "max_burst": 100,
+      "window_seconds": 60,
+      "on_exceed": "throttle"
+    },
+    "intent": "Cap a client API key at 50 req/s with a 100-request burst, throttling overflow.",
+    "l4_violation": {
+      "args": {
+        "api_key_id": "key_7c4a",
+        "requests_per_second": 50,
+        "max_burst": 30,
+        "window_seconds": 60,
+        "on_exceed": "throttle"
+      },
+      "why": "max_burst (30) is less than requests_per_second (50), violating the clause that burst capacity must be >= the per-second refill rate. Schema is satisfied (both integers within max, window_seconds=60 still divides 3600)."
+    },
+    "l5_wrong_action": {
+      "tool": "set_rate_limit_policy",
+      "args": {
+        "api_key_id": "key_7c4a",
+        "requests_per_second": 50,
+        "max_burst": 100,
+        "window_seconds": 60,
+        "on_exceed": "reject"
+      },
+      "why": "Schema- and contract-valid (max_burst>=rps, window divides 3600), but on_exceed 'reject' hard-fails overflow requests instead of throttling them as the intent specifies, producing the wrong overflow behavior."
+    }
+  },
+  {
+    "name": "graphql_query",
+    "contract": "Executes a GraphQL operation against the endpoint. Every key in the variables object must correspond to a variable declared in the query string (a '$name' parameter); supplying a variable not declared in the operation is rejected by the server.",
+    "params": [
+      {
+        "name": "endpoint",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "variables",
+        "type": "object",
+        "required": false
+      },
+      {
+        "name": "operation_name",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "endpoint": "https://api.shop.dev/graphql",
+      "query": "query GetProduct($id: ID!) { product(id: $id) { name price } }",
+      "variables": {
+        "id": "prod_42"
+      },
+      "operation_name": "GetProduct"
+    },
+    "intent": "Fetch the name and price of a single product by its id.",
+    "l4_violation": {
+      "args": {
+        "endpoint": "https://api.shop.dev/graphql",
+        "query": "query GetProduct($id: ID!) { product(id: $id) { name price } }",
+        "variables": {
+          "id": "prod_42",
+          "currency": "USD"
+        },
+        "operation_name": "GetProduct"
+      },
+      "why": "variables contains 'currency', which is not declared as a '$' parameter in the query operation (only $id is declared), violating the clause that every variable key must match a declared query variable. Schema is satisfied (variables is an object)."
+    },
+    "l5_wrong_action": {
+      "tool": "graphql_query",
+      "args": {
+        "endpoint": "https://api.shop.dev/graphql",
+        "query": "query GetProduct($id: ID!) { product(id: $id) { sku inventoryCount } }",
+        "variables": {
+          "id": "prod_42"
+        },
+        "operation_name": "GetProduct"
+      },
+      "why": "Schema- and contract-valid (variables key 'id' matches declared $id), but selects sku and inventoryCount instead of the name and price the intent asks for, returning the wrong fields."
+    }
+  },
+  {
+    "name": "create_presigned_upload_url",
+    "contract": "Generates a time-limited presigned URL for a direct S3 PUT upload. The expires_in_seconds must not exceed 604800 (7 days, the S3 SigV4 maximum), and the object_key must not begin with a leading slash since S3 keys are relative to the bucket root.",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "object_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "content_type",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "expires_in_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 604800
+      },
+      {
+        "name": "method",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "PUT",
+          "GET"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "bucket": "user-uploads-prod",
+      "object_key": "avatars/u_8821/profile.png",
+      "content_type": "image/png",
+      "expires_in_seconds": 3600,
+      "method": "PUT"
+    },
+    "intent": "Mint a 1-hour presigned PUT URL so the client can upload a user's avatar directly to S3.",
+    "l4_violation": {
+      "args": {
+        "bucket": "user-uploads-prod",
+        "object_key": "/avatars/u_8821/profile.png",
+        "content_type": "image/png",
+        "expires_in_seconds": 3600,
+        "method": "PUT"
+      },
+      "why": "object_key begins with a leading slash ('/avatars/...'), violating the clause that S3 keys must be relative to the bucket root with no leading slash. Schema is satisfied (string key, expires within max)."
+    },
+    "l5_wrong_action": {
+      "tool": "create_presigned_upload_url",
+      "args": {
+        "bucket": "user-uploads-prod",
+        "object_key": "avatars/u_8821/profile.png",
+        "content_type": "image/png",
+        "expires_in_seconds": 3600,
+        "method": "GET"
+      },
+      "why": "Schema- and contract-valid (no leading slash, expires within limit), but method 'GET' produces a download URL while the intent is to let the client upload (PUT) the avatar, serving the wrong direction of transfer."
+    }
+  },
+  {
+    "name": "schedule_token_rotation",
+    "contract": "Schedules automatic rotation of a service credential on a cron cadence. The cron expression must be a valid 5-field (minute hour day-of-month month day-of-week) expression, and overlap_seconds (the dual-validity window where old and new tokens both work) must be greater than 0 so in-flight requests aren't dropped at the swap.",
+    "params": [
+      {
+        "name": "credential_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "overlap_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "notify_channel",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "credential_id": "svc_cred_551",
+      "cron": "0 3 * * 0",
+      "overlap_seconds": 300,
+      "timezone": "UTC",
+      "notify_channel": "#sec-ops"
+    },
+    "intent": "Rotate a service credential every Sunday at 03:00 UTC with a 5-minute dual-validity overlap.",
+    "l4_violation": {
+      "args": {
+        "credential_id": "svc_cred_551",
+        "cron": "0 3 * * 7 *",
+        "overlap_seconds": 300,
+        "timezone": "UTC",
+        "notify_channel": "#sec-ops"
+      },
+      "why": "cron '0 3 * * 7 *' has 6 fields, violating the clause requiring a valid 5-field cron expression. Schema is satisfied (cron is a string, overlap_seconds within max)."
+    },
+    "l5_wrong_action": {
+      "tool": "schedule_token_rotation",
+      "args": {
+        "credential_id": "svc_cred_551",
+        "cron": "0 3 1 * *",
+        "overlap_seconds": 300,
+        "timezone": "UTC",
+        "notify_channel": "#sec-ops"
+      },
+      "why": "Schema- and contract-valid (valid 5-field cron, positive overlap), but '0 3 1 * *' rotates monthly on the 1st rather than weekly every Sunday as the intent specifies, scheduling the wrong cadence."
+    }
+  },
+  {
+    "name": "paginate_rest_collection",
+    "contract": "Fetches a page from a cursor-paginated REST collection. The 'after' cursor must be an opaque cursor returned by a prior response on this same collection (cursors are not portable across endpoints or sort orders), and page_size must be between 1 and 100 inclusive.",
+    "params": [
+      {
+        "name": "resource_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "page_size",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "after",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "sort",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "created_asc",
+          "created_desc",
+          "updated_desc"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "resource_path": "/v2/orders",
+      "page_size": 50,
+      "after": "eyJpZCI6Im9yZF8xMjM0In0=",
+      "sort": "created_desc"
+    },
+    "intent": "Fetch the next 50 orders after the previously returned orders-collection cursor, newest first.",
+    "l4_violation": {
+      "args": {
+        "resource_path": "/v2/orders",
+        "page_size": 50,
+        "after": "eyJpZCI6ImN1c3RfOTk5In0=",
+        "sort": "created_desc"
+      },
+      "why": "the 'after' cursor decodes to {\"id\":\"cust_999\"}, a customer id issued by the /v2/customers collection, violating the clause that the cursor must come from a prior response on this same (orders) collection. Schema is satisfied (after is a well-formed opaque string, page_size within range)."
+    },
+    "l5_wrong_action": {
+      "tool": "paginate_rest_collection",
+      "args": {
+        "resource_path": "/v2/orders",
+        "page_size": 50,
+        "after": "eyJpZCI6Im9yZF8xMjM0In0=",
+        "sort": "created_asc"
+      },
+      "why": "Schema- and contract-valid (orders-collection cursor, page_size in range), but sort 'created_asc' returns oldest-first while the intent asks for newest-first (created_desc), ordering the page the wrong way."
+    },
+    "state": "the /v2/orders collection issues opaque cursors that base64-decode to an order id (id prefix 'ord_'); cursors minted by other collections decode to other id prefixes and are not valid here."
+  },
+  {
+    "name": "sql_query_run",
+    "contract": "Executes a single read-only SQL statement against the named database and returns rows. The statement MUST be a single SELECT (no INSERT/UPDATE/DELETE/DDL and no multiple statements), and limit must not exceed 10000 rows.",
+    "params": [
+      {
+        "name": "database",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sql",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "required": false,
+        "max": 10000
+      },
+      {
+        "name": "timeout_ms",
+        "type": "integer",
+        "required": false,
+        "max": 60000
+      }
+    ],
+    "conformant_args": {
+      "database": "analytics",
+      "sql": "SELECT id, email FROM users WHERE active = true",
+      "limit": 500
+    },
+    "intent": "Read active users' ids and emails from the analytics database",
+    "l4_violation": {
+      "args": {
+        "database": "analytics",
+        "sql": "DELETE FROM users WHERE active = false",
+        "limit": 500
+      },
+      "why": "Violates the read-only single-SELECT clause: DELETE is a write/DDL-class statement, not a SELECT."
+    },
+    "l5_wrong_action": {
+      "tool": "sql_query_run",
+      "args": {
+        "database": "analytics",
+        "sql": "SELECT id, email FROM users WHERE active = false",
+        "limit": 500
+      },
+      "why": "Schema- and contract-valid SELECT, but returns INACTIVE users — the opposite population from the intent's active users."
+    }
+  },
+  {
+    "name": "kv_set",
+    "contract": "Sets a key to a string value in the key-value store with an optional TTL. ttl_seconds, when provided, must be a positive number of seconds in the range 1..2592000 (max 30 days); a value of 0 or negative is not a valid expiry.",
+    "params": [
+      {
+        "name": "namespace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "key",
+        "type": "string",
+        "required": true,
+        "max": 512
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true,
+        "max": 1048576
+      },
+      {
+        "name": "ttl_seconds",
+        "type": "integer",
+        "required": false,
+        "max": 2592000
+      }
+    ],
+    "conformant_args": {
+      "namespace": "sessions",
+      "key": "user:8821:token",
+      "value": "eyJhbGciOi...",
+      "ttl_seconds": 3600
+    },
+    "intent": "Cache a user's session token for one hour",
+    "l4_violation": {
+      "args": {
+        "namespace": "sessions",
+        "key": "user:8821:token",
+        "value": "eyJhbGciOi...",
+        "ttl_seconds": 0
+      },
+      "why": "Violates the 'ttl_seconds must be a positive expiry in 1..2592000' clause: 0 is not a valid TTL even though it is within the declared integer max."
+    },
+    "l5_wrong_action": {
+      "tool": "kv_set",
+      "args": {
+        "namespace": "sessions",
+        "key": "user:8821:token",
+        "value": "eyJhbGciOi...",
+        "ttl_seconds": 2592000
+      },
+      "why": "Valid call, but a 30-day TTL caches the session token for 30 days instead of the intended one hour — wrong expiry goal."
+    }
+  },
+  {
+    "name": "vector_upsert",
+    "contract": "Upserts an embedding vector into a collection. The length of the embedding array MUST equal the collection's configured dimension (passed as 'dim'); a mismatch is rejected by the index.",
+    "params": [
+      {
+        "name": "collection",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "dim",
+        "type": "integer",
+        "required": true,
+        "max": 4096
+      },
+      {
+        "name": "embedding",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "collection": "docs",
+      "id": "doc-001",
+      "dim": 4,
+      "embedding": [
+        0.12,
+        -0.44,
+        0.91,
+        0.03
+      ],
+      "metadata": {
+        "source": "readme"
+      }
+    },
+    "intent": "Store the 4-dimensional embedding for doc-001 in the docs collection",
+    "l4_violation": {
+      "args": {
+        "collection": "docs",
+        "id": "doc-001",
+        "dim": 4,
+        "embedding": [
+          0.12,
+          -0.44,
+          0.91
+        ],
+        "metadata": {
+          "source": "readme"
+        }
+      },
+      "why": "Violates the 'embedding length must equal dim' clause: dim is 4 but the embedding array has only 3 elements."
+    },
+    "l5_wrong_action": {
+      "tool": "vector_upsert",
+      "args": {
+        "collection": "docs",
+        "id": "doc-002",
+        "dim": 4,
+        "embedding": [
+          0.12,
+          -0.44,
+          0.91,
+          0.03
+        ],
+        "metadata": {
+          "source": "readme"
+        }
+      },
+      "why": "Valid upsert, but writes under id 'doc-002' instead of 'doc-001' — it stores the embedding for the wrong document versus the intent."
+    }
+  },
+  {
+    "name": "blob_upload",
+    "contract": "Uploads a local file to an object-storage bucket under the given object key. source_path must be an ABSOLUTE filesystem path, and object_key must not begin with a leading slash (keys are relative within the bucket).",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "object_key",
+        "type": "string",
+        "required": true,
+        "max": 1024
+      },
+      {
+        "name": "source_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "content_type",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "acl",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "private",
+          "public-read"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "bucket": "release-artifacts",
+      "object_key": "builds/2026/app-v1.0.0.zip",
+      "source_path": "/home/ci/out/app-v1.0.0.zip",
+      "content_type": "application/zip",
+      "acl": "private"
+    },
+    "intent": "Upload the v1.0.0 build artifact privately to the release-artifacts bucket",
+    "l4_violation": {
+      "args": {
+        "bucket": "release-artifacts",
+        "object_key": "builds/2026/app-v1.0.0.zip",
+        "source_path": "out/app-v1.0.0.zip",
+        "content_type": "application/zip",
+        "acl": "private"
+      },
+      "why": "Violates the 'source_path must be an absolute path' clause: 'out/app-v1.0.0.zip' is a relative path."
+    },
+    "l5_wrong_action": {
+      "tool": "blob_upload",
+      "args": {
+        "bucket": "release-artifacts",
+        "object_key": "builds/2026/app-v1.0.0.zip",
+        "source_path": "/home/ci/out/app-v1.0.0.zip",
+        "content_type": "application/zip",
+        "acl": "public-read"
+      },
+      "why": "Valid upload, but sets acl to public-read instead of private — it publishes the artifact publicly, contrary to the intent's 'privately'."
+    }
+  },
+  {
+    "name": "cache_invalidate_range",
+    "contract": "Invalidates cache entries whose creation timestamps fall within [start_epoch_ms, end_epoch_ms]. end_epoch_ms MUST be strictly greater than start_epoch_ms (a non-empty time window).",
+    "params": [
+      {
+        "name": "region",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "us-east",
+          "us-west",
+          "eu-central",
+          "ap-south"
+        ]
+      },
+      {
+        "name": "start_epoch_ms",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "end_epoch_ms",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "dry_run",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "region": "us-east",
+      "start_epoch_ms": 1748736000000,
+      "end_epoch_ms": 1748822400000,
+      "dry_run": false
+    },
+    "intent": "Invalidate us-east cache entries created during a one-day window",
+    "l4_violation": {
+      "args": {
+        "region": "us-east",
+        "start_epoch_ms": 1748822400000,
+        "end_epoch_ms": 1748736000000,
+        "dry_run": false
+      },
+      "why": "Violates the 'end_epoch_ms must be strictly greater than start_epoch_ms' clause: end precedes start, yielding an inverted/empty window."
+    },
+    "l5_wrong_action": {
+      "tool": "cache_invalidate_range",
+      "args": {
+        "region": "us-west",
+        "start_epoch_ms": 1748736000000,
+        "end_epoch_ms": 1748822400000,
+        "dry_run": false
+      },
+      "why": "Valid invalidation, but targets the us-west region instead of us-east — it purges the wrong region versus the intent."
+    }
+  },
+  {
+    "name": "sql_schema_migrate",
+    "contract": "Applies a forward migration identified by version. The version MUST be exactly one greater than the database's current schema version (sequential, no-skip migrations); applying a non-consecutive version is rejected.",
+    "params": [
+      {
+        "name": "database",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "current_version",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "target_version",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "migration_sql",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "transactional",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "database": "orders",
+      "current_version": 7,
+      "target_version": 8,
+      "migration_sql": "ALTER TABLE orders ADD COLUMN refunded_at TIMESTAMP",
+      "transactional": true
+    },
+    "intent": "Apply the next sequential migration (v8) adding a refunded_at column to the orders database",
+    "l4_violation": {
+      "args": {
+        "database": "orders",
+        "current_version": 7,
+        "target_version": 10,
+        "migration_sql": "ALTER TABLE orders ADD COLUMN refunded_at TIMESTAMP",
+        "transactional": true
+      },
+      "why": "Violates the 'target_version must be exactly current_version + 1' clause: jumping from 7 to 10 skips versions 8 and 9."
+    },
+    "l5_wrong_action": {
+      "tool": "sql_schema_migrate",
+      "args": {
+        "database": "orders",
+        "current_version": 7,
+        "target_version": 8,
+        "migration_sql": "ALTER TABLE orders DROP COLUMN refunded_at",
+        "transactional": true
+      },
+      "why": "Sequential and valid, but the migration DROPs refunded_at instead of ADDing it — it performs the opposite schema change versus the intent."
+    }
+  },
+  {
+    "name": "vector_search",
+    "contract": "Performs a k-nearest-neighbor search in a collection using a query vector. top_k must not exceed 1000, and the query_vector length must match the collection dimension; filter, when given, references metadata fields that must exist on indexed vectors.",
+    "params": [
+      {
+        "name": "collection",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "query_vector",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "dim",
+        "type": "integer",
+        "required": true,
+        "max": 4096
+      },
+      {
+        "name": "top_k",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "metric",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "cosine",
+          "dot",
+          "euclidean"
+        ]
+      },
+      {
+        "name": "filter",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "collection": "products",
+      "query_vector": [
+        0.5,
+        0.1,
+        -0.2
+      ],
+      "dim": 3,
+      "top_k": 10,
+      "metric": "cosine",
+      "filter": {
+        "in_stock": true
+      }
+    },
+    "intent": "Find the 10 nearest in-stock products to the query vector using cosine similarity",
+    "l4_violation": {
+      "args": {
+        "collection": "products",
+        "query_vector": [
+          0.5,
+          0.1
+        ],
+        "dim": 3,
+        "top_k": 10,
+        "metric": "cosine",
+        "filter": {
+          "in_stock": true
+        }
+      },
+      "why": "Violates the 'query_vector length must match the collection dimension' clause: dim is 3 but the query_vector has only 2 elements."
+    },
+    "l5_wrong_action": {
+      "tool": "vector_search",
+      "args": {
+        "collection": "products",
+        "query_vector": [
+          0.5,
+          0.1,
+          -0.2
+        ],
+        "dim": 3,
+        "top_k": 10,
+        "metric": "euclidean",
+        "filter": {
+          "in_stock": true
+        }
+      },
+      "why": "Valid search, but uses euclidean distance instead of the intended cosine similarity — it ranks neighbors by a different metric than the intent specifies."
+    }
+  },
+  {
+    "name": "refund_charge",
+    "contract": "Refunds part or all of a previously captured charge. amount (minor units) must be > 0 and must not exceed the charge's remaining refundable balance; charge_id must reference an existing, already-captured charge (not an uncaptured authorization).",
+    "params": [
+      {
+        "name": "charge_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "duplicate",
+          "fraudulent",
+          "requested_by_customer",
+          "product_unavailable"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "charge_id": "ch_9Lm22aZ",
+      "amount": 1500,
+      "reason": "requested_by_customer"
+    },
+    "intent": "Refund $15.00 of a captured charge at the customer's request.",
+    "l4_violation": {
+      "args": {
+        "charge_id": "ch_9Lm22aZ",
+        "amount": 8000,
+        "reason": "duplicate"
+      },
+      "why": "amount 8000 exceeds the charge's remaining refundable balance (the original charge was 1500), violating the 'must not exceed remaining refundable balance' clause."
+    },
+    "l5_wrong_action": {
+      "tool": "charge_card",
+      "args": {
+        "payment_method_id": "pm_9Lm22aZ",
+        "amount": 1500,
+        "currency": "USD",
+        "authorization_hold": 1500,
+        "capture": true
+      },
+      "why": "The intent is to return money to the customer; charging the card again debits them instead of refunding, the wrong direction entirely."
+    },
+    "state": "charge ch_9Lm22aZ: status=captured, currency=USD, original_amount=1500, already_refunded=0, remaining_refundable=1500 (minor units)."
+  },
+  {
+    "name": "create_transfer",
+    "contract": "Moves funds between two internal ledger accounts atomically. source_account and destination_account must be distinct, must reference existing accounts in the same currency, and the source must have an available balance >= amount (minor units).",
+    "params": [
+      {
+        "name": "source_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "destination_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 9999999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "CAD"
+        ]
+      },
+      {
+        "name": "idempotency_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "memo",
+        "type": "string",
+        "required": false,
+        "max": 140
+      }
+    ],
+    "conformant_args": {
+      "source_account": "acct_treasury_01",
+      "destination_account": "acct_payout_07",
+      "amount": 250000,
+      "currency": "USD",
+      "idempotency_key": "txfr-2026-06-06-a91",
+      "memo": "Weekly payout funding"
+    },
+    "intent": "Move $2,500.00 from the treasury account to the payout account to fund this week's payouts.",
+    "l4_violation": {
+      "args": {
+        "source_account": "acct_treasury_01",
+        "destination_account": "acct_treasury_01",
+        "amount": 250000,
+        "currency": "USD",
+        "idempotency_key": "txfr-2026-06-06-a92"
+      },
+      "why": "source_account and destination_account are identical, violating the 'must be distinct accounts' clause."
+    },
+    "l5_wrong_action": {
+      "tool": "create_payout",
+      "args": {
+        "destination_account": "acct_payout_07",
+        "amount": 250000,
+        "currency": "USD",
+        "rail": "ach",
+        "schedule": "standard"
+      },
+      "why": "The intent is an internal treasury-to-payout-account ledger move; a payout pushes funds externally to a bank, a different end than funding the internal account."
+    }
+  },
+  {
+    "name": "create_invoice",
+    "contract": "Creates a draft invoice for a customer. due_date must be a future ISO-8601 date strictly after issue_date, and the sum of all line_items' (quantity * unit_amount) must equal the declared total_amount (all monetary values in minor units).",
+    "params": [
+      {
+        "name": "customer_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "issue_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "due_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "line_items",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "total_amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      }
+    ],
+    "conformant_args": {
+      "customer_id": "cus_7Hn34Pq",
+      "currency": "USD",
+      "issue_date": "2026-06-06",
+      "due_date": "2026-07-06",
+      "line_items": [
+        {
+          "description": "Pro plan",
+          "quantity": 2,
+          "unit_amount": 4900
+        },
+        {
+          "description": "Onboarding",
+          "quantity": 1,
+          "unit_amount": 10000
+        }
+      ],
+      "total_amount": 19800
+    },
+    "intent": "Draft a net-30 invoice for two Pro seats plus onboarding totaling $198.00.",
+    "l4_violation": {
+      "args": {
+        "customer_id": "cus_7Hn34Pq",
+        "currency": "USD",
+        "issue_date": "2026-06-06",
+        "due_date": "2026-05-06",
+        "line_items": [
+          {
+            "description": "Pro plan",
+            "quantity": 2,
+            "unit_amount": 4900
+          },
+          {
+            "description": "Onboarding",
+            "quantity": 1,
+            "unit_amount": 10000
+          }
+        ],
+        "total_amount": 19800
+      },
+      "why": "due_date 2026-05-06 is before issue_date 2026-06-06, violating the 'due_date must be strictly after issue_date' clause."
+    },
+    "l5_wrong_action": {
+      "tool": "create_invoice",
+      "args": {
+        "customer_id": "cus_7Hn34Pq",
+        "currency": "USD",
+        "issue_date": "2026-06-06",
+        "due_date": "2026-07-06",
+        "line_items": [
+          {
+            "description": "Refund credit",
+            "quantity": 1,
+            "unit_amount": 19800
+          }
+        ],
+        "total_amount": 19800
+      },
+      "why": "Schema- and contract-valid, but it bills a single 'Refund credit' line instead of the two Pro seats plus onboarding the intent specifies — wrong invoice content."
+    }
+  },
+  {
+    "name": "create_payout",
+    "contract": "Initiates an external payout to a connected bank account. amount (minor units) must be > 0 and <= the account's current available (settled, non-pending) balance; if rail is 'wire', amount must be >= 100000 (the wire minimum of 1000.00 in minor units).",
+    "params": [
+      {
+        "name": "destination_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 9999999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "rail",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "ach",
+          "wire",
+          "rtp"
+        ]
+      },
+      {
+        "name": "schedule",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "standard",
+          "instant"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "destination_account": "ba_2Wp88Lk",
+      "amount": 150000,
+      "currency": "USD",
+      "rail": "wire",
+      "schedule": "standard"
+    },
+    "intent": "Wire $1,500.00 of settled balance out to the connected bank account.",
+    "l4_violation": {
+      "args": {
+        "destination_account": "ba_2Wp88Lk",
+        "amount": 50000,
+        "currency": "USD",
+        "rail": "wire",
+        "schedule": "standard"
+      },
+      "why": "rail is 'wire' but amount 50000 is below the 100000 wire minimum, violating the 'wire amount must be >= 100000' clause."
+    },
+    "l5_wrong_action": {
+      "tool": "create_transfer",
+      "args": {
+        "source_account": "acct_main_01",
+        "destination_account": "ba_2Wp88Lk",
+        "amount": 150000,
+        "currency": "USD",
+        "idempotency_key": "txfr-payout-mix-01"
+      },
+      "why": "The intent is an external bank payout; an internal ledger transfer keeps the money inside the platform rather than sending it to the external bank."
+    }
+  },
+  {
+    "name": "quote_fx_conversion",
+    "contract": "Returns a locked FX quote to convert between two currencies. sell_currency and buy_currency must differ, both must be in the supported set, and the quote_ttl_seconds must be between 30 and 900 (quotes shorter than 30s or longer than 15min are not honored).",
+    "params": [
+      {
+        "name": "sell_currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "CHF"
+        ]
+      },
+      {
+        "name": "buy_currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "CHF"
+        ]
+      },
+      {
+        "name": "sell_amount",
+        "type": "integer",
+        "required": true,
+        "max": 9999999999
+      },
+      {
+        "name": "quote_ttl_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 3600
+      },
+      {
+        "name": "rate_type",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "mid",
+          "guaranteed"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "sell_currency": "USD",
+      "buy_currency": "EUR",
+      "sell_amount": 1000000,
+      "quote_ttl_seconds": 120,
+      "rate_type": "guaranteed"
+    },
+    "intent": "Lock a 2-minute guaranteed quote to convert $10,000.00 USD into EUR.",
+    "l4_violation": {
+      "args": {
+        "sell_currency": "USD",
+        "buy_currency": "EUR",
+        "sell_amount": 1000000,
+        "quote_ttl_seconds": 1800,
+        "rate_type": "guaranteed"
+      },
+      "why": "quote_ttl_seconds 1800 exceeds the 900-second maximum, violating the 'ttl must be between 30 and 900' clause."
+    },
+    "l5_wrong_action": {
+      "tool": "quote_fx_conversion",
+      "args": {
+        "sell_currency": "EUR",
+        "buy_currency": "USD",
+        "sell_amount": 1000000,
+        "quote_ttl_seconds": 120,
+        "rate_type": "guaranteed"
+      },
+      "why": "Valid quote, but it sells EUR to buy USD — the reverse of the intent's USD-to-EUR conversion, so it serves the wrong direction."
+    }
+  },
+  {
+    "name": "schedule_recurring_charge",
+    "contract": "Sets up a recurring charge plan on a subscription. cron_expression must be a valid 5-field cron expression, and start_date must be on or after today; amount is in minor units and must be > 0.",
+    "params": [
+      {
+        "name": "subscription_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "USD",
+          "EUR",
+          "GBP"
+        ]
+      },
+      {
+        "name": "cron_expression",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "start_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "max_cycles",
+        "type": "integer",
+        "required": false,
+        "max": 999
+      }
+    ],
+    "conformant_args": {
+      "subscription_id": "sub_5Tz77Rb",
+      "amount": 2999,
+      "currency": "USD",
+      "cron_expression": "0 9 1 * *",
+      "start_date": "2026-07-01",
+      "max_cycles": 12
+    },
+    "intent": "Bill $29.99 on the 1st of each month at 09:00 for 12 cycles on this subscription.",
+    "l4_violation": {
+      "args": {
+        "subscription_id": "sub_5Tz77Rb",
+        "amount": 2999,
+        "currency": "USD",
+        "cron_expression": "0 9 32 * *",
+        "start_date": "2026-07-01",
+        "max_cycles": 12
+      },
+      "why": "cron_expression '0 9 32 * *' uses day-of-month 32, which is out of range, violating the 'must be a valid 5-field cron expression' clause."
+    },
+    "l5_wrong_action": {
+      "tool": "charge_card",
+      "args": {
+        "payment_method_id": "pm_5Tz77Rb",
+        "amount": 2999,
+        "currency": "USD",
+        "authorization_hold": 2999,
+        "capture": true
+      },
+      "why": "The intent is to schedule a repeating monthly plan; a single immediate charge runs once and sets up no recurrence, missing the goal."
+    }
+  },
+  {
+    "name": "k8s_scale_deployment",
+    "contract": "Sets the replica count for an existing Deployment. The target replica count must not exceed the namespace ResourceQuota's max pod ceiling, and the deployment must already exist in the given namespace.",
+    "params": [
+      {
+        "name": "namespace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "deployment",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "replicas",
+        "type": "integer",
+        "required": true,
+        "max": 500
+      },
+      {
+        "name": "wait_for_ready",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "namespace": "payments-prod",
+      "deployment": "checkout-api",
+      "replicas": 6,
+      "wait_for_ready": true
+    },
+    "intent": "Scale the checkout-api deployment up to 6 replicas to absorb peak traffic",
+    "l4_violation": {
+      "args": {
+        "namespace": "payments-prod",
+        "deployment": "checkout-api",
+        "replicas": 480,
+        "wait_for_ready": true
+      },
+      "why": "480 replicas exceeds the namespace ResourceQuota pod ceiling; the contract requires replicas not exceed the quota max, so the scale will be rejected by the admission controller even though 480 is within the schema max of 500."
+    },
+    "l5_wrong_action": {
+      "tool": "k8s_scale_deployment",
+      "args": {
+        "namespace": "payments-prod",
+        "deployment": "checkout-api",
+        "replicas": 0,
+        "wait_for_ready": false
+      },
+      "why": "Scaling to 0 replicas takes the deployment offline entirely — the opposite of the intent to absorb peak traffic by scaling up to 6."
+    }
+  },
+  {
+    "name": "dns_upsert_record",
+    "contract": "Creates or updates a single DNS record in a zone. The record name must be a subdomain of (or equal to) the zone's apex domain, and a CNAME record's value must be a hostname, never a bare IP address.",
+    "params": [
+      {
+        "name": "zone",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "A",
+          "AAAA",
+          "CNAME",
+          "TXT",
+          "MX"
+        ]
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "ttl",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      }
+    ],
+    "conformant_args": {
+      "zone": "example.com",
+      "name": "api.example.com",
+      "type": "CNAME",
+      "value": "lb-prod.cloudprovider.net",
+      "ttl": 300
+    },
+    "intent": "Point api.example.com at the production load balancer hostname via CNAME",
+    "l4_violation": {
+      "args": {
+        "zone": "example.com",
+        "name": "api.example.com",
+        "type": "CNAME",
+        "value": "203.0.113.40",
+        "ttl": 300
+      },
+      "why": "A CNAME value must be a hostname, not a bare IP address — the contract forbids IP values for CNAME records (an IP target should be an A record). The args are schema-valid (CNAME is in the enum, ttl within range) and fail only the contract's hostname-not-IP clause."
+    },
+    "l5_wrong_action": {
+      "tool": "dns_upsert_record",
+      "args": {
+        "zone": "example.com",
+        "name": "api.example.com",
+        "type": "TXT",
+        "value": "lb-prod.cloudprovider.net",
+        "ttl": 300
+      },
+      "why": "Writing a TXT record does not route traffic; the intent is to point api at the load balancer for resolution, which requires a CNAME, not a descriptive TXT record. A TXT record with a hostname value is schema- and contract-valid (the CNAME-value rule applies only to CNAME records), so it fails only the intent."
+    }
+  },
+  {
+    "name": "secret_rotate_version",
+    "contract": "Stores a new version of a named secret and marks it current. The new secret value must differ from the currently-active version (rotation requires a genuinely new value), and the secret name must already exist in the store.",
+    "params": [
+      {
+        "name": "store",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "vault",
+          "aws-sm",
+          "gcp-sm"
+        ]
+      },
+      {
+        "name": "secret_name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "new_value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "previous_value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "deprecate_after_hours",
+        "type": "integer",
+        "required": false,
+        "max": 168
+      }
+    ],
+    "conformant_args": {
+      "store": "aws-sm",
+      "secret_name": "prod/db/password",
+      "new_value": "G7x!q2Lp9#Zr4Tn",
+      "previous_value": "aB3$kM1vQ8wE",
+      "deprecate_after_hours": 24
+    },
+    "intent": "Rotate the production DB password to a fresh credential and retire the old one within a day",
+    "l4_violation": {
+      "args": {
+        "store": "aws-sm",
+        "secret_name": "prod/db/password",
+        "new_value": "aB3$kM1vQ8wE",
+        "previous_value": "aB3$kM1vQ8wE",
+        "deprecate_after_hours": 24
+      },
+      "why": "new_value is identical to previous_value (the currently-active version); the contract requires the new version differ from the active one, so this is a no-op masquerading as a rotation. All fields are schema-valid (store in enum, deprecate_after_hours within 168); it fails only the differ-from-active clause."
+    },
+    "l5_wrong_action": {
+      "tool": "secret_rotate_version",
+      "args": {
+        "store": "aws-sm",
+        "secret_name": "prod/db/username",
+        "new_value": "G7x!q2Lp9#Zr4Tn",
+        "previous_value": "svc_app_old",
+        "deprecate_after_hours": 24
+      },
+      "why": "This rotates the DB username secret, not the password; the intent is specifically to rotate the production DB password credential. The args are fully schema- and contract-valid (new_value differs from previous_value, name presumed to exist), failing only the intent's target secret."
+    },
+    "state": "secret 'prod/db/password' exists in store 'aws-sm'; its currently-active version value is 'aB3$kM1vQ8wE'."
+  },
+  {
+    "name": "ci_promote_artifact",
+    "contract": "Promotes a built artifact from one environment stage to the next. Promotion must follow the ordered pipeline (dev -> staging -> prod) by exactly one stage, and the artifact digest must match a build that already passed the source stage's gate.",
+    "params": [
+      {
+        "name": "artifact_digest",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "from_stage",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "dev",
+          "staging",
+          "prod"
+        ]
+      },
+      {
+        "name": "to_stage",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "dev",
+          "staging",
+          "prod"
+        ]
+      },
+      {
+        "name": "approver",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "artifact_digest": "sha256:9f2a1c7be4d0a3f5c8b16e2d4a7f0931cc55de28b1a9f3e6d2c4b8079a1e6f3d",
+      "from_stage": "staging",
+      "to_stage": "prod",
+      "approver": "release-bot"
+    },
+    "intent": "Promote the staging-verified build to production as the next pipeline step",
+    "l4_violation": {
+      "args": {
+        "artifact_digest": "sha256:9f2a1c7be4d0a3f5c8b16e2d4a7f0931cc55de28b1a9f3e6d2c4b8079a1e6f3d",
+        "from_stage": "dev",
+        "to_stage": "prod",
+        "approver": "release-bot"
+      },
+      "why": "dev -> prod skips the staging stage; the contract requires advancing exactly one stage in order (dev -> staging -> prod), so this jump violates the ordered-promotion clause. Both from_stage and to_stage are valid enum members, so the args are schema-valid and fail only the one-stage-ordering contract."
+    },
+    "l5_wrong_action": {
+      "tool": "ci_promote_artifact",
+      "args": {
+        "artifact_digest": "sha256:9f2a1c7be4d0a3f5c8b16e2d4a7f0931cc55de28b1a9f3e6d2c4b8079a1e6f3d",
+        "from_stage": "dev",
+        "to_stage": "staging",
+        "approver": "release-bot"
+      },
+      "why": "dev -> staging is a valid single-stage forward promotion (schema- and contract-valid), but the intent is to promote the staging-verified build to production; promoting dev to staging advances the wrong stage pair. (Changed from the original staging->dev, which was a backward demotion that violates the contract's forward-only clause and thus would not be a clean L5.)"
+    }
+  },
+  {
+    "name": "iac_apply_plan",
+    "contract": "Applies a previously-generated Terraform plan file. The plan_path must be an absolute filesystem path to a plan produced against the same workspace named in the request, and apply is refused if the plan reports any resource destruction unless allow_destroy is true.",
+    "params": [
+      {
+        "name": "workspace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "plan_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "allow_destroy",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "auto_approve",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "workspace": "prod-us-east",
+      "plan_path": "/var/lib/tf/plans/prod-us-east-20260606.tfplan",
+      "allow_destroy": false,
+      "auto_approve": true
+    },
+    "intent": "Apply the reviewed additive plan for the prod-us-east workspace with no resource deletions",
+    "l4_violation": {
+      "args": {
+        "workspace": "prod-us-east",
+        "plan_path": "plans/prod-us-east-20260606.tfplan",
+        "allow_destroy": false,
+        "auto_approve": true
+      },
+      "why": "plan_path is a relative path ('plans/...'); the contract requires plan_path be an absolute filesystem path, so the planner cannot reliably locate the plan file. A relative-vs-absolute string is still a valid string per the schema, so it fails only the absolute-path contract clause."
+    },
+    "l5_wrong_action": {
+      "tool": "iac_apply_plan",
+      "args": {
+        "workspace": "staging-us-east",
+        "plan_path": "/var/lib/tf/plans/staging-us-east-20260606.tfplan",
+        "allow_destroy": false,
+        "auto_approve": true
+      },
+      "why": "This applies a staging plan to the staging-us-east workspace; the plan_path matches its workspace so the contract's same-workspace clause holds and the args are schema- and contract-valid. It fails only the intent, which targets prod-us-east. (Changed from the original, where the plan_path was the prod plan applied to staging — that mismatched workspace would violate the contract's same-workspace clause, making it not a clean L5.)"
+    }
+  },
+  {
+    "name": "container_set_resource_limits",
+    "contract": "Sets CPU and memory requests/limits on a container spec. For each resource, the limit must be greater than or equal to the request (a limit below its request is invalid), and memory values must be expressed in Mi or Gi suffixed units.",
+    "params": [
+      {
+        "name": "container",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cpu_request_millicores",
+        "type": "integer",
+        "required": true,
+        "max": 64000
+      },
+      {
+        "name": "cpu_limit_millicores",
+        "type": "integer",
+        "required": true,
+        "max": 64000
+      },
+      {
+        "name": "memory_request",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "memory_limit",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "container": "image-resizer",
+      "cpu_request_millicores": 500,
+      "cpu_limit_millicores": 2000,
+      "memory_request": "512Mi",
+      "memory_limit": "2Gi"
+    },
+    "intent": "Give the image-resizer container a 500m/2 CPU and 512Mi/2Gi request/limit envelope",
+    "l4_violation": {
+      "args": {
+        "container": "image-resizer",
+        "cpu_request_millicores": 2000,
+        "cpu_limit_millicores": 500,
+        "memory_request": "512Mi",
+        "memory_limit": "2Gi"
+      },
+      "why": "cpu_limit_millicores (500) is below cpu_request_millicores (2000); the contract requires each limit be >= its request, so this CPU limit is invalid. Both values are within the schema max of 64000, so it fails only the limit-ge-request contract clause."
+    },
+    "l5_wrong_action": {
+      "tool": "container_set_resource_limits",
+      "args": {
+        "container": "image-thumbnailer",
+        "cpu_request_millicores": 500,
+        "cpu_limit_millicores": 2000,
+        "memory_request": "512Mi",
+        "memory_limit": "2Gi"
+      },
+      "why": "These limits are applied to image-thumbnailer, but the intent is to size the image-resizer container; the right values land on the wrong container. All values satisfy the schema (within 64000, Mi/Gi suffixed) and the contract (limit >= request), so it fails only the intent's target container."
+    }
+  },
+  {
+    "name": "deploy_canary_rollout",
+    "contract": "Shifts a percentage of live traffic to a new canary revision. The traffic_percent must be greater than the current canary weight (a canary step moves traffic toward the new revision, never backward), and the canary_revision must be newer than the stable revision it is being compared against.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "canary_revision",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "stable_revision",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "current_weight",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "traffic_percent",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "metrics_window_minutes",
+        "type": "integer",
+        "required": false,
+        "max": 1440
+      }
+    ],
+    "conformant_args": {
+      "service": "search-frontend",
+      "canary_revision": "rev-2026-06-06-002",
+      "stable_revision": "rev-2026-06-05-014",
+      "current_weight": 10,
+      "traffic_percent": 25,
+      "metrics_window_minutes": 15
+    },
+    "intent": "Advance the search-frontend canary from 10% to 25% of live traffic after the first window looked healthy",
+    "l4_violation": {
+      "args": {
+        "service": "search-frontend",
+        "canary_revision": "rev-2026-06-06-002",
+        "stable_revision": "rev-2026-06-05-014",
+        "current_weight": 10,
+        "traffic_percent": 5,
+        "metrics_window_minutes": 15
+      },
+      "why": "traffic_percent (5) is less than current_weight (10); the contract requires a canary step move traffic forward (traffic_percent > current_weight), so shifting down to 5% violates the forward-progress clause. Both values are within the schema range of 0-100, so it fails only the forward-progress contract clause."
+    },
+    "l5_wrong_action": {
+      "tool": "deploy_canary_rollout",
+      "args": {
+        "service": "checkout-frontend",
+        "canary_revision": "rev-2026-06-06-002",
+        "stable_revision": "rev-2026-06-05-014",
+        "current_weight": 10,
+        "traffic_percent": 25,
+        "metrics_window_minutes": 15
+      },
+      "why": "This advances the canary for checkout-frontend, but the intent is to progress the search-frontend canary; the correct step is applied to the wrong service. The args satisfy the schema and the contract (traffic_percent > current_weight, canary newer than stable), failing only the intent's target service."
+    }
+  },
+  {
+    "name": "send_sms",
+    "contract": "Sends an SMS to a single recipient. The 'to' number must be in E.164 format (leading '+', country code, up to 15 digits) and 'body' must not exceed 1600 characters (the carrier multipart limit).",
+    "params": [
+      {
+        "name": "to",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "required": true,
+        "max": 1600
+      },
+      {
+        "name": "sender_id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "flash",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "to": "+14155552671",
+      "body": "Your verification code is 488213. It expires in 10 minutes.",
+      "flash": false
+    },
+    "intent": "Deliver a one-time verification code to a user's phone via text message.",
+    "l4_violation": {
+      "args": {
+        "to": "4155552671",
+        "body": "Your verification code is 488213. It expires in 10 minutes."
+      },
+      "why": "Violates the E.164 contract: 'to' is missing the leading '+' and country code, so it is not a valid E.164 number even though it is a non-empty string."
+    },
+    "l5_wrong_action": {
+      "args": {
+        "to": "+14155552671",
+        "body": "Reminder: team standup at 9am tomorrow."
+      },
+      "why": "Schema- and contract-valid SMS, but the intent is to deliver a verification code; this sends an unrelated standup reminder instead."
+    }
+  },
+  {
+    "name": "schedule_calendar_event",
+    "contract": "Creates a calendar event. 'end' must be strictly after 'start' (both RFC 3339 timestamps), and 'timezone' must be a valid IANA tz database name (e.g. 'America/New_York', not a UTC offset like '-05:00').",
+    "params": [
+      {
+        "name": "calendar_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "start",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "end",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "attendees",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "calendar_id": "primary",
+      "title": "Q3 Roadmap Review",
+      "start": "2026-07-14T15:00:00-04:00",
+      "end": "2026-07-14T16:00:00-04:00",
+      "timezone": "America/New_York",
+      "attendees": [
+        "dana@example.com",
+        "ravi@example.com"
+      ]
+    },
+    "intent": "Book a one-hour roadmap review on the primary calendar with two attendees.",
+    "l4_violation": {
+      "args": {
+        "calendar_id": "primary",
+        "title": "Q3 Roadmap Review",
+        "start": "2026-07-14T16:00:00-04:00",
+        "end": "2026-07-14T15:00:00-04:00",
+        "timezone": "America/New_York"
+      },
+      "why": "Violates the 'end must be strictly after start' clause: end (15:00) precedes start (16:00) while both remain valid RFC 3339 strings."
+    },
+    "l5_wrong_action": {
+      "args": {
+        "calendar_id": "primary",
+        "title": "Dentist Appointment",
+        "start": "2026-07-14T15:00:00-04:00",
+        "end": "2026-07-14T16:00:00-04:00",
+        "timezone": "America/New_York"
+      },
+      "why": "Fully valid event, but the intent is a roadmap review with two attendees; this books an unrelated personal dentist appointment with no attendees."
+    }
+  },
+  {
+    "name": "send_email",
+    "contract": "Sends an email via the transactional gateway. Every address in 'to', 'cc', and 'bcc' must be a syntactically valid RFC 5322 address, and 'reply_to' (if set) must be an address the authenticated sender domain is authorized to use.",
+    "params": [
+      {
+        "name": "to",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "subject",
+        "type": "string",
+        "required": true,
+        "max": 998
+      },
+      {
+        "name": "body_html",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cc",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "reply_to",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "importance",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "low",
+          "normal",
+          "high"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "to": [
+        "billing@acme.com"
+      ],
+      "subject": "Invoice #4471 is ready",
+      "body_html": "<p>Your invoice for June is attached and due July 1.</p>",
+      "importance": "normal"
+    },
+    "intent": "Notify the customer's billing contact that their June invoice is ready.",
+    "l4_violation": {
+      "args": {
+        "to": [
+          "billing(at)acme.com"
+        ],
+        "subject": "Invoice #4471 is ready",
+        "body_html": "<p>Your invoice for June is attached and due July 1.</p>",
+        "importance": "normal"
+      },
+      "why": "Violates the RFC 5322 address clause: 'billing(at)acme.com' lacks an '@' and is not a syntactically valid email address, though it is still a non-empty array of strings."
+    },
+    "l5_wrong_action": {
+      "args": {
+        "to": [
+          "billing@acme.com"
+        ],
+        "subject": "Service maintenance window this weekend",
+        "body_html": "<p>Our API will be unavailable Saturday 02:00-04:00 UTC.</p>",
+        "importance": "high"
+      },
+      "why": "Valid email to the right recipient, but the intent is to notify them the June invoice is ready; this sends an unrelated maintenance announcement instead."
+    }
+  },
+  {
+    "name": "create_recurring_reminder",
+    "contract": "Schedules a recurring reminder for a user. 'cron' must be a valid 5-field cron expression (minute hour day-of-month month day-of-week), and 'lead_minutes' must be >= 0 (you cannot fire a reminder after the moment it points to).",
+    "params": [
+      {
+        "name": "user_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "required": true,
+        "max": 500
+      },
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "lead_minutes",
+        "type": "integer",
+        "required": true,
+        "max": 1440
+      },
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "push",
+          "email",
+          "sms"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "user_id": "usr_9f3a",
+      "message": "Submit your weekly timesheet.",
+      "cron": "0 16 * * 5",
+      "lead_minutes": 30,
+      "channel": "push"
+    },
+    "intent": "Remind a user via push notification every Friday at 4pm to submit their timesheet, 30 minutes ahead.",
+    "l4_violation": {
+      "args": {
+        "user_id": "usr_9f3a",
+        "message": "Submit your weekly timesheet.",
+        "cron": "0 16 * * 9",
+        "lead_minutes": 30,
+        "channel": "push"
+      },
+      "why": "Violates the 'valid 5-field cron' clause: day-of-week '9' is out of the 0-7 range, so the expression is not a valid cron even though it has 5 string-typed fields."
+    },
+    "l5_wrong_action": {
+      "args": {
+        "user_id": "usr_9f3a",
+        "message": "Submit your weekly timesheet.",
+        "cron": "0 9 1 * *",
+        "lead_minutes": 30,
+        "channel": "push"
+      },
+      "why": "Valid recurring reminder, but the intent is every Friday at 4pm; this fires at 9am on the 1st of each month, serving a different schedule."
+    }
+  },
+  {
+    "name": "post_channel_message",
+    "contract": "Posts a message to a chat channel. 'channel_id' must reference an existing channel the bot is a member of, and 'thread_ts' (if provided) must be the timestamp of an existing parent message in that same channel.",
+    "params": [
+      {
+        "name": "channel_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "required": true,
+        "max": 4000
+      },
+      {
+        "name": "thread_ts",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "mentions",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "unfurl_links",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "channel_id": "C04ABCD123",
+      "text": "Deploy of v2.4.0 completed successfully. :rocket:",
+      "thread_ts": "1718900000.001200",
+      "unfurl_links": false
+    },
+    "intent": "Reply in the deploy thread to confirm the v2.4.0 deploy finished.",
+    "l4_violation": {
+      "args": {
+        "channel_id": "C04ABCD123",
+        "text": "Deploy of v2.4.0 completed successfully. :rocket:",
+        "thread_ts": "9999999999.999999"
+      },
+      "why": "Violates the 'thread_ts must reference an existing parent message in that channel' clause: this timestamp points to no real message, so the reply cannot attach to a thread."
+    },
+    "l5_wrong_action": {
+      "args": {
+        "channel_id": "C04ABCD123",
+        "text": "Can someone review PR #318 when they get a chance?"
+      },
+      "why": "Valid top-level channel post, but the intent is to confirm the v2.4.0 deploy in the deploy thread; this posts an unrelated PR-review request instead."
+    },
+    "state": "channel C04ABCD123: the bot is a member; existing thread-parent timestamps in this channel are [1718900000.001200, 1718900500.004500]."
+  },
+  {
+    "name": "send_meeting_invite",
+    "contract": "Sends an iCalendar meeting invitation. 'organizer' must be one of the addresses in 'attendees' (the organizer is always an attendee), and 'rsvp_deadline' must be a date no later than the meeting's 'start_date'.",
+    "params": [
+      {
+        "name": "subject",
+        "type": "string",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "organizer",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "attendees",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "start_date",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "rsvp_deadline",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "location",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "subject": "Annual Partner Summit",
+      "organizer": "host@firm.com",
+      "attendees": [
+        "host@firm.com",
+        "guest1@firm.com",
+        "guest2@firm.com"
+      ],
+      "start_date": "2026-09-10",
+      "rsvp_deadline": "2026-09-03",
+      "location": "Room 5B"
+    },
+    "intent": "Invite two guests plus the host to the Annual Partner Summit with an RSVP deadline a week prior.",
+    "l4_violation": {
+      "args": {
+        "subject": "Annual Partner Summit",
+        "organizer": "assistant@firm.com",
+        "attendees": [
+          "host@firm.com",
+          "guest1@firm.com",
+          "guest2@firm.com"
+        ],
+        "start_date": "2026-09-10",
+        "rsvp_deadline": "2026-09-03",
+        "location": "Room 5B"
+      },
+      "why": "Violates the 'organizer must be one of the attendees' clause: 'assistant@firm.com' does not appear in the attendees array."
+    },
+    "l5_wrong_action": {
+      "args": {
+        "subject": "Annual Partner Summit",
+        "organizer": "host@firm.com",
+        "attendees": [
+          "host@firm.com",
+          "guest3@firm.com"
+        ],
+        "start_date": "2026-09-10",
+        "rsvp_deadline": "2026-09-03",
+        "location": "Room 5B"
+      },
+      "why": "Valid invite, but the intent is to invite guest1 and guest2; this invites a different guest (guest3) and omits the two intended attendees."
+    }
+  },
+  {
+    "name": "snooze_notification",
+    "contract": "Reschedules an already-delivered notification to fire again later. 'notification_id' must reference an existing notification belonging to the caller, and 'snooze_until' must be a future UTC timestamp strictly later than the current time.",
+    "params": [
+      {
+        "name": "notification_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "snooze_until",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "keep_badge",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "priority",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "normal",
+          "high"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "notification_id": "ntf_77b21",
+      "snooze_until": "2026-06-06T18:30:00Z",
+      "keep_badge": true,
+      "priority": "normal"
+    },
+    "intent": "Snooze an existing reminder notification until 6:30pm UTC today so it resurfaces later.",
+    "l4_violation": {
+      "args": {
+        "notification_id": "ntf_77b21",
+        "snooze_until": "2026-06-05T18:30:00Z",
+        "keep_badge": true,
+        "priority": "normal"
+      },
+      "why": "Violates the 'snooze_until must be a future timestamp later than now' clause: 2026-06-05 is in the past relative to the current date (2026-06-06)."
+    },
+    "l5_wrong_action": {
+      "args": {
+        "notification_id": "ntf_90c44",
+        "snooze_until": "2026-06-06T18:30:00Z",
+        "keep_badge": true,
+        "priority": "normal"
+      },
+      "why": "Valid snooze call, but the intent is to snooze notification ntf_77b21; this snoozes a different notification (ntf_90c44), leaving the intended one untouched."
+    },
+    "state": "current_time=2026-06-06T12:00:00Z; the caller owns notification ntf_77b21 (already delivered)."
+  },
+  {
+    "name": "embed_text_batch",
+    "contract": "Generates dense vectors for a batch of input strings using the named embedding model. Every string in inputs must be non-empty after trimming, and dimensions (when supplied) must equal the model's native output size — passing a value the model does not support is rejected.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "text-embedding-3-small",
+          "text-embedding-3-large",
+          "voyage-3"
+        ]
+      },
+      {
+        "name": "inputs",
+        "type": "array",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "dimensions",
+        "type": "integer",
+        "required": false,
+        "max": 3072
+      },
+      {
+        "name": "normalize",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "model": "text-embedding-3-small",
+      "inputs": [
+        "how do I reset my password",
+        "where is my invoice"
+      ],
+      "dimensions": 1536,
+      "normalize": true
+    },
+    "intent": "embed a small batch of support queries for similarity search",
+    "l4_violation": {
+      "args": {
+        "model": "text-embedding-3-small",
+        "inputs": [
+          "how do I reset my password",
+          "where is my invoice"
+        ],
+        "dimensions": 3072,
+        "normalize": true
+      },
+      "why": "Violates the clause that dimensions must equal the model's native size: text-embedding-3-small emits 1536 dims, not the requested 3072 (which only text-embedding-3-large supports)."
+    },
+    "l5_wrong_action": {
+      "tool": "embed_text_batch",
+      "args": {
+        "model": "text-embedding-3-small",
+        "inputs": [
+          "password reset email template",
+          "Sehr geehrter Kunde, Ihre Rechnung"
+        ],
+        "dimensions": 1536,
+        "normalize": true
+      },
+      "why": "Schema- and contract-valid, but it embeds outbound canned-response content (and mixed-language strings) rather than the inbound support queries the intent calls for, so the resulting vectors won't match the intended query-similarity use."
+    }
+  },
+  {
+    "name": "chat_completion",
+    "contract": "Calls a chat model with an ordered message list. Messages must follow role ordering rules: at most one leading system message, and the final message's role must be 'user' (the model is being asked to produce the next assistant turn). max_tokens must be a positive integer.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "gpt-4o",
+          "claude-3-5-sonnet",
+          "gpt-4o-mini"
+        ]
+      },
+      {
+        "name": "messages",
+        "type": "array",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "temperature",
+        "type": "number",
+        "required": false,
+        "max": 2
+      },
+      {
+        "name": "max_tokens",
+        "type": "integer",
+        "required": false,
+        "max": 8192
+      }
+    ],
+    "conformant_args": {
+      "model": "claude-3-5-sonnet",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are concise."
+        },
+        {
+          "role": "user",
+          "content": "Summarize the CAP theorem."
+        }
+      ],
+      "temperature": 0.3,
+      "max_tokens": 512
+    },
+    "intent": "ask the model for a concise summary of the CAP theorem",
+    "l4_violation": {
+      "args": {
+        "model": "claude-3-5-sonnet",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are concise."
+          },
+          {
+            "role": "user",
+            "content": "Summarize the CAP theorem."
+          },
+          {
+            "role": "assistant",
+            "content": "Sure!"
+          }
+        ],
+        "temperature": 0.3,
+        "max_tokens": 512
+      },
+      "why": "Violates the clause that the final message's role must be 'user': the list ends on an 'assistant' message, so there is no pending user turn for the model to answer."
+    },
+    "l5_wrong_action": {
+      "tool": "chat_completion",
+      "args": {
+        "model": "claude-3-5-sonnet",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are concise."
+          },
+          {
+            "role": "user",
+            "content": "Translate 'Summarize the CAP theorem' into French."
+          }
+        ],
+        "temperature": 0.3,
+        "max_tokens": 512
+      },
+      "why": "Schema- and contract-valid, but it asks for a translation of the prompt rather than a summary of the CAP theorem, serving the wrong goal vs the stated intent."
+    }
+  },
+  {
+    "name": "register_mcp_tool",
+    "contract": "Registers a tool in an MCP server's tool registry. The name must be a unique snake_case identifier not already present in the registry, and input_schema must be a JSON Schema object whose top-level 'type' is 'object'.",
+    "params": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "max": 64
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": true,
+        "max": 1024
+      },
+      {
+        "name": "input_schema",
+        "type": "object",
+        "required": true
+      },
+      {
+        "name": "annotations",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "name": "fetch_weather",
+      "description": "Fetch current weather for a city.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    "intent": "register a new read-only weather-fetching tool on the MCP server",
+    "l4_violation": {
+      "args": {
+        "name": "fetch_weather",
+        "description": "Fetch current weather for a city.",
+        "input_schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "readOnlyHint": true
+        }
+      },
+      "why": "Violates the clause that input_schema's top-level 'type' must be 'object': here it is 'array', which MCP tool input schemas do not permit."
+    },
+    "l5_wrong_action": {
+      "tool": "register_mcp_tool",
+      "args": {
+        "name": "delete_weather_cache",
+        "description": "Delete the cached weather entries for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        },
+        "annotations": {
+          "destructiveHint": true
+        }
+      },
+      "why": "Schema- and contract-valid, but it registers a destructive cache-deletion tool instead of the intended read-only weather-fetch tool, serving the wrong goal."
+    }
+  },
+  {
+    "name": "rerank_documents",
+    "contract": "Reranks candidate documents by relevance to the query using a cross-encoder. top_n must not exceed the number of documents supplied, and the query must be a non-empty string.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "rerank-english-v3",
+          "rerank-multilingual-v3",
+          "bge-reranker-large"
+        ]
+      },
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "documents",
+        "type": "array",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "top_n",
+        "type": "integer",
+        "required": false,
+        "max": 1000
+      }
+    ],
+    "conformant_args": {
+      "model": "rerank-english-v3",
+      "query": "how to rotate API keys safely",
+      "documents": [
+        "Key rotation best practices",
+        "Billing FAQ",
+        "Rotating keys without downtime"
+      ],
+      "top_n": 2
+    },
+    "intent": "return the 2 most relevant docs about safe API key rotation",
+    "l4_violation": {
+      "args": {
+        "model": "rerank-english-v3",
+        "query": "how to rotate API keys safely",
+        "documents": [
+          "Key rotation best practices",
+          "Billing FAQ",
+          "Rotating keys without downtime"
+        ],
+        "top_n": 5
+      },
+      "why": "Violates the clause that top_n must not exceed the document count: top_n is 5 but only 3 documents were supplied."
+    },
+    "l5_wrong_action": {
+      "tool": "rerank_documents",
+      "args": {
+        "model": "rerank-english-v3",
+        "query": "how to update billing payment method",
+        "documents": [
+          "Key rotation best practices",
+          "Billing FAQ",
+          "Rotating keys without downtime"
+        ],
+        "top_n": 2
+      },
+      "why": "Schema- and contract-valid, but it reranks against a billing query rather than the intended API-key-rotation query, surfacing the wrong documents for the goal."
+    }
+  },
+  {
+    "name": "create_embedding_index",
+    "contract": "Creates a new ANN index. The metric must be compatible with the dimension and intended use: cosine and dotproduct require pre-normalized vectors, and dimension must be a positive multiple of 8 for the quantized HNSW backend. name must not collide with an existing index.",
+    "params": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "max": 45
+      },
+      {
+        "name": "dimension",
+        "type": "integer",
+        "required": true,
+        "max": 4096
+      },
+      {
+        "name": "metric",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "cosine",
+          "euclidean",
+          "dotproduct"
+        ]
+      },
+      {
+        "name": "backend",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "flat",
+          "hnsw",
+          "quantized-hnsw"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "name": "product-search",
+      "dimension": 768,
+      "metric": "cosine",
+      "backend": "quantized-hnsw"
+    },
+    "intent": "create a cosine-metric ANN index for 768-dim product embeddings on the quantized HNSW backend",
+    "l4_violation": {
+      "args": {
+        "name": "product-search",
+        "dimension": 770,
+        "metric": "cosine",
+        "backend": "quantized-hnsw"
+      },
+      "why": "Violates the clause that dimension must be a multiple of 8 for the quantized-hnsw backend: 770 is not divisible by 8."
+    },
+    "l5_wrong_action": {
+      "tool": "create_embedding_index",
+      "args": {
+        "name": "product-search",
+        "dimension": 768,
+        "metric": "euclidean",
+        "backend": "flat"
+      },
+      "why": "Schema- and contract-valid (euclidean needs no normalization and the flat backend has no multiple-of-8 constraint), but it builds a euclidean flat index rather than the intended cosine quantized-HNSW index, producing a differently-behaving index than the goal requires."
+    }
+  },
+  {
+    "name": "schedule_agent_run",
+    "contract": "Schedules a recurring autonomous agent run. cron must be a valid 5-field cron expression, and start_after (if provided) must be an ISO-8601 timestamp strictly earlier than end_before. The referenced agent_id must already exist.",
+    "params": [
+      {
+        "name": "agent_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "cron",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timezone",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "start_after",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "end_before",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "agent_id": "agent_inbox_triage",
+      "cron": "0 9 * * 1-5",
+      "timezone": "America/New_York",
+      "start_after": "2026-06-08T00:00:00Z",
+      "end_before": "2026-12-31T00:00:00Z"
+    },
+    "intent": "run the inbox-triage agent every weekday at 9am Eastern through year-end",
+    "l4_violation": {
+      "args": {
+        "agent_id": "agent_inbox_triage",
+        "cron": "0 9 * * 1-5",
+        "timezone": "America/New_York",
+        "start_after": "2026-12-31T00:00:00Z",
+        "end_before": "2026-06-08T00:00:00Z"
+      },
+      "why": "Violates the clause that start_after must be strictly earlier than end_before: the window starts on 2026-12-31 but ends on 2026-06-08."
+    },
+    "l5_wrong_action": {
+      "tool": "schedule_agent_run",
+      "args": {
+        "agent_id": "agent_inbox_triage",
+        "cron": "0 9 * * 6,0",
+        "timezone": "America/New_York",
+        "start_after": "2026-06-08T00:00:00Z",
+        "end_before": "2026-12-31T00:00:00Z"
+      },
+      "why": "Schema- and contract-valid (valid 5-field weekend cron, where 6 and 0 are Saturday and Sunday), but it schedules the agent on Saturdays and Sundays instead of weekdays, serving the wrong goal vs the intended weekday triage."
+    }
+  },
+  {
+    "name": "git_create_branch",
+    "contract": "Creates a new branch pointing at a given commit-ish. The branch name must not already exist in the repo, and the start_point must reference an existing commit, branch, or tag.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "branch_name",
+        "type": "string",
+        "required": true,
+        "max": 255
+      },
+      {
+        "name": "start_point",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "checkout",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "repo_path": "/home/dev/acme-api",
+      "branch_name": "feature/rate-limiter",
+      "start_point": "main",
+      "checkout": true
+    },
+    "intent": "Branch off main to start work on a rate limiter feature",
+    "l4_violation": {
+      "args": {
+        "repo_path": "/home/dev/acme-api",
+        "branch_name": "main",
+        "start_point": "main",
+        "checkout": true
+      },
+      "why": "Violates 'branch name must not already exist' — 'main' is the existing default branch, so creation would fail/refuse."
+    },
+    "l5_wrong_action": {
+      "tool": "git_create_tag",
+      "args": {
+        "repo_path": "/home/dev/acme-api",
+        "tag_name": "v0.1.0",
+        "target": "main",
+        "message": "rate limiter milestone",
+        "annotated": true
+      },
+      "why": "Intent is to create a mutable working branch to develop on; this is a fully valid git_create_tag call (semver name, existing target) but it produces an immutable release marker instead of a branch to commit work onto, serving the wrong goal."
+    }
+  },
+  {
+    "name": "git_merge_branch",
+    "contract": "Merges source_branch into target_branch within the repo. source_branch and target_branch must both exist and must be different; merging a branch into itself is rejected.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "source_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "strategy",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "recursive",
+          "ours",
+          "theirs",
+          "octopus",
+          "fast-forward-only"
+        ]
+      },
+      {
+        "name": "commit_message",
+        "type": "string",
+        "required": false,
+        "max": 2000
+      }
+    ],
+    "conformant_args": {
+      "repo_path": "/srv/repos/payments",
+      "source_branch": "feature/refunds",
+      "target_branch": "main",
+      "strategy": "recursive"
+    },
+    "intent": "Integrate the completed refunds feature into the main line",
+    "l4_violation": {
+      "args": {
+        "repo_path": "/srv/repos/payments",
+        "source_branch": "main",
+        "target_branch": "main",
+        "strategy": "recursive"
+      },
+      "why": "Violates 'source_branch and target_branch must be different' — merging main into main is a no-op the contract rejects."
+    },
+    "l5_wrong_action": {
+      "tool": "git_merge_branch",
+      "args": {
+        "repo_path": "/srv/repos/payments",
+        "source_branch": "main",
+        "target_branch": "feature/refunds",
+        "strategy": "recursive"
+      },
+      "why": "Intent is to land the feature into main; this reverses the direction, merging main into the feature branch (an update/rebase-style sync), not the requested integration."
+    }
+  },
+  {
+    "name": "git_create_commit",
+    "contract": "Records a commit from the currently staged changes. The staging area must be non-empty (there must be staged changes to commit), and the message must be non-blank.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "required": true,
+        "max": 5000
+      },
+      {
+        "name": "author_email",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "allow_empty",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "sign",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "repo_path": "/home/dev/web",
+      "message": "fix(auth): reject expired refresh tokens",
+      "author_email": "dev@acme.io",
+      "sign": true
+    },
+    "intent": "Commit the staged auth fix with a signed, conventional-commit message",
+    "l4_violation": {
+      "args": {
+        "repo_path": "/home/dev/web",
+        "message": "   ",
+        "author_email": "dev@acme.io"
+      },
+      "why": "Violates 'message must be non-blank' — a whitespace-only message passes the string/required schema but is empty per the contract."
+    },
+    "l5_wrong_action": {
+      "tool": "git_create_commit",
+      "args": {
+        "repo_path": "/home/dev/web",
+        "message": "fix(auth): reject expired refresh tokens",
+        "author_email": "dev@acme.io",
+        "allow_empty": true
+      },
+      "why": "Intent is to commit the staged auth fix; allow_empty:true records an empty marker commit that captures none of the staged work, serving a different end."
+    }
+  },
+  {
+    "name": "git_create_tag",
+    "contract": "Creates a tag at a target commit-ish. The tag name must follow semver with a leading 'v' (e.g. v1.4.0) and must not already exist; target must reference an existing commit.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "tag_name",
+        "type": "string",
+        "required": true,
+        "max": 100
+      },
+      {
+        "name": "target",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "required": false,
+        "max": 2000
+      },
+      {
+        "name": "annotated",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "repo_path": "/srv/repos/cli",
+      "tag_name": "v2.1.0",
+      "target": "main",
+      "message": "Release 2.1.0",
+      "annotated": true
+    },
+    "intent": "Cut an annotated release tag v2.1.0 on the main line",
+    "l4_violation": {
+      "args": {
+        "repo_path": "/srv/repos/cli",
+        "tag_name": "release-latest",
+        "target": "main",
+        "annotated": true
+      },
+      "why": "Violates 'tag name must follow semver with a leading v' — 'release-latest' is a valid string but not a vMAJOR.MINOR.PATCH semver tag."
+    },
+    "l5_wrong_action": {
+      "tool": "git_create_tag",
+      "args": {
+        "repo_path": "/srv/repos/cli",
+        "tag_name": "v2.0.9",
+        "target": "main",
+        "message": "Release 2.0.9",
+        "annotated": true
+      },
+      "why": "Intent is to release version 2.1.0; tagging v2.0.9 publishes the wrong (lower, already-superseded) version number on the same commit."
+    }
+  },
+  {
+    "name": "git_revert_commit",
+    "contract": "Creates a new commit that undoes the changes introduced by an existing commit. The commit_sha must reference an existing commit reachable from HEAD; it does not rewrite history.",
+    "params": [
+      {
+        "name": "repo_path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "commit_sha",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "no_commit",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "mainline_parent",
+        "type": "integer",
+        "required": false,
+        "max": 8
+      }
+    ],
+    "conformant_args": {
+      "repo_path": "/srv/repos/api",
+      "commit_sha": "9f3c1a7e2b8d4c5a6f0e1d2c3b4a5968d7e8f9a0",
+      "no_commit": false
+    },
+    "intent": "Safely undo a bad commit by adding an inverse commit on top of history",
+    "l4_violation": {
+      "args": {
+        "repo_path": "/srv/repos/api",
+        "commit_sha": "0000000000000000000000000000000000000000",
+        "no_commit": false
+      },
+      "why": "Violates 'commit_sha must reference an existing commit reachable from HEAD' — the all-zero SHA is a well-formed hex string but resolves to no real commit."
+    },
+    "l5_wrong_action": {
+      "tool": "git_reset_hard",
+      "args": {
+        "repo_path": "/srv/repos/api",
+        "target": "HEAD~1"
+      },
+      "why": "Intent is a safe, history-preserving undo via an inverse commit; a hard reset rewrites history and discards the commit instead of reverting it, the wrong (destructive) action."
+    },
+    "state": "repo /srv/repos/api: commits reachable from HEAD include 9f3c1a7e2b8d4c5a6f0e1d2c3b4a5968d7e8f9a0 and 7b2e9c0a1f3d4e5b6c7a8d9e0f1a2b3c4d5e6f70. No other SHAs are reachable."
+  },
+  {
+    "name": "open_pull_request",
+    "contract": "Opens a pull request from head_branch into base_branch in the named repository. head_branch and base_branch must differ, and head_branch must contain at least one commit not present on base_branch (otherwise there is nothing to review).",
+    "params": [
+      {
+        "name": "repo",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "head_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "base_branch",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true,
+        "max": 256
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "required": false,
+        "max": 65536
+      },
+      {
+        "name": "draft",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "reviewers",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "repo": "acme/api",
+      "head_branch": "feature/webhooks",
+      "base_branch": "main",
+      "title": "Add webhook delivery retries",
+      "draft": false,
+      "reviewers": [
+        "alice",
+        "bob"
+      ]
+    },
+    "intent": "Open a review-ready PR for the webhooks feature targeting main",
+    "l4_violation": {
+      "args": {
+        "repo": "acme/api",
+        "head_branch": "main",
+        "base_branch": "main",
+        "title": "Add webhook delivery retries"
+      },
+      "why": "Violates 'head_branch and base_branch must differ' — a PR from main into main has no diff to review."
+    },
+    "l5_wrong_action": {
+      "tool": "open_pull_request",
+      "args": {
+        "repo": "acme/api",
+        "head_branch": "feature/webhooks",
+        "base_branch": "release/1.0",
+        "title": "Add webhook delivery retries"
+      },
+      "why": "Intent is to target the main development line; basing the PR on the frozen release/1.0 branch sends the feature to the wrong integration target."
+    }
+  },
+  {
+    "name": "submit_pr_review",
+    "contract": "Submits a code review verdict on an open pull request. The pr_number must reference an existing open PR, and when event is REQUEST_CHANGES or COMMENT the body must be non-empty (a blocking/comment review requires written rationale).",
+    "params": [
+      {
+        "name": "repo",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "pr_number",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "event",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "APPROVE",
+          "REQUEST_CHANGES",
+          "COMMENT"
+        ]
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "required": false,
+        "max": 65536
+      },
+      {
+        "name": "line_comments",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "repo": "acme/api",
+      "pr_number": 412,
+      "event": "REQUEST_CHANGES",
+      "body": "The retry loop has no backoff cap; please bound it before merge.",
+      "line_comments": [
+        {
+          "path": "src/webhooks.ts",
+          "line": 88,
+          "comment": "Unbounded retries here."
+        }
+      ]
+    },
+    "intent": "Block PR #412 with actionable change requests on the retry logic",
+    "l4_violation": {
+      "args": {
+        "repo": "acme/api",
+        "pr_number": 412,
+        "event": "REQUEST_CHANGES",
+        "body": ""
+      },
+      "why": "Violates 'when event is REQUEST_CHANGES the body must be non-empty' — blocking a PR with an empty rationale is rejected by the contract."
+    },
+    "l5_wrong_action": {
+      "tool": "submit_pr_review",
+      "args": {
+        "repo": "acme/api",
+        "pr_number": 412,
+        "event": "APPROVE",
+        "body": "LGTM"
+      },
+      "why": "Intent is to block the PR over the unbounded retry bug; submitting APPROVE clears it for merge, the opposite verdict, leaving the defect unaddressed."
+    }
+  },
+  {
+    "name": "http_paginate_range",
+    "domain": "http",
+    "contract": "Fetches a byte range of a remote resource. range_start must be < range_end (both >= 0), and the requested span (range_end - range_start) must not exceed max_chunk_bytes.",
+    "params": [
+      {
+        "name": "url",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "range_start",
+        "type": "integer",
+        "required": true,
+        "max": 1000000000
+      },
+      {
+        "name": "range_end",
+        "type": "integer",
+        "required": true,
+        "max": 1000000000
+      },
+      {
+        "name": "max_chunk_bytes",
+        "type": "integer",
+        "required": true,
+        "max": 1000000000
+      }
+    ],
+    "conformant_args": {
+      "url": "https://cdn.example.com/build.bin",
+      "range_start": 0,
+      "range_end": 1048576,
+      "max_chunk_bytes": 2097152
+    },
+    "intent": "download the first ~1 MB chunk of a large remote file",
+    "l4_violations": [
+      {
+        "args": {
+          "url": "https://cdn.example.com/build.bin",
+          "range_start": 2000,
+          "range_end": 1000,
+          "max_chunk_bytes": 2097152
+        },
+        "why": "range_start (2000) is not less than range_end (1000); the contract requires range_start < range_end, so the range is empty/inverted."
+      },
+      {
+        "args": {
+          "url": "https://cdn.example.com/build.bin",
+          "range_start": 0,
+          "range_end": 5000000,
+          "max_chunk_bytes": 2097152
+        },
+        "why": "the requested span 5000000 - 0 = 5000000 bytes exceeds max_chunk_bytes (2097152); the contract caps a single range at max_chunk_bytes."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "http_head",
+      "args": {
+        "url": "https://cdn.example.com/build.bin"
+      },
+      "why": "a HEAD request returns only headers and downloads no bytes — it does not fetch the requested range."
+    }
+  },
+  {
+    "name": "schedule_maintenance_window",
+    "domain": "scheduling",
+    "contract": "Schedules a maintenance window. starts_at must be strictly before ends_at (both RFC 3339), and duration_minutes must equal the actual number of minutes between starts_at and ends_at.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "starts_at",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "ends_at",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "duration_minutes",
+        "type": "integer",
+        "required": true,
+        "max": 10080
+      }
+    ],
+    "conformant_args": {
+      "service": "payments-api",
+      "starts_at": "2026-07-01T02:00:00Z",
+      "ends_at": "2026-07-01T03:00:00Z",
+      "duration_minutes": 60
+    },
+    "intent": "book a one-hour maintenance window starting 02:00 UTC",
+    "l4_violations": [
+      {
+        "args": {
+          "service": "payments-api",
+          "starts_at": "2026-07-01T03:00:00Z",
+          "ends_at": "2026-07-01T02:00:00Z",
+          "duration_minutes": 60
+        },
+        "why": "ends_at 02:00 precedes starts_at 03:00; the contract requires starts_at strictly before ends_at."
+      },
+      {
+        "args": {
+          "service": "payments-api",
+          "starts_at": "2026-07-01T02:00:00Z",
+          "ends_at": "2026-07-01T03:00:00Z",
+          "duration_minutes": 120
+        },
+        "why": "duration_minutes is 120 but the window from 02:00 to 03:00 is only 60 minutes; the contract requires duration_minutes to equal the actual span."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "cancel_maintenance_window",
+      "args": {
+        "service": "payments-api",
+        "window_id": "win_pending"
+      },
+      "why": "cancelling a window is the opposite of scheduling one."
+    }
+  },
+  {
+    "name": "set_price_filter",
+    "domain": "search",
+    "contract": "Sets a price-range search filter. min_price must be <= max_price, both must be >= 0, and the currency on both bounds must be the same ISO-4217 code.",
+    "params": [
+      {
+        "name": "query",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "min_price",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "max_price",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "currency_max",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "query": "wireless headphones",
+      "min_price": 50.0,
+      "max_price": 300.0,
+      "currency": "USD",
+      "currency_max": "USD"
+    },
+    "intent": "filter search results to the $50-$300 range",
+    "l4_violations": [
+      {
+        "args": {
+          "query": "wireless headphones",
+          "min_price": 300.0,
+          "max_price": 50.0,
+          "currency": "USD",
+          "currency_max": "USD"
+        },
+        "why": "min_price (300) is greater than max_price (50); the contract requires min_price <= max_price, so the range is empty."
+      },
+      {
+        "args": {
+          "query": "wireless headphones",
+          "min_price": 50.0,
+          "max_price": 300.0,
+          "currency": "USD",
+          "currency_max": "EUR"
+        },
+        "why": "the lower bound is in USD but the upper bound is in EUR; the contract requires both bounds to use the same currency, so the range is incoherent."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "set_sort_order",
+      "args": {
+        "query": "wireless headphones",
+        "sort": "price_asc"
+      },
+      "why": "sorting by price is not the same as constraining the price range the user asked to filter on."
+    }
+  },
+  {
+    "name": "allocate_index_shards",
+    "domain": "search-infra",
+    "contract": "Allocates shards and replicas for a search index. replicas must be <= nodes (you cannot place more replica copies than there are nodes), and shard_count must be >= 1.",
+    "params": [
+      {
+        "name": "index",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "nodes",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "shard_count",
+        "type": "integer",
+        "required": true,
+        "max": 1024
+      },
+      {
+        "name": "replicas",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      }
+    ],
+    "conformant_args": {
+      "index": "products-v3",
+      "nodes": 5,
+      "shard_count": 10,
+      "replicas": 2
+    },
+    "intent": "create a products index with 2 replicas across the 5-node cluster",
+    "l4_violations": [
+      {
+        "args": {
+          "index": "products-v3",
+          "nodes": 3,
+          "shard_count": 10,
+          "replicas": 5
+        },
+        "why": "replicas (5) exceeds nodes (3); the contract forbids more replica copies than nodes, so at least two replicas would have to share a node."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "delete_index",
+      "args": {
+        "index": "products-v3"
+      },
+      "why": "deleting the index destroys it rather than allocating shards for it."
+    }
+  },
+  {
+    "name": "batch_embed_texts",
+    "domain": "ml",
+    "contract": "Embeds a batch of texts. inputs and ids must have the same length (one id per input), and batch_size must not exceed the number of inputs.",
+    "params": [
+      {
+        "name": "model",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "inputs",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "ids",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "batch_size",
+        "type": "integer",
+        "required": true,
+        "max": 512
+      }
+    ],
+    "conformant_args": {
+      "model": "text-embedding-3-small",
+      "inputs": [
+        "alpha doc",
+        "beta doc",
+        "gamma doc"
+      ],
+      "ids": [
+        "d1",
+        "d2",
+        "d3"
+      ],
+      "batch_size": 2
+    },
+    "intent": "embed three documents, tagging each with its id",
+    "l4_violations": [
+      {
+        "args": {
+          "model": "text-embedding-3-small",
+          "inputs": [
+            "alpha doc",
+            "beta doc",
+            "gamma doc"
+          ],
+          "ids": [
+            "d1",
+            "d2"
+          ],
+          "batch_size": 2
+        },
+        "why": "ids has 2 entries but inputs has 3; the contract requires exactly one id per input, so one document would be unlabelled."
+      },
+      {
+        "args": {
+          "model": "text-embedding-3-small",
+          "inputs": [
+            "alpha doc",
+            "beta doc",
+            "gamma doc"
+          ],
+          "ids": [
+            "d1",
+            "d2",
+            "d3"
+          ],
+          "batch_size": 8
+        },
+        "why": "batch_size (8) exceeds the number of inputs (3); the contract requires batch_size <= len(inputs)."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "rerank_documents",
+      "args": {
+        "model": "rerank-v3",
+        "query": "alpha",
+        "documents": [
+          "alpha doc",
+          "beta doc",
+          "gamma doc"
+        ],
+        "top_n": 3
+      },
+      "why": "reranking scores documents against a query; it does not produce the embedding vectors the intent asks for."
+    }
+  },
+  {
+    "name": "split_traffic",
+    "domain": "devops",
+    "contract": "Splits inbound traffic across deploy targets. weights must sum to exactly 100, each weight is in 0..100, and weights must have the same length as targets (one weight per target).",
+    "params": [
+      {
+        "name": "route",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "targets",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "weights",
+        "type": "array",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "route": "api.example.com",
+      "targets": [
+        "blue",
+        "green"
+      ],
+      "weights": [
+        60,
+        40
+      ]
+    },
+    "intent": "send 60% of traffic to blue and 40% to green",
+    "l4_violations": [
+      {
+        "args": {
+          "route": "api.example.com",
+          "targets": [
+            "blue",
+            "green"
+          ],
+          "weights": [
+            60,
+            30
+          ]
+        },
+        "why": "the weights sum to 90, not 100; the contract requires the split to total 100% so 10% of traffic would be unrouted."
+      },
+      {
+        "args": {
+          "route": "api.example.com",
+          "targets": [
+            "blue",
+            "green"
+          ],
+          "weights": [
+            50,
+            30,
+            20
+          ]
+        },
+        "why": "weights has 3 entries but targets has 2; the contract requires one weight per target."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "drain_target",
+      "args": {
+        "route": "api.example.com",
+        "target": "green"
+      },
+      "why": "draining a target removes it from rotation rather than splitting traffic across both as intended."
+    }
+  },
+  {
+    "name": "db_select_window",
+    "domain": "db",
+    "contract": "Reads a window of rows. order_by must be one of the columns being selected, limit must be in 1..1000, and offset must be >= 0.",
+    "params": [
+      {
+        "name": "table",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "columns",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "order_by",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "offset",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      }
+    ],
+    "conformant_args": {
+      "table": "orders",
+      "columns": [
+        "id",
+        "total",
+        "created_at"
+      ],
+      "order_by": "created_at",
+      "limit": 50,
+      "offset": 0
+    },
+    "intent": "read the 50 most recent orders with id, total and created_at",
+    "l4_violations": [
+      {
+        "args": {
+          "table": "orders",
+          "columns": [
+            "id",
+            "total",
+            "created_at"
+          ],
+          "order_by": "updated_at",
+          "limit": 50,
+          "offset": 0
+        },
+        "why": "order_by 'updated_at' is not among the selected columns ['id','total','created_at']; the contract requires ordering by a selected column."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "count_rows",
+      "args": {
+        "table": "orders"
+      },
+      "why": "counting rows returns a single number, not the windowed rows the intent asks to read."
+    }
+  },
+  {
+    "name": "upsert_dns_failover",
+    "domain": "dns",
+    "contract": "Creates or updates a failover DNS record. Exactly one of 'ip' (for an A record) or 'cname' (for a CNAME) must be provided — never both and never neither.",
+    "params": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "ttl",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "ip",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cname",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "name": "app.example.com",
+      "ttl": 300,
+      "ip": "203.0.113.10"
+    },
+    "intent": "point app.example.com at the IP 203.0.113.10",
+    "l4_violations": [
+      {
+        "args": {
+          "name": "app.example.com",
+          "ttl": 300,
+          "ip": "203.0.113.10",
+          "cname": "lb.example.net"
+        },
+        "why": "both 'ip' and 'cname' are set; the contract requires exactly one, and a record cannot be both an A and a CNAME."
+      },
+      {
+        "args": {
+          "name": "app.example.com",
+          "ttl": 300
+        },
+        "why": "neither 'ip' nor 'cname' is set; the contract requires exactly one target, so the record has nothing to resolve to."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "delete_dns_record",
+      "args": {
+        "name": "app.example.com"
+      },
+      "why": "deleting the record removes resolution rather than pointing the name at the intended IP."
+    }
+  },
+  {
+    "name": "configure_autoscaler",
+    "domain": "k8s",
+    "contract": "Configures a horizontal autoscaler. min_replicas must be <= max_replicas, min_replicas must be >= 1, and target_cpu_percent must be in 1..100.",
+    "params": [
+      {
+        "name": "deployment",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "min_replicas",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "max_replicas",
+        "type": "integer",
+        "required": true,
+        "max": 1000
+      },
+      {
+        "name": "target_cpu_percent",
+        "type": "integer",
+        "required": true,
+        "max": 100
+      }
+    ],
+    "conformant_args": {
+      "deployment": "web",
+      "min_replicas": 2,
+      "max_replicas": 10,
+      "target_cpu_percent": 70
+    },
+    "intent": "autoscale web between 2 and 10 replicas at 70% CPU",
+    "l4_violations": [
+      {
+        "args": {
+          "deployment": "web",
+          "min_replicas": 10,
+          "max_replicas": 3,
+          "target_cpu_percent": 70
+        },
+        "why": "min_replicas (10) exceeds max_replicas (3); the contract requires min_replicas <= max_replicas, so the bounds are inverted."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "scale_deployment",
+      "args": {
+        "deployment": "web",
+        "replicas": 5
+      },
+      "why": "setting a fixed replica count is a one-off scale, not the dynamic autoscaler the intent configures."
+    }
+  },
+  {
+    "name": "apply_order_coupon",
+    "domain": "payments",
+    "state": "order ord_5521: subtotal=4000 (minor units, USD), currency=USD, coupon_applied=false.",
+    "contract": "Applies a fixed-amount coupon to an open order. discount_amount (minor units) must be > 0 and must not exceed the order's subtotal, and the coupon currency must match the order currency.",
+    "params": [
+      {
+        "name": "order_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "discount_amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "coupon_code",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "order_id": "ord_5521",
+      "discount_amount": 1000,
+      "currency": "USD",
+      "coupon_code": "SAVE10"
+    },
+    "intent": "take $10 off order ord_5521",
+    "l4_violations": [
+      {
+        "args": {
+          "order_id": "ord_5521",
+          "discount_amount": 5000,
+          "currency": "USD",
+          "coupon_code": "SAVE50"
+        },
+        "why": "discount_amount 5000 exceeds the order subtotal of 4000 (per STATE); the contract forbids a discount larger than the subtotal, which would yield a negative total."
+      },
+      {
+        "args": {
+          "order_id": "ord_5521",
+          "discount_amount": 1000,
+          "currency": "EUR",
+          "coupon_code": "SAVE10"
+        },
+        "why": "the coupon currency EUR does not match the order currency USD (per STATE); the contract requires matching currencies."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "cancel_order",
+      "args": {
+        "order_id": "ord_5521"
+      },
+      "why": "cancelling the order is not the same as discounting it."
+    }
+  },
+  {
+    "name": "reserve_inventory",
+    "domain": "commerce",
+    "state": "sku SKU-42: available=12, reserved=3, warehouse=us-east. No backorders allowed.",
+    "contract": "Reserves stock for an order line. quantity must be >= 1 and must not exceed the available stock for the sku.",
+    "params": [
+      {
+        "name": "sku",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "quantity",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "order_id",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "sku": "SKU-42",
+      "quantity": 5,
+      "order_id": "ord_5521"
+    },
+    "intent": "reserve 5 units of SKU-42 for an order",
+    "l4_violations": [
+      {
+        "args": {
+          "sku": "SKU-42",
+          "quantity": 20,
+          "order_id": "ord_5521"
+        },
+        "why": "quantity 20 exceeds the available stock of 12 (per STATE); the contract forbids reserving more than is available and backorders are not allowed."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "release_inventory",
+      "args": {
+        "sku": "SKU-42",
+        "quantity": 5,
+        "order_id": "ord_5521"
+      },
+      "why": "releasing stock frees a reservation — the opposite of reserving it."
+    }
+  },
+  {
+    "name": "transfer_funds",
+    "domain": "payments",
+    "state": "account acct_src: balance=25000 (minor units), currency=USD. account acct_dst: currency=USD. Both accounts are open.",
+    "contract": "Moves money between two accounts. amount (minor units) must be > 0 and must not exceed the source account's balance, source_account and destination_account must be different, and the transfer currency must match BOTH accounts' currency.",
+    "params": [
+      {
+        "name": "source_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "destination_account",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": "integer",
+        "required": true,
+        "max": 99999999
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "source_account": "acct_src",
+      "destination_account": "acct_dst",
+      "amount": 5000,
+      "currency": "USD"
+    },
+    "intent": "move $50.00 from acct_src to acct_dst",
+    "l4_violations": [
+      {
+        "args": {
+          "source_account": "acct_src",
+          "destination_account": "acct_dst",
+          "amount": 50000,
+          "currency": "USD"
+        },
+        "why": "amount 50000 exceeds the source balance of 25000 (per STATE); the contract forbids overdrawing the source account."
+      },
+      {
+        "args": {
+          "source_account": "acct_src",
+          "destination_account": "acct_src",
+          "amount": 5000,
+          "currency": "USD"
+        },
+        "why": "source_account and destination_account are both acct_src; the contract requires them to differ, so this transfer moves money to itself."
+      },
+      {
+        "args": {
+          "source_account": "acct_src",
+          "destination_account": "acct_dst",
+          "amount": 5000,
+          "currency": "EUR"
+        },
+        "why": "the transfer currency EUR matches neither account (both are USD per STATE); the contract requires the currency to match both accounts."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "transfer_funds",
+      "args": {
+        "source_account": "acct_dst",
+        "destination_account": "acct_src",
+        "amount": 5000,
+        "currency": "USD"
+      },
+      "why": "this reverses the direction, debiting the destination and crediting the source — the opposite of the stated intent."
+    }
+  },
+  {
+    "name": "promote_release",
+    "domain": "devops",
+    "state": "service checkout-api: current_version=7, current_stage=staging. Versions deploy in order.",
+    "contract": "Promotes a service to the next release version. target_version must equal the current_version + 1 (no skipping versions), and must not equal a version already deployed.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_version",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "stage",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "staging",
+          "production"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "service": "checkout-api",
+      "target_version": 8,
+      "stage": "production"
+    },
+    "intent": "promote checkout-api to the next version in production",
+    "l4_violations": [
+      {
+        "args": {
+          "service": "checkout-api",
+          "target_version": 10,
+          "stage": "production"
+        },
+        "why": "target_version 10 skips versions 8 and 9 from the current_version 7 (per STATE); the contract requires exactly current_version + 1."
+      },
+      {
+        "args": {
+          "service": "checkout-api",
+          "target_version": 7,
+          "stage": "production"
+        },
+        "why": "target_version 7 equals the already-deployed current_version (per STATE); the contract forbids re-deploying an existing version as a promotion."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "rollback_release",
+      "args": {
+        "service": "checkout-api",
+        "target_version": 6
+      },
+      "why": "rolling back to an earlier version is the opposite of promoting forward."
+    }
+  },
+  {
+    "name": "assign_seat",
+    "domain": "travel",
+    "state": "flight UA482: available_seats=[12A, 12B, 14C, 21F]. All other seats are taken or blocked.",
+    "contract": "Assigns a seat to a passenger on a flight. seat must be one of the flight's currently available seats.",
+    "params": [
+      {
+        "name": "flight",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "seat",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "passenger_id",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "flight": "UA482",
+      "seat": "12B",
+      "passenger_id": "pax_9931"
+    },
+    "intent": "seat passenger pax_9931 in 12B",
+    "l4_violations": [
+      {
+        "args": {
+          "flight": "UA482",
+          "seat": "30F",
+          "passenger_id": "pax_9931"
+        },
+        "why": "seat 30F is not in the flight's available set [12A,12B,14C,21F] (per STATE); the contract requires assigning only a currently-available seat."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "cancel_seat_assignment",
+      "args": {
+        "flight": "UA482",
+        "passenger_id": "pax_9931"
+      },
+      "why": "cancelling an assignment removes a seat rather than assigning one."
+    }
+  },
+  {
+    "name": "grant_role",
+    "domain": "iam",
+    "contract": "Grants a role to a principal. The 'admin' role may be granted ONLY when principal_tier is 'owner'; 'editor' and 'viewer' may be granted at any tier.",
+    "params": [
+      {
+        "name": "principal_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "principal_tier",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "member",
+          "manager",
+          "owner"
+        ]
+      },
+      {
+        "name": "role",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "viewer",
+          "editor",
+          "admin"
+        ]
+      }
+    ],
+    "conformant_args": {
+      "principal_id": "u_2210",
+      "principal_tier": "owner",
+      "role": "admin"
+    },
+    "intent": "make the owner-tier principal an admin",
+    "l4_violations": [
+      {
+        "args": {
+          "principal_id": "u_2210",
+          "principal_tier": "member",
+          "role": "admin"
+        },
+        "why": "role 'admin' was requested for a 'member'-tier principal; the contract permits 'admin' only when principal_tier is 'owner'."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "revoke_role",
+      "args": {
+        "principal_id": "u_2210",
+        "role": "admin"
+      },
+      "why": "revoking a role removes access rather than granting it."
+    }
+  },
+  {
+    "name": "crop_image",
+    "domain": "media",
+    "contract": "Crops a rectangle from an image. The crop must stay in bounds: x + width must be <= image_width and y + height must be <= image_height (all >= 0).",
+    "params": [
+      {
+        "name": "image_width",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "image_height",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "x",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "y",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "width",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "height",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      }
+    ],
+    "conformant_args": {
+      "image_width": 1920,
+      "image_height": 1080,
+      "x": 100,
+      "y": 100,
+      "width": 800,
+      "height": 600
+    },
+    "intent": "crop an 800x600 region starting at (100,100) from a 1920x1080 image",
+    "l4_violations": [
+      {
+        "args": {
+          "image_width": 1920,
+          "image_height": 1080,
+          "x": 1500,
+          "y": 100,
+          "width": 800,
+          "height": 600
+        },
+        "why": "x + width = 1500 + 800 = 2300 exceeds image_width 1920 (per the call); the crop runs off the right edge, which the in-bounds contract forbids."
+      },
+      {
+        "args": {
+          "image_width": 1920,
+          "image_height": 1080,
+          "x": 100,
+          "y": 700,
+          "width": 800,
+          "height": 600
+        },
+        "why": "y + height = 700 + 600 = 1300 exceeds image_height 1080; the crop runs off the bottom edge."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "resize_image",
+      "args": {
+        "image_width": 1920,
+        "image_height": 1080,
+        "width": 800,
+        "height": 600
+      },
+      "why": "resizing rescales the whole image; it does not crop the requested sub-region."
+    }
+  },
+  {
+    "name": "merge_pdf_pages",
+    "domain": "media",
+    "contract": "Extracts an inclusive page range from a PDF. page_from must be <= page_to, and both must be within 1..total_pages.",
+    "params": [
+      {
+        "name": "source",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "total_pages",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "page_from",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      },
+      {
+        "name": "page_to",
+        "type": "integer",
+        "required": true,
+        "max": 100000
+      }
+    ],
+    "conformant_args": {
+      "source": "/docs/report.pdf",
+      "total_pages": 50,
+      "page_from": 5,
+      "page_to": 10
+    },
+    "intent": "extract pages 5 through 10 of a 50-page PDF",
+    "l4_violations": [
+      {
+        "args": {
+          "source": "/docs/report.pdf",
+          "total_pages": 50,
+          "page_from": 12,
+          "page_to": 8
+        },
+        "why": "page_from (12) is greater than page_to (8); the contract requires page_from <= page_to for an inclusive range."
+      },
+      {
+        "args": {
+          "source": "/docs/report.pdf",
+          "total_pages": 50,
+          "page_from": 5,
+          "page_to": 60
+        },
+        "why": "page_to (60) exceeds total_pages (50); the contract requires the range to stay within 1..total_pages."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "rotate_pdf",
+      "args": {
+        "source": "/docs/report.pdf",
+        "degrees": 90
+      },
+      "why": "rotating pages does not extract the requested page range."
+    }
+  },
+  {
+    "name": "distribute_budget",
+    "domain": "finance",
+    "contract": "Distributes a total budget across line items. The sum of the allocation values must equal total_budget exactly (no shortfall, no overflow), and every allocation must be >= 0.",
+    "params": [
+      {
+        "name": "total_budget",
+        "type": "integer",
+        "required": true,
+        "max": 999999999
+      },
+      {
+        "name": "allocations",
+        "type": "object",
+        "required": true
+      },
+      {
+        "name": "period",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "total_budget": 1000,
+      "allocations": {
+        "eng": 600,
+        "marketing": 400
+      },
+      "period": "2026-Q3"
+    },
+    "intent": "split a 1000 budget into 600 eng / 400 marketing",
+    "l4_violations": [
+      {
+        "args": {
+          "total_budget": 1000,
+          "allocations": {
+            "eng": 600,
+            "marketing": 300
+          },
+          "period": "2026-Q3"
+        },
+        "why": "the allocations sum to 900, not the total_budget of 1000; the contract requires the allocations to sum exactly to the total, leaving 100 unallocated."
+      },
+      {
+        "args": {
+          "total_budget": 1000,
+          "allocations": {
+            "eng": 700,
+            "marketing": 400
+          },
+          "period": "2026-Q3"
+        },
+        "why": "the allocations sum to 1100, overflowing the total_budget of 1000; the contract forbids allocating more than the total."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "set_budget",
+      "args": {
+        "total_budget": 1000,
+        "period": "2026-Q3"
+      },
+      "why": "setting the total budget does not perform the per-line-item distribution the intent asks for."
+    }
+  },
+  {
+    "name": "configure_mtls",
+    "domain": "security",
+    "contract": "Configures TLS for a listener. When mtls_enabled is true, client_ca_path is REQUIRED and must be an absolute path (the CA used to verify client certs); when mtls_enabled is false, client_ca_path must be omitted.",
+    "params": [
+      {
+        "name": "listener",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "mtls_enabled",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "client_ca_path",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "listener": "ingress-443",
+      "mtls_enabled": true,
+      "client_ca_path": "/etc/tls/client-ca.pem"
+    },
+    "intent": "turn on mutual TLS on the ingress listener with the client CA bundle",
+    "l4_violations": [
+      {
+        "args": {
+          "listener": "ingress-443",
+          "mtls_enabled": true
+        },
+        "why": "mtls_enabled is true but client_ca_path is missing; the contract requires a client CA path whenever mTLS is enabled, so client certs could not be verified."
+      },
+      {
+        "args": {
+          "listener": "ingress-443",
+          "mtls_enabled": true,
+          "client_ca_path": "tls/client-ca.pem"
+        },
+        "why": "client_ca_path 'tls/client-ca.pem' is relative; the contract requires an absolute path for the client CA bundle."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "disable_tls",
+      "args": {
+        "listener": "ingress-443"
+      },
+      "why": "disabling TLS removes encryption entirely — the opposite of enabling mutual TLS."
+    }
+  },
+  {
+    "name": "set_storage_tiers",
+    "domain": "infra",
+    "contract": "Sets data lifecycle tiers. The thresholds must be monotonically non-decreasing: warm_days <= cold_days <= delete_days (data moves warm -> cold -> deleted), and all must be >= 1.",
+    "params": [
+      {
+        "name": "bucket",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "warm_days",
+        "type": "integer",
+        "required": true,
+        "max": 36500
+      },
+      {
+        "name": "cold_days",
+        "type": "integer",
+        "required": true,
+        "max": 36500
+      },
+      {
+        "name": "delete_days",
+        "type": "integer",
+        "required": true,
+        "max": 36500
+      }
+    ],
+    "conformant_args": {
+      "bucket": "logs-archive",
+      "warm_days": 7,
+      "cold_days": 30,
+      "delete_days": 365
+    },
+    "intent": "keep logs warm 7 days, cold to 30 days, delete at 365",
+    "l4_violations": [
+      {
+        "args": {
+          "bucket": "logs-archive",
+          "warm_days": 30,
+          "cold_days": 7,
+          "delete_days": 365
+        },
+        "why": "warm_days (30) is greater than cold_days (7); the contract requires warm_days <= cold_days, so the warm window outlasts the cold transition."
+      },
+      {
+        "args": {
+          "bucket": "logs-archive",
+          "warm_days": 7,
+          "cold_days": 400,
+          "delete_days": 365
+        },
+        "why": "cold_days (400) is greater than delete_days (365); the contract requires cold_days <= delete_days, so data would be deleted before it ever moves to cold."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "delete_bucket",
+      "args": {
+        "bucket": "logs-archive"
+      },
+      "why": "deleting the bucket destroys the data instead of setting its lifecycle tiers."
+    }
+  },
+  {
+    "name": "create_load_test",
+    "domain": "perf",
+    "contract": "Starts a load test. ramp_up_seconds must be <= duration_seconds (you cannot ramp for longer than the test runs), and target_rps must be >= 1.",
+    "params": [
+      {
+        "name": "endpoint",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "duration_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "ramp_up_seconds",
+        "type": "integer",
+        "required": true,
+        "max": 86400
+      },
+      {
+        "name": "target_rps",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      }
+    ],
+    "conformant_args": {
+      "endpoint": "https://api.example.com/health",
+      "duration_seconds": 300,
+      "ramp_up_seconds": 60,
+      "target_rps": 200
+    },
+    "intent": "run a 5-minute load test ramping to 200 rps over the first minute",
+    "l4_violations": [
+      {
+        "args": {
+          "endpoint": "https://api.example.com/health",
+          "duration_seconds": 300,
+          "ramp_up_seconds": 600,
+          "target_rps": 200
+        },
+        "why": "ramp_up_seconds (600) exceeds duration_seconds (300); the contract requires the ramp to fit within the test, so the test would end before reaching full load."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "stop_load_test",
+      "args": {
+        "test_id": "lt_pending"
+      },
+      "why": "stopping a test is the opposite of starting the one the intent describes."
+    }
+  },
+  {
+    "name": "set_resource_quota",
+    "domain": "k8s",
+    "contract": "Sets a namespace resource quota. soft_limit must be <= hard_limit (the soft warning threshold cannot exceed the hard ceiling), and both must be >= 0.",
+    "params": [
+      {
+        "name": "namespace",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "resource",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "cpu",
+          "memory",
+          "pods"
+        ]
+      },
+      {
+        "name": "soft_limit",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      },
+      {
+        "name": "hard_limit",
+        "type": "integer",
+        "required": true,
+        "max": 1000000
+      }
+    ],
+    "conformant_args": {
+      "namespace": "team-a",
+      "resource": "pods",
+      "soft_limit": 40,
+      "hard_limit": 50
+    },
+    "intent": "warn team-a at 40 pods, hard-cap at 50",
+    "l4_violations": [
+      {
+        "args": {
+          "namespace": "team-a",
+          "resource": "pods",
+          "soft_limit": 80,
+          "hard_limit": 50
+        },
+        "why": "soft_limit (80) exceeds hard_limit (50); the contract requires soft_limit <= hard_limit, so the warning would fire only after the hard cap is already breached."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "delete_resource_quota",
+      "args": {
+        "namespace": "team-a",
+        "resource": "pods"
+      },
+      "why": "deleting the quota removes the limits rather than setting them."
+    }
+  },
+  {
+    "name": "schedule_job_oneshot",
+    "domain": "scheduling",
+    "contract": "Schedules a job. Exactly one scheduling mode must be set: either 'run_at' (a single RFC 3339 timestamp for a one-shot run) OR 'cron_expression' (a 5-field cron for a recurring run) — never both and never neither.",
+    "params": [
+      {
+        "name": "job",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "run_at",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cron_expression",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "conformant_args": {
+      "job": "nightly-export",
+      "cron_expression": "0 3 * * *"
+    },
+    "intent": "run nightly-export every day at 03:00",
+    "l4_violations": [
+      {
+        "args": {
+          "job": "nightly-export",
+          "run_at": "2026-07-01T03:00:00Z",
+          "cron_expression": "0 3 * * *"
+        },
+        "why": "both 'run_at' and 'cron_expression' are set; the contract requires exactly one scheduling mode, so it is ambiguous whether the job is one-shot or recurring."
+      },
+      {
+        "args": {
+          "job": "nightly-export"
+        },
+        "why": "neither 'run_at' nor 'cron_expression' is set; the contract requires exactly one scheduling mode, so the job has no schedule."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "run_job_now",
+      "args": {
+        "job": "nightly-export"
+      },
+      "why": "running the job immediately is not the same as scheduling its recurring nightly run."
+    }
+  },
+  {
+    "name": "set_canary_slo",
+    "domain": "devops",
+    "contract": "Sets the SLO gate for a canary. latency_p99_ms must be >= latency_p50_ms (the 99th percentile cannot be lower than the median), and error_rate_max must be in 0..100.",
+    "params": [
+      {
+        "name": "service",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "latency_p50_ms",
+        "type": "integer",
+        "required": true,
+        "max": 600000
+      },
+      {
+        "name": "latency_p99_ms",
+        "type": "integer",
+        "required": true,
+        "max": 600000
+      },
+      {
+        "name": "error_rate_max",
+        "type": "number",
+        "required": true
+      }
+    ],
+    "conformant_args": {
+      "service": "search",
+      "latency_p50_ms": 120,
+      "latency_p99_ms": 450,
+      "error_rate_max": 1.0
+    },
+    "intent": "gate the search canary at p50<=120ms, p99<=450ms, <=1% errors",
+    "l4_violations": [
+      {
+        "args": {
+          "service": "search",
+          "latency_p50_ms": 450,
+          "latency_p99_ms": 120,
+          "error_rate_max": 1.0
+        },
+        "why": "latency_p99_ms (120) is lower than latency_p50_ms (450); the 99th percentile cannot be below the median, so the thresholds are incoherent."
+      }
+    ],
+    "l5_wrong_action": {
+      "tool": "promote_canary",
+      "args": {
+        "service": "search"
+      },
+      "why": "promoting the canary advances the rollout rather than setting the SLO gate the intent describes."
+    }
+  }
+]

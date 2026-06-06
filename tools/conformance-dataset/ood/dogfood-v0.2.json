@@ -1,0 +1,207 @@
+{
+  "label": "v0.2",
+  "cases": 49,
+  "items": 132,
+  "query_errors": 0,
+  "accuracy": 0.924,
+  "flip_consistency": 0.837,
+  "false_conformant": 9,
+  "at_risk": 83,
+  "false_conformant_rate": 0.108,
+  "per_class": {
+    "bounds_in_call": {
+      "acc": 0.615,
+      "n": 13,
+      "false_conformant": 4,
+      "at_risk": 8
+    },
+    "cardinality": {
+      "acc": 1.0,
+      "n": 13,
+      "false_conformant": 0,
+      "at_risk": 8
+    },
+    "conditional": {
+      "acc": 1.0,
+      "n": 15,
+      "false_conformant": 0,
+      "at_risk": 10
+    },
+    "cross_field_consistency": {
+      "acc": 0.818,
+      "n": 11,
+      "false_conformant": 2,
+      "at_risk": 7
+    },
+    "distinctness": {
+      "acc": 1.0,
+      "n": 12,
+      "false_conformant": 0,
+      "at_risk": 7
+    },
+    "monotonic": {
+      "acc": 1.0,
+      "n": 14,
+      "false_conformant": 0,
+      "at_risk": 9
+    },
+    "mutual_exclusion": {
+      "acc": 1.0,
+      "n": 15,
+      "false_conformant": 0,
+      "at_risk": 10
+    },
+    "ordering": {
+      "acc": 1.0,
+      "n": 13,
+      "false_conformant": 0,
+      "at_risk": 8
+    },
+    "stateful_balance": {
+      "acc": 1.0,
+      "n": 13,
+      "false_conformant": 0,
+      "at_risk": 8
+    },
+    "sum_total": {
+      "acc": 0.769,
+      "n": 13,
+      "false_conformant": 3,
+      "at_risk": 8
+    }
+  },
+  "false_conformant_details": [
+    {
+      "tool": "cdn.shard_edge_traffic",
+      "class": "sum_total",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "hostname": "cdn.example.com",
+        "pops": [
+          "iad",
+          "fra",
+          "sin"
+        ],
+        "weights": [
+          50,
+          30,
+          15
+        ]
+      }
+    },
+    {
+      "tool": "genome.assign_sequencing_lanes",
+      "class": "sum_total",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "flowcell_id": "FC-22",
+        "sample_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "sample_fractions": [
+          0.4,
+          0.3,
+          0.25,
+          0.1
+        ]
+      }
+    },
+    {
+      "tool": "telephony.split_trunk_channels",
+      "class": "sum_total",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "trunk_id": "trunk-east-1",
+        "trunk_capacity": 100,
+        "tenant_ids": [
+          "acme",
+          "globex",
+          "initech"
+        ],
+        "tenant_channels": [
+          40,
+          35,
+          30
+        ]
+      }
+    },
+    {
+      "tool": "genome_slice_extract",
+      "class": "bounds_in_call",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "chromosome": "chr7",
+        "position": 159343000,
+        "window_size": 5000,
+        "chromosome_length": 159345973
+      }
+    },
+    {
+      "tool": "warehouse_pick_reserve",
+      "class": "bounds_in_call",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "bin_id": "A12-R04-S03",
+        "reserve_qty": 70,
+        "already_committed": 55,
+        "bin_on_hand": 120
+      }
+    },
+    {
+      "tool": "telephony_did_block_allocate",
+      "class": "bounds_in_call",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "range_prefix": "+1415555",
+        "start_offset": 980,
+        "block_count": 50,
+        "range_capacity": 1000
+      }
+    },
+    {
+      "tool": "game_server_shard_assign",
+      "class": "bounds_in_call",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "shard_id": "eu-west-arena-0317",
+        "party_size": 5,
+        "current_players": 60,
+        "shard_capacity": 64
+      }
+    },
+    {
+      "tool": "genomics.register_variant_call",
+      "class": "cross_field_consistency",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "reference_sequence": "ACGTTAGCCA",
+        "position": 5,
+        "reference_allele": "A",
+        "alternate_allele": "G"
+      }
+    },
+    {
+      "tool": "genomics.register_variant_call",
+      "class": "cross_field_consistency",
+      "gold": "nonconformant",
+      "pred": "conformant",
+      "args": {
+        "reference_sequence": "ACGTTAGCCA",
+        "position": 6,
+        "reference_allele": "T",
+        "alternate_allele": "G"
+      }
+    }
+  ]
+}

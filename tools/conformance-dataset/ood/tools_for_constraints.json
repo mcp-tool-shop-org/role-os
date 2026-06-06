@@ -1,0 +1,1412 @@
+[
+  {
+    "tool_name": "cdn.purge_window_schedule",
+    "_class": "ordering",
+    "domain": "CDN / edge cache operations",
+    "contract": "Schedules a cache-purge window on an edge POP. The window is defined by epoch-second timestamps `purge_start_epoch` and `purge_end_epoch`. CONTRACT: `purge_start_epoch` MUST be strictly less than `purge_end_epoch` (the window must have positive duration; a zero-length or inverted window is rejected). `pop_code` selects the point of presence. `max_objects` caps how many cached objects are evicted and must be a positive integer.",
+    "params": [
+      {
+        "name": "pop_code",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "purge_start_epoch",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "purge_end_epoch",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "max_objects",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Schedule a bounded cache-purge window on an edge POP."
+  },
+  {
+    "tool_name": "robotics.joint_sweep_command",
+    "_class": "ordering",
+    "domain": "Industrial robotics / motion control",
+    "contract": "Commands a single revolute joint to sweep through an angular range at a fixed angular velocity. Angles are in degrees. CONTRACT: `angle_min_deg` MUST be less than `angle_max_deg` (the sweep travels from min toward max; min >= max is an invalid sweep envelope). `joint_id` selects the joint; `velocity_deg_s` must be a positive number.",
+    "params": [
+      {
+        "name": "joint_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "angle_min_deg",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "angle_max_deg",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "velocity_deg_s",
+        "type": "number",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Sweep a robot joint across an angular range at constant speed."
+  },
+  {
+    "tool_name": "genomics.region_coverage_query",
+    "_class": "ordering",
+    "domain": "Genomics / sequence alignment",
+    "contract": "Queries read-coverage statistics over a contiguous interval of a reference contig. Coordinates are 0-based half-open. CONTRACT: `start_pos` MUST be strictly less than `end_pos` (a half-open interval requires start < end; an empty or reversed interval is rejected). `contig` names the reference sequence; `min_mapq` filters reads by mapping quality and must be an integer in 0..60.",
+    "params": [
+      {
+        "name": "contig",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "start_pos",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "end_pos",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "min_mapq",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Compute coverage over a genomic interval on a contig."
+  },
+  {
+    "tool_name": "telephony.tiered_rate_band_define",
+    "_class": "ordering",
+    "domain": "Telephony / billing rate plans",
+    "contract": "Defines one usage tier of a metered call-rate plan. A tier applies to call minutes between `band_floor_min` and `band_ceiling_min` inclusive of the floor and exclusive of the ceiling. CONTRACT: `band_floor_min` MUST be less than `band_ceiling_min` (the tier must cover a non-empty minute range; floor >= ceiling defines no billable minutes). `plan_id` identifies the plan; `price_per_min` is the per-minute cost in cents and must be a non-negative number.",
+    "params": [
+      {
+        "name": "plan_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "band_floor_min",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "band_ceiling_min",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "price_per_min",
+        "type": "number",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Add a non-empty usage tier to a metered call-rate plan."
+  },
+  {
+    "tool_name": "gameserver.matchmaking_skill_bracket_open",
+    "_class": "ordering",
+    "domain": "Game servers / matchmaking",
+    "contract": "Opens a matchmaking bracket that accepts players whose MMR (matchmaking rating) falls within a band. CONTRACT: `mmr_lower` MUST be less than or equal to `mmr_upper` (the inclusive band must be valid; lower may equal upper for a single-rating bracket, but lower > upper is rejected). `queue_name` selects the queue; `region` selects the datacenter region from {na, eu, apac, sa}.",
+    "params": [
+      {
+        "name": "queue_name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "mmr_lower",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "mmr_upper",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "region",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Open a matchmaking bracket for an MMR band in a region."
+  },
+  {
+    "tool_name": "swarm_drone_assign_waypoints",
+    "_class": "cardinality",
+    "domain": "robotics / autonomous drone swarm control",
+    "contract": "Assigns a flight waypoint to each drone in a swarm for a single coordinated maneuver. CARDINALITY CLAUSE: len(drone_ids) must equal len(waypoints) — every drone named in drone_ids receives exactly one waypoint, position-matched by index, so the two arrays must be the same length. Additionally, hover_seconds must be a non-negative integer (schema range, not the relational clause under test).",
+    "params": [
+      {
+        "name": "drone_ids",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "waypoints",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "maneuver_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "hover_seconds",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Command four drones to fly to four distinct GPS waypoints in one coordinated maneuver."
+  },
+  {
+    "tool_name": "cdn_purge_paths_with_etags",
+    "_class": "cardinality",
+    "domain": "CDN / edge cache invalidation",
+    "contract": "Purges specific edge-cached objects and, for each path, supplies the ETag the caller believes is currently cached so the edge can confirm before evicting. CARDINALITY CLAUSE: when verify_etags is true, len(expected_etags) must equal len(paths) — one expected ETag per path, index-aligned. When verify_etags is false, expected_etags must be omitted/empty (not under test here; verify_etags is true in all calls below).",
+    "params": [
+      {
+        "name": "zone_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "paths",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "expected_etags",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "verify_etags",
+        "type": "boolean",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Conditionally purge three CDN paths, each guarded by its expected ETag."
+  },
+  {
+    "tool_name": "phone_ring_group_set_weights",
+    "_class": "cardinality",
+    "domain": "telephony / VoIP call-routing",
+    "contract": "Configures a weighted ring group so inbound calls are distributed across member extensions in proportion to per-member weights. CARDINALITY CLAUSE: len(weights) must equal len(extensions) — exactly one integer weight per extension, index-aligned. Each weight must also be a positive integer (schema range, not the relational clause under test).",
+    "params": [
+      {
+        "name": "group_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "extensions",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "weights",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "strategy",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Set a weighted ring group across three extensions with a 5:3:2 split."
+  },
+  {
+    "tool_name": "genome_variant_batch_annotate",
+    "_class": "cardinality",
+    "domain": "genomics / variant annotation pipeline",
+    "contract": "Annotates a batch of genomic variants, returning at most a bounded number of candidate gene effects per variant. CARDINALITY CLAUSE: max_effects_per_variant must be less than or equal to len(variant_ids) is NOT the relation; the relation is max_effects_per_variant must be a positive integer that does not exceed the number of distinct reference transcripts supplied, i.e. max_effects_per_variant <= len(transcript_set). The annotation cannot emit more effects than there are transcripts to draw from.",
+    "params": [
+      {
+        "name": "assembly",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "variant_ids",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "transcript_set",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "max_effects_per_variant",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Annotate five variants, capping effects per variant at 3 against a 4-transcript reference set."
+  },
+  {
+    "tool_name": "warehouse_pick_wave_release",
+    "_class": "cardinality",
+    "domain": "logistics / warehouse fulfillment",
+    "contract": "Releases a pick wave by assigning order lines to available pickers. CARDINALITY CLAUSE: picker_count must be greater than or equal to 1 and less than or equal to the number of unique zones touched by the wave, i.e. 1 <= picker_count <= len(zones). The wave cannot dispatch more pickers than there are zones to staff (one picker per zone maximum for this wave policy).",
+    "params": [
+      {
+        "name": "wave_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "zones",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "order_lines",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "picker_count",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Release a pick wave across three zones with two pickers."
+  },
+  {
+    "tool_name": "telephony.bridgeCallLegs",
+    "_class": "distinctness",
+    "domain": "telephony / PBX call control",
+    "contract": "Bridges two active call legs into a single conference. DISTINCTNESS: leg_a_id and leg_b_id must refer to different call legs — a call leg cannot be bridged to itself. Both leg ids must be present in the call. record_mixed toggles whether the bridged audio is recorded.",
+    "params": [
+      {
+        "name": "leg_a_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "leg_b_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "record_mixed",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Bridge an inbound caller leg to an agent leg so the two parties can talk on one conference."
+  },
+  {
+    "tool_name": "genomics.alignPairwiseSequences",
+    "_class": "distinctness",
+    "domain": "bioinformatics / sequence alignment",
+    "contract": "Submits a pairwise alignment job between two stored sequence records. DISTINCTNESS: query_seq_id and subject_seq_id must reference two different sequence records — a sequence cannot be pairwise-aligned against itself in this endpoint. Both ids must be present in the call. gap_open_penalty is a non-negative integer.",
+    "params": [
+      {
+        "name": "query_seq_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "subject_seq_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "gap_open_penalty",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Align a newly sequenced read against a reference record to score similarity."
+  },
+  {
+    "tool_name": "cdn.promoteOriginFailover",
+    "_class": "distinctness",
+    "domain": "CDN / edge origin routing",
+    "contract": "Configures an active-origin to standby-origin failover pair for an edge route. DISTINCTNESS: primary_origin_id and failover_origin_id must be two different origins — the failover target cannot be the same origin as the primary, or there is no redundancy. Both ids must be present. health_check_interval_sec is a positive integer.",
+    "params": [
+      {
+        "name": "route_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "primary_origin_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "failover_origin_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "health_check_interval_sec",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Point an edge route at a primary origin with a distinct standby origin to fail over to when the primary is unhealthy."
+  },
+  {
+    "tool_name": "featureflags.copyVariantTargeting",
+    "_class": "distinctness",
+    "domain": "feature-flag / experimentation platform",
+    "contract": "Copies the targeting rules of one flag variant onto another variant within the same flag. DISTINCTNESS: source_variant_key and dest_variant_key must be two different variant keys — you cannot copy a variant's targeting onto itself. Both keys must be present in the call. overwrite controls whether existing destination rules are replaced.",
+    "params": [
+      {
+        "name": "flag_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "source_variant_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "dest_variant_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "overwrite",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Replicate the 'treatment' variant's audience targeting onto the 'treatment_v2' variant so both serve the same cohort."
+  },
+  {
+    "tool_name": "gameserver.migratePartyShard",
+    "_class": "distinctness",
+    "domain": "online game server / sharded matchmaking",
+    "contract": "Migrates a player party from one game shard to another for load rebalancing. DISTINCTNESS: from_shard_id and to_shard_id must be two different shards — migrating a party to the shard it already lives on is not allowed. Both shard ids must be present in the call. drain_existing_session is a boolean controlling whether the current session is torn down first.",
+    "params": [
+      {
+        "name": "party_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "from_shard_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "to_shard_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "drain_existing_session",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Move an overloaded party off shard us-west-03 onto the lightly loaded shard us-west-07."
+  },
+  {
+    "tool_name": "cdn.shard_edge_traffic",
+    "_class": "sum_total",
+    "domain": "CDN / edge networking",
+    "contract": "Splits incoming traffic for a hostname across edge POPs. The `weights` array assigns a percentage (integer, 0-100) to each POP in `pops`. RELATIONAL CLAUSE: the elements of `weights` MUST sum to exactly 100 (a complete traffic distribution; partial distributions are rejected). Additionally `weights.length` must equal `pops.length`.",
+    "params": [
+      {
+        "name": "hostname",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "pops",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "weights",
+        "type": "array",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Route 100% of cdn.example.com traffic across three POPs."
+  },
+  {
+    "tool_name": "genome.assign_sequencing_lanes",
+    "_class": "sum_total",
+    "domain": "Genomics / sequencing",
+    "contract": "Multiplexes samples onto a flowcell. `sample_fractions` gives each sample in `sample_ids` its fraction (number, 0.0-1.0) of total flowcell reads. RELATIONAL CLAUSE: the elements of `sample_fractions` MUST sum to a value not exceeding 1.0 (the flowcell capacity); under-filling is allowed (spare capacity) but over-subscription is rejected. `sample_fractions.length` must equal `sample_ids.length`.",
+    "params": [
+      {
+        "name": "flowcell_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "sample_ids",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "sample_fractions",
+        "type": "array",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Pool four samples onto flowcell FC-22 using 95% of capacity."
+  },
+  {
+    "tool_name": "gameserver.allocate_match_slots",
+    "_class": "sum_total",
+    "domain": "Game servers / matchmaking",
+    "contract": "Distributes a match's player slots across teams. `team_sizes` gives the integer slot count per team in `team_names`. RELATIONAL CLAUSE: the elements of `team_sizes` MUST sum to exactly `total_slots` (the lobby is filled exactly — no empty or overbooked slots). `team_sizes.length` must equal `team_names.length` and `total_slots` >= 1.",
+    "params": [
+      {
+        "name": "match_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "total_slots",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "team_names",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "team_sizes",
+        "type": "array",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Fill a 12-slot match across two teams of six."
+  },
+  {
+    "tool_name": "logistics.plan_pallet_loadout",
+    "_class": "sum_total",
+    "domain": "Logistics / freight",
+    "contract": "Plans how cargo items are loaded onto a single truck. `item_weights_kg` gives the weight (number, kg) of each item in `item_ids`. RELATIONAL CLAUSE: the elements of `item_weights_kg` MUST sum to a value not exceeding `max_payload_kg` (the truck's rated payload); the load may be under the limit but never over it. `item_weights_kg.length` must equal `item_ids.length` and `max_payload_kg` > 0.",
+    "params": [
+      {
+        "name": "truck_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "max_payload_kg",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "item_ids",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "item_weights_kg",
+        "type": "array",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Load three crates onto a truck rated for 1000 kg."
+  },
+  {
+    "tool_name": "telephony.split_trunk_channels",
+    "_class": "sum_total",
+    "domain": "Telephony / SIP trunking",
+    "contract": "Partitions a SIP trunk's concurrent-call channels among tenants. `tenant_channels` gives the integer channel count per tenant in `tenant_ids`. RELATIONAL CLAUSE: the elements of `tenant_channels` MUST sum to at most `trunk_capacity` (the trunk's licensed concurrent-call ceiling); allocating fewer is allowed (reserve headroom) but exceeding the ceiling is rejected. `tenant_channels.length` must equal `tenant_ids.length`, each channel count >= 0, and `trunk_capacity` >= 1.",
+    "params": [
+      {
+        "name": "trunk_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "trunk_capacity",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "tenant_ids",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "tenant_channels",
+        "type": "array",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Allocate channels of a 100-channel trunk across three tenants with headroom."
+  },
+  {
+    "tool_name": "cdn.purge_cache_target",
+    "_class": "mutual_exclusion",
+    "domain": "CDN / edge caching",
+    "contract": "Purges cached content from an edge CDN zone. MUTUAL EXCLUSION: exactly one of `url_prefix` or `cache_tag` must be set to identify the purge target — never both, never neither. `url_prefix` purges by path; `cache_tag` purges by surrogate-key tag. Setting both is ambiguous (two conflicting target selectors); setting neither leaves the purge target undefined. `zone_id` is always required.",
+    "params": [
+      {
+        "name": "zone_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "url_prefix",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cache_tag",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "soft_purge",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Purge a region of the cache identified by exactly one selector."
+  },
+  {
+    "tool_name": "telephony.route_inbound_did",
+    "_class": "mutual_exclusion",
+    "domain": "Telephony / SIP call routing",
+    "contract": "Configures the inbound routing destination for a provisioned DID phone number. MUTUAL EXCLUSION: exactly one of `forward_extension` or `sip_uri` must be provided as the routing destination — never both, never neither. `forward_extension` routes the call to an internal PBX extension; `sip_uri` routes it to an external SIP endpoint. Supplying both creates two competing destinations; supplying neither leaves the DID with no answer target. `did_number` is always required.",
+    "params": [
+      {
+        "name": "did_number",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "forward_extension",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "sip_uri",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "ring_timeout_sec",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Point an inbound DID at exactly one answer destination."
+  },
+  {
+    "tool_name": "robotics.set_joint_command",
+    "_class": "mutual_exclusion",
+    "domain": "Robotics / motor control",
+    "contract": "Issues a command to a single robot arm joint. MUTUAL EXCLUSION: exactly one of `target_angle_deg` or `target_velocity_dps` must be set, selecting either position-control mode or velocity-control mode — never both, never neither. The two modes drive mutually incompatible servo control loops; supplying both is undefined behavior, and supplying neither gives the joint no setpoint. `joint_id` is always required.",
+    "params": [
+      {
+        "name": "joint_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_angle_deg",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "target_velocity_dps",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "max_torque_nm",
+        "type": "number",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Command one joint in exactly one control mode."
+  },
+  {
+    "tool_name": "featureflag.set_rollout_rule",
+    "_class": "mutual_exclusion",
+    "domain": "Feature flags / progressive delivery",
+    "contract": "Defines how a feature flag is exposed to traffic. MUTUAL EXCLUSION: exactly one of `percentage_rollout` or `segment_id` must be specified as the targeting strategy — never both, never neither. `percentage_rollout` exposes the flag to a random percentage of users; `segment_id` exposes it to a named audience segment. The two strategies are evaluated by different targeting engines and cannot be combined in one rule; omitting both produces a rule that matches no users. `flag_key` is always required.",
+    "params": [
+      {
+        "name": "flag_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "percentage_rollout",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "segment_id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "enabled",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Set a flag's exposure via exactly one targeting strategy."
+  },
+  {
+    "tool_name": "genomics.fetch_variant_window",
+    "_class": "mutual_exclusion",
+    "domain": "Genomics / sequence retrieval",
+    "contract": "Retrieves the genomic variants overlapping a query window from a reference assembly. MUTUAL EXCLUSION: exactly one of `region_coords` or `gene_symbol` must be provided to define the query window — never both, never neither. `region_coords` defines the window by literal chromosome coordinates (e.g. chr7:55019017-55211628); `gene_symbol` resolves the window from a gene name lookup. Providing both yields two conflicting window definitions; providing neither leaves the query unbounded. `assembly` is always required.",
+    "params": [
+      {
+        "name": "assembly",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "region_coords",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "gene_symbol",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "include_synonymous",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Fetch variants for exactly one query window definition."
+  },
+  {
+    "tool_name": "cdn_purge_create",
+    "_class": "conditional",
+    "domain": "CDN / edge cache invalidation",
+    "contract": "Creates a cache-purge job for a distribution. CONDITIONAL CO-REQUIREMENT: if scope='paths', the paths array MUST be non-empty (at least one path glob); if scope='everything', paths MUST be omitted or empty (a full purge takes no path list). The wait_seconds delay applies in both scopes.",
+    "params": [
+      {
+        "name": "distribution_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "scope",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "paths",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "wait_seconds",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "purge specific cached path globs from a CDN distribution"
+  },
+  {
+    "tool_name": "telephony_outbound_call",
+    "_class": "conditional",
+    "domain": "Telephony / programmable voice",
+    "contract": "Places an outbound voice call. CONDITIONAL CO-REQUIREMENT: if record=true, then retention_days MUST be present and within 1..90 inclusive (recordings require an explicit retention window); if record=false, retention_days MUST be omitted (no recording means no retention setting). caller_id and to_number are always required.",
+    "params": [
+      {
+        "name": "to_number",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "caller_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "record",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "retention_days",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "place a recorded outbound call with a defined recording retention window"
+  },
+  {
+    "tool_name": "warehouse_robot_dispatch",
+    "_class": "conditional",
+    "domain": "Robotics / warehouse fleet control",
+    "contract": "Dispatches a mobile robot to a task. CONDITIONAL CO-REQUIREMENT: if payload_kg > 0 (the robot will carry a load), then gripper MUST be one of 'suction' or 'clamp' (a load requires an end-effector); if payload_kg == 0 (empty repositioning move), gripper MUST be 'none'. zone_id and robot_id are always required.",
+    "params": [
+      {
+        "name": "robot_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "zone_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "payload_kg",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "gripper",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "send a robot to pick up and carry a load in a warehouse zone"
+  },
+  {
+    "tool_name": "feature_flag_rollout_set",
+    "_class": "conditional",
+    "domain": "Feature flags / progressive delivery",
+    "contract": "Configures a feature flag's rollout. CONDITIONAL CO-REQUIREMENT: if strategy='percentage', then percentage MUST be present and in 0..100 inclusive, and segment_id MUST be omitted; if strategy='segment', then segment_id MUST be present (a non-empty string) and percentage MUST be omitted. flag_key is always required.",
+    "params": [
+      {
+        "name": "flag_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "strategy",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "percentage",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "segment_id",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "roll a feature flag out to a percentage of traffic"
+  },
+  {
+    "tool_name": "genome_variant_call_submit",
+    "_class": "conditional",
+    "domain": "Genomics / variant calling pipeline",
+    "contract": "Submits a variant-calling job over a reference genome. CONDITIONAL CO-REQUIREMENT: if reference_build='GRCh38', then chrom_naming MUST equal 'chr_prefixed' (GRCh38 contigs in this pipeline are named chr1..chrX); if reference_build='GRCh37', then chrom_naming MUST equal 'numeric' (GRCh37 contigs are named 1..X). sample_id and reference_build are always required.",
+    "params": [
+      {
+        "name": "sample_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "reference_build",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "chrom_naming",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "min_depth",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "call variants for a sample against the GRCh38 reference with matching contig naming"
+  },
+  {
+    "tool_name": "cdn_purge_range",
+    "_class": "bounds_in_call",
+    "domain": "CDN / edge cache",
+    "contract": "Purges a contiguous byte range of a cached object at an edge node. The requested range must lie entirely within the object: start_byte + length must be less than or equal to object_size (all three given in this call). start_byte is a 0-based offset; length is the number of bytes to purge.",
+    "params": [
+      {
+        "name": "cache_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "start_byte",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "length",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "object_size",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Invalidate a sub-range of a large cached asset without purging the whole object."
+  },
+  {
+    "tool_name": "genome_slice_extract",
+    "_class": "bounds_in_call",
+    "domain": "genomics / sequence analysis",
+    "contract": "Extracts a subsequence from a single chromosome. The slice must fit within the chromosome: position + window_size must be less than or equal to chromosome_length (all provided in this call). position is a 1-based coordinate of the first base; window_size is the number of bases to read.",
+    "params": [
+      {
+        "name": "chromosome",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "position",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "window_size",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "chromosome_length",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Pull a fixed-width base window starting at a given coordinate for motif scanning."
+  },
+  {
+    "tool_name": "warehouse_pick_reserve",
+    "_class": "bounds_in_call",
+    "domain": "logistics / warehouse fulfillment",
+    "contract": "Reserves units of a SKU from a specific bin for an outbound order. The reservation plus what is already committed must not exceed the bin's on-hand units: reserve_qty + already_committed must be less than or equal to bin_on_hand (all three given in this call). reserve_qty is the units to reserve now.",
+    "params": [
+      {
+        "name": "bin_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "reserve_qty",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "already_committed",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "bin_on_hand",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Allocate stock to an order line while respecting units already promised to other orders."
+  },
+  {
+    "tool_name": "telephony_did_block_allocate",
+    "_class": "bounds_in_call",
+    "domain": "telephony / number provisioning",
+    "contract": "Allocates a contiguous block of Direct Inward Dialing numbers starting at an offset within a carrier-assigned range. The block must stay inside the range: start_offset + block_count must be less than or equal to range_capacity (all given in this call). start_offset is the 0-based index into the range; block_count is how many consecutive DIDs to allocate.",
+    "params": [
+      {
+        "name": "range_prefix",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "start_offset",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "block_count",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "range_capacity",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Carve a consecutive DID block out of a leased number range for a tenant."
+  },
+  {
+    "tool_name": "game_server_shard_assign",
+    "_class": "bounds_in_call",
+    "domain": "game servers / matchmaking",
+    "contract": "Assigns a party of players to a live match shard. The party plus the players already on the shard must not exceed the shard's hard player cap: party_size + current_players must be less than or equal to shard_capacity (all three given in this call). party_size is the number of players joining together now.",
+    "params": [
+      {
+        "name": "shard_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "party_size",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "current_players",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "shard_capacity",
+        "type": "integer",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Slot a queued party onto a running match without overfilling the shard."
+  },
+  {
+    "tool_name": "cdn_purge_quota_consume",
+    "_class": "stateful_balance",
+    "domain": "CDN / edge cache operations",
+    "contract": "Consumes purge credits from an edge zone's monthly quota. The number of URLs submitted (url_count) must not exceed the zone's remaining purge credits recorded in STATE (remaining_credits). If url_count > STATE.remaining_credits the call is rejected. The zone_id must also be one of the zones present in STATE.",
+    "params": [
+      {
+        "name": "zone_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "url_count",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "priority",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": "zone 'edge-fra-07' has remaining_credits=120 this billing cycle; known zones = {edge-fra-07, edge-iad-02}.",
+    "intent": "Submit a batch URL purge against an edge zone, drawing down its monthly purge-credit balance."
+  },
+  {
+    "tool_name": "warehouse_robot_pick_reserve",
+    "_class": "stateful_balance",
+    "domain": "Robotics / warehouse fulfillment",
+    "contract": "Reserves units of a SKU for a picking robot to retrieve from a bin. The requested quantity (qty) must not exceed the on-hand units for that SKU in STATE (on_hand). If qty > STATE.on_hand the reservation is rejected because the robot cannot pick stock that is not physically present.",
+    "params": [
+      {
+        "name": "sku",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "bin_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "qty",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "robot_id",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": "SKU 'BOLT-M6-22' in bin A14 has on_hand=8 units.",
+    "intent": "Reserve physical units of a SKU in a bin for a robot pick task."
+  },
+  {
+    "tool_name": "telephony_did_assign",
+    "_class": "stateful_balance",
+    "domain": "Telephony / VoIP number provisioning",
+    "contract": "Assigns a Direct Inward Dialing (DID) phone number to a subscriber line. The did_number must be a member of the carrier's available (unassigned) DID pool listed in STATE (available_dids). If did_number is not in STATE.available_dids the assignment is rejected, since only free numbers in the pool can be provisioned.",
+    "params": [
+      {
+        "name": "did_number",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "subscriber_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "region",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": "available_dids (unassigned pool) = {+14155550101, +14155550102, +14155550199}.",
+    "intent": "Provision an available DID number from the carrier pool to a subscriber."
+  },
+  {
+    "tool_name": "feature_flag_rollout_increment",
+    "_class": "stateful_balance",
+    "domain": "Feature flags / progressive delivery",
+    "contract": "Increases the rollout percentage of a feature flag. The requested target_percent must not exceed the flag's approved rollout ceiling in STATE (max_approved_percent). If target_percent > STATE.max_approved_percent the change is rejected, because rollout cannot surpass the change-management-approved cap.",
+    "params": [
+      {
+        "name": "flag_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_percent",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "environment",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": "flag 'checkout-v2' in env=prod has max_approved_percent=50.",
+    "intent": "Bump a feature flag's rollout percentage toward its approved ceiling."
+  },
+  {
+    "tool_name": "game_server_slot_join",
+    "_class": "stateful_balance",
+    "domain": "Multiplayer game servers / matchmaking",
+    "contract": "Adds a player party to a live match instance. The party_size must not exceed the match's currently open slots in STATE (open_slots). If party_size > STATE.open_slots the join is rejected because the match cannot seat more players than it has free slots. The match_id must also be one of the active matches in STATE.",
+    "params": [
+      {
+        "name": "match_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "party_size",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "region",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": "match 'm-7742' is active with open_slots=3; active matches = {m-7742, m-7743}.",
+    "intent": "Seat a party of players into an active match with available capacity."
+  },
+  {
+    "tool_name": "cdn_cache_tier_promote",
+    "_class": "monotonic",
+    "domain": "CDN / edge caching",
+    "contract": "Moves a cached asset to a colder storage tier. Tiers are strictly ordered hot < warm < cold < frozen (warmest to coldest). MONOTONIC: target_tier must be strictly colder than the asset's current_tier in STATE — promotion only ever moves an asset one or more steps toward colder storage, never back toward a warmer tier and never to the same tier. The current_tier is given in STATE; the verdict is derivable from the tier ordering plus that fact.",
+    "params": [
+      {
+        "name": "asset_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_tier",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "verify_checksum",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": "Asset asset_id='img-90f23' current_tier='warm'. Tier order (warm→cold): hot < warm < cold < frozen.",
+    "intent": "Demote an infrequently-accessed asset to colder, cheaper storage."
+  },
+  {
+    "tool_name": "firmware_ota_stage",
+    "_class": "monotonic",
+    "domain": "robotics / embedded OTA updates",
+    "contract": "Stages a firmware image onto a robot for over-the-air update. STEP rule: target_version must equal the robot's installed_version plus exactly one — sequential single-step upgrades only, no skipped versions and no downgrades. The installed_version is given in STATE; target_version is conformant only if target_version == installed_version + 1.",
+    "params": [
+      {
+        "name": "robot_serial",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "target_version",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "reboot_after",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": "Robot robot_serial='RX7-0042' installed_version=14.",
+    "intent": "Push the next sequential firmware revision to a field robot."
+  },
+  {
+    "tool_name": "loan_repayment_stage_advance",
+    "_class": "monotonic",
+    "domain": "lending / loan servicing",
+    "contract": "Advances a loan account to a new delinquency-resolution stage. Stages are strictly ordered current < grace < late < collections < charged_off, progressing only toward more severe states. MONOTONIC: new_stage must be the same severity or more severe than the account's current_stage in STATE — the stage may hold or worsen but may never be rolled back to a less-severe stage by this call. current_stage is given in STATE.",
+    "params": [
+      {
+        "name": "account_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "new_stage",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "notify_borrower",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "state": "Account account_id='LN-55120' current_stage='grace'. Stage severity order: current < grace < late < collections < charged_off.",
+    "intent": "Escalate a delinquent account from grace period to late status."
+  },
+  {
+    "tool_name": "telco_number_porting_state_set",
+    "_class": "monotonic",
+    "domain": "telephony / number portability",
+    "contract": "Sets the next state of a phone-number porting request. The porting lifecycle is a strict ordered chain submitted < validated < accepted < activated < completed and may only move forward one step at a time. STEP rule: next_state must be the immediate successor of the request's current_state in STATE (exactly one step forward in the chain) — no skipping intermediate states and no moving backward. current_state is given in STATE.",
+    "params": [
+      {
+        "name": "port_request_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "next_state",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "carrier_ref",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": "Port request port_request_id='PORT-7781' current_state='validated'. Lifecycle chain: submitted < validated < accepted < activated < completed.",
+    "intent": "Advance a port request from 'validated' to the next lifecycle state."
+  },
+  {
+    "tool_name": "feature_flag_rollout_widen",
+    "_class": "monotonic",
+    "domain": "feature flags / progressive delivery",
+    "contract": "Widens the rollout percentage of a feature flag. MONOTONIC: rollout_percent must be strictly greater than the flag's current_percent in STATE — rollout can only widen, never narrow or stay flat, through this tool (rollbacks use a separate revert tool). rollout_percent is an integer in the inclusive range 0..100. current_percent is given in STATE.",
+    "params": [
+      {
+        "name": "flag_key",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "rollout_percent",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "state": "Flag flag_key='new-checkout' current_percent=25. rollout_percent valid range is 0..100.",
+    "intent": "Increase a canary feature flag from 25% to a wider audience."
+  },
+  {
+    "tool_name": "genomics.register_variant_call",
+    "_class": "cross_field_consistency",
+    "domain": "genomics / variant calling",
+    "contract": "Registers a single nucleotide variant against a reference build. CROSS-FIELD CONSISTENCY: the `reference_allele` field must be exactly equal to the base(s) present in `reference_sequence` at the 1-based `position` (i.e. reference_sequence[position-1 .. position-1+len(reference_allele)-1] must spell reference_allele). The asserted reference allele must agree with what the supplied reference sequence actually contains at that position.",
+    "params": [
+      {
+        "name": "reference_sequence",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "position",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "reference_allele",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "alternate_allele",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "state": null,
+    "intent": "Test that an asserted reference base agrees with the actual base at the given coordinate in the provided sequence."
+  },
+  {
+    "tool_name": "cdn.create_signed_cache_purge",
+    "_class": "cross_field_consistency",
+    "domain": "CDN / edge cache",
+    "contract": "Creates a signed purge request for a set of edge URLs. CROSS-FIELD CONSISTENCY: the `host` field must equal the hostname (authority) component of every URL in `urls`. All purge targets must belong to the host being authorized; if any URL's hostname differs from `host`, the fields disagree.",
+    "params": [
+      {
+        "name": "host",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "urls",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "purge_type",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "ttl_seconds",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Test that a declared host matches the hostname of every URL in the accompanying list."
+  },
+  {
+    "tool_name": "robotics.commit_joint_trajectory",
+    "_class": "cross_field_consistency",
+    "domain": "robotics / motion planning",
+    "contract": "Commits a joint-space trajectory waypoint to an arm controller. CROSS-FIELD CONSISTENCY: the integer `dof` (degrees of freedom) must equal the length of the `joint_positions` array. The declared DOF must match the number of joint values actually supplied; if dof != len(joint_positions) the fields disagree.",
+    "params": [
+      {
+        "name": "arm_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "dof",
+        "type": "integer",
+        "required": true
+      },
+      {
+        "name": "joint_positions",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "duration_ms",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": null,
+    "intent": "Test that a declared dimensionality field equals the length of the vector it describes."
+  },
+  {
+    "tool_name": "logistics.book_reefer_shipment",
+    "_class": "cross_field_consistency",
+    "domain": "logistics / cold-chain freight",
+    "contract": "Books a refrigerated (reefer) container shipment. CROSS-FIELD CONSISTENCY: the requested `setpoint_celsius` must fall within the cargo's allowed temperature window for the chosen `commodity_code`, where the per-commodity window is given in STATE. The setpoint must be >= the window's min and <= the window's max for that commodity; a setpoint outside the window for the declared commodity makes the two fields disagree.",
+    "params": [
+      {
+        "name": "commodity_code",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "setpoint_celsius",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "container_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "humidity_pct",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "state": "Commodity temperature windows (min_celsius, max_celsius): FROZEN-SEAFOOD = [-25.0, -18.0]; FRESH-PRODUCE = [2.0, 8.0]; PHARMA-2-8 = [2.0, 8.0]; BANANAS = [12.0, 14.0]. Container 'REEF-88241' is a valid reefer unit.",
+    "intent": "Test that a setpoint value agrees with the allowed range for the cargo type named in the same call, using a state-provided window."
+  }
+]

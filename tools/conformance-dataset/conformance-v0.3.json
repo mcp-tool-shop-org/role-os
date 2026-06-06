@@ -1,0 +1,35 @@
+{
+  "id": "conformance-v0.3 — deterministic CONTRACT floor (architectural, NOT a finetune)",
+  "supersedes_decision": "conformance-v0.2.json (the finetune that lifted the exam but did NOT generalize)",
+  "role": "Tool-Call Conformance",
+  "premise": "v0.2's OOD dogfood proved the residual false-conformants are COMPUTABLE-ARITHMETIC contracts (sum-to-cap, additive bounds, cardinality, string-index) a 14B LLM does unreliably at any training volume. v0.3 moves those to the deterministic floor — the deterministic-floor + LLM-ceiling design taken one rung further.",
+  "change": {
+    "where": "role-os/src/specialist/conformance-consult.mjs",
+    "added": "contractFloor(tool, call, state) — a constraint evaluator over a tool's structured `constraints`; resolveOperand (bare field | {value} | {len} | {state} | {field} | {enum}). Constraint kinds: cmp (lt/le/gt/ge/eq/ne, float-epsilon eq, {len} operands), sum (sum-to-cap + additive bounds via of:[fields]), present (exactly-N, mutual-exclusion), requires (conditional co-requirement), distinct, member (set/STATE), char_at (string-index, with `offset` for 1-based). evidenceFor + consultConformance thread optional `state`.",
+    "safety": "The floor only ever PROVES a violation; an unevaluable constraint (operand absent / prose-only state / unknown kind) DEFERS to the LLM (verdict null) — never asserts conformance, never false-flags. A floor violation short-circuits to nonconformant/floor before the LLM. No-op for tools without `constraints` (backward-compatible).",
+    "tests": "30 unit+integration in test/specialist-conformance-consult.test.mjs (each kind pass+prove, floor-short-circuits-before-LLM, state threading, unevaluable-defers). Full role-os suite green."
+  },
+  "proof_ood": {
+    "method": "Blind-authored constraints for the 49 v0.2 OOD tools (10-agent workflow conformance-constraint-author, agents saw contract+params+intent ONLY — not the gold calls). A validation guard drops any constraint that flags its tool's known-good conformant call (provably mis-authored). Then contractFloor scored every OOD call deterministically (ood_floor_eval.mjs).",
+    "constraints_authored_raw": 85,
+    "constraints_dropped_misauthored": 4,
+    "conformant_false_positives": 0,
+    "violations_caught_by_floor": "76/83 (92%)",
+    "per_class_caught": {"ordering": "8/8", "cardinality": "8/8", "distinctness": "7/7", "sum_total": "8/8", "mutual_exclusion": "10/10", "conditional": "6/10", "bounds_in_call": "8/8", "stateful_balance": "8/8", "monotonic": "9/9", "cross_field_consistency": "4/7"},
+    "vs_v1_bar": {
+      "v1_llm_ood_false_conformants": 7,
+      "now_caught_by_floor": 7,
+      "combined_floor_or_llm_residual_false_conformants": 0
+    },
+    "comparison": "OOD false-conformants: v1 LLM = 7; v0.2 finetune = 9 (WORSE); v0.3 floor = 0. Zero retraining, zero false-positives, fully replayable/auditable."
+  },
+  "deployment": {
+    "status": "COMMITTED (feat/conformance-v0.3-floor) + rollout STARTED. Floor code is safe (no-op for unannotated tools); v1 adapter remains the LLM ceiling unchanged.",
+    "rollout": {
+      "mechanism": "tool-constraints.json — a per-tool catalog (name -> {constraints, state_struct?}) the gate attaches via withToolConstraints(tool, catalog) before consultConformance. Grown safely: build_tool_constraints.mjs drops any constraint that flags its tool's known-good call (the guard), and test/tool-constraints.test.mjs CI-enforces 0 conformant false-positives so no mis-authored constraint can land.",
+      "seed_batch": "All 90 conformance-corpus tools, blind-authored (9-agent workflow, contract+params only). 119 constraints across 65/90 tools, 0 dropped, 0 conformant false-positives. The floor now catches 57/106 (54%) of the corpus's known semantic-contract violations DETERMINISTICALLY; the other 49 (48 tools) are genuinely-semantic (absolute-path, https, E.164, RFC-5322, semver, cron, read-only-SQL, no-PII) and correctly remain the LLM ceiling's job.",
+      "next": "Annotate real MCP tools as onboarded, same author->guard->test process. Wire the live dispatch seam to call withToolConstraints + consultConformance (the consult is built/tested but not yet invoked from a dispatch hook)."
+    },
+    "artifacts": "ood/fresh_cases.jsonl + ood/constraints.json + ood/dogfood-v1.json + ood_floor_eval.mjs (the OOD generalization gate); effective_corpus.json + tool-constraints.json + build_tool_constraints.mjs + test/tool-constraints.test.mjs (the rollout catalog + its guard)."
+  }
+}

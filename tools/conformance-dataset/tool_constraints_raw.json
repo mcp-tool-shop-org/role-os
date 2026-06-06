@@ -1,0 +1,1389 @@
+{
+  "read_file": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "http_fetch": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "db_query": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "limit",
+        "right": {
+          "value": 1000
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "charge_card": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "create_event": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "end",
+        "right": "start"
+      }
+    ],
+    "state_struct": null
+  },
+  "send_message": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": {
+          "len": "text"
+        },
+        "right": {
+          "value": 4000
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "s3_upload": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "run_shell": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "timeout",
+        "right": {
+          "value": 300
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "git_commit": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "search_web": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "top_k",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "top_k",
+        "right": {
+          "value": 50
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "schedule_task": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "set_config": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "scope",
+          "equals": "global"
+        },
+        "require": [
+          "admin"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "admin",
+        "right": {
+          "value": true
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "write_file": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "move_path": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "chmod_path": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "create_archive": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": {
+          "len": "sources"
+        },
+        "right": {
+          "value": 1
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "stat_path": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "path",
+        "in": {
+          "state": "existing_entries"
+        }
+      }
+    ],
+    "state_struct": {
+      "existing_entries": [
+        "/etc/hosts",
+        "/etc/passwd",
+        "/var/log"
+      ]
+    }
+  },
+  "make_directory": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "watch_path": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "debounce_ms",
+        "right": "timeout_ms"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": {
+          "len": "events"
+        },
+        "right": {
+          "value": 1
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "create_oauth_token": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "redirect_uri",
+        "right": {
+          "state": "original_redirect_uri"
+        }
+      },
+      {
+        "kind": "requires",
+        "when": {
+          "field": "grant_type",
+          "equals": "authorization_code"
+        },
+        "require": [
+          "code"
+        ]
+      }
+    ],
+    "state_struct": {
+      "original_redirect_uri": "https://app.example.com/oauth/callback"
+    }
+  },
+  "register_webhook": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "set_rate_limit_policy": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "max_burst",
+        "right": "requests_per_second"
+      }
+    ],
+    "state_struct": null
+  },
+  "graphql_query": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "create_presigned_upload_url": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "expires_in_seconds",
+        "right": {
+          "value": 604800
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "schedule_token_rotation": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "overlap_seconds",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "paginate_rest_collection": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "page_size",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "page_size",
+        "right": {
+          "value": 100
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "sql_query_run": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "limit",
+        "right": {
+          "value": 10000
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "kv_set": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "ttl_seconds",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "ttl_seconds",
+        "right": {
+          "value": 2592000
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "vector_upsert": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "embedding"
+        },
+        "right": "dim"
+      }
+    ],
+    "state_struct": null
+  },
+  "blob_upload": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "cache_invalidate_range": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "end_epoch_ms",
+        "right": "start_epoch_ms"
+      }
+    ],
+    "state_struct": null
+  },
+  "sql_schema_migrate": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "target_version",
+        "right": "current_version"
+      }
+    ],
+    "state_struct": null
+  },
+  "vector_search": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "top_k",
+        "right": {
+          "value": 1000
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "query_vector"
+        },
+        "right": "dim"
+      }
+    ],
+    "state_struct": null
+  },
+  "refund_charge": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "amount",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "amount",
+        "right": {
+          "state": "remaining_refundable"
+        }
+      }
+    ],
+    "state_struct": {
+      "remaining_refundable": 1500
+    }
+  },
+  "create_transfer": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "source_account",
+          "destination_account"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "create_invoice": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "due_date",
+        "right": "issue_date"
+      }
+    ],
+    "state_struct": null
+  },
+  "create_payout": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "amount",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "quote_fx_conversion": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "sell_currency",
+          "buy_currency"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "quote_ttl_seconds",
+        "right": {
+          "value": 30
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "quote_ttl_seconds",
+        "right": {
+          "value": 900
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "schedule_recurring_charge": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "amount",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "k8s_scale_deployment": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "dns_upsert_record": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "secret_rotate_version": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ne",
+        "left": "new_value",
+        "right": {
+          "state": "active_value"
+        }
+      }
+    ],
+    "state_struct": {
+      "active_value": "aB3$kM1vQ8wE"
+    }
+  },
+  "ci_promote_artifact": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "iac_apply_plan": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "container_set_resource_limits": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "cpu_limit_millicores",
+        "right": "cpu_request_millicores"
+      }
+    ],
+    "state_struct": null
+  },
+  "deploy_canary_rollout": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "traffic_percent",
+        "right": "current_weight"
+      }
+    ],
+    "state_struct": null
+  },
+  "send_sms": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": {
+          "len": "body"
+        },
+        "right": {
+          "value": 1600
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "schedule_calendar_event": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "end",
+        "right": "start"
+      }
+    ],
+    "state_struct": null
+  },
+  "send_email": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "create_recurring_reminder": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "lead_minutes",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "post_channel_message": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "channel_id",
+        "in": {
+          "state": "member_channels"
+        }
+      },
+      {
+        "kind": "member",
+        "field": "thread_ts",
+        "in": {
+          "state": "thread_parents"
+        }
+      }
+    ],
+    "state_struct": {
+      "member_channels": [
+        "C04ABCD123"
+      ],
+      "thread_parents": [
+        "1718900000.001200",
+        "1718900500.004500"
+      ]
+    }
+  },
+  "send_meeting_invite": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "organizer",
+        "in": {
+          "field": "attendees"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "rsvp_deadline",
+        "right": "start_date"
+      }
+    ],
+    "state_struct": null
+  },
+  "snooze_notification": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "notification_id",
+        "in": {
+          "state": "owned_notifications"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "snooze_until",
+        "right": {
+          "state": "current_time"
+        }
+      }
+    ],
+    "state_struct": {
+      "current_time": "2026-06-06T12:00:00Z",
+      "owned_notifications": [
+        "ntf_77b21"
+      ]
+    }
+  },
+  "embed_text_batch": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "chat_completion": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "max_tokens",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "register_mcp_tool": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "rerank_documents": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "top_n",
+        "right": {
+          "len": "documents"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "create_embedding_index": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "schedule_agent_run": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "start_after",
+        "right": "end_before"
+      }
+    ],
+    "state_struct": null
+  },
+  "git_create_branch": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "git_merge_branch": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "source_branch",
+          "target_branch"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "git_create_commit": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "git_create_tag": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "git_revert_commit": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "commit_sha",
+        "in": {
+          "state": "reachable_shas"
+        }
+      }
+    ],
+    "state_struct": {
+      "reachable_shas": [
+        "9f3c1a7e2b8d4c5a6f0e1d2c3b4a5968d7e8f9a0",
+        "7b2e9c0a1f3d4e5b6c7a8d9e0f1a2b3c4d5e6f70"
+      ]
+    }
+  },
+  "open_pull_request": {
+    "constraints": [
+      {
+        "kind": "distinct",
+        "fields": [
+          "head_branch",
+          "base_branch"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "submit_pr_review": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "event",
+          "in": [
+            "REQUEST_CHANGES",
+            "COMMENT"
+          ]
+        },
+        "require": [
+          "body"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "http_paginate_range": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "range_start",
+        "right": "range_end"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "range_start",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "range_end",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "sum",
+        "op": "ge",
+        "of": [
+          "range_start",
+          "max_chunk_bytes"
+        ],
+        "vs": "range_end"
+      }
+    ],
+    "state_struct": null
+  },
+  "schedule_maintenance_window": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "lt",
+        "left": "starts_at",
+        "right": "ends_at"
+      }
+    ],
+    "state_struct": null
+  },
+  "set_price_filter": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "min_price",
+        "right": "max_price"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "min_price",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "max_price",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "currency",
+        "right": "currency_max"
+      }
+    ],
+    "state_struct": null
+  },
+  "allocate_index_shards": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "replicas",
+        "right": "nodes"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "shard_count",
+        "right": {
+          "value": 1
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "batch_embed_texts": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "inputs"
+        },
+        "right": {
+          "len": "ids"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "batch_size",
+        "right": {
+          "len": "inputs"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "split_traffic": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "eq",
+        "of": "weights",
+        "vs": {
+          "value": 100
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": {
+          "len": "weights"
+        },
+        "right": {
+          "len": "targets"
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "db_select_window": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "order_by",
+        "in": {
+          "field": "columns"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "limit",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "limit",
+        "right": {
+          "value": 1000
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "offset",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "upsert_dns_failover": {
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "ip",
+          "cname"
+        ],
+        "count": 1
+      }
+    ],
+    "state_struct": null
+  },
+  "configure_autoscaler": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "min_replicas",
+        "right": "max_replicas"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "min_replicas",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "target_cpu_percent",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "target_cpu_percent",
+        "right": {
+          "value": 100
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "apply_order_coupon": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "discount_amount",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "discount_amount",
+        "right": {
+          "state": "order_subtotal"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "currency",
+        "right": {
+          "state": "order_currency"
+        }
+      }
+    ],
+    "state_struct": {
+      "order_subtotal": 4000,
+      "order_currency": "USD"
+    }
+  },
+  "reserve_inventory": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "quantity",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "quantity",
+        "right": {
+          "state": "available_stock"
+        }
+      }
+    ],
+    "state_struct": {
+      "available_stock": 12
+    }
+  },
+  "transfer_funds": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "amount",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "amount",
+        "right": {
+          "state": "source_balance"
+        }
+      },
+      {
+        "kind": "distinct",
+        "fields": [
+          "source_account",
+          "destination_account"
+        ]
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "currency",
+        "right": {
+          "state": "source_currency"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "currency",
+        "right": {
+          "state": "destination_currency"
+        }
+      }
+    ],
+    "state_struct": {
+      "source_balance": 25000,
+      "source_currency": "USD",
+      "destination_currency": "USD"
+    }
+  },
+  "promote_release": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "eq",
+        "left": "target_version",
+        "right": {
+          "state": "next_version"
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ne",
+        "left": "target_version",
+        "right": {
+          "state": "current_version"
+        }
+      }
+    ],
+    "state_struct": {
+      "current_version": 7,
+      "next_version": 8
+    }
+  },
+  "assign_seat": {
+    "constraints": [
+      {
+        "kind": "member",
+        "field": "seat",
+        "in": {
+          "state": "available_seats"
+        }
+      }
+    ],
+    "state_struct": {
+      "available_seats": [
+        "12A",
+        "12B",
+        "14C",
+        "21F"
+      ]
+    }
+  },
+  "grant_role": {
+    "constraints": [],
+    "state_struct": null
+  },
+  "crop_image": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": [
+          "x",
+          "width"
+        ],
+        "vs": "image_width"
+      },
+      {
+        "kind": "sum",
+        "op": "le",
+        "of": [
+          "y",
+          "height"
+        ],
+        "vs": "image_height"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "x",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "y",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "width",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "height",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "merge_pdf_pages": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "page_from",
+        "right": "page_to"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "page_from",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "page_from",
+        "right": "total_pages"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "page_to",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "page_to",
+        "right": "total_pages"
+      }
+    ],
+    "state_struct": null
+  },
+  "distribute_budget": {
+    "constraints": [
+      {
+        "kind": "sum",
+        "op": "eq",
+        "of": "allocations",
+        "vs": "total_budget"
+      }
+    ],
+    "state_struct": null
+  },
+  "configure_mtls": {
+    "constraints": [
+      {
+        "kind": "requires",
+        "when": {
+          "field": "mtls_enabled",
+          "equals": true
+        },
+        "require": [
+          "client_ca_path"
+        ]
+      }
+    ],
+    "state_struct": null
+  },
+  "set_storage_tiers": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "warm_days",
+        "right": "cold_days"
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "cold_days",
+        "right": "delete_days"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "warm_days",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "cold_days",
+        "right": {
+          "value": 1
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "delete_days",
+        "right": {
+          "value": 1
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "create_load_test": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "ramp_up_seconds",
+        "right": "duration_seconds"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "target_rps",
+        "right": {
+          "value": 1
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "set_resource_quota": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "soft_limit",
+        "right": "hard_limit"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "soft_limit",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "hard_limit",
+        "right": {
+          "value": 0
+        }
+      }
+    ],
+    "state_struct": null
+  },
+  "schedule_job_oneshot": {
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "run_at",
+          "cron_expression"
+        ],
+        "count": 1
+      }
+    ],
+    "state_struct": null
+  },
+  "set_canary_slo": {
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "latency_p99_ms",
+        "right": "latency_p50_ms"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "error_rate_max",
+        "right": {
+          "value": 0
+        }
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "error_rate_max",
+        "right": {
+          "value": 100
+        }
+      }
+    ],
+    "state_struct": null
+  }
+}
