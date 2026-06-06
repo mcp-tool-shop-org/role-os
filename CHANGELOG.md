@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.7.0
+
+### Added
+
+#### Token Budget Analyst — production budget consult (opt-in, default-off)
+
+- **`src/specialist/budget-consult.mjs`** — wires the budgeter specialist into dispatch assembly. `consultBudgetForManifest(manifest)` / `buildDispatchManifestWithBudget(options)` consult the Token Budget Analyst per dispatch step (via the proven `dispatchSpecialist` path), attaching an advisory `budgetForecast` + `budgetReceipt` to each step.
+- **Opt-in** via `ROLEOS_BUDGET_CONSULT` (default **off** — production dispatch is byte-identical until the flip, which is a release decision). **Fail-open** to the deterministic baseline `max(ctx*1.5, 50000)` (not Claude); the consult swallows any error into a receipt so it can never break manifest assembly. **Advisory** — it never blocks or gates a dispatch. Compensator: `roleos specialist rollback <role> <version>`.
+- Also lands the **Token Budget Analyst dataset tooling** under `tools/token-budget-dataset/` (the v0.1 harvester + puzzle curriculum + review/freeze pipeline that produced the budgeter's training corpus). Not part of the published CLI package (`files` ships `bin`/`src`/`starter-pack`).
+
+### Tests
+- 9 new tests (`specialist-budget-consult`: off=no-op, specialist forecast, fail-open on backend-down + no-registry, never-throws). **1334 total, all green.**
+
 ## 2.6.0
 
 ### Changed
