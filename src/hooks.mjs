@@ -22,6 +22,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { schemaFloor, contractFloor } from "./specialist/conformance-consult.mjs";
+import { capabilityGate } from "./specialist/capability-gate.mjs";
 
 // ── Hook script generators ────────────────────────────────────────────────────
 
@@ -249,6 +250,12 @@ export function onPreToolUse(input, opts = {}) {
     state.toolsUsed.push(toolName);
     saveSessionState(cwd, state);
   }
+
+  // Capability gate (opt-in via ROLEOS_CAPABILITY_GATE, fail-closed): an irreversible action without
+  // a granted capability is DENIED — bounds what a wrong verdict (honest or adversarial) can DO
+  // (POLA / CaMeL). Default OFF => pure no-op. Distinct from the advisory conformance floor below.
+  const cap = capabilityGate(cwd, toolName, input.tool_input, opts);
+  if (cap.denied) return { deny: { reason: cap.reason } };
 
   const notes = [];
 
@@ -486,6 +493,16 @@ try {
     }
   }
 } catch { /* role-os not resolvable here, or internal error -> no-op (never block a tool call) */ }
+
+// Capability gate (opt-in via ROLEOS_CAPABILITY_GATE, FAIL-CLOSED): an irreversible action without a
+// granted capability is DENIED (exit 2 blocks). Default OFF => no-op. Bounds what a wrong verdict can
+// DO (POLA / CaMeL). Best-effort: if role-os is not resolvable here a hook-resolution failure must not
+// itself block a call; the in-process onPreToolUse path still enforces it where role-os is resolvable.
+try {
+  const { capabilityGate } = await import("role-os/src/specialist/capability-gate.mjs");
+  const cap = capabilityGate(cwd, toolName, input.tool_input || {});
+  if (cap.denied) { process.stderr.write(cap.reason + "\\n"); process.exit(2); }
+} catch { /* role-os not resolvable / internal error -> no-op (in-process path enforces) */ }
 
 // PreToolUse wire protocol (current Claude Code): inject advisory context via
 // hookSpecificOutput.additionalContext + exit 0. A bare { addContext } is IGNORED; exit 2 would BLOCK.
