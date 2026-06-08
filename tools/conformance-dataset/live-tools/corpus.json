@@ -1,0 +1,1435 @@
+[
+  {
+    "tool": "Read",
+    "conformant_args": [
+      {
+        "file_path": "E:/AI/gpu-container/README.md"
+      },
+      {
+        "file_path": "E:/AI/gpu-container/package.json",
+        "limit": 1,
+        "offset": 0
+      },
+      {
+        "file_path": "/home/user/project/src/main.py",
+        "limit": 100,
+        "offset": 50
+      },
+      {
+        "file_path": "C:/Users/mikey/.claude/CLAUDE.md",
+        "offset": 0
+      },
+      {
+        "file_path": "E:/AI/gpu-container/docs/spec.pdf",
+        "pages": "1-5"
+      },
+      {
+        "file_path": "/var/log/system.log",
+        "limit": 1
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/README.md",
+          "limit": 0
+        },
+        "violates": "limit must be a positive integer (> 0); 0 is not > 0"
+      },
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/README.md",
+          "offset": -1
+        },
+        "violates": "offset must be non-negative (>= 0); -1 is negative"
+      },
+      {
+        "args": {
+          "file_path": "README.md"
+        },
+        "violates": "file_path must be an absolute path; 'README.md' is relative"
+      },
+      {
+        "args": {
+          "limit": 50,
+          "offset": 0
+        },
+        "violates": "required param file_path is missing"
+      }
+    ]
+  },
+  {
+    "tool": "Edit",
+    "conformant_args": [
+      {
+        "file_path": "E:/AI/gpu-container/src/config.ts",
+        "old_string": "const PORT = 3000;",
+        "new_string": "const PORT = 8080;"
+      },
+      {
+        "file_path": "E:/AI/gpu-container/README.md",
+        "old_string": "v0.1.3",
+        "new_string": "v0.1.4",
+        "replace_all": true
+      },
+      {
+        "file_path": "E:/AI/gpu-container/scripts/build.sh",
+        "old_string": "echo done",
+        "new_string": "echo done\necho cleanup",
+        "replace_all": false
+      },
+      {
+        "file_path": "E:/AI/gpu-container/main.py",
+        "old_string": "x",
+        "new_string": "y"
+      },
+      {
+        "file_path": "E:/AI/gpu-container/notes.txt",
+        "old_string": "old line of text\nwith a newline",
+        "new_string": "new line of text\nwith a newline",
+        "replace_all": true
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/src/config.ts",
+          "old_string": "const PORT = 3000;",
+          "new_string": "const PORT = 3000;"
+        },
+        "violates": "old_string equals new_string (identical), which the contract explicitly rejects as a no-op replacement"
+      },
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/src/config.ts",
+          "old_string": "",
+          "new_string": ""
+        },
+        "violates": "old_string equals new_string (both empty strings are identical), a no-op replacement that is rejected"
+      },
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/src/config.ts",
+          "new_string": "const PORT = 8080;"
+        },
+        "violates": "required string old_string is missing"
+      },
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/src/config.ts",
+          "old_string": "const PORT = 3000;",
+          "new_string": "const PORT = 8080;",
+          "replace_all": "true"
+        },
+        "violates": "replace_all must be a boolean, not the string \"true\""
+      },
+      {
+        "args": {
+          "file_path": 42,
+          "old_string": "a",
+          "new_string": "b"
+        },
+        "violates": "file_path must be a string, not a number"
+      }
+    ]
+  },
+  {
+    "tool": "Write",
+    "conformant_args": [
+      {
+        "file_path": "E:/AI/gpu-container/scratch/notes.md",
+        "content": "# Notes\n\nThis is a normal multi-line file written to an absolute path on the workspace drive."
+      },
+      {
+        "file_path": "E:/AI/gpu-container/empty.txt",
+        "content": ""
+      },
+      {
+        "file_path": "/tmp/conformance/sample.json",
+        "content": "{\"ok\": true, \"count\": 0}"
+      },
+      {
+        "file_path": "E:\\AI\\gpu-container\\config\\settings.ini",
+        "content": "[section]\nkey=value\nenabled=1"
+      },
+      {
+        "file_path": "/home/user/project/src/main.py",
+        "content": "def main():\n    print(\"hello world\")\n\n\nif __name__ == \"__main__\":\n    main()\n"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "content": "Some content but no destination path."
+        },
+        "violates": "Missing required arg file_path (required string per schema floor)."
+      },
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/out.txt"
+        },
+        "violates": "Missing required arg content (required string per schema floor)."
+      },
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/data.bin",
+          "content": 12345
+        },
+        "violates": "content is a number, not a string (type violation of required string)."
+      },
+      {
+        "args": {
+          "file_path": [
+            "E:/AI/gpu-container/list.txt"
+          ],
+          "content": "text"
+        },
+        "violates": "file_path is an array, not a string (type violation of required string)."
+      },
+      {
+        "args": {
+          "file_path": "E:/AI/gpu-container/x.txt",
+          "content": "text",
+          "append": true
+        },
+        "violates": "Invented param 'append' not present in the schema (only file_path and content are allowed)."
+      }
+    ]
+  },
+  {
+    "tool": "Bash",
+    "conformant_args": [
+      {
+        "command": "ls -la /tmp",
+        "description": "List files in the temp directory"
+      },
+      {
+        "command": "npm test",
+        "timeout": 600000,
+        "description": "Run the full test suite with the maximum allowed timeout"
+      },
+      {
+        "command": "echo hello",
+        "timeout": 0,
+        "description": "Run an instant command with the minimum non-negative timeout"
+      },
+      {
+        "command": "node server.js",
+        "run_in_background": true,
+        "timeout": 30000,
+        "description": "Start the dev server in the background"
+      },
+      {
+        "command": "rm -rf ./build",
+        "dangerouslyDisableSandbox": true,
+        "run_in_background": false
+      },
+      {
+        "command": "git status"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "command": "npm run build",
+          "timeout": 700000
+        },
+        "violates": "timeout 700000 exceeds the stated max of 600000 ms"
+      },
+      {
+        "args": {
+          "command": "sleep 5",
+          "timeout": -1
+        },
+        "violates": "timeout -1 is negative; contract requires timeout to be non-negative"
+      },
+      {
+        "args": {
+          "timeout": 5000,
+          "description": "missing command"
+        },
+        "violates": "required param 'command' is absent"
+      },
+      {
+        "args": {
+          "command": "echo hi",
+          "run_in_background": "yes"
+        },
+        "violates": "run_in_background is a string, not a boolean as required by the schema"
+      },
+      {
+        "args": {
+          "command": 12345
+        },
+        "violates": "command is a number, but the schema requires a string"
+      }
+    ]
+  },
+  {
+    "tool": "PowerShell",
+    "conformant_args": [
+      {
+        "command": "Get-PSDrive -PSProvider FileSystem"
+      },
+      {
+        "command": "git status",
+        "description": "Show working tree status"
+      },
+      {
+        "command": "npm test",
+        "description": "Run the package test suite",
+        "timeout": 600000
+      },
+      {
+        "command": "Get-ChildItem -Path E:\\AI -Directory",
+        "timeout": 0
+      },
+      {
+        "command": "Start-Sleep -Seconds 1; Write-Output done",
+        "description": "Tiny sleep then print",
+        "timeout": 1
+      },
+      {
+        "command": "node E:\\AI\\polyglot-mcp\\scripts\\translate-all.mjs README.md",
+        "description": "Run translations in background",
+        "run_in_background": true,
+        "timeout": 599999
+      },
+      {
+        "command": "cargo check",
+        "description": "Type-check the Rust crate",
+        "timeout": 300000,
+        "run_in_background": false,
+        "dangerouslyDisableSandbox": false
+      },
+      {
+        "command": "gh run list --limit 1",
+        "description": "Check latest CI run",
+        "dangerouslyDisableSandbox": true
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "command": "npm run build",
+          "timeout": 701000
+        },
+        "violates": "timeout 701000 exceeds the stated max of 600000 ms"
+      },
+      {
+        "args": {
+          "command": "Get-ChildItem",
+          "timeout": 600001
+        },
+        "violates": "timeout 600001 is one over the inclusive max of 600000 ms"
+      },
+      {
+        "args": {
+          "command": "Start-Sleep 5",
+          "timeout": -1
+        },
+        "violates": "timeout -1 is negative; contract requires non-negative"
+      },
+      {
+        "args": {
+          "description": "List files",
+          "run_in_background": true
+        },
+        "violates": "missing required 'command' string"
+      },
+      {
+        "args": {
+          "command": "git status",
+          "timeout": "600000"
+        },
+        "violates": "timeout is a string, not a number"
+      },
+      {
+        "args": {
+          "command": "echo hi",
+          "run_in_background": "true"
+        },
+        "violates": "run_in_background is a string, not a boolean"
+      }
+    ]
+  },
+  {
+    "tool": "Grep",
+    "conformant_args": [
+      {
+        "pattern": "TODO",
+        "path": "E:/AI/gpu-container/src",
+        "output_mode": "files_with_matches"
+      },
+      {
+        "pattern": "function\\s+\\w+",
+        "glob": "*.js",
+        "output_mode": "content",
+        "-n": true,
+        "-i": false
+      },
+      {
+        "pattern": "error",
+        "output_mode": "count",
+        "type": "py"
+      },
+      {
+        "pattern": "deprecated",
+        "output_mode": "content",
+        "-A": 0,
+        "-B": 0,
+        "-C": 0,
+        "context": 0,
+        "head_limit": 0,
+        "offset": 0
+      },
+      {
+        "pattern": "import",
+        "output_mode": "content",
+        "-A": 3,
+        "-B": 2,
+        "-C": 5,
+        "context": 4,
+        "head_limit": 100,
+        "offset": 0
+      },
+      {
+        "pattern": "class\\s+\\w+\\{\\}",
+        "multiline": true,
+        "output_mode": "content",
+        "-o": true,
+        "head_limit": 50,
+        "offset": 10
+      },
+      {
+        "pattern": "config",
+        "output_mode": "files_with_matches",
+        "head_limit": 250,
+        "offset": 250
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "pattern": "TODO",
+          "output_mode": "matches"
+        },
+        "violates": "output_mode 'matches' is not one of the allowed enum values content|files_with_matches|count"
+      },
+      {
+        "args": {
+          "pattern": "error",
+          "output_mode": "content",
+          "-A": -1
+        },
+        "violates": "-A is -1 but the contract states the context line counts must be non-negative (>= 0)"
+      },
+      {
+        "args": {
+          "pattern": "warning",
+          "output_mode": "content",
+          "offset": -1
+        },
+        "violates": "offset is -1 but the contract states offset must be a non-negative integer (>= 0)"
+      },
+      {
+        "args": {
+          "pattern": "log",
+          "output_mode": "content",
+          "head_limit": -5
+        },
+        "violates": "head_limit is -5 but the contract states head_limit must be a non-negative integer (>= 0)"
+      },
+      {
+        "args": {
+          "output_mode": "count",
+          "path": "E:/AI/gpu-container"
+        },
+        "violates": "required field 'pattern' is missing"
+      },
+      {
+        "args": {
+          "pattern": "config",
+          "output_mode": "content",
+          "context": -3
+        },
+        "violates": "context is -3 but the contract states the numeric context fields must be non-negative (>= 0)"
+      }
+    ]
+  },
+  {
+    "tool": "Glob",
+    "conformant_args": [
+      {
+        "pattern": "**/*.ts"
+      },
+      {
+        "pattern": "src/**/*.tsx",
+        "path": "E:/AI/gpu-container"
+      },
+      {
+        "pattern": "*.md"
+      },
+      {
+        "pattern": "**/package.json",
+        "path": "E:/AI"
+      },
+      {
+        "pattern": "scripts/*.mjs",
+        "path": "E:/AI/polyglot-mcp"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "path": "E:/AI/gpu-container"
+        },
+        "violates": "Missing required param 'pattern' — schema floor requires pattern (string, required:true)."
+      },
+      {
+        "args": {
+          "pattern": 42
+        },
+        "violates": "Wrong type for 'pattern' — schema requires string, got number."
+      },
+      {
+        "args": {
+          "pattern": "**/*.ts",
+          "path": [
+            "E:/AI",
+            "E:/AI/gpu-container"
+          ]
+        },
+        "violates": "Wrong type for 'path' — schema requires string, got array."
+      },
+      {
+        "args": {
+          "pattern": "**/*.ts",
+          "recursive": true
+        },
+        "violates": "Invented param 'recursive' not in schema — only 'pattern' and 'path' are defined."
+      },
+      {
+        "args": {
+          "pattern": null
+        },
+        "violates": "Required param 'pattern' is null, not a valid string — fails schema type/required floor."
+      }
+    ]
+  },
+  {
+    "tool": "AskUserQuestion",
+    "conformant_args": [
+      {
+        "questions": [
+          {
+            "question": "Which database should the new service use for primary storage?",
+            "header": "Database",
+            "options": [
+              {
+                "label": "PostgreSQL",
+                "description": "Relational, strong consistency, mature ecosystem."
+              },
+              {
+                "label": "MongoDB",
+                "description": "Document store, flexible schema, easy horizontal scaling."
+              }
+            ],
+            "multiSelect": false
+          }
+        ]
+      },
+      {
+        "questions": [
+          {
+            "question": "Which deployment target do you want to ship to first?",
+            "header": "Deploy",
+            "options": [
+              {
+                "label": "AWS",
+                "description": "Broadest service catalog and existing org credits."
+              },
+              {
+                "label": "GCP",
+                "description": "Strong managed Kubernetes and data tooling."
+              }
+            ],
+            "multiSelect": false
+          },
+          {
+            "question": "What logging level should the production build default to?",
+            "header": "Log level",
+            "options": [
+              {
+                "label": "info",
+                "description": "Balanced signal for normal operations."
+              },
+              {
+                "label": "warn",
+                "description": "Quieter logs, only surface problems."
+              }
+            ],
+            "multiSelect": false
+          }
+        ]
+      },
+      {
+        "questions": [
+          {
+            "question": "Which CI provider should the pipeline run on?",
+            "header": "CI",
+            "options": [
+              {
+                "label": "GitHub Actions",
+                "description": "Native to the repo, free minutes on public repos."
+              },
+              {
+                "label": "CircleCI",
+                "description": "Faster caching for large monorepos."
+              }
+            ],
+            "multiSelect": false
+          },
+          {
+            "question": "What is the target Node.js runtime version?",
+            "header": "Node",
+            "options": [
+              {
+                "label": "20 LTS",
+                "description": "Current long-term-support line, widely supported."
+              },
+              {
+                "label": "22",
+                "description": "Latest features, shorter support window."
+              }
+            ],
+            "multiSelect": false
+          },
+          {
+            "question": "Which package manager should contributors use?",
+            "header": "PM",
+            "options": [
+              {
+                "label": "pnpm",
+                "description": "Disk-efficient, strict by default."
+              },
+              {
+                "label": "npm",
+                "description": "Zero extra install, ships with Node."
+              }
+            ],
+            "multiSelect": false
+          },
+          {
+            "question": "Which optional integrations should we enable at launch?",
+            "header": "Integrations",
+            "options": [
+              {
+                "label": "Slack",
+                "description": "Post build and deploy notifications to a channel."
+              },
+              {
+                "label": "Sentry",
+                "description": "Capture and group runtime exceptions."
+              },
+              {
+                "label": "Datadog",
+                "description": "Metrics and APM dashboards."
+              }
+            ],
+            "multiSelect": true
+          }
+        ]
+      },
+      {
+        "questions": [
+          {
+            "question": "Should the migration run automatically on deploy, or be triggered manually?",
+            "header": "Migration",
+            "options": [
+              {
+                "label": "Automatic",
+                "description": "Runs on every deploy; zero manual steps."
+              },
+              {
+                "label": "Manual",
+                "description": "Operator triggers it after reviewing the plan."
+              }
+            ],
+            "multiSelect": false
+          },
+          {
+            "question": "Which auth method should the API expose?",
+            "header": "Auth",
+            "options": [
+              {
+                "label": "OAuth2",
+                "description": "Delegated auth via external identity provider."
+              },
+              {
+                "label": "API keys",
+                "description": "Simple static credentials per client."
+              }
+            ],
+            "multiSelect": false
+          },
+          {
+            "question": "What should the default request timeout be?",
+            "header": "Timeout",
+            "options": [
+              {
+                "label": "30s",
+                "description": "Generous for slow upstreams."
+              },
+              {
+                "label": "10s",
+                "description": "Fail fast, keep the queue moving."
+              }
+            ],
+            "multiSelect": false
+          }
+        ]
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "questions": [
+            {
+              "question": "Which database should we use?",
+              "header": "Database",
+              "options": [
+                {
+                  "label": "PostgreSQL",
+                  "description": "Relational store."
+                },
+                {
+                  "label": "MongoDB",
+                  "description": "Document store."
+                }
+              ],
+              "multiSelect": false
+            },
+            {
+              "question": "Which deploy target?",
+              "header": "Deploy",
+              "options": [
+                {
+                  "label": "AWS",
+                  "description": "Broad catalog."
+                },
+                {
+                  "label": "GCP",
+                  "description": "Strong k8s."
+                }
+              ],
+              "multiSelect": false
+            },
+            {
+              "question": "Which CI provider?",
+              "header": "CI",
+              "options": [
+                {
+                  "label": "GitHub Actions",
+                  "description": "Native to repo."
+                },
+                {
+                  "label": "CircleCI",
+                  "description": "Fast caching."
+                }
+              ],
+              "multiSelect": false
+            },
+            {
+              "question": "Which package manager?",
+              "header": "PM",
+              "options": [
+                {
+                  "label": "pnpm",
+                  "description": "Disk efficient."
+                },
+                {
+                  "label": "npm",
+                  "description": "Ships with Node."
+                }
+              ],
+              "multiSelect": false
+            },
+            {
+              "question": "Which Node version?",
+              "header": "Node",
+              "options": [
+                {
+                  "label": "20 LTS",
+                  "description": "Stable line."
+                },
+                {
+                  "label": "22",
+                  "description": "Latest features."
+                }
+              ],
+              "multiSelect": false
+            }
+          ]
+        },
+        "violates": "questions array length is 5, exceeding the stated maximum of 4 (length must be <= 4)."
+      },
+      {
+        "args": {
+          "questions": []
+        },
+        "violates": "questions array is empty (length 0), violating the stated minimum of 1 (length must be >= 1)."
+      }
+    ]
+  },
+  {
+    "tool": "ToolSearch",
+    "conformant_args": [
+      {
+        "query": "select:WebFetch"
+      },
+      {
+        "query": "notebook jupyter editing",
+        "max_results": 5
+      },
+      {
+        "query": "select:CronCreate,CronDelete,CronList",
+        "max_results": 3
+      },
+      {
+        "query": "+slack send message",
+        "max_results": 1
+      },
+      {
+        "query": "computer use screenshot click",
+        "max_results": 100
+      },
+      {
+        "query": "browser automation navigate",
+        "max_results": 25
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "query": "scheduled tasks cron",
+          "max_results": -1
+        },
+        "violates": "max_results = -1 is not a positive integer; contract states max_results is an optional positive integer"
+      },
+      {
+        "args": {
+          "max_results": 5
+        },
+        "violates": "required string param 'query' is missing"
+      },
+      {
+        "args": {
+          "query": "web fetch",
+          "max_results": 0
+        },
+        "violates": "max_results = 0 is not a positive integer (positive means >= 1)"
+      },
+      {
+        "args": {
+          "query": 12345
+        },
+        "violates": "'query' must be a string but a number was provided (type violation of schema)"
+      },
+      {
+        "args": {
+          "query": "task list",
+          "max_results": 3.5
+        },
+        "violates": "max_results = 3.5 is not an integer; contract states max_results is a positive integer"
+      }
+    ]
+  },
+  {
+    "tool": "Skill",
+    "conformant_args": [
+      {
+        "skill": "shipcheck"
+      },
+      {
+        "skill": "full-treatment",
+        "args": "give this the full treatment for the roll repo"
+      },
+      {
+        "skill": "translation",
+        "args": ""
+      },
+      {
+        "skill": "deep-research",
+        "args": "What is the current state-of-the-art in adaptive game soundtrack systems? Region: global. Use case: indie 2.5D JRPG. Depth: thorough with citations."
+      },
+      {
+        "skill": "ollama-intern",
+        "args": "delegate to 8B: produce an incident pack for the failed release pipeline run"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "args": "run shipcheck on this repo"
+        },
+        "violates": "Required param 'skill' is missing — schema floor requires 'skill' on every call."
+      },
+      {
+        "args": {
+          "skill": 42
+        },
+        "violates": "'skill' must be type string; an integer violates the schema type for 'skill'."
+      },
+      {
+        "args": {
+          "skill": "shipcheck",
+          "args": [
+            "item1",
+            "item2"
+          ]
+        },
+        "violates": "'args' must be type string; an array violates the schema type for 'args'."
+      },
+      {
+        "args": {
+          "skill": "full-treatment",
+          "timeout": 600000
+        },
+        "violates": "'timeout' is not a param in the schema — only 'skill' and 'args' are permitted; no invented params allowed."
+      }
+    ]
+  },
+  {
+    "tool": "Agent",
+    "conformant_args": [
+      {
+        "description": "Audit auth module",
+        "prompt": "Review the authentication module in src/auth and report any security issues you find.",
+        "subagent_type": "security-reviewer"
+      },
+      {
+        "description": "Refactor parser",
+        "prompt": "Refactor the JSON parser in src/parse.ts to reduce nesting. Keep all tests passing.",
+        "subagent_type": "general-purpose",
+        "model": "sonnet"
+      },
+      {
+        "description": "Deep design study",
+        "prompt": "Research verifier patterns for multi-agent pipelines and synthesize a cited summary.",
+        "subagent_type": "researcher",
+        "model": "opus",
+        "isolation": "worktree",
+        "run_in_background": true
+      },
+      {
+        "description": "Quick lint fix",
+        "prompt": "Fix the lint errors reported by eslint in the packages/cli directory.",
+        "subagent_type": "haiku-fixer",
+        "model": "haiku",
+        "run_in_background": false
+      },
+      {
+        "description": "Custom domain agent",
+        "prompt": "Generate combat balance tables for the Fractured Road enemy doctrine.",
+        "subagent_type": "game-balance-tuner",
+        "isolation": "worktree"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "description": "Bad model value",
+          "prompt": "Do the thing.",
+          "subagent_type": "general-purpose",
+          "model": "gpt-4"
+        },
+        "violates": "model must be one of sonnet|opus|haiku; 'gpt-4' is not in the enum"
+      },
+      {
+        "args": {
+          "description": "Bad isolation value",
+          "prompt": "Do the thing.",
+          "subagent_type": "general-purpose",
+          "isolation": "branch"
+        },
+        "violates": "isolation when provided must be 'worktree'; 'branch' is not the allowed value"
+      },
+      {
+        "args": {
+          "description": "Missing required prompt",
+          "subagent_type": "general-purpose",
+          "model": "opus"
+        },
+        "violates": "required field 'prompt' is absent"
+      },
+      {
+        "args": {
+          "description": "Wrong type for run_in_background",
+          "prompt": "Do the thing.",
+          "subagent_type": "general-purpose",
+          "run_in_background": "yes"
+        },
+        "violates": "run_in_background must be a boolean; 'yes' is a string"
+      },
+      {
+        "args": {
+          "prompt": "Do the thing.",
+          "subagent_type": "general-purpose"
+        },
+        "violates": "required field 'description' is absent"
+      }
+    ]
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_chat",
+    "conformant_args": [
+      {
+        "messages": [
+          {
+            "role": "user",
+            "content": "What is the time complexity of a balanced binary search tree lookup?"
+          }
+        ]
+      },
+      {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a terse assistant."
+          },
+          {
+            "role": "user",
+            "content": "Summarize the difference between TCP and UDP in one sentence."
+          },
+          {
+            "role": "assistant",
+            "content": "TCP is connection-oriented and reliable; UDP is connectionless and best-effort."
+          },
+          {
+            "role": "user",
+            "content": "Which is better for live video?"
+          }
+        ],
+        "model": "llama3.1:8b",
+        "system": "Answer concisely and avoid hedging."
+      },
+      {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Explain what a mutex is."
+          }
+        ],
+        "model": "qwen2.5:14b"
+      },
+      {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Translate 'good morning' to French."
+          }
+        ],
+        "system": "You are a translation assistant."
+      },
+      {
+        "messages": [
+          {
+            "role": "user",
+            "content": "List three uses for a hash map."
+          },
+          {
+            "role": "assistant",
+            "content": "Caching, deduplication, and fast key lookups."
+          },
+          {
+            "role": "user",
+            "content": "Give a code example for the first one."
+          }
+        ],
+        "model": "hermes3:8b"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "messages": []
+        },
+        "violates": "messages is an empty array (length 0), but the contract requires a NON-EMPTY array with length >= 1"
+      },
+      {
+        "args": {
+          "model": "llama3.1:8b",
+          "system": "You are helpful."
+        },
+        "violates": "required param 'messages' is absent entirely"
+      },
+      {
+        "args": {
+          "messages": "Hello there",
+          "model": "llama3.1:8b"
+        },
+        "violates": "messages is a string, but the contract requires an array of {role,content}"
+      },
+      {
+        "args": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Hi"
+            }
+          ],
+          "model": 8
+        },
+        "violates": "model is a number, but the contract declares model as an optional string"
+      },
+      {
+        "args": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Hi"
+            }
+          ],
+          "system": [
+            "be",
+            "concise"
+          ]
+        },
+        "violates": "system is an array, but the contract declares system as an optional string"
+      }
+    ]
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_classify",
+    "conformant_args": [
+      {
+        "labels": [
+          "bug",
+          "feature",
+          "question"
+        ],
+        "text": "The app crashes when I click save on an empty form."
+      },
+      {
+        "labels": [
+          "positive",
+          "negative",
+          "neutral"
+        ],
+        "text": "This release is exactly what we needed.",
+        "threshold": 0
+      },
+      {
+        "labels": [
+          "spam",
+          "ham"
+        ],
+        "source_path": "E:/AI/gpu-container/inbox/message-001.txt",
+        "threshold": 1
+      },
+      {
+        "labels": [
+          "security",
+          "performance",
+          "docs",
+          "ci"
+        ],
+        "items": [
+          "fix(binary): absolute import in the unified entry",
+          "ci(release): scope the binary-upload download"
+        ],
+        "per_file_max_chars": 1000
+      },
+      {
+        "labels": [
+          "urgent",
+          "routine"
+        ],
+        "source_path": "E:/AI/gpu-container/logs/triage.log",
+        "per_file_max_chars": 200000,
+        "allow_none": true
+      },
+      {
+        "labels": [
+          "frontend",
+          "backend",
+          "infra"
+        ],
+        "text": "Refactor the Tauri IPC bridge to use typed channels.",
+        "threshold": 0.75,
+        "allow_none": false,
+        "frame": "Classify this commit message by the primary engineering area it touches.",
+        "model": "hermes3:8b"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "labels": [
+            "a",
+            "b"
+          ],
+          "text": "Two sources present at once.",
+          "source_path": "E:/AI/gpu-container/x.txt"
+        },
+        "violates": "Both 'text' and 'source_path' present; contract requires EXACTLY ONE of text/source_path/items."
+      },
+      {
+        "args": {
+          "labels": [
+            "a",
+            "b"
+          ],
+          "threshold": 0.5
+        },
+        "violates": "No input source present; contract requires exactly one of text/source_path/items to be present."
+      },
+      {
+        "args": {
+          "labels": [
+            "a",
+            "b"
+          ],
+          "text": "threshold above the allowed ceiling",
+          "threshold": 1.7
+        },
+        "violates": "threshold 1.7 exceeds the allowed range [0,1]."
+      },
+      {
+        "args": {
+          "labels": [
+            "a",
+            "b"
+          ],
+          "text": "negative threshold",
+          "threshold": -0.1
+        },
+        "violates": "threshold -0.1 below the allowed range [0,1]."
+      },
+      {
+        "args": {
+          "labels": [
+            "a",
+            "b"
+          ],
+          "source_path": "E:/AI/gpu-container/big.txt",
+          "per_file_max_chars": 999
+        },
+        "violates": "per_file_max_chars 999 below the minimum of 1000 (range [1000,200000])."
+      },
+      {
+        "args": {
+          "labels": [
+            "a",
+            "b"
+          ],
+          "source_path": "E:/AI/gpu-container/big.txt",
+          "per_file_max_chars": 200001
+        },
+        "violates": "per_file_max_chars 200001 above the maximum of 200000 (range [1000,200000])."
+      },
+      {
+        "args": {
+          "text": "missing required labels"
+        },
+        "violates": "Required param 'labels' is absent."
+      },
+      {
+        "args": {
+          "labels": [
+            "a",
+            "b",
+            "c"
+          ],
+          "text": "all three sources at once",
+          "source_path": "E:/AI/gpu-container/y.txt",
+          "items": [
+            "one",
+            "two"
+          ]
+        },
+        "violates": "text, source_path, and items all present; contract requires EXACTLY ONE input source."
+      }
+    ]
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_corpus_search",
+    "conformant_args": [
+      {
+        "corpus": "engineering-handbook",
+        "query": "how do we rotate database credentials"
+      },
+      {
+        "corpus": "incident-postmortems",
+        "query": "root cause of the 2025 outage",
+        "mode": "semantic",
+        "top_k": 1,
+        "preview_chars": 0
+      },
+      {
+        "corpus": "api-reference",
+        "query": "pagination cursor format",
+        "mode": "hybrid",
+        "top_k": 100,
+        "preview_chars": 500,
+        "explain": true
+      },
+      {
+        "corpus": "design-docs",
+        "query": "retry backoff policy",
+        "mode": "lexical",
+        "top_k": 50,
+        "preview_chars": 240,
+        "filter": {
+          "team": "platform",
+          "status": "approved"
+        }
+      },
+      {
+        "corpus": "fact-base",
+        "query": "default request timeout in milliseconds",
+        "mode": "fact",
+        "top_k": 1,
+        "preview_chars": 500
+      },
+      {
+        "corpus": "wiki",
+        "query": "onboarding checklist",
+        "mode": "title_path",
+        "top_k": 100,
+        "preview_chars": 0,
+        "explain": false
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "corpus": "engineering-handbook",
+          "query": "credential rotation",
+          "mode": "vector"
+        },
+        "violates": "mode='vector' is not one of the allowed enum values semantic|lexical|hybrid|fact|title_path"
+      },
+      {
+        "args": {
+          "corpus": "engineering-handbook",
+          "query": "credential rotation",
+          "top_k": 0
+        },
+        "violates": "top_k=0 is below the minimum of 1 (range is [1,100])"
+      },
+      {
+        "args": {
+          "corpus": "engineering-handbook",
+          "query": "credential rotation",
+          "top_k": 101
+        },
+        "violates": "top_k=101 exceeds the maximum of 100 (range is [1,100])"
+      },
+      {
+        "args": {
+          "corpus": "engineering-handbook",
+          "query": "credential rotation",
+          "preview_chars": 501
+        },
+        "violates": "preview_chars=501 exceeds the maximum of 500 (range is [0,500])"
+      },
+      {
+        "args": {
+          "corpus": "engineering-handbook",
+          "query": "credential rotation",
+          "preview_chars": -1
+        },
+        "violates": "preview_chars=-1 is below the minimum of 0 (range is [0,500])"
+      },
+      {
+        "args": {
+          "query": "credential rotation",
+          "mode": "semantic"
+        },
+        "violates": "missing required string 'corpus'"
+      },
+      {
+        "args": {
+          "corpus": "engineering-handbook",
+          "mode": "semantic"
+        },
+        "violates": "missing required string 'query'"
+      },
+      {
+        "args": {
+          "corpus": "engineering-handbook",
+          "query": "credential rotation",
+          "top_k": 5.5
+        },
+        "violates": "top_k=5.5 is not an integer (type must be integer)"
+      }
+    ]
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_summarize_fast",
+    "conformant_args": [
+      {
+        "text": "The release pipeline was fixed by scoping the binary-upload download step to binary-* artifacts only, which resolved the prior failure where the job attempted to download unrelated artifacts and errored out.",
+        "max_words": 25
+      },
+      {
+        "text": "Quarterly results came in above expectations across all three business units, with margin expansion driven by lower input costs and a favorable product mix.",
+        "max_words": 10,
+        "frame": "executive summary"
+      },
+      {
+        "text": "This is a long-form technical postmortem covering the root cause analysis, the timeline of the incident, every mitigation attempted, the eventual fix, and the follow-up action items assigned to each owning team across engineering, SRE, and product.",
+        "max_words": 400,
+        "frame": "neutral",
+        "model": "llama3.1:8b"
+      },
+      {
+        "text": "A short note about the meeting agenda and the two decisions that need sign-off before Friday."
+      },
+      {
+        "text": "Customer reported intermittent timeouts on the checkout endpoint during peak traffic; investigation points to connection-pool exhaustion under load.",
+        "max_words": 50,
+        "model": "qwen2.5:7b"
+      }
+    ],
+    "violation_args": [
+      {
+        "args": {
+          "text": "Summarize this with a target length just below the allowed minimum.",
+          "max_words": 9
+        },
+        "violates": "max_words is 9, below the stated lower bound of 10 for the [10,400] integer range"
+      },
+      {
+        "args": {
+          "text": "Summarize this with a target length above the allowed maximum.",
+          "max_words": 401
+        },
+        "violates": "max_words is 401, above the stated upper bound of 400 for the [10,400] integer range"
+      },
+      {
+        "args": {
+          "max_words": 50,
+          "frame": "neutral"
+        },
+        "violates": "required 'text' parameter is missing"
+      },
+      {
+        "args": {
+          "text": "Summarize with a non-integer max_words.",
+          "max_words": 25.5
+        },
+        "violates": "max_words is 25.5, not an integer as the contract requires"
+      },
+      {
+        "args": {
+          "text": "Summarize with max_words as a string.",
+          "max_words": "100"
+        },
+        "violates": "max_words is a string, but the contract requires an integer type"
+      }
+    ]
+  }
+]
