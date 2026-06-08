@@ -91,14 +91,14 @@ Role OS puede consultar a un **analista de presupuesto de tokens** local en cada
 
 ## Supervisión de las llamadas a herramientas
 
-El sistema operativo (OS) del rol verifica y controla las llamadas a herramientas en el punto `PreToolUse` de forma determinista, sin utilizar ningún modelo en la ruta principal:
+Role OS verifica y controla las llamadas a herramientas en el punto `PreToolUse`, de forma determinista, sin utilizar ningún modelo en la ruta principal:
 
-- **Monitor de conformidad** (asesoramiento, falla abierta): un esquema determinista + una verificación del contrato computable comprueba una llamada propuesta con su contrato de herramienta catalogado y adjunta un veredicto asesor sobre una llamada *comprobada* como no conforme; nunca bloquea. Un límite opcional para el modelo lingüístico grande (LLM) (`ROLEOS_CONFORMANCE_CONSULT`) gestiona los residuos genuinamente semánticos.
-- **Control de capacidad** (falla cerrada, opcional `ROLEOS_CAPABILITY_GATE`, desactivado por defecto): control determinista del privilegio mínimo en las acciones *irreversibles* (publicación en npm/PyPI, `gh release`, `git push`, edición de repositorios, despliegue de Páginas). Una acción controlada se deniega a menos que el administrador haya concedido su capacidad en `.claude/role-os/capabilities.json`, por lo que un paso incorrecto (un error honesto o uno inyectado) no puede desencadenar una acción irreversible no autorizada. El complemento preventivo de la regla del compensador con nombre. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/).
+- **Monitor de conformidad** (asesoramiento, permite el acceso por defecto) — un esquema determinista + comprobaciones de contrato computables verifican una llamada propuesta con respecto a su contrato de herramienta catalogado y adjuntan un veredicto asesor sobre una llamada *comprobada* como no conforme; nunca bloquea. Un límite opcional para LLM (`ROLEOS_CONFORMANCE_CONSULT`) gestiona el residuo genuinamente semántico.
+- **Control de capacidades** (bloquea por defecto, `ROLEOS_CAPABILITY_GATE` opcional, desactivado por defecto) — control determinista del principio de mínimo privilegio en acciones *irreversibles* (publicación en npm/PyPI, `gh release`, `git push`, edición de repositorios, despliegue de Pages). Se deniega una acción controlada a menos que el administrador haya concedido su capacidad en `.claude/role-os/capabilities.json`, por lo que un paso incorrecto (un error honesto o uno provocado) no puede desencadenar una acción irreversible no autorizada. El complemento preventivo de la regla del compensador nombrado. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/).
 
 ## Estado de la implementación a nivel de organización
 
-El estado de la implementación a nivel de organización (cola, decisiones, registros de auditoría, paquetes de bloqueo por repositorio) se encuentra en un repositorio privado independiente: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Este repositorio es el producto; ese repositorio es el estado operativo.
+El estado de implementación a nivel de organización (cola, decisiones, registros de auditoría, paquetes de bloqueo por repositorio) se encuentra en un repositorio **privado** e interno de la organización (`role-os-rollout`). Este repositorio es el producto; ese repositorio es el estado operativo.
 
 ## Memoria y continuidad
 

@@ -89,16 +89,16 @@ Le esecuzioni vengono salvate su disco (`.claude/runs/`), in modo che le session
 
 Role OS può consultare un **analista del budget dei token** locale per ogni fase di distribuzione e allegare una previsione di spesa indicativa al manifesto: opzionale (`ROLEOS_BUDGET_CONSULT`), indicativa (non blocca mai una distribuzione) e con fallback a una base di riferimento deterministica. Disattivata per impostazione predefinita; la previsione è locale e gratuita. Consulta il [manuale](https://mcp-tool-shop-org.github.io/role-os/handbook/specialist-budget/).
 
-## Supervision delle chiamate agli strumenti
+## Controllo delle chiamate agli strumenti
 
-Il sistema operativo di ruolo (Role OS) verifica e autorizza le chiamate agli strumenti nel punto `PreToolUse` in modo deterministico, senza utilizzare un modello durante l'esecuzione:
+Il sistema Role OS verifica e gestisce le chiamate agli strumenti nel punto di controllo `PreToolUse`, in modo deterministico, senza l’intervento di un modello durante l’esecuzione:
 
-- **Monitoraggio della conformità** (consulenza, apertura predefinita) — uno schema deterministico + controlli del contratto computabile verificano una chiamata proposta rispetto al suo contratto di strumento catalogato e aggiungono un parere su una chiamata *dimostrata* non conforme; non blocca mai. Un limite opzionale per il modello linguistico (LLM) (`ROLEOS_CONFORMANCE_CONSULT`) gestisce i residui genuinamente semantici.
-- **Controllo delle capacità** (chiusura predefinita, attivazione facoltativa `ROLEOS_CAPABILITY_GATE`, disattivato per impostazione predefinita) — principio del minimo privilegio deterministico sulle azioni *irreversibili* (pubblicazione su npm/PyPI, `gh release`, `git push`, modifiche al repository, distribuzione di Pages). Un'azione autorizzata viene negata a meno che il responsabile non abbia concesso la sua capacità in `.claude/role-os/capabilities.json`, quindi un passo errato (un errore onesto o uno inserito) non può attivare un'azione irreversibile non autorizzata. Il complemento preventivo alla regola del compensatore denominato. Consultare il [manuale](https://mcp-tool-shop-org.github.io/role-os/handbook/).
+- **Monitoraggio della conformità** (a titolo consultivo, con tolleranza agli errori) — uno schema deterministico e controlli basati su contratti verificabili analizzano una chiamata proposta rispetto al contratto dello strumento corrispondente e forniscono un parere consultivo su eventuali chiamate che si discostano dai requisiti; non blocca mai l’esecuzione. Un limite opzionale per il modello linguistico (`ROLEOS_CONFORMANCE_CONSULT`) gestisce i residui di significato effettivo.
+- **Controllo delle capacità** (blocco in caso di errore, attivabile tramite `ROLEOS_CAPABILITY_GATE`, disattivato per impostazione predefinita) — applica il principio del minimo privilegio alle azioni *irreversibili* (pubblicazione su npm/PyPI, creazione di una release con `gh release`, esecuzione di `git push`, modifiche al repository, distribuzione tramite Pages). Un’azione controllata viene negata a meno che l’amministratore non abbia autorizzato la relativa capacità nel file `.claude/role-os/capabilities.json`; pertanto, un errore (un errore involontario o uno causato da un attacco) non può innescare un’azione irreversibile non autorizzata. Rappresenta il complemento preventivo alla regola del compensatore denominato. Consultare la [guida](https://mcp-tool-shop-org.github.io/role-os/handbook/).
 
 ## Stato di implementazione a livello di organizzazione
 
-Lo stato di implementazione a livello di organizzazione (coda, decisioni, registri di audit, pacchetti di blocco per repository) è memorizzato in un repository privato separato: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Questo repository è il prodotto; l'altro repository è lo stato operativo.
+Lo stato di implementazione a livello dell’organizzazione (coda, decisioni, registri di controllo, pacchetti di blocco per repository) è memorizzato in un repository **privato**, interno all’organizzazione (`role-os-rollout`). Questo repository rappresenta il prodotto; l’altro repository contiene lo stato operativo.
 
 ## Memoria e continuità
 

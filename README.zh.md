@@ -98,7 +98,7 @@ roleos reopen 0 "found issue in review"
 
 ## 组织推广状态
 
-整个组织的推广状态（队列、决策、审核记录、每个仓库的锁定包）都存储在一个单独的私有仓库中：[`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout)。这个仓库是产品；那个仓库是运行状态。
+整个组织范围内的部署状态（包括队列、决策、审计记录以及每个代码仓库的锁定数据包）都存储在一个独立的**私有**组织内部的代码仓库中（`role-os-rollout`）。这个代码仓库是产品的体现；而另一个代码仓库则用于存储运行时的状态。
 
 ## 内存和连续性
 

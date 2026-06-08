@@ -98,7 +98,7 @@ Role OS vérifie et contrôle les appels d’outils au niveau de `PreToolUse` �
 
 ## État de déploiement au niveau de l’organisation
 
-L’état de déploiement à l’échelle de l’organisation (file d’attente, décisions, enregistrements d’audit, ensembles de verrouillage par dépôt) est stocké dans un dépôt privé distinct : [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Ce dépôt est le produit ; ce dépôt est l’état opérationnel.
+L’état du déploiement à l’échelle de l’organisation (file d’attente, décisions, journaux d’audit, paquets de verrouillage par dépôt) est stocké dans un référentiel **privé** distinct, interne à l’organisation (`role-os-rollout`). Ce référentiel représente le produit ; ce référentiel contient les données opérationnelles.
 
 ## Mémoire et continuité
 

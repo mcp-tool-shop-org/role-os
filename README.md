@@ -98,7 +98,7 @@ Role OS verifies and gates tool calls at the `PreToolUse` seam — deterministic
 
 ## Org rollout state
 
-Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.
+Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate **private**, org-internal repo (`role-os-rollout`). This repo is the product; that repo is operational state.
 
 ## Memory and continuity
 

@@ -98,7 +98,7 @@ O Role OS verifica e controla as chamadas de ferramentas no ponto `PreToolUse` �
 
 ## Estado de implantação em toda a organização
 
-O estado de implantação em toda a organização (fila, decisões, registros de auditoria, pacotes de bloqueio por repositório) está armazenado em um repositório privado separado: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Este repositório é o produto; aquele repositório é o estado operacional.
+O estado do lançamento em toda a organização (fila de tarefas, decisões, registos de auditoria, pacotes de bloqueio por repositório) está armazenado num repositório **privado** e interno da organização (`role-os-rollout`). Este repositório é o produto; esse repositório contém o estado operacional.
 
 ## Memória e continuidade
 
