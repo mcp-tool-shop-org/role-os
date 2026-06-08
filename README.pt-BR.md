@@ -89,6 +89,13 @@ As execuções são persistidas em disco (`.claude/runs/`), para que as sessões
 
 O Role OS pode consultar um **analista de orçamento de tokens** local para cada etapa de despacho e anexar uma previsão de gastos consultiva ao manifesto — opcional (`ROLEOS_BUDGET_CONSULT`), consultiva (nunca bloqueia um despacho) e com fallback para uma linha de base determinística. Desativado por padrão; a previsão é local e gratuita. Consulte o [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/specialist-budget/).
 
+## Supervisão das chamadas de ferramentas
+
+O Role OS verifica e controla as chamadas de ferramentas no ponto `PreToolUse` — de forma determinística, sem nenhum modelo no caminho crítico:
+
+- **Monitor de conformidade** (aconselhamento, falha aberta) — um esquema determinístico + verificações de contrato computável avaliam uma chamada proposta em relação ao seu contrato de ferramenta catalogado e anexam um parecer consultivo sobre uma chamada *comprovadamente* não conforme; nunca bloqueia. Um limite opcional do LLM (`ROLEOS_CONFORMANCE_CONSULT`) lida com o resíduo genuinamente semântico.
+- **Controle de capacidade** (falha fechada, opcional `ROLEOS_CAPABILITY_GATE`, padrão DESLIGADO) — privilégio mínimo determinístico em ações *irreversíveis* (publicação no npm/PyPI, `gh release`, `git push`, edições do repositório, implantação de Páginas). Uma ação controlada é negada, a menos que o administrador tenha concedido sua capacidade em `.claude/role-os/capabilities.json`, portanto, um passo errado — um erro honesto ou um erro intencional — não pode acionar uma ação irreversível não autorizada. O complemento preventivo da regra de compensação nomeada. Consulte o [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/).
+
 ## Estado de implantação em toda a organização
 
 O estado de implantação em toda a organização (fila, decisões, registros de auditoria, pacotes de bloqueio por repositório) está armazenado em um repositório privado separado: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Este repositório é o produto; aquele repositório é o estado operacional.

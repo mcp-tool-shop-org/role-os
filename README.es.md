@@ -89,6 +89,13 @@ Las ejecuciones se guardan en el disco (`.claude/runs/`), por lo que las sesione
 
 Role OS puede consultar a un **analista de presupuesto de tokens** local en cada paso de la distribución y adjuntar una previsión de gasto orientativa al manifiesto: opcional (`ROLEOS_BUDGET_CONSULT`), orientativa (nunca bloquea una distribución) y con un mecanismo de seguridad que vuelve a una línea de base determinista. Desactivado por defecto; la previsión es local y gratuita. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/specialist-budget/).
 
+## Supervisión de las llamadas a herramientas
+
+El sistema operativo (OS) del rol verifica y controla las llamadas a herramientas en el punto `PreToolUse` de forma determinista, sin utilizar ningún modelo en la ruta principal:
+
+- **Monitor de conformidad** (asesoramiento, falla abierta): un esquema determinista + una verificación del contrato computable comprueba una llamada propuesta con su contrato de herramienta catalogado y adjunta un veredicto asesor sobre una llamada *comprobada* como no conforme; nunca bloquea. Un límite opcional para el modelo lingüístico grande (LLM) (`ROLEOS_CONFORMANCE_CONSULT`) gestiona los residuos genuinamente semánticos.
+- **Control de capacidad** (falla cerrada, opcional `ROLEOS_CAPABILITY_GATE`, desactivado por defecto): control determinista del privilegio mínimo en las acciones *irreversibles* (publicación en npm/PyPI, `gh release`, `git push`, edición de repositorios, despliegue de Páginas). Una acción controlada se deniega a menos que el administrador haya concedido su capacidad en `.claude/role-os/capabilities.json`, por lo que un paso incorrecto (un error honesto o uno inyectado) no puede desencadenar una acción irreversible no autorizada. El complemento preventivo de la regla del compensador con nombre. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/).
+
 ## Estado de la implementación a nivel de organización
 
 El estado de la implementación a nivel de organización (cola, decisiones, registros de auditoría, paquetes de bloqueo por repositorio) se encuentra en un repositorio privado independiente: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). Este repositorio es el producto; ese repositorio es el estado operativo.

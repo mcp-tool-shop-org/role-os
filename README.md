@@ -89,6 +89,13 @@ Runs persist to disk (`.claude/runs/`), so interrupted sessions resume cleanly. 
 
 Role OS can consult a local **Token Budget Analyst** for each dispatch step and attach an advisory spend forecast to the manifest — opt-in (`ROLEOS_BUDGET_CONSULT`), advisory (it never blocks a dispatch), and fail-open to a deterministic baseline. Off by default; the forecast is local and free to run. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/specialist-budget/).
 
+## Tool-call oversight
+
+Role OS verifies and gates tool calls at the `PreToolUse` seam — deterministically, with no model on the hot path:
+
+- **Conformance watcher** (advisory, fail-open) — a deterministic schema + computable-contract floor checks a proposed call against its catalogued tool-contract and attaches an advisory verdict on a *proven* nonconformant call; it never blocks. An opt-in LLM ceiling (`ROLEOS_CONFORMANCE_CONSULT`) handles the genuinely-semantic residue.
+- **Capability gate** (fail-closed, opt-in `ROLEOS_CAPABILITY_GATE`, default OFF) — deterministic least-privilege on *irreversible* actions (npm/PyPI publish, `gh release`, `git push`, repo edits, Pages deploy). A gated action is denied unless the director granted its capability in `.claude/role-os/capabilities.json`, so a wrong step — an honest mistake or an injected one — can't trigger an unauthorized irreversible action. The preventive complement to the named-compensator rule. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/).
+
 ## Org rollout state
 
 Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate private repo: [`role-os-rollout`](https://github.com/mcp-tool-shop-org/role-os-rollout). This repo is the product; that repo is operational state.

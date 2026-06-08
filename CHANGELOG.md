@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.8.0
+
+### Added
+- **Capability gate — deterministic least-privilege on irreversible tool calls.**
+  `src/specialist/capability-gate.mjs`: a gated set of irreversible / world-touching actions
+  (npm/PyPI publish, `gh release` / `pr` / `repo edit`, `git push`, Pages deploy), a director-authored
+  `.claude/role-os/capabilities.json` grant manifest, and `capabilityGate()`. Opt-in
+  (`ROLEOS_CAPABILITY_GATE`, default OFF → pure no-op), **fail-closed** for the gated set, deterministic
+  (no model). Wired into `onPreToolUse` (deny path) + the generated PreToolUse hook (exit 2), alongside
+  the advisory / fail-open conformance floor. Bounds what a wrong verdict — an honest mistake or an
+  injected one — can DO; the preventive complement to the named-compensator rule (POLA / CaMeL).
+
+### Changed
+- **Wedge #1 conformance — live tool-contracts catalog rollout.** The deterministic schema + computable-
+  contract floor runs at the live `onPreToolUse` seam against `.claude/role-os/tool-contracts.json`
+  (advisory, fail-open), and generated hook scripts emit the current Claude Code wire protocol
+  (`hookSpecificOutput.additionalContext` + exit 0).
+
+(Full suite 1400 tests green.)
+
 ## 2.7.1
 
 ### Docs
