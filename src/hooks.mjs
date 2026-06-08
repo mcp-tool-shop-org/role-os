@@ -391,10 +391,15 @@ writeFileSync(join(stateDir, "session-state.json"), JSON.stringify(state, null, 
 
 const hasRoleOs = existsSync(join(cwd, ".claude", "agents"));
 if (hasRoleOs) {
+  // SessionStart wire protocol (current Claude Code): hookSpecificOutput.additionalContext + exit 0.
   console.log(JSON.stringify({
-    addContext: "Role OS is active. For non-trivial tasks, run /roleos-route first.",
+    hookSpecificOutput: {
+      hookEventName: "SessionStart",
+      additionalContext: "Role OS is active. For non-trivial tasks, run /roleos-route first.",
+    },
   }));
 }
+process.exit(0);
 `;
 }
 
@@ -424,10 +429,15 @@ if (isSubstantial) state.substantivePrompts = (state.substantivePrompts || 0) + 
 writeFileSync(statePath, JSON.stringify(state, null, 2));
 
 if (isSubstantial && (state.substantivePrompts || 0) >= 2 && !state.routeCardPresent) {
+  // UserPromptSubmit wire protocol (current Claude Code): hookSpecificOutput.additionalContext + exit 0.
   console.log(JSON.stringify({
-    addContext: "No Role OS route card yet. Consider /roleos-route to classify this task.",
+    hookSpecificOutput: {
+      hookEventName: "UserPromptSubmit",
+      additionalContext: "No Role OS route card yet. Consider /roleos-route to classify this task.",
+    },
   }));
 }
+process.exit(0);
 `;
 }
 
@@ -477,7 +487,14 @@ try {
   }
 } catch { /* role-os not resolvable here, or internal error -> no-op (never block a tool call) */ }
 
-if (notes.length) console.log(JSON.stringify({ addContext: notes.join(" ") }));
+// PreToolUse wire protocol (current Claude Code): inject advisory context via
+// hookSpecificOutput.additionalContext + exit 0. A bare { addContext } is IGNORED; exit 2 would BLOCK.
+if (notes.length) {
+  console.log(JSON.stringify({
+    hookSpecificOutput: { hookEventName: "PreToolUse", additionalContext: notes.join(" ") },
+  }));
+}
+process.exit(0);
 `;
 }
 
@@ -497,10 +514,15 @@ if (existsSync(statePath)) {
 }
 
 if (state.activeRole) {
+  // SubagentStart wire protocol (current Claude Code): hookSpecificOutput.additionalContext + exit 0.
   console.log(JSON.stringify({
-    addContext: \`Role OS active. Role: \${state.activeRole}. Pack: \${state.activePack || "free routing"}. Follow role contract.\`,
+    hookSpecificOutput: {
+      hookEventName: "SubagentStart",
+      additionalContext: \`Role OS active. Role: \${state.activeRole}. Pack: \${state.activePack || "free routing"}. Follow role contract.\`,
+    },
   }));
 }
+process.exit(0);
 `;
 }
 
@@ -527,9 +549,15 @@ if (!state.routeCardPresent) warnings.push("No route card produced.");
 if (!state.outcomeRecorded) warnings.push("No outcome artifact recorded.");
 
 if (warnings.length > 0) {
+  // Stop wire protocol (current Claude Code): advisory context via hookSpecificOutput.additionalContext
+  // + exit 0 lets the session end with a note. { decision: "block" } would PREVENT stopping (not wanted here).
   console.log(JSON.stringify({
-    addContext: \`Role OS audit: \${warnings.join(" ")} Consider documenting the outcome.\`,
+    hookSpecificOutput: {
+      hookEventName: "Stop",
+      additionalContext: \`Role OS audit: \${warnings.join(" ")} Consider documenting the outcome.\`,
+    },
   }));
 }
+process.exit(0);
 `;
 }

@@ -273,6 +273,54 @@ describe("generatePreToolUseScript wiring", () => {
     assert.ok(script.includes("contractFloor"), "runs the contract floor");
     assert.ok(script.includes("NONCONFORMANT"), "emits an advisory verdict");
   });
+
+  it("the scaffolded pre-tool-use hook emits the current PreToolUse wire shape (not the ignored bare addContext)", () => {
+    setup();
+    scaffoldHooks(TEST_DIR);
+    const script = readFileSync(join(TEST_DIR, ".claude", "hooks", "pre-tool-use.mjs"), "utf-8");
+    assert.ok(script.includes("hookSpecificOutput"), "uses hookSpecificOutput");
+    assert.ok(script.includes('hookEventName: "PreToolUse"'), "tags hookEventName PreToolUse");
+    assert.ok(script.includes("additionalContext"), "injects via additionalContext");
+    assert.ok(script.includes("process.exit(0)"), "exits 0 — advisory, never blocks");
+    // The bug: a bare console.log(JSON.stringify({ addContext: ... })) is IGNORED by Claude Code.
+    assert.ok(
+      !/JSON\.stringify\(\{\s*addContext/.test(script),
+      "must NOT emit the ignored bare { addContext } stdout shape",
+    );
+  });
+});
+
+// ── Generated hook scripts: per-event wire protocol ─────────────────────────────
+
+describe("scaffolded hook scripts use the correct per-event wire protocol", () => {
+  before(setup);
+  afterEach(cleanup);
+
+  // Each context-injecting hook must emit hookSpecificOutput.{hookEventName,additionalContext} + exit 0.
+  // A bare { addContext } is silently ignored by current Claude Code (the shipped-generator bug).
+  const expectedEvent = {
+    "session-start.mjs": "SessionStart",
+    "prompt-submit.mjs": "UserPromptSubmit",
+    "pre-tool-use.mjs": "PreToolUse",
+    "subagent-start.mjs": "SubagentStart",
+    "stop.mjs": "Stop",
+  };
+
+  for (const [file, event] of Object.entries(expectedEvent)) {
+    it(`${file} injects context via hookSpecificOutput (hookEventName "${event}") + exit 0`, () => {
+      setup();
+      scaffoldHooks(TEST_DIR);
+      const script = readFileSync(join(TEST_DIR, ".claude", "hooks", file), "utf-8");
+      assert.ok(script.includes("hookSpecificOutput"), `${file} uses hookSpecificOutput`);
+      assert.ok(script.includes(`hookEventName: "${event}"`), `${file} tags hookEventName ${event}`);
+      assert.ok(script.includes("additionalContext"), `${file} injects via additionalContext`);
+      assert.ok(script.includes("process.exit(0)"), `${file} exits 0`);
+      assert.ok(
+        !/JSON\.stringify\(\{\s*addContext/.test(script),
+        `${file} must NOT emit the ignored bare { addContext } stdout shape`,
+      );
+    });
+  }
 });
 
 // ── SubagentStart ─────────────────────────────────────────────────────────────
