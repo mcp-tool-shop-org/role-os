@@ -1,0 +1,264 @@
+[
+  {
+    "tool": "Read",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "gt",
+        "left": "limit",
+        "right": 0
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "offset",
+        "right": 0
+      }
+    ],
+    "notes": "Encoded the two computable arithmetic bounds the contract states: limit > 0 (positive integer) and offset >= 0 (non-negative, 0-based). Both use cmp on optional fields so they skip when omitted (zero false-positives). Left to the LLM ceiling / schema floor: file_path absoluteness (open-set string predicate, not a relational contract a validator proves from arithmetic), type/required/max bounds (schema floor), and pages-range validity (free-form string, not computable here).",
+    "state_struct": null
+  },
+  {
+    "tool": "Edit",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ne",
+        "left": "old_string",
+        "right": {
+          "field": "new_string"
+        }
+      }
+    ],
+    "notes": "Encoded the one computable relational contract: old_string != new_string (replacing a string with itself is a rejected no-op). Left to the LLM ceiling: whether old_string actually occurs in the file, uniqueness of the match when replace_all is false, and path validity — none are computable from call arguments alone. Type/required/boolean checks are deferred to the schema floor."
+  },
+  {
+    "tool": "Write",
+    "constraints": [],
+    "state_struct": null,
+    "notes": "Empty: Write has only two required string args (file_path, content), both covered by the schema floor; no relational/arithmetic/ordering/exactly-one-of contract exists. Absolute-path validity and content correctness are open-set semantic checks left to the LLM ceiling."
+  },
+  {
+    "tool": "Bash",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "timeout",
+        "right": 0
+      }
+    ],
+    "notes": "Encoded the one computable relational contract the schema floor cannot express: timeout >= 0 (non-negative), via cmp/ge which skips when timeout is omitted. The upper bound (<=600000), types, and required-ness are left to the schema floor; command meaningfulness, sandbox-disable safety, and background-execution semantics are open-set/semantic and left to the LLM ceiling.",
+    "state_struct": null
+  },
+  {
+    "tool": "PowerShell",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "timeout",
+        "right": 0
+      }
+    ],
+    "notes": "Encoded the non-negative lower bound on optional timeout (cmp ge 0, skips when omitted). Left the upper bound (<=600000), types, required, and booleans to the schema floor; left command content semantics (safety, sandbox/dangerouslyDisableSandbox intent, background-run appropriateness) to the LLM ceiling as open-set/semantic contracts."
+  },
+  {
+    "tool": "Grep",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "-A",
+        "right": 0
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "-B",
+        "right": 0
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "-C",
+        "right": 0
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "context",
+        "right": 0
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "head_limit",
+        "right": 0
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "offset",
+        "right": 0
+      }
+    ],
+    "notes": "Encoded the six non-negativity bounds the contract states (-A, -B, -C, context, head_limit, offset all >= 0) as cmp/ge, which skip silently when the optional field is omitted (zero false-positives). Left to the schema floor: pattern required, output_mode enum membership, and all type checks. Left to the LLM ceiling: open-set string fields (pattern regex validity, path/glob/type values) and the semantic redundancy of -C vs -A/-B, none of which is a computable relational contract from the arguments alone."
+  },
+  {
+    "tool": "Glob",
+    "constraints": [],
+    "state_struct": null,
+    "notes": "Empty: the contract explicitly states no computable relational contract beyond the schema floor. Both params are free-form open-set strings (pattern, optional path) with no arithmetic/cardinality/ordering/mutual-exclusion relationship; pattern validity and path-vs-pattern semantics are left to the LLM ceiling."
+  },
+  {
+    "tool": "AskUserQuestion",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": {
+          "len": "questions"
+        },
+        "right": 1
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": {
+          "len": "questions"
+        },
+        "right": 4
+      }
+    ],
+    "notes": "Encoded the computable cardinality contract: 1 <= len(questions) <= 4 via cmp on {\"len\":\"questions\"} (skips safely if questions is undefined). Left to the LLM ceiling: question/option semantic quality, free-form text content, and per-option correctness — none of which are provable from call arguments alone.",
+    "state_struct": null
+  },
+  {
+    "tool": "ToolSearch",
+    "constraints": [],
+    "state_struct": null,
+    "notes": "Empty: the contract states no relational contract beyond the schema floor. 'query' required and 'max_results' positive-integer are type/required/min bounds already covered by the schema floor; there is no cross-argument arithmetic, ordering, cardinality, or exactly-one-of relationship to encode. Query-semantics (open-set string matching) are left to the LLM ceiling."
+  },
+  {
+    "tool": "Skill",
+    "constraints": [],
+    "notes": "Empty: contract states no computable relational contract beyond the schema floor. 'skill' is an open string set (exact skill names — new ones are legal, can't be enum-bounded here) and 'args' is free-form; the type/required floor already covers them. Skill-name existence and arg semantics are left to the LLM ceiling.",
+    "state_struct": null
+  },
+  {
+    "tool": "Agent",
+    "constraints": [],
+    "notes": "Empty: every stated contract is already covered by the schema floor (required description/prompt/subagent_type; enum on model=sonnet|opus|haiku and isolation=worktree) or is explicitly non-computable (subagent_type is an OPEN set — left to the LLM ceiling). No relational/arithmetic/cardinality/ordering/exactly-one-of contracts exist among the args to encode.",
+    "state_struct": null
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_chat",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": {
+          "len": "messages"
+        },
+        "right": 1
+      }
+    ],
+    "notes": "Encoded the one computable relational contract: messages array length >= 1 (non-empty). Left the per-element {role,content} structure, role-enum, and free-form content/model/system string semantics to the schema floor and the LLM ceiling (open-set fields).",
+    "state_struct": null
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_classify",
+    "constraints": [
+      {
+        "kind": "present",
+        "fields": [
+          "text",
+          "source_path",
+          "items"
+        ],
+        "count": 1
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "threshold",
+        "right": 0
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "threshold",
+        "right": 1
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "per_file_max_chars",
+        "right": 1000
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "per_file_max_chars",
+        "right": 200000
+      }
+    ],
+    "notes": "Encoded the input-source exactly-one-of ({text|source_path|items} count=1, holds for every valid call) plus relational numeric bounds (threshold in [0,1], per_file_max_chars in [1000,200000]) as skip-on-undefined cmp guards. Left labels-required/types/enums to the schema floor and the open-set semantics (label set quality, frame text, model name, allow_none policy) to the LLM ceiling."
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_corpus_search",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "top_k",
+        "right": 1,
+        "_added": "real-schema minimum:1"
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "top_k",
+        "right": 100,
+        "_added": "real-schema maximum:100"
+      },
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "preview_chars",
+        "right": 0,
+        "_added": "real-schema minimum:0"
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "preview_chars",
+        "right": 500,
+        "_added": "real-schema maximum:500"
+      }
+    ],
+    "notes": "Empty: every computable contract here (mode enum, top_k in [1,100], preview_chars in [0,500], required corpus/query) is a type/required/enum/min/max bound already owned by the schema floor. No cross-field relational, ordering, exactly-one-of, or distinctness contracts exist; corpus/query are open free-form strings left to the LLM ceiling. [build-author added 4 range constraint(s) from the real MCP schema min/max; the schema floor lacks min support and no max was set on these params.]"
+  },
+  {
+    "tool": "mcp__ollama-intern__ollama_summarize_fast",
+    "constraints": [
+      {
+        "kind": "cmp",
+        "op": "ge",
+        "left": "max_words",
+        "right": 10,
+        "_added": "real-schema minimum:10"
+      },
+      {
+        "kind": "cmp",
+        "op": "le",
+        "left": "max_words",
+        "right": 400,
+        "_added": "real-schema maximum:400"
+      }
+    ],
+    "notes": "Empty: the only numeric contract is max_words in [10,400], which is an integer range bound already covered by the schema floor (type+min+max) — not a relational/arithmetic cross-field contract the DSL adds. There are no field-to-field comparisons, cardinality, exactly-one-of, or co-requirements in the contract. text required is a schema-floor concern; frame and model are open-set free-form strings left to the LLM ceiling (semantic appropriateness of frame/model selection and summary fidelity). [build-author added 2 range constraint(s) from the real MCP schema min/max; the schema floor lacks min support and no max was set on these params.]",
+    "state_struct": null
+  }
+]
