@@ -96,6 +96,12 @@ O Role OS verifica e controla as chamadas de ferramentas no ponto `PreToolUse` �
 - **Monitor de conformidade** (aconselhamento, falha aberta) — um esquema determinístico + verificações de contrato computável avaliam uma chamada proposta em relação ao seu contrato de ferramenta catalogado e anexam um parecer consultivo sobre uma chamada *comprovadamente* não conforme; nunca bloqueia. Um limite opcional do LLM (`ROLEOS_CONFORMANCE_CONSULT`) lida com o resíduo genuinamente semântico.
 - **Controle de capacidade** (falha fechada, opcional `ROLEOS_CAPABILITY_GATE`, padrão DESLIGADO) — privilégio mínimo determinístico em ações *irreversíveis* (publicação no npm/PyPI, `gh release`, `git push`, edições do repositório, implantação de Páginas). Uma ação controlada é negada, a menos que o administrador tenha concedido sua capacidade em `.claude/role-os/capabilities.json`, portanto, um passo errado — um erro honesto ou um erro intencional — não pode acionar uma ação irreversível não autorizada. O complemento preventivo da regra de compensação nomeada. Consulte o [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/).
 
+## Dossiê da equipe
+
+Cada função tem um **dossiê** — uma ficha de personagem que também serve como configuração para o tempo de execução. Seis aptidões (Rigor, Ritmo, Alcance, Ceticismo, Autonomia, Franqueza) correspondem a parâmetros reais de distribuição; uma camada de **disposição** com oito arquétipos (Cético, Construtor, Investigador, Rebelde…) contém uma instrução comportamental; e cada função tem um retrato pintado e uma classificação. Veja toda a equipe como uma galeria (`dossier/dossier.html`) — o radar de cada função mostra sua configuração ajustada em relação ao seu ideal canônico.
+
+Quando uma função tem um dossiê, a distribuição injeta uma **Postura Operacional** — a instrução comportamental da disposição mais uma linha de postura das aptidões da função —, para que a ficha configure efetivamente a função. Opcional e aditivo: as funções sem um dossiê se comportam exatamente como antes. Consulte o [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).
+
 ## Estado de implantação em toda a organização
 
 O estado do lançamento em toda a organização (fila de tarefas, decisões, registos de auditoria, pacotes de bloqueio por repositório) está armazenado num repositório **privado** e interno da organização (`role-os-rollout`). Este repositório é o produto; esse repositório contém o estado operacional.

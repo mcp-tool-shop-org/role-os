@@ -96,6 +96,12 @@ Role OS verifies and gates tool calls at the `PreToolUse` seam — deterministic
 - **Conformance watcher** (advisory, fail-open) — a deterministic schema + computable-contract floor checks a proposed call against its catalogued tool-contract and attaches an advisory verdict on a *proven* nonconformant call; it never blocks. An opt-in LLM ceiling (`ROLEOS_CONFORMANCE_CONSULT`) handles the genuinely-semantic residue.
 - **Capability gate** (fail-closed, opt-in `ROLEOS_CAPABILITY_GATE`, default OFF) — deterministic least-privilege on *irreversible* actions (npm/PyPI publish, `gh release`, `git push`, repo edits, Pages deploy). A gated action is denied unless the director granted its capability in `.claude/role-os/capabilities.json`, so a wrong step — an honest mistake or an injected one — can't trigger an unauthorized irreversible action. The preventive complement to the named-compensator rule. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/).
 
+## Crew dossier
+
+Every role has a **dossier** — a character sheet that doubles as run-time config. Six aptitudes (Rigor, Pace, Range, Skepticism, Autonomy, Candor) map to real dispatch knobs; an eight-archetype **disposition** layer (Skeptic, Builder, Investigator, Maverick…) carries a behavioral instruction; and each role has a painted portrait and a grade. Browse the whole crew as a gallery (`dossier/dossier.html`) — each role's radar shows its tuned build against its canonical ideal.
+
+When a role has a dossier, dispatch injects an **Operating Posture** — the disposition's behavioral instruction plus a posture line from the role's aptitudes — so the sheet actually configures the role. Opt-in and additive: roles without a dossier behave exactly as before. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).
+
 ## Org rollout state
 
 Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) lives in a separate **private**, org-internal repo (`role-os-rollout`). This repo is the product; that repo is operational state.

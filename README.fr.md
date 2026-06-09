@@ -96,9 +96,15 @@ Role OS vérifie et contrôle les appels d’outils au niveau de `PreToolUse` �
 - **Surveillance de la conformité** (indicatif, en cas d’échec, il revient à une base de référence) — un schéma déterministe + des seuils de contrat calculables vérifient un appel proposé par rapport à son contrat d’outil catalogué et joignent une évaluation indicative sur un appel *manifestement* non conforme ; il ne bloque jamais. Un plafond LLM optionnel (`ROLEOS_CONFORMANCE_CONSULT`) gère les éléments sémantiques restants.
 - **Contrôle des capacités** (en cas d’échec, optionnel `ROLEOS_CAPABILITY_GATE`, désactivé par défaut) — privilèges minimums déterministes sur les actions *irréversibles* (publication npm/PyPI, `gh release`, `git push`, modifications du dépôt, déploiement de Pages). Une action contrôlée est refusée à moins que le responsable n’ait accordé sa capacité dans `.claude/role-os/capabilities.json`, de sorte qu’une étape incorrecte — une erreur honnête ou une injection malveillante — ne puisse pas déclencher une action irréversible non autorisée. Le complément préventif à la règle du compensateur nommé. Voir le [manuel](https://mcp-tool-shop-org.github.io/role-os/handbook/).
 
+## Dossier de l’équipe
+
+Chaque rôle possède un **dossier** : une fiche de personnage qui sert également de fichier de configuration en cours d’exécution. Six aptitudes (Rigueur, Rythme, Portée, Scepticisme, Autonomie, Franchise) correspondent à des paramètres réels ; une couche de **disposition** comportant huit archétypes (Sceptique, Constructeur, Enquêteur, Iconoclaste…) contient une instruction comportementale ; et chaque rôle possède un portrait peint et une note. Parcourez toute l’équipe comme dans une galerie (`dossier/dossier.html`) : le radar de chaque rôle affiche sa configuration personnalisée par rapport à son idéal canonique.
+
+Lorsqu’un rôle possède un dossier, la fonction d’affectation injecte une **posture opérationnelle** : l’instruction comportementale de la disposition, ainsi qu’une ligne de posture tirée des aptitudes du rôle ; ainsi, la fiche configure réellement le rôle. Optionnel et cumulatif : les rôles sans dossier se comportent exactement comme auparavant. Voir le [manuel](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).
+
 ## État de déploiement au niveau de l’organisation
 
-L’état du déploiement à l’échelle de l’organisation (file d’attente, décisions, journaux d’audit, paquets de verrouillage par dépôt) est stocké dans un référentiel **privé** distinct, interne à l’organisation (`role-os-rollout`). Ce référentiel représente le produit ; ce référentiel contient les données opérationnelles.
+L’état du déploiement à l’échelle de l’organisation (file d’attente, décisions, enregistrements d’audit, paquets de verrouillage par dépôt) est stocké dans un **référentiel privé** distinct, interne à l’organisation (`role-os-rollout`). Ce référentiel est le produit ; ce référentiel contient l’état opérationnel.
 
 ## Mémoire et continuité
 

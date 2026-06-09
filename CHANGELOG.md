@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.9.0
+
+### Added
+- **Crew dossier — a character sheet per role that configures it at run time.** Each of the 64 roles
+  (the 61 roles + 3 specialty auditors) gets a dossier: six aptitudes (rigor / pace / range /
+  skepticism / autonomy / candor, 0–5) mapped to real dispatch knobs, an 8-archetype **disposition**
+  layer carrying a behavioral instruction, a painted portrait, and a grade. A self-contained crew
+  gallery (`dossier/dossier.html`) renders each role's radar — its tuned build vs the canonical ideal.
+- **Operating Posture dispatch wiring (opt-in, non-breaking).** `src/dossier-block.mjs` injects an
+  "Operating Posture" block — the role's disposition prompt-delta + a posture line from its aptitudes —
+  into `buildRolePrompt` when a dossier exists; roles without one are byte-identical to before. Runtime
+  data ships in `src/role-dossiers.json`. Mirrors the existing knowledge-block injection pattern.
+- Aptitude profiles were calibrated like an instrument: a 10-archetype model → a 3-model cloud panel
+  (per-axis median consensus) → a different-family external-verifier pass breaking collisions → 64
+  unique, knob-faithful fingerprints.
+
+(Full suite 1404 tests green.)
+
 ## 2.8.0
 
 ### Added

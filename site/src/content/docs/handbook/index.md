@@ -15,6 +15,7 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 - **[Role Spine](/role-os/handbook/role-spine/)** — 61 specialist roles across 10 packs and their contracts
 - **[Team Packs](/role-os/handbook/team-packs/)** — 10 pre-assembled role chains for common work types
 - **[Reference](/role-os/handbook/reference/)** — CLI commands, schemas, policies, and the operating system layers
+- **[Crew Dossier](/role-os/handbook/crew-dossier/)** — per-role character sheets (aptitudes, disposition, portrait) that configure roles at dispatch time
 
 ## What is Role OS?
 
