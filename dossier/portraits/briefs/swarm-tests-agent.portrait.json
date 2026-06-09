@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "swarm-tests-agent",
+  "role": "Swarm Tests Agent",
+  "dossier_ref": "../../examples/swarm-tests-agent.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A mid-30s professional with close-cropped dark hair, light stubble, and squared shoulders, wearing a slate-gray wool blazer over a crisp white Oxford button-down shirt with a structured collar, three short matte-brass rank bars on the collar points, a small enameled orange lapel pin shaped like a convergence node, one hand gripping a slim bound test audit report, a mechanical pencil tucked behind the ear.",
+    "specialization": "A small brass folding magnifier loupe pinched between thumb and forefinger at chest level, lens glinting.",
+    "expression": "Narrowed appraising dark eyes beneath a faintly raised left brow, mouth set in a thin measured line, chin lowered two degrees, shoulders braced in guarded, unconvinced composure.",
+    "crew_palette": "A subtle warm orange rim-light tracing the jawline and collar, plus a small enameled orange convergence-node pin on the blazer lapel.",
+    "grade_cue": "Three short matte-brass rank bars affixed horizontally to the buttoned shirt collar points."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 2184217787
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A mid-30s professional with close-cropped dark hair, light stubble, and squared shoulders, wearing a slate-gray wool blazer over a crisp white Oxford button-down shirt with a structured collar, three short matte-brass rank bars on the collar points, a small enameled orange lapel pin shaped like a convergence node, one hand gripping a slim bound test audit report, a mechanical pencil tucked behind the ear., A small brass folding magnifier loupe pinched between thumb and forefinger at chest level, lens glinting., Narrowed appraising dark eyes beneath a faintly raised left brow, mouth set in a thin measured line, chin lowered two degrees, shoulders braced in guarded, unconvinced composure., A subtle warm orange rim-light tracing the jawline and collar, plus a small enameled orange convergence-node pin on the blazer lapel., Three short matte-brass rank bars affixed horizontally to the buttoned shirt collar points.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Test Convergence"
+    ]
+  }
+}

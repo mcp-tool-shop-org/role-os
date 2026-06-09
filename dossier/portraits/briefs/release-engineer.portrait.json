@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "release-engineer",
+  "role": "Release Engineer",
+  "dossier_ref": "../../examples/release-engineer.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A mid-30s release engineer in a tailored charcoal dress shirt with a slim matte-black tie, one hand cradling an open leather changelog notebook while the other grips a small chrome version-stamp, a release-credential badge clipped neatly at the chest pocket.",
+    "specialization": "A compact chrome hand-stamp pressed to the open notebook page, freshly inked with a crisp version number on a cream tag.",
+    "expression": "Forward-leaning posture toward the viewer, focused gaze fixed past the camera, sleeves pushed past the forearms to reveal a slim steel wristwatch, jaw set with quiet determination, ready-to-work energy in the squared shoulders.",
+    "crew_palette": "A subtle gold rim-light catching the jaw, cheekbone, and shoulder seam, paired with a small gold collar insignia shaped like a stylized release tag pinned at the left collar point.",
+    "grade_cue": "Four thin gold rank bars stitched in a tight column just above the left chest pocket, set against refined tapered tailoring with crisp shoulder seams and a sharply pressed collar."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 1393172684
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident brushwork and soft edges, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled lighting, rich restrained palette, detailed rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A mid-30s release engineer in a tailored charcoal dress shirt with a slim matte-black tie, one hand cradling an open leather changelog notebook while the other grips a small chrome version-stamp, a release-credential badge clipped neatly at the chest pocket., A compact chrome hand-stamp pressed to the open notebook page, freshly inked with a crisp version number on a cream tag., Forward-leaning posture toward the viewer, focused gaze fixed past the camera, sleeves pushed past the forearms to reveal a slim steel wristwatch, jaw set with quiet determination, ready-to-work energy in the squared shoulders., A subtle gold rim-light catching the jaw, cheekbone, and shoulder seam, paired with a small gold collar insignia shaped like a stylized release tag pinned at the left collar point., Four thin gold rank bars stitched in a tight column just above the left chest pocket, set against refined tapered tailoring with crisp shoulder seams and a sharply pressed collar.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Publication"
+    ]
+  }
+}

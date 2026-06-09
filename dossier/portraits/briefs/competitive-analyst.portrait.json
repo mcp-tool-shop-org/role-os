@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "competitive-analyst",
+  "role": "Competitive Analyst",
+  "dossier_ref": "../../examples/competitive-analyst.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A focused adult analyst in a charcoal herringbone blazer over a crisp ivory button-down shirt, holding a small folded topographic map card in one hand with a slim black pen tucked behind the ear",
+    "specialization": "A small hand-held topographic map card creased at the corners, marked with faint elevation contour lines and tiny colored pin flags clustered along a ridge",
+    "expression": "Keen, searching eyes narrowed in close attention, head cocked and shoulders leaning slightly forward as if closing in on a clue, lips held in a quiet, probing line",
+    "crew_palette": "A warm amber rim-light grazing the jaw and the edge of the blazer, paired with a tiny enameled amber teardrop pin on the left lapel",
+    "grade_cue": "Three slim brushed-steel rank bars lined in a neat row at the right collar point of the blazer"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 1877604579
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A focused adult analyst in a charcoal herringbone blazer over a crisp ivory button-down shirt, holding a small folded topographic map card in one hand with a slim black pen tucked behind the ear, A small hand-held topographic map card creased at the corners, marked with faint elevation contour lines and tiny colored pin flags clustered along a ridge, Keen, searching eyes narrowed in close attention, head cocked and shoulders leaning slightly forward as if closing in on a clue, lips held in a quiet, probing line, A warm amber rim-light grazing the jaw and the edge of the blazer, paired with a tiny enameled amber teardrop pin on the left lapel, Three slim brushed-steel rank bars lined in a neat row at the right collar point of the blazer",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Competitive Analysis"
+    ]
+  }
+}

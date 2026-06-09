@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "ui-designer",
+  "role": "UI Designer",
+  "dossier_ref": "../../examples/ui-designer.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A lean, mid-thirties UI designer in a crisp slate-gray button-down shirt with sleeves pushed up past the forearms, leaning forward into the frame with a graphite stylus twirled loosely between the knuckles of one hand, the other hand gripping a slim tablet displaying a low-fidelity wireframe grid and a taped paper flow diagram",
+    "specialization": "A small handheld tablet angled toward the viewer, its screen lit with pale gray wireframe boxes, a sticky note tab marked with a hand-drawn arrow loop, and a stylus tucked across the bezel",
+    "expression": "Forward-leaning shoulders pitched into the picture plane, eyes locked in a sharp focused gaze just off-camera, jaw set, brows drawn together in quiet concentration, sleeves creased and bunched above the wrist in a ready-to-work stance",
+    "crew_palette": "Magenta used only as a hairline rim-light tracing the left jaw, ear, and shirt shoulder edge, paired with a small enameled magenta insignia pin on the left collar",
+    "grade_cue": "Three slim parallel rank bars embroidered in tonal thread on the right collar tab of the shirt"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 2138013219
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A lean, mid-thirties UI designer in a crisp slate-gray button-down shirt with sleeves pushed up past the forearms, leaning forward into the frame with a graphite stylus twirled loosely between the knuckles of one hand, the other hand gripping a slim tablet displaying a low-fidelity wireframe grid and a taped paper flow diagram, A small handheld tablet angled toward the viewer, its screen lit with pale gray wireframe boxes, a sticky note tab marked with a hand-drawn arrow loop, and a stylus tucked across the bezel, Forward-leaning shoulders pitched into the picture plane, eyes locked in a sharp focused gaze just off-camera, jaw set, brows drawn together in quiet concentration, sleeves creased and bunched above the wrist in a ready-to-work stance, Magenta used only as a hairline rim-light tracing the left jaw, ear, and shirt shoulder edge, paired with a small enameled magenta insignia pin on the left collar, Three slim parallel rank bars embroidered in tonal thread on the right collar tab of the shirt",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Interface Design"
+    ]
+  }
+}

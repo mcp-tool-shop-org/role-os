@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "swarm-bridge-agent",
+  "role": "Swarm Bridge Agent",
+  "dossier_ref": "../../examples/swarm-bridge-agent.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "Head-and-shoulders portrait of a lean, sun-tanned adult in a charcoal modern-fit blazer over a rolled-sleeve chambray work shirt with the cuffs folded twice just above the elbow, top button undone, leaning slightly forward into the frame with shoulders squared, one hand lifting a slim matte-black diagnostic tablet whose screen shows a tiny glowing bridge icon pulsing steady green, the other hand loosely holding a pair of compact reading glasses by one temple arm as if just pulled off, jaw set, brow faintly furrowed, eyes locked on an unseen integration log off-camera",
+    "specialization": "A small enamel lapel pin on the left blazer lapel shaped like two interlocking links with a heartbeat line threaded through them, plus a slim silver pulse-oximeter clipped to the shirt placket as a health-monitor cue",
+    "expression": "Forward-leaning posture, chin tipped down, eyes narrowed in tight focused concentration, lips pressed in a flat working line, sleeves pushed up to mid-forearm, hands alive with ready-to-work energy as if mid-gesture toward a keyboard",
+    "crew_palette": "A thin warm-orange rim-light tracing the right edge of the jaw, ear, and shoulder seam, paired with a small orange enamel crew insignia pin on the right blazer lapel shaped like a stylized bridge truss",
+    "grade_cue": "Three short parallel gunmetal rank bars stitched horizontally onto each side of the shirt collar, evenly spaced, just above the collar point"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 3720945667
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, Head-and-shoulders portrait of a lean, sun-tanned adult in a charcoal modern-fit blazer over a rolled-sleeve chambray work shirt with the cuffs folded twice just above the elbow, top button undone, leaning slightly forward into the frame with shoulders squared, one hand lifting a slim matte-black diagnostic tablet whose screen shows a tiny glowing bridge icon pulsing steady green, the other hand loosely holding a pair of compact reading glasses by one temple arm as if just pulled off, jaw set, brow faintly furrowed, eyes locked on an unseen integration log off-camera, A small enamel lapel pin on the left blazer lapel shaped like two interlocking links with a heartbeat line threaded through them, plus a slim silver pulse-oximeter clipped to the shirt placket as a health-monitor cue, Forward-leaning posture, chin tipped down, eyes narrowed in tight focused concentration, lips pressed in a flat working line, sleeves pushed up to mid-forearm, hands alive with ready-to-work energy as if mid-gesture toward a keyboard, A thin warm-orange rim-light tracing the right edge of the jaw, ear, and shoulder seam, paired with a small orange enamel crew insignia pin on the right blazer lapel shaped like a stylized bridge truss, Three short parallel gunmetal rank bars stitched horizontally onto each side of the shirt collar, evenly spaced, just above the collar point",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Bridge Convergence"
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "red-teamer",
+  "role": "Red-Teamer",
+  "dossier_ref": "../../examples/red-teamer.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A late-thirties operative in a charcoal worsted blazer over a crisp white collared shirt, left hand holding a slim clipboard bearing a printed attack-vector matrix, right hand loosely cradling a matte pen with a slate-blue grip, a small rectangular slate-blue collar pin on the left lapel, posture squared and unhurried.",
+    "specialization": "A small fanned stack of attack-vector index cards tucked into the breast pocket, each corner tabbed with a faint red-flag color code, edges visibly thumbed from use.",
+    "expression": "Narrowed appraising eyes under a faintly raised left brow, lips pressed in a measured unconvinced line, jaw set with guarded composure, chin level, attention visibly weighing every claim before it lands.",
+    "crew_palette": "Slate-blue reading as a thin cold rim-light along the jawline and a small rectangular collar insignia pinned to the left lapel, the rest of the blazer kept a sober charcoal.",
+    "grade_cue": "Four slim slate-blue rank bars stacked vertically on the left sleeve cuff, the blazer cut with sharp peak lapels and a refined, structured shoulder line."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 3254508861
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A late-thirties operative in a charcoal worsted blazer over a crisp white collared shirt, left hand holding a slim clipboard bearing a printed attack-vector matrix, right hand loosely cradling a matte pen with a slate-blue grip, a small rectangular slate-blue collar pin on the left lapel, posture squared and unhurried., A small fanned stack of attack-vector index cards tucked into the breast pocket, each corner tabbed with a faint red-flag color code, edges visibly thumbed from use., Narrowed appraising eyes under a faintly raised left brow, lips pressed in a measured unconvinced line, jaw set with guarded composure, chin level, attention visibly weighing every claim before it lands., Slate-blue reading as a thin cold rim-light along the jawline and a small rectangular collar insignia pinned to the left lapel, the rest of the blazer kept a sober charcoal., Four slim slate-blue rank bars stacked vertically on the left sleeve cuff, the blazer cut with sharp peak lapels and a refined, structured shoulder line.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Adversarial Testing"
+    ]
+  }
+}

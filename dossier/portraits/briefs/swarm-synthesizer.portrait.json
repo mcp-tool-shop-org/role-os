@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "swarm-synthesizer",
+  "role": "Swarm Synthesizer",
+  "dossier_ref": "../../examples/swarm-synthesizer.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A poised adult professional in a sharply tailored charcoal wool blazer over a soft ivory silk shell, holding a slim leather-bound convergence report open in one hand while the other hand rests with a slim brass fountain pen, hair pulled back in a low neat chignon, warm steady eyes and a composed half-smile conveying quiet confidence and openness",
+    "specialization": "A folded convergence report in hand, its columns inked in graphite and orange, tally marks cleanly crossed through, a small header reading FINAL SWARM SUMMARY visible at the top of the page",
+    "expression": "Open warm expression with a slight knowing smile, soft attentive eyes, chin level, shoulders relaxed, conveying composed diplomacy and receptive attentiveness",
+    "crew_palette": "A faint orange rim-glow catching the jaw and lapel edge, paired with a tiny enameled orange bar-pin insignia affixed to the left blazer lapel",
+    "grade_cue": "Refined pick-stitch tailoring along the lapel and a subtle five-bar rank mark in tonal thread stitched discreetly beside the inner cuff of the blazer sleeve"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 2547880740
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A poised adult professional in a sharply tailored charcoal wool blazer over a soft ivory silk shell, holding a slim leather-bound convergence report open in one hand while the other hand rests with a slim brass fountain pen, hair pulled back in a low neat chignon, warm steady eyes and a composed half-smile conveying quiet confidence and openness, A folded convergence report in hand, its columns inked in graphite and orange, tally marks cleanly crossed through, a small header reading FINAL SWARM SUMMARY visible at the top of the page, Open warm expression with a slight knowing smile, soft attentive eyes, chin level, shoulders relaxed, conveying composed diplomacy and receptive attentiveness, A faint orange rim-glow catching the jaw and lapel edge, paired with a tiny enameled orange bar-pin insignia affixed to the left blazer lapel, Refined pick-stitch tailoring along the lapel and a subtle five-bar rank mark in tonal thread stitched discreetly beside the inner cuff of the blazer sleeve",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Swarm Synthesis"
+    ]
+  }
+}

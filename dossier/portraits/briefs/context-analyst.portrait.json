@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "context-analyst",
+  "role": "Context Analyst",
+  "dossier_ref": "../../examples/context-analyst.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A poised woman in her mid-thirties in an immaculate charcoal wool blazer over a crisp ivory shell, hair pulled into a precise low chignon, holding a slim leather-bound taxonomy folio open to overlapping hand-drawn Venn circles, a fine-tip drafting pen resting between the first two fingers of her right hand.",
+    "specialization": "Two small index cards tucked into the folio's inner breast pocket — one stamped with a circled category term, the other crossed through with a clean red diagonal slash — paper edges still razor-sharp and unhandled.",
+    "expression": "Eyes locked forward in an unblinking, meticulous stare, brow level, jaw set, shoulders squared, lips pressed into a controlled line of quiet exactitude.",
+    "crew_palette": "Cool violet rim-light tracing the left lapel edge of the blazer and a tiny embroidered violet 'C' monogram pinned at the right collar point.",
+    "grade_cue": "Three slim polished silver rank bars inset evenly along the blazer's left lapel notch."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 1928967539
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A poised woman in her mid-thirties in an immaculate charcoal wool blazer over a crisp ivory shell, hair pulled into a precise low chignon, holding a slim leather-bound taxonomy folio open to overlapping hand-drawn Venn circles, a fine-tip drafting pen resting between the first two fingers of her right hand., Two small index cards tucked into the folio's inner breast pocket — one stamped with a circled category term, the other crossed through with a clean red diagonal slash — paper edges still razor-sharp and unhandled., Eyes locked forward in an unblinking, meticulous stare, brow level, jaw set, shoulders squared, lips pressed into a controlled line of quiet exactitude., Cool violet rim-light tracing the left lapel edge of the blazer and a tiny embroidered violet 'C' monogram pinned at the right collar point., Three slim polished silver rank bars inset evenly along the blazer's left lapel notch.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Context Analysis"
+    ]
+  }
+}

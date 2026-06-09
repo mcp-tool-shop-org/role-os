@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "swarm-infra-agent",
+  "role": "Swarm Infra Agent",
+  "dossier_ref": "../../examples/swarm-infra-agent.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "An adult operative with sun-touched skin and short-cropped dark hair, wearing a slate zip-front work jacket over a charcoal crew-neck shirt, the right hand loosely holding a slim silver-bodied pen while the left arm tucks a small dark hardbound maintenance notebook against the ribs.",
+    "specialization": "A folded CI log sheet tucked into the jacket's chest pocket, its corner stamped with a tiny pipeline-runner glyph in muted ink.",
+    "expression": "A relaxed confident half-smile, mouth easy at the corners and eyes settled in a calm unhurried gaze — shoulders dropped, chin level, posture grounded and unbothered.",
+    "crew_palette": "A faint warm orange rim-light grazing the jawline and shoulder seam, paired with a small orange chevron stitched at the right collar point.",
+    "grade_cue": "Three tonal-on-tonal horizontal rank bars bar-tacked at the left collar point, just above the lapel break."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 508514072
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, An adult operative with sun-touched skin and short-cropped dark hair, wearing a slate zip-front work jacket over a charcoal crew-neck shirt, the right hand loosely holding a slim silver-bodied pen while the left arm tucks a small dark hardbound maintenance notebook against the ribs., A folded CI log sheet tucked into the jacket's chest pocket, its corner stamped with a tiny pipeline-runner glyph in muted ink., A relaxed confident half-smile, mouth easy at the corners and eyes settled in a calm unhurried gaze — shoulders dropped, chin level, posture grounded and unbothered., A faint warm orange rim-light grazing the jawline and shoulder seam, paired with a small orange chevron stitched at the right collar point., Three tonal-on-tonal horizontal rank bars bar-tacked at the left collar point, just above the lapel break.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Infra Convergence"
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "judge",
+  "dossier_ref": "../../examples/judge.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "a composed adjudicator in a dark structured high-collar coat, holding a slim closed verdict folio, calm authoritative bearing, an arbiter of arguments",
+    "specialization": "a faint fan of review documents at the lower frame edge",
+    "expression": "narrowed appraising eyes, one brow faintly raised, measured and unconvinced, guarded composure",
+    "crew_palette": "violet accent rim-light, a small violet insignia pin at the collar",
+    "grade_cue": "distinguished refined tailoring, a subtle five-bar rank mark"
+  },
+  "derivation": {
+    "expression_from": "disposition.active = Skeptic",
+    "specialization_from": "specialization = Verdict & Synthesis Review",
+    "crew_palette_from": "crew[0].pack = brainstorm (violet accent)",
+    "grade_cue_from": "grade.level = L5",
+    "subject_from": "function = Adjudication"
+  },
+  "negative": "$house",
+  "params": {
+    "base": "chroma1-hd",
+    "sampler": "euler",
+    "steps": 30,
+    "cfg": 4.5,
+    "width": 832,
+    "height": 1216,
+    "seed": "det:hash(judge)"
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "reads as a composed adjudicator figure",
+      "violet accent present"
+    ]
+  }
+}

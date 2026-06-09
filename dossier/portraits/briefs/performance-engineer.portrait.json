@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "performance-engineer",
+  "role": "Performance Engineer",
+  "dossier_ref": "../../examples/performance-engineer.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A focused adult performance engineer in a sharply tailored charcoal wool blazer over a crisp white poplin dress shirt, head and shoulders framing, holding a brushed steel stopwatch in one hand at chest height and pinching a small folded flame-graph printout in the other, chin tipped slightly down as if reading the chart close.",
+    "specialization": "A compact analog stopwatch with a worn tan leather lanyard looped over the wrist, paired with a folded paper flame-graph printout held between thumb and forefinger of the opposite hand.",
+    "expression": "Keen, narrowed eyes locked forward with intent focus, brow faintly creased, head tilted a few degrees and shoulders rolled subtly inward as if leaning in to examine evidence.",
+    "crew_palette": "A thin cyan rim tracing the edge of the right lapel and a small cyan enamel collar pin shaped like a stylized waveform, the only saturated color on the figure.",
+    "grade_cue": "Four slim brushed-silver rank bars stacked along the left cuff and precise notched lapels with a sharp collar break, suggesting a well-cut custom blazer."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 4190884589
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A focused adult performance engineer in a sharply tailored charcoal wool blazer over a crisp white poplin dress shirt, head and shoulders framing, holding a brushed steel stopwatch in one hand at chest height and pinching a small folded flame-graph printout in the other, chin tipped slightly down as if reading the chart close., A compact analog stopwatch with a worn tan leather lanyard looped over the wrist, paired with a folded paper flame-graph printout held between thumb and forefinger of the opposite hand., Keen, narrowed eyes locked forward with intent focus, brow faintly creased, head tilted a few degrees and shoulders rolled subtly inward as if leaning in to examine evidence., A thin cyan rim tracing the edge of the right lapel and a small cyan enamel collar pin shaped like a stylized waveform, the only saturated color on the figure., Four slim brushed-silver rank bars stacked along the left cuff and precise notched lapels with a sharp collar break, suggesting a well-cut custom blazer.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Performance Engineering"
+    ]
+  }
+}

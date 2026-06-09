@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "backend-engineer",
+  "role": "Backend Engineer",
+  "dossier_ref": "../../examples/backend-engineer.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "An adult backend engineer in a fitted navy oxford button-up with sleeves cuffed at the forearms, shoulders squared and torso pitched forward, right hand loosely gripping a small matte black hardware security key between thumb and forefinger",
+    "specialization": "A small polished silver rack-server enamel pin set just beneath the collar",
+    "expression": "Squared shoulders, chin slightly lowered then eyes lifting in a focused direct gaze, lips pressed in quiet intent, forearms bared with sleeves pushed up, weight settled forward as if mid-stride toward a workstation",
+    "crew_palette": "A whisper of cyan catching the edge of the jaw as rim-light, mirrored by a slim cyan chevron insignia stitched at the collar point",
+    "grade_cue": "Three short gunmetal rank bars embroidered in a tidy row along each collar edge"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 2775662627
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident brushwork and soft edges, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled lighting, rich restrained palette, detailed rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, An adult backend engineer in a fitted navy oxford button-up with sleeves cuffed at the forearms, shoulders squared and torso pitched forward, right hand loosely gripping a small matte black hardware security key between thumb and forefinger, A small polished silver rack-server enamel pin set just beneath the collar, Squared shoulders, chin slightly lowered then eyes lifting in a focused direct gaze, lips pressed in quiet intent, forearms bared with sleeves pushed up, weight settled forward as if mid-stride toward a workstation, A whisper of cyan catching the edge of the jaw as rim-light, mirrored by a slim cyan chevron insignia stitched at the collar point, Three short gunmetal rank bars embroidered in a tidy row along each collar edge",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Backend Engineering"
+    ]
+  }
+}

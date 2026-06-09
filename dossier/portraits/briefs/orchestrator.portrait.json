@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "orchestrator",
+  "role": "Orchestrator",
+  "dossier_ref": "../../examples/orchestrator.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A composed adult in their early forties with warm hazel eyes and softly graying temples, wearing a tailored charcoal merino blazer over a clean ivory poplin shirt with a tonal knit tie, holding a slim espresso-brown leather portfolio in the left hand while the right hand gestures mid-open palm, a slim chrome pen tucked at the breast pocket.",
+    "specialization": "A slim leather portfolio held loosely at chest height with a tabbed set of small kraft role-assignment cards fanned slightly from its edge, suggesting a coordinated handoff between teams.",
+    "expression": "Open brow with eyes crinkled gently at the corners, a soft half-smile pulling one corner of the mouth into a knowing curve, head tilted a fraction forward in attentive listening, shoulders relaxed and square.",
+    "crew_palette": "A cool steel-silver rim light catching the jaw and the top of the blazer shoulder, with a small silver-thread-stitched lapel insignia shaped like three interlocking chevrons on the left collar.",
+    "grade_cue": "A discreet five-bar rank mark in tonal matte silver pinned as a slim bar pin on the right lapel, paired with refined soft-shoulder tailoring, pick-stitched lapels, and a faintly pin-tucked shirt placket signaling senior polish."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 3552196777
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident brushwork and soft edges, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled lighting, rich restrained palette, detailed rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A composed adult in their early forties with warm hazel eyes and softly graying temples, wearing a tailored charcoal merino blazer over a clean ivory poplin shirt with a tonal knit tie, holding a slim espresso-brown leather portfolio in the left hand while the right hand gestures mid-open palm, a slim chrome pen tucked at the breast pocket., A slim leather portfolio held loosely at chest height with a tabbed set of small kraft role-assignment cards fanned slightly from its edge, suggesting a coordinated handoff between teams., Open brow with eyes crinkled gently at the corners, a soft half-smile pulling one corner of the mouth into a knowing curve, head tilted a fraction forward in attentive listening, shoulders relaxed and square., A cool steel-silver rim light catching the jaw and the top of the blazer shoulder, with a small silver-thread-stitched lapel insignia shaped like three interlocking chevrons on the left collar., A discreet five-bar rank mark in tonal matte silver pinned as a slim bar pin on the right lapel, paired with refined soft-shoulder tailoring, pick-stitched lapels, and a faintly pin-tucked shirt placket signaling senior polish.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Orchestration"
+    ]
+  }
+}

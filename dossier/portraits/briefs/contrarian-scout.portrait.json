@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "contrarian-scout",
+  "role": "Contrarian Scout",
+  "dossier_ref": "../../examples/contrarian-scout.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A lean, weathered man in his mid-forties with close-cropped salt-and-pepper hair, light stubble, and a skeptical tilt to his jaw, wearing a tailored charcoal two-button suit jacket over a pressed white dress shirt with a slim charcoal tie, arms folded tightly across his chest, a slim red marking pen gripped between his fingers",
+    "specialization": "A red fine-tip marking pen with the cap posted on the back, held between the folded fingers, paired with a slim leather-bound notepad showing red-inked cross-outs tucked into the inner breast pocket",
+    "expression": "Wry, knowing challenge — left eyebrow cocked high, the corner of his mouth pulled into a lopsided smirk, eyes narrowed with quiet disbelief, chin tilted slightly down, arms folded tight across his chest",
+    "crew_palette": "Faint violet rim-light tracing the edge of his jaw, temple, and shoulder, paired with a small violet enamel collar insignia at the shirt point",
+    "grade_cue": "Three slim silver rank bars set into a small rectangular metal collar tab at the shirt point"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 1014679349
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A lean, weathered man in his mid-forties with close-cropped salt-and-pepper hair, light stubble, and a skeptical tilt to his jaw, wearing a tailored charcoal two-button suit jacket over a pressed white dress shirt with a slim charcoal tie, arms folded tightly across his chest, a slim red marking pen gripped between his fingers, A red fine-tip marking pen with the cap posted on the back, held between the folded fingers, paired with a slim leather-bound notepad showing red-inked cross-outs tucked into the inner breast pocket, Wry, knowing challenge — left eyebrow cocked high, the corner of his mouth pulled into a lopsided smirk, eyes narrowed with quiet disbelief, chin tilted slightly down, arms folded tight across his chest, Faint violet rim-light tracing the edge of his jaw, temple, and shoulder, paired with a small violet enamel collar insignia at the shirt point, Three slim silver rank bars set into a small rectangular metal collar tab at the shirt point",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Challenge Scouting"
+    ]
+  }
+}

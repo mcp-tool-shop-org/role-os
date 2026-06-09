@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "docs-architect",
+  "role": "Docs Architect",
+  "dossier_ref": "../../examples/docs-architect.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A poised early-fortysomething professional in a sharply tailored charcoal wool blazer over a crisp ivory dress shirt, holding a slim dark tablet displaying a clean indented sitemap wireframe, a slim steel stylus pinched between index finger and thumb",
+    "specialization": "The tablet's illuminated screen showing a luminous information-architecture diagram with branching parent-child nodes and tidy hierarchical indentation",
+    "expression": "A precise, focused stare through slightly narrowed eyes, lips pressed into a flat exacting line, posture rigid with immaculate composure, head canted a degree as if scrutinizing a fine detail",
+    "crew_palette": "A thin gold rim-light catching the right jaw and shoulder seam, paired with a single small brushed-gold collar pin at the throat",
+    "grade_cue": "Four small gold rank bars stacked above the left breast pocket, set against razor-creased lapels and a perfectly centered four-in-hand tie knot"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 707501644
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A poised early-fortysomething professional in a sharply tailored charcoal wool blazer over a crisp ivory dress shirt, holding a slim dark tablet displaying a clean indented sitemap wireframe, a slim steel stylus pinched between index finger and thumb, The tablet's illuminated screen showing a luminous information-architecture diagram with branching parent-child nodes and tidy hierarchical indentation, A precise, focused stare through slightly narrowed eyes, lips pressed into a flat exacting line, posture rigid with immaculate composure, head canted a degree as if scrutinizing a fine detail, A thin gold rim-light catching the right jaw and shoulder seam, paired with a single small brushed-gold collar pin at the throat, Four small gold rank bars stacked above the left breast pocket, set against razor-creased lapels and a perfectly centered four-in-hand tie knot",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Docs Architecture"
+    ]
+  }
+}

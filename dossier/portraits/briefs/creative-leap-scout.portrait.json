@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "creative-leap-scout",
+  "role": "Creative Leap Scout",
+  "dossier_ref": "../../examples/creative-leap-scout.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A late-thirties scout with tousled dark hair, light stubble, and an off-center half-smile, wearing a charcoal unstructured blazer over a slate crewneck knit; one hand cradles a slim leather-bound notebook and fountain pen while the other pinches a tiny brass watch gear pressed flat against a small pressed fern frond — the two unrelated objects deliberately held together as one gestalt.",
+    "specialization": "A tiny brass watch gear and a pressed fern frond held together between thumb and forefinger — cross-domain objects fused into a single held specimen.",
+    "expression": "A confident off-center half-smile, one brow subtly cocked, eyes lit with an amused glint of independence; shoulders loose, chin dipped a degree as if quietly ignoring the brief.",
+    "crew_palette": "A thin violet rim-light grazing the jawline and blazer shoulder, paired with a small violet enamel pin on the lapel.",
+    "grade_cue": "Three slim matte-silver rank bars stacked vertically on the blazer's inner collar stand."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 2287458930
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A late-thirties scout with tousled dark hair, light stubble, and an off-center half-smile, wearing a charcoal unstructured blazer over a slate crewneck knit; one hand cradles a slim leather-bound notebook and fountain pen while the other pinches a tiny brass watch gear pressed flat against a small pressed fern frond — the two unrelated objects deliberately held together as one gestalt., A tiny brass watch gear and a pressed fern frond held together between thumb and forefinger — cross-domain objects fused into a single held specimen., A confident off-center half-smile, one brow subtly cocked, eyes lit with an amused glint of independence; shoulders loose, chin dipped a degree as if quietly ignoring the brief., A thin violet rim-light grazing the jawline and blazer shoulder, paired with a small violet enamel pin on the lapel., Three slim matte-silver rank bars stacked vertically on the blazer's inner collar stand.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Creative Scouting"
+    ]
+  }
+}

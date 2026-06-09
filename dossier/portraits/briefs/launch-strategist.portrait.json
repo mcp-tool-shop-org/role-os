@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "launch-strategist",
+  "role": "Launch Strategist",
+  "dossier_ref": "../../examples/launch-strategist.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A mid-30s professional in a tailored charcoal wool blazer over a fine-gauge ivory knit, shoulders dropped, holding a slim cognac-leather planner open in the left hand while the right hand rests against the lapel with a muted green rollerball pen",
+    "specialization": "The open planner reveals a hand-inked go-to-market timeline with audience cohort columns, proof-point callouts, and circled launch windows in olive ink",
+    "expression": "Relaxed confident half-smile, one corner of the mouth lifted, brow soft, gaze steady and direct, shoulders squared but unforced — the settled ease of someone who has watched the plan hold",
+    "crew_palette": "Subtle forest-green rim-light grazing the jaw and the blazer's left shoulder, paired with a small enameled leaf lapel pin catching a quiet glint on the left lapel",
+    "grade_cue": "Four slim pewter rank bars set into the right cuff, paired with pick-stitched lapel edges and a softly structured shoulder indicating L4 refinement"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 2480446407
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A mid-30s professional in a tailored charcoal wool blazer over a fine-gauge ivory knit, shoulders dropped, holding a slim cognac-leather planner open in the left hand while the right hand rests against the lapel with a muted green rollerball pen, The open planner reveals a hand-inked go-to-market timeline with audience cohort columns, proof-point callouts, and circled launch windows in olive ink, Relaxed confident half-smile, one corner of the mouth lifted, brow soft, gaze steady and direct, shoulders squared but unforced — the settled ease of someone who has watched the plan hold, Subtle forest-green rim-light grazing the jaw and the blazer's left shoulder, paired with a small enameled leaf lapel pin catching a quiet glint on the left lapel, Four slim pewter rank bars set into the right cuff, paired with pick-stitched lapel edges and a softly structured shoulder indicating L4 refinement",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Launch Strategy"
+    ]
+  }
+}

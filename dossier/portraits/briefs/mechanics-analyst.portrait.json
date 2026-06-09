@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "mechanics-analyst",
+  "role": "Mechanics Analyst",
+  "dossier_ref": "../../examples/mechanics-analyst.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A lean adult analyst in a fitted charcoal wool blazer over a crisp pale-lavender collared shirt, head and shoulders turned three-quarter toward the viewer, one hand raised holding a slim charcoal pen and a small leather-bound field notebook whose open page shows a hand-sketched circular loop diagram with branching dependency arrows",
+    "specialization": "a fine silver chain lanyard tucked into the blazer lapel holding a tiny brass-rimmed magnifying loupe at chest level, the notebook page drawn as a closed-loop node graph with annotated failure-mode arrows",
+    "expression": "narrowed, intent eyes fixed mid-distance and slightly downward as if tracing a dependency chain, brow faintly furrowed, chin tipped forward and shoulders rolled slightly inward in a subtle lean of concentration, lips pressed in a quiet searching line",
+    "crew_palette": "a soft violet rim-light grazing the jawline and temple, paired with a small enameled violet pin shaped like a linked double-loop set just above the left lapel notch",
+    "grade_cue": "three narrow polished silver rank bars stacked vertically on the right collar of the pale-lavender shirt, each bar catching a quiet metallic highlight against the cloth weave"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 379955211
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A lean adult analyst in a fitted charcoal wool blazer over a crisp pale-lavender collared shirt, head and shoulders turned three-quarter toward the viewer, one hand raised holding a slim charcoal pen and a small leather-bound field notebook whose open page shows a hand-sketched circular loop diagram with branching dependency arrows, a fine silver chain lanyard tucked into the blazer lapel holding a tiny brass-rimmed magnifying loupe at chest level, the notebook page drawn as a closed-loop node graph with annotated failure-mode arrows, narrowed, intent eyes fixed mid-distance and slightly downward as if tracing a dependency chain, brow faintly furrowed, chin tipped forward and shoulders rolled slightly inward in a subtle lean of concentration, lips pressed in a quiet searching line, a soft violet rim-light grazing the jawline and temple, paired with a small enameled violet pin shaped like a linked double-loop set just above the left lapel notch, three narrow polished silver rank bars stacked vertically on the right collar of the pale-lavender shirt, each bar catching a quiet metallic highlight against the cloth weave",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Mechanics Analysis"
+    ]
+  }
+}

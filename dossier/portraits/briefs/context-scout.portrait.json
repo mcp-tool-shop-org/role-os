@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "context-scout",
+  "role": "Context Scout",
+  "dossier_ref": "../../examples/context-scout.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A late-thirties adult professional with swept-back dark hair, sharp cheekbones, and a focused gaze, wearing a charcoal-gray textured wool blazer over a crisp white oxford shirt with the collar open, leaning the torso forward, one hand cradling a slim leather-bound notebook with a fine-tip pen tucked between the fingers.",
+    "specialization": "A small pocket reference card fanned from the notebook, hand-inscribed with a sketched adjacent-domain map and a few underlined terminology terms.",
+    "expression": "Keen, narrowed eyes locked forward with searching intensity, brows slightly drawn, head tilted and shoulders leaned in as if closing in on a clue, mouth closed in quiet concentration.",
+    "crew_palette": "A thin violet rim catching the jawline and a small violet enamel brainstorm-crew collar pin at the lapel.",
+    "grade_cue": "Three slim parallel rank bars in gunmetal and violet set at the left lapel."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 3611482051
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A late-thirties adult professional with swept-back dark hair, sharp cheekbones, and a focused gaze, wearing a charcoal-gray textured wool blazer over a crisp white oxford shirt with the collar open, leaning the torso forward, one hand cradling a slim leather-bound notebook with a fine-tip pen tucked between the fingers., A small pocket reference card fanned from the notebook, hand-inscribed with a sketched adjacent-domain map and a few underlined terminology terms., Keen, narrowed eyes locked forward with searching intensity, brows slightly drawn, head tilted and shoulders leaned in as if closing in on a clue, mouth closed in quiet concentration., A thin violet rim catching the jawline and a small violet enamel brainstorm-crew collar pin at the lapel., Three slim parallel rank bars in gunmetal and violet set at the left lapel.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Context Scouting"
+    ]
+  }
+}

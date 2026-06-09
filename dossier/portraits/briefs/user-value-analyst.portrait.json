@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "user-value-analyst",
+  "role": "User Value Analyst",
+  "dossier_ref": "../../examples/user-value-analyst.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "Head-and-shoulders portrait of a lean, square-jawed adult professional in a dark charcoal herringbone wool blazer over a crisp ivory cotton shirt with a structured collar, leaning forward at the shoulders with a small black softcover notebook and a slim matte-black rollerball pen held close at chest height, as if pausing mid-interview to listen.",
+    "specialization": "A slim open notebook tucked against the blazer lapel, its pages marked with short handwritten lines and three violet-tabbed index cards fanned at the edge, suggesting captured jobs-to-be-done notes and pain statements.",
+    "expression": "Keen, narrowed eyes locked forward with a slight squint of attention, one brow faintly raised, lips softly closed, chin tucked and shoulders rolled inward, the whole posture leaning a fraction toward an unseen subject as if searching for the unsaid want beneath the words.",
+    "crew_palette": "A cool violet rim-light catching the left jaw, cheekbone, and shoulder seam, mirrored by a small enameled violet lapel pin shaped like an open eye, with no other violet in the wardrobe.",
+    "grade_cue": "Three slim brushed-silver rank bars stitched in a clean horizontal row across the point of the shirt collar."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 761013657
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, Head-and-shoulders portrait of a lean, square-jawed adult professional in a dark charcoal herringbone wool blazer over a crisp ivory cotton shirt with a structured collar, leaning forward at the shoulders with a small black softcover notebook and a slim matte-black rollerball pen held close at chest height, as if pausing mid-interview to listen., A slim open notebook tucked against the blazer lapel, its pages marked with short handwritten lines and three violet-tabbed index cards fanned at the edge, suggesting captured jobs-to-be-done notes and pain statements., Keen, narrowed eyes locked forward with a slight squint of attention, one brow faintly raised, lips softly closed, chin tucked and shoulders rolled inward, the whole posture leaning a fraction toward an unseen subject as if searching for the unsaid want beneath the words., A cool violet rim-light catching the left jaw, cheekbone, and shoulder seam, mirrored by a small enameled violet lapel pin shaped like an open eye, with no other violet in the wardrobe., Three slim brushed-silver rank bars stitched in a clean horizontal row across the point of the shirt collar.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Value Analysis"
+    ]
+  }
+}

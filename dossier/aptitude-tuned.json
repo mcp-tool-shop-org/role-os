@@ -1,0 +1,2912 @@
+{
+  "orchestrator": {
+    "archetype": "coordinator",
+    "baseline": {
+      "rigor": 3,
+      "pace": 4,
+      "range": 2,
+      "skepticism": 2,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 5,
+        "range": 3,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 5,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 5,
+      "range": 3,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "critic-reviewer": {
+    "archetype": "adjudicator",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 4,
+      "autonomy": 3,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "product-strategist": {
+    "archetype": "strategist",
+    "baseline": {
+      "rigor": 3,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "security-reviewer": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "backend-engineer": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 4,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 3
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 3
+    }
+  },
+  "ux-researcher": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "verified": true
+  },
+  "launch-copywriter": {
+    "archetype": "communicator",
+    "baseline": {
+      "rigor": 3,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 1,
+      "autonomy": 3,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 3,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 3,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 4,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 3,
+      "candor": 5
+    }
+  },
+  "release-engineer": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 3
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 3
+    }
+  },
+  "component-auditor": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 2
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 0,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 4
+    }
+  },
+  "brand-guardian": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 3,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "contrarian-analyst": {
+    "archetype": "contrarian",
+    "baseline": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "ui-designer": {
+    "archetype": "creative",
+    "baseline": {
+      "rigor": 1,
+      "pace": 4,
+      "range": 5,
+      "skepticism": 0,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 2,
+        "pace": 4,
+        "range": 5,
+        "skepticism": 1,
+        "autonomy": 3,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 2,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 1,
+        "autonomy": 3,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 3,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 2,
+        "autonomy": 3,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 2,
+      "pace": 3,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 3,
+      "candor": 4
+    }
+  },
+  "frontend-developer": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 5,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 3,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 5,
+        "range": 3,
+        "skepticism": 1,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 3
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 5,
+      "range": 3,
+      "skepticism": 2,
+      "autonomy": 4,
+      "candor": 3
+    }
+  },
+  "test-engineer": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "verified": true
+  },
+  "performance-engineer": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 3,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 3,
+      "range": 2,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "refactor-engineer": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 3,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 3
+    }
+  },
+  "dependency-auditor": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "repo-researcher": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 4
+    }
+  },
+  "repo-translator": {
+    "archetype": "communicator",
+    "baseline": {
+      "rigor": 3,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 1,
+      "autonomy": 3,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 1,
+        "skepticism": 2,
+        "autonomy": 2,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 2,
+        "autonomy": 3,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 3,
+      "range": 2,
+      "skepticism": 2,
+      "autonomy": 3,
+      "candor": 5
+    }
+  },
+  "docs-architect": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "metadata-curator": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 3,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 4
+    }
+  },
+  "coverage-auditor": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 1,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "deployment-verifier": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "launch-strategist": {
+    "archetype": "strategist",
+    "baseline": {
+      "rigor": 3,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 5,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "content-strategist": {
+    "archetype": "communicator",
+    "baseline": {
+      "rigor": 3,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 1,
+      "autonomy": 3,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 2,
+        "autonomy": 3,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 2,
+        "autonomy": 2,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 3,
+      "range": 4,
+      "skepticism": 2,
+      "autonomy": 3,
+      "candor": 5
+    }
+  },
+  "community-manager": {
+    "archetype": "communicator",
+    "baseline": {
+      "rigor": 3,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 1,
+      "autonomy": 3,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 4,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 5,
+        "range": 4,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 3,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 4,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "support-triage-lead": {
+    "archetype": "coordinator",
+    "baseline": {
+      "rigor": 3,
+      "pace": 4,
+      "range": 2,
+      "skepticism": 2,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 3,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 5,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 4,
+      "range": 2,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "feedback-synthesizer": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "roadmap-prioritizer": {
+    "archetype": "strategist",
+    "baseline": {
+      "rigor": 3,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "spec-writer": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 3,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "competitive-analyst": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 3,
+      "range": 4,
+      "skepticism": 4,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "trend-researcher": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 3,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 4,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "user-interview-synthesizer": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 3,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 3,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "context-scout": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 3,
+        "pace": 4,
+        "range": 5,
+        "skepticism": 2,
+        "autonomy": 3,
+        "candor": 2
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "user-value-scout": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 5,
+      "skepticism": 2,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "creative-leap-scout": {
+    "archetype": "creative",
+    "baseline": {
+      "rigor": 1,
+      "pace": 4,
+      "range": 5,
+      "skepticism": 0,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 1,
+        "pace": 4,
+        "range": 5,
+        "skepticism": 0,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 1,
+        "pace": 5,
+        "range": 5,
+        "skepticism": 0,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 2,
+        "pace": 4,
+        "range": 5,
+        "skepticism": 1,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 1,
+      "pace": 4,
+      "range": 5,
+      "skepticism": 0,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "normalizer": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 3,
+      "range": 2,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "synthesizer": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "product-expander": {
+    "archetype": "creative",
+    "baseline": {
+      "rigor": 1,
+      "pace": 4,
+      "range": 5,
+      "skepticism": 0,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 2,
+        "pace": 4,
+        "range": 5,
+        "skepticism": 0,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 2,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 1,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 3,
+        "pace": 4,
+        "range": 5,
+        "skepticism": 1,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 2,
+      "pace": 4,
+      "range": 5,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "mechanics-scout": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 4,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "market-scout": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 4,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "contrarian-scout": {
+    "archetype": "contrarian",
+    "baseline": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 3,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 1,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "feasibility-scout": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 4,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "quality-bar-scout": {
+    "archetype": "adjudicator",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 4,
+      "autonomy": 3,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 3,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "scenario-expander": {
+    "archetype": "creative",
+    "baseline": {
+      "rigor": 1,
+      "pace": 4,
+      "range": 5,
+      "skepticism": 0,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 2,
+        "pace": 4,
+        "range": 5,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 2,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 2,
+        "pace": 3,
+        "range": 5,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 2,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 2,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "moat-expander": {
+    "archetype": "strategist",
+    "baseline": {
+      "rigor": 3,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "context-analyst": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 5,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 5
+    },
+    "verified": true
+  },
+  "user-value-analyst": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 2,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 5,
+      "skepticism": 4,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "mechanics-analyst": {
+    "archetype": "researcher",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 4,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 2,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 3,
+      "skepticism": 4,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "positioning-analyst": {
+    "archetype": "strategist",
+    "baseline": {
+      "rigor": 3,
+      "pace": 3,
+      "range": 5,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 5,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 5,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "test-truth-auditor": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 2,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 2,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 2,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    }
+  },
+  "seam-auditor": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 1,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 4
+    }
+  },
+  "audit-synthesizer": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 3,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 1,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 1,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "swarm-coordinator": {
+    "archetype": "coordinator",
+    "baseline": {
+      "rigor": 3,
+      "pace": 4,
+      "range": 2,
+      "skepticism": 2,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 1,
+        "skepticism": 3,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 3,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 3,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 3,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "swarm-backend-agent": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 2
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 4,
+      "range": 2,
+      "skepticism": 2,
+      "autonomy": 5,
+      "candor": 3
+    }
+  },
+  "swarm-bridge-agent": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 3
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 2,
+      "autonomy": 5,
+      "candor": 3
+    }
+  },
+  "swarm-tests-agent": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 3
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 4
+    }
+  },
+  "swarm-infra-agent": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 3,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 4,
+        "pace": 5,
+        "range": 2,
+        "skepticism": 2,
+        "autonomy": 5,
+        "candor": 3
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 4,
+      "pace": 4,
+      "range": 3,
+      "skepticism": 2,
+      "autonomy": 5,
+      "candor": 4
+    },
+    "verified": true
+  },
+  "swarm-frontend-agent": {
+    "archetype": "builder",
+    "baseline": {
+      "rigor": 3,
+      "pace": 5,
+      "range": 4,
+      "skepticism": 1,
+      "autonomy": 4,
+      "candor": 2
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 4,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 5,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 3
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 4,
+        "range": 2,
+        "skepticism": 3,
+        "autonomy": 5,
+        "candor": 3
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 4,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 3
+    }
+  },
+  "swarm-synthesizer": {
+    "archetype": "synthesizer",
+    "baseline": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 3,
+      "autonomy": 5,
+      "candor": 5
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 2,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 1,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 1,
+        "skepticism": 4,
+        "autonomy": 5,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 2,
+      "range": 1,
+      "skepticism": 4,
+      "autonomy": 5,
+      "candor": 5
+    }
+  },
+  "red-teamer": {
+    "archetype": "contrarian",
+    "baseline": {
+      "rigor": 4,
+      "pace": 2,
+      "range": 2,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 4
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 3,
+        "range": 4,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 2,
+        "range": 4,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 5
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 3,
+      "range": 4,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 5
+    }
+  },
+  "caption-auditor": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 3
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 2
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    }
+  },
+  "monster-taxonomy-verifier": {
+    "archetype": "auditor",
+    "baseline": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 4,
+      "candor": 3
+    },
+    "panel": {
+      "minimax-m3": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 4,
+        "candor": 4
+      },
+      "deepseek-v4-pro": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      },
+      "glm-5.1": {
+        "rigor": 5,
+        "pace": 1,
+        "range": 0,
+        "skepticism": 5,
+        "autonomy": 5,
+        "candor": 4
+      }
+    },
+    "valid": 3,
+    "ideal": {
+      "rigor": 5,
+      "pace": 1,
+      "range": 0,
+      "skepticism": 5,
+      "autonomy": 5,
+      "candor": 3
+    },
+    "verified": true
+  }
+}

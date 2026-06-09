@@ -18,6 +18,7 @@ import { join, resolve } from "node:path";
 import { resolveBlocked, resolveRejected } from "./escalation.mjs";
 import { TOOL_PROFILES } from "./tool-profiles.mjs";
 import { renderKnowledgeBlock, knowledgeManifestSummary } from "./knowledge/render-knowledge-block.mjs";
+import { renderDossierBlock } from "./dossier-block.mjs";
 
 // ── Default role config ─────────────────────────────────────────────────────
 
@@ -45,6 +46,7 @@ export const EXEC_STATES = [
 
 function buildRolePrompt(roleName, packetContent, chainContext, packetKnowledge) {
   const knowledgeBlock = renderKnowledgeBlock(packetKnowledge);
+  const dossierBlock = renderDossierBlock(roleName);
 
   return `You are operating as ${roleName} in a Role-OS managed chain.
 
@@ -58,7 +60,7 @@ ${packetContent}
 You are step ${chainContext.stepNumber} of ${chainContext.totalSteps} in this chain.
 ${chainContext.previousRole ? `Previous role: ${chainContext.previousRole} (${chainContext.previousStatus})` : "You are the first role in this chain."}
 ${chainContext.nextRole ? `Next role: ${chainContext.nextRole}` : "You are the last role before Critic review."}
-${knowledgeBlock ? `\n${knowledgeBlock}\n` : ""}
+${knowledgeBlock ? `\n${knowledgeBlock}\n` : ""}${dossierBlock ? `\n${dossierBlock}\n` : ""}
 ## Handoff Requirements
 When you finish, produce a structured handoff:
 1. Summary of what you did

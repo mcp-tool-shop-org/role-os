@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "product-strategist",
+  "role": "Product Strategist",
+  "dossier_ref": "../../examples/product-strategist.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A grounded late-30s professional with weathered tan skin and a relaxed confident half-smile, wearing a tailored charcoal heather wool blazer over a soft open-collar white shirt with no tie, sleeves pushed to the forearms, cradling a slim leather-bound product spec notebook in one hand with a black pen loosely tucked between the fingers.",
+    "specialization": "A small open product brief notebook held at chest level, its page showing a hand-sketched wireframe and a cluster of yellow sticky notes marking scope decisions.",
+    "expression": "Easy half-smile with a relaxed jaw, steady knowing eyes, and a slight head-tilt that conveys grounded confidence — unbothered, listening without urgency, shoulders set low and calm.",
+    "crew_palette": "A subtle teal rim-light grazing the jawline and shoulder seam, paired with a small matte teal enamel collar pin on the left lapel as the only chromatic accent.",
+    "grade_cue": "Four slim polished steel rank bars set into a discreet under-collar tab, paired with refined Italian tailoring — sharp notch lapels, a structured roped shoulder, and hand-finished buttonholes."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 1229732289
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident brushwork and soft edges, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled lighting, rich restrained palette, detailed rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A grounded late-30s professional with weathered tan skin and a relaxed confident half-smile, wearing a tailored charcoal heather wool blazer over a soft open-collar white shirt with no tie, sleeves pushed to the forearms, cradling a slim leather-bound product spec notebook in one hand with a black pen loosely tucked between the fingers., A small open product brief notebook held at chest level, its page showing a hand-sketched wireframe and a cluster of yellow sticky notes marking scope decisions., Easy half-smile with a relaxed jaw, steady knowing eyes, and a slight head-tilt that conveys grounded confidence — unbothered, listening without urgency, shoulders set low and calm., A subtle teal rim-light grazing the jawline and shoulder seam, paired with a small matte teal enamel collar pin on the left lapel as the only chromatic accent., Four slim polished steel rank bars set into a discreet under-collar tab, paired with refined Italian tailoring — sharp notch lapels, a structured roped shoulder, and hand-finished buttonholes.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Strategy"
+    ]
+  }
+}

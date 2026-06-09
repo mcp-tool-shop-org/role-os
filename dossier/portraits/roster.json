@@ -1,0 +1,333 @@
+{
+  "_note": "Complete 61-role Role OS portrait roster (plus 3 specialty deep-audit auditors = 64 entries). Canonical checklist is the route.mjs ROLE_CATALOG (61 distinct roles, the figure the README header cites). The 12 hero roles from Batch 1 are preserved byte-for-byte; the remaining roles were derived from each role's Mission (.claude/agents/**/*.md) or its code contract (artifacts.mjs, packs.mjs, brainstorm-roles.mjs, route.mjs). crew keys house-style.json pack_palette (11 palettes); disposition keys disposition_expression (8). Dispositions are sensible defaults (re-speccable via the dossier). Fields: role, function, specialization, crew, disposition, grade, charter.",
+
+  "judge": {
+    "role": "Judge", "function": "Adjudication", "specialization": "Verdict & Synthesis Review",
+    "crew": "brainstorm", "disposition": "Skeptic", "grade": "L5",
+    "charter": "Render a final verdict on a synthesized dispute graph — weigh every challenge and rebuttal, then decide accept / expand / re-synthesize / reject. Judges the work, never authors it."
+  },
+  "orchestrator": {
+    "role": "Orchestrator", "function": "Orchestration", "specialization": "Cross-cutting Coordination",
+    "crew": "core", "disposition": "Diplomat", "grade": "L5",
+    "charter": "Turn a request into the smallest lawful sequence of role-owned work."
+  },
+  "critic-reviewer": {
+    "role": "Critic Reviewer", "function": "Quality Adjudication", "specialization": "Contract & Quality Gating",
+    "crew": "core", "disposition": "Perfectionist", "grade": "L5",
+    "charter": "Accept, reject, or block work based on contract compliance, quality, and truthfulness."
+  },
+  "product-strategist": {
+    "role": "Product Strategist", "function": "Strategy", "specialization": "Product Definition",
+    "crew": "product", "disposition": "Pragmatist", "grade": "L4",
+    "charter": "Shape work so it solves the real product problem without scope drift or thesis loss."
+  },
+  "security-reviewer": {
+    "role": "Security Reviewer", "function": "Threat Review", "specialization": "Vulnerability Assessment",
+    "crew": "engineering", "disposition": "Investigator", "grade": "L5",
+    "charter": "Review code and configuration for security vulnerabilities — injection, auth gaps, secret exposure, unsafe defaults, OWASP top 10."
+  },
+  "backend-engineer": {
+    "role": "Backend Engineer", "function": "Backend Engineering", "specialization": "Server-side Systems",
+    "crew": "engineering", "disposition": "Builder", "grade": "L3",
+    "charter": "Implement reliable server-side behavior, data flow, and system contracts needed for the product outcome."
+  },
+  "ux-researcher": {
+    "role": "UX Researcher", "function": "UX Research", "specialization": "Usability Evaluation",
+    "crew": "research", "disposition": "Investigator", "grade": "L3",
+    "charter": "Identify user friction, flow pain, and usability issues through evidence — observed behavior and structured analysis, not opinion."
+  },
+  "launch-copywriter": {
+    "role": "Launch Copywriter", "function": "Messaging", "specialization": "Release Communication",
+    "crew": "marketing", "disposition": "Maverick", "grade": "L2",
+    "charter": "Turn completed product value into clear, credible launch messaging without hype or invention."
+  },
+  "release-engineer": {
+    "role": "Release Engineer", "function": "Publication", "specialization": "Release Engineering",
+    "crew": "treatment", "disposition": "Builder", "grade": "L4",
+    "charter": "Prepare and execute clean releases — versioning, changelog, packaging, tagging, publish readiness — so shipped artifacts are correct and traceable."
+  },
+  "component-auditor": {
+    "role": "Component Auditor", "function": "Code Audit", "specialization": "Per-Component Audit",
+    "crew": "deep-audit", "disposition": "Perfectionist", "grade": "L4",
+    "charter": "Read every line in an assigned code component and produce structured findings for every material issue."
+  },
+  "brand-guardian": {
+    "role": "Brand Guardian", "function": "Brand Stewardship", "specialization": "Identity Consistency",
+    "crew": "design", "disposition": "Perfectionist", "grade": "L4",
+    "charter": "Protect product identity — tone, terminology, visual language, fiction consistency — across all surfaces, preventing drift."
+  },
+  "contrarian-analyst": {
+    "role": "Contrarian Analyst", "function": "Challenge", "specialization": "Claim Refutation",
+    "crew": "brainstorm", "disposition": "Contrarian", "grade": "L3",
+    "charter": "Challenge specific claims by ID — expose overstatement, contradiction, and structural flaws; never generate, only refute."
+  },
+
+  "ui-designer": {
+    "role": "UI Designer", "function": "Interface Design", "specialization": "Screen & Interaction Design",
+    "crew": "design", "disposition": "Builder", "grade": "L3",
+    "charter": "Design the screen structure and interaction approach that best expresses the intended product behavior."
+  },
+  "frontend-developer": {
+    "role": "Frontend Developer", "function": "Frontend Engineering", "specialization": "Client-side Interfaces",
+    "crew": "engineering", "disposition": "Builder", "grade": "L3",
+    "charter": "Implement user-facing interfaces and interactions faithfully, cleanly, and in line with project conventions."
+  },
+  "test-engineer": {
+    "role": "Test Engineer", "function": "Test Engineering", "specialization": "Regression Defense",
+    "crew": "engineering", "disposition": "Skeptic", "grade": "L3",
+    "charter": "Verify that the work is defended against regression, edge cases, and false confidence."
+  },
+  "performance-engineer": {
+    "role": "Performance Engineer", "function": "Performance Engineering", "specialization": "Profiling & Optimization",
+    "crew": "engineering", "disposition": "Investigator", "grade": "L4",
+    "charter": "Identify and fix performance problems using measurement, not intuition — hot paths, regressions, memory leaks, and budget violations."
+  },
+  "refactor-engineer": {
+    "role": "Refactor Engineer", "function": "Refactoring", "specialization": "Structural Simplification",
+    "crew": "engineering", "disposition": "Perfectionist", "grade": "L4",
+    "charter": "Improve code structure without changing behavior — reduce complexity, eliminate duplication, clarify boundaries, and improve maintainability."
+  },
+  "dependency-auditor": {
+    "role": "Dependency Auditor", "function": "Dependency Audit", "specialization": "Supply-chain Health",
+    "crew": "engineering", "disposition": "Skeptic", "grade": "L4",
+    "charter": "Assess dependency health — stale packages, known vulnerabilities, supply-chain risk, unnecessary bloat, and version drift."
+  },
+
+  "repo-researcher": {
+    "role": "Repo Researcher", "function": "Repo Research", "specialization": "Codebase Mapping",
+    "crew": "treatment", "disposition": "Investigator", "grade": "L3",
+    "charter": "Map the live truth of a repository — structure, entrypoints, seams, build paths, and runtime shape — so downstream roles work from verified fact, not stale assumptions."
+  },
+  "repo-translator": {
+    "role": "Repo Translator", "function": "Translation", "specialization": "Docs Localization",
+    "crew": "treatment", "disposition": "Perfectionist", "grade": "L2",
+    "charter": "Translate documentation across languages and audiences faithfully, preserving technical accuracy and product voice without invention."
+  },
+  "docs-architect": {
+    "role": "Docs Architect", "function": "Docs Architecture", "specialization": "Information Structure",
+    "crew": "treatment", "disposition": "Perfectionist", "grade": "L4",
+    "charter": "Design information structure and build searchable, navigable documentation — owning both the hierarchy and the docs artifact itself."
+  },
+  "metadata-curator": {
+    "role": "Metadata Curator", "function": "Metadata Curation", "specialization": "Manifest & Discovery",
+    "crew": "treatment", "disposition": "Perfectionist", "grade": "L2",
+    "charter": "Ensure repository metadata, package manifests, and discovery surfaces are accurate, complete, and consistent with the product's actual state."
+  },
+  "coverage-auditor": {
+    "role": "Coverage Auditor", "function": "Coverage Audit", "specialization": "False-confidence Detection",
+    "crew": "treatment", "disposition": "Skeptic", "grade": "L4",
+    "charter": "Assess test coverage truthfully — what is proven, what is unproven, where false confidence exists — and recommend targeted improvements."
+  },
+  "deployment-verifier": {
+    "role": "Deployment Verifier", "function": "Deployment Verification", "specialization": "Live-surface Checks",
+    "crew": "treatment", "disposition": "Investigator", "grade": "L3",
+    "charter": "Verify that deployed artifacts actually work — landing pages render, packages install, docs are searchable, badges resolve, and live surfaces match what was shipped."
+  },
+
+  "launch-strategist": {
+    "role": "Launch Strategist", "function": "Launch Strategy", "specialization": "Go-to-market Planning",
+    "crew": "growth", "disposition": "Pragmatist", "grade": "L4",
+    "charter": "Plan launches so they reach the right audience with the right proof at the right time — without hype, invented metrics, or premature claims."
+  },
+  "content-strategist": {
+    "role": "Content Strategist", "function": "Content Strategy", "specialization": "Docs-to-market Content",
+    "crew": "growth", "disposition": "Maverick", "grade": "L3",
+    "charter": "Plan long-form content that bridges documentation and marketing — technical articles, announcement angles, case studies, and docs-to-audience pipelines."
+  },
+  "community-manager": {
+    "role": "Community Manager", "function": "Community", "specialization": "Contributor Relations",
+    "crew": "growth", "disposition": "Diplomat", "grade": "L3",
+    "charter": "Manage community interactions — issues, discussions, contributions, and feedback loops — with responsiveness and honesty, without hype or false promises."
+  },
+  "support-triage-lead": {
+    "role": "Support Triage Lead", "function": "Support Triage", "specialization": "Request Classification",
+    "crew": "growth", "disposition": "Pragmatist", "grade": "L2",
+    "charter": "Classify and route incoming support requests efficiently — separating bugs from feature requests, user errors from product failures, and urgent from routine."
+  },
+
+  "feedback-synthesizer": {
+    "role": "Feedback Synthesizer", "function": "Signal Synthesis", "specialization": "Theme Extraction",
+    "crew": "product", "disposition": "Investigator", "grade": "L3",
+    "charter": "Turn scattered user signals — issues, complaints, feature requests, usage patterns — into actionable product insights without inflation or invention."
+  },
+  "roadmap-prioritizer": {
+    "role": "Roadmap Prioritizer", "function": "Prioritization", "specialization": "Work Sequencing",
+    "crew": "product", "disposition": "Pragmatist", "grade": "L4",
+    "charter": "Sequence work by leverage, risk, and dependency truth — not by loudness, recency, or wishful thinking."
+  },
+  "spec-writer": {
+    "role": "Spec Writer", "function": "Specification", "specialization": "Execution-grade Specs",
+    "crew": "product", "disposition": "Perfectionist", "grade": "L3",
+    "charter": "Turn ambiguous goals into execution-grade specifications that downstream roles can implement without guessing."
+  },
+
+  "competitive-analyst": {
+    "role": "Competitive Analyst", "function": "Competitive Analysis", "specialization": "Landscape Mapping",
+    "crew": "research", "disposition": "Investigator", "grade": "L3",
+    "charter": "Map the competitive landscape truthfully — what alternatives exist, where they're strong, where they're weak, and what differentiation actually holds."
+  },
+  "trend-researcher": {
+    "role": "Trend Researcher", "function": "Trend Research", "specialization": "Ecosystem Signals",
+    "crew": "research", "disposition": "Investigator", "grade": "L3",
+    "charter": "Identify relevant technical, market, and ecosystem trends that could affect product decisions — without hype, speculation, or trend-chasing."
+  },
+  "user-interview-synthesizer": {
+    "role": "User Interview Synthesizer", "function": "Interview Synthesis", "specialization": "Mental-model Extraction",
+    "crew": "research", "disposition": "Investigator", "grade": "L3",
+    "charter": "Extract actionable insights from user interviews — patterns, unmet needs, mental models, and priority signals — without projecting desired outcomes onto user words."
+  },
+
+  "context-scout": {
+    "role": "Context Scout", "function": "Context Scouting", "specialization": "Domain Landscape",
+    "crew": "brainstorm", "disposition": "Investigator", "grade": "L3",
+    "charter": "Map the surrounding domain — terminology, adjacent spaces, and prior art — so exploration is grounded in what already exists."
+  },
+  "user-value-scout": {
+    "role": "User Value Scout", "function": "Value Scouting", "specialization": "Pain & Desire Mapping",
+    "crew": "brainstorm", "disposition": "Investigator", "grade": "L3",
+    "charter": "Surface where the felt pull and pain live — user pains, unmet needs, and desire signals across segments."
+  },
+  "creative-leap-scout": {
+    "role": "Creative Leap Scout", "function": "Creative Scouting", "specialization": "Divergent Combination",
+    "crew": "brainstorm", "disposition": "Maverick", "grade": "L3",
+    "charter": "Generate bold, unexpected directions through cross-domain analogy and novel combination — the divergent lens against sameness."
+  },
+  "normalizer": {
+    "role": "Normalizer", "function": "Normalization", "specialization": "Atom & Conflict Calibration",
+    "crew": "brainstorm", "disposition": "Perfectionist", "grade": "L3",
+    "charter": "Translate role-native outputs into provenance-preserving claim atoms — deduplicate, detect conflicts, and calibrate evidence without flattening source identity."
+  },
+  "synthesizer": {
+    "role": "Synthesizer", "function": "Synthesis", "specialization": "Direction Selection",
+    "crew": "brainstorm", "disposition": "Diplomat", "grade": "L5",
+    "charter": "Synthesize a real dispute graph into a bounded set of advancing directions, each cited to truth-layer atoms, preserving tensions rather than collapsing them."
+  },
+  "product-expander": {
+    "role": "Product Expander", "function": "Concept Expansion", "specialization": "Product Shape",
+    "crew": "brainstorm", "disposition": "Builder", "grade": "L3",
+    "charter": "Expand a synthesis direction into a concrete product shape — target user, core mechanism, features, core loop, and smallest proof."
+  },
+  "mechanics-scout": {
+    "role": "Mechanics Scout", "function": "Mechanics Scouting", "specialization": "Structural Feasibility",
+    "crew": "brainstorm", "disposition": "Investigator", "grade": "L3",
+    "charter": "Probe how a direction actually works — the operational mechanisms and structural feasibility that have to hold for it to be real."
+  },
+  "market-scout": {
+    "role": "Market Scout", "function": "Market Scouting", "specialization": "Whitespace Detection",
+    "crew": "brainstorm", "disposition": "Investigator", "grade": "L3",
+    "charter": "Locate market whitespace and existing solutions — where the sameness trap lies and where genuine positioning room remains."
+  },
+  "contrarian-scout": {
+    "role": "Contrarian Scout", "function": "Challenge Scouting", "specialization": "Evidence Challenge",
+    "crew": "brainstorm", "disposition": "Contrarian", "grade": "L3",
+    "charter": "Challenge findings and evidence — expose overgeneralization, false novelty, and weak support before they harden into direction."
+  },
+  "feasibility-scout": {
+    "role": "Feasibility Scout", "function": "Feasibility Scouting", "specialization": "Buildability Assessment",
+    "crew": "brainstorm", "disposition": "Skeptic", "grade": "L3",
+    "charter": "Assess whether a direction is feasible and provable — buildability, complexity, and a realistic proof timeline."
+  },
+  "quality-bar-scout": {
+    "role": "Quality Bar Scout", "function": "Quality Scouting", "specialization": "Excellence Threshold",
+    "crew": "brainstorm", "disposition": "Perfectionist", "grade": "L3",
+    "charter": "Set the bar for excellence — define what an adequate versus exceptional version of a direction must clear."
+  },
+  "scenario-expander": {
+    "role": "Scenario Expander", "function": "Scenario Expansion", "specialization": "Concrete Situations",
+    "crew": "brainstorm", "disposition": "Builder", "grade": "L3",
+    "charter": "Ground a concept in concrete user scenarios — situations, edge cases, and failure modes that test whether it holds up in use."
+  },
+  "moat-expander": {
+    "role": "Moat Expander", "function": "Moat Expansion", "specialization": "Defensibility Analysis",
+    "crew": "brainstorm", "disposition": "Pragmatist", "grade": "L4",
+    "charter": "Analyze defensibility — stickiness, competitive moat, and phase planning that keep a direction defensible over time."
+  },
+  "context-analyst": {
+    "role": "Context Analyst", "function": "Context Analysis", "specialization": "Category Boundaries",
+    "crew": "brainstorm", "disposition": "Perfectionist", "grade": "L3",
+    "charter": "Map what something is, what it sits next to, and what it is not — terminology genealogy, adjacency, and category boundaries, never user desire or positioning."
+  },
+  "user-value-analyst": {
+    "role": "User Value Analyst", "function": "Value Analysis", "specialization": "Jobs-to-be-done",
+    "crew": "brainstorm", "disposition": "Investigator", "grade": "L3",
+    "charter": "Locate the felt pull and pain — jobs-to-be-done, frictions, unmet desires, and willingness signals, never mechanism or competitive framing."
+  },
+  "mechanics-analyst": {
+    "role": "Mechanics Analyst", "function": "Mechanics Analysis", "specialization": "Loop & Dependency",
+    "crew": "brainstorm", "disposition": "Investigator", "grade": "L3",
+    "charter": "Determine what must be true for a direction to work — loop decomposition, dependency chains, and failure modes, never messaging or user willingness."
+  },
+  "positioning-analyst": {
+    "role": "Positioning Analyst", "function": "Positioning Analysis", "specialization": "Wedge & Timing",
+    "crew": "brainstorm", "disposition": "Pragmatist", "grade": "L3",
+    "charter": "Identify what claim a direction could own and when it is legal to make it — substitutes, wedge candidates, and category frame, never implementation."
+  },
+
+  "test-truth-auditor": {
+    "role": "Test Truth Auditor", "function": "Test Audit", "specialization": "Coverage Reality",
+    "crew": "deep-audit", "disposition": "Skeptic", "grade": "L4",
+    "charter": "Distinguish tests that prove behavior from tests that merely exist — name untested-but-risky paths, ceremonial tests, and integration gaps, and estimate real coverage."
+  },
+  "seam-auditor": {
+    "role": "Seam Auditor", "function": "Seam Audit", "specialization": "Integration Boundaries",
+    "crew": "deep-audit", "disposition": "Investigator", "grade": "L4",
+    "charter": "Inspect every declared boundary from the dependency graph — surface false-independence risks, content-code drift, and wrong dependency direction across components."
+  },
+  "audit-synthesizer": {
+    "role": "Audit Synthesizer", "function": "Audit Synthesis", "specialization": "Verdict & Action Plan",
+    "crew": "deep-audit", "disposition": "Diplomat", "grade": "L5",
+    "charter": "Reconcile findings across all audit parcels into a ranked verdict, adjudicate contradictions, and produce an action plan grouped by root cause and leverage."
+  },
+
+  "swarm-coordinator": {
+    "role": "Swarm Coordinator", "function": "Swarm Coordination", "specialization": "Wave Gating",
+    "crew": "swarm", "disposition": "Diplomat", "grade": "L5",
+    "charter": "Evaluate exit conditions against accumulated wave findings and decide loop / advance / halt — gating each convergence stage on build results and user approval."
+  },
+  "swarm-backend-agent": {
+    "role": "Swarm Backend Agent", "function": "Backend Convergence", "specialization": "Server-domain Health",
+    "crew": "swarm", "disposition": "Builder", "grade": "L3",
+    "charter": "Inspect every file in the backend domain, severity-triage findings, and apply remediations in order until the build passes — within exclusive file ownership."
+  },
+  "swarm-bridge-agent": {
+    "role": "Swarm Bridge Agent", "function": "Bridge Convergence", "specialization": "Integration Health",
+    "crew": "swarm", "disposition": "Builder", "grade": "L3",
+    "charter": "Inspect every file in the integration / bridge domain, severity-triage findings, and apply remediations until the build passes — within exclusive file ownership."
+  },
+  "swarm-tests-agent": {
+    "role": "Swarm Tests Agent", "function": "Test Convergence", "specialization": "Suite Health",
+    "crew": "swarm", "disposition": "Skeptic", "grade": "L3",
+    "charter": "Audit the test suite for gaps, ceremonial tests, and fixture quality, report coverage delta, and apply fixes until the build passes — within exclusive file ownership."
+  },
+  "swarm-infra-agent": {
+    "role": "Swarm Infra Agent", "function": "Infra Convergence", "specialization": "CI & Docs Health",
+    "crew": "swarm", "disposition": "Pragmatist", "grade": "L3",
+    "charter": "Inspect CI workflows, config files, and docs, severity-triage findings, and apply remediations until the build passes — within exclusive file ownership."
+  },
+  "swarm-frontend-agent": {
+    "role": "Swarm Frontend Agent", "function": "Frontend Convergence", "specialization": "UI & A11y Health",
+    "crew": "swarm", "disposition": "Builder", "grade": "L3",
+    "charter": "Audit the UI layer for bugs, accessibility, and UX, list accessibility issues separately, and apply fixes until the build passes — within exclusive file ownership."
+  },
+  "swarm-synthesizer": {
+    "role": "Swarm Synthesizer", "function": "Swarm Synthesis", "specialization": "Convergence Report",
+    "crew": "swarm", "disposition": "Diplomat", "grade": "L5",
+    "charter": "Summarize all swarm stages, tally findings fixed versus remaining, run the final test suite, and recommend ship, hold, or re-swarm."
+  },
+
+  "red-teamer": {
+    "role": "Red-Teamer", "function": "Adversarial Testing", "specialization": "Attack-vector Probing",
+    "crew": "deep-audit", "disposition": "Skeptic", "grade": "L4",
+    "charter": "Attempt to break a subject under test across many attack vectors, compute a catch rate, itemize uncaught breaks with reproductions, and flag pipelines that reject 0/N attacks as suspect."
+  },
+  "caption-auditor": {
+    "role": "Caption Auditor", "function": "Dataset Audit", "specialization": "Caption Rule Compliance",
+    "crew": "deep-audit", "disposition": "Perfectionist", "grade": "L3",
+    "charter": "Audit a captioned dataset against its rules — compute per-rule compliance over a declared sample, cite each violation by record id, and refuse to PASS on tiny samples claiming perfection."
+  },
+  "monster-taxonomy-verifier": {
+    "role": "Monster Taxonomy Verifier", "function": "Taxonomy Audit", "specialization": "Schema & LoRA Separability",
+    "crew": "deep-audit", "disposition": "Perfectionist", "grade": "L3",
+    "charter": "Verify monster taxonomy entries against schema — compute per-field compliance, enumerate missing fields, declare LoRA-separability explicitly, and flag human-element contamination in pure-monster scope."
+  }
+}

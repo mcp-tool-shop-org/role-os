@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "mechanics-scout",
+  "role": "Mechanics Scout",
+  "dossier_ref": "../../examples/mechanics-scout.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A lean, sharp-boned woman in her late thirties with close-cropped dark hair, wearing a structured charcoal wool blazer over a crisp dove-gray collared shirt buttoned to the second button; she holds a small folded structural schematic and a slim mechanical pencil close to her chest, fingers long and precise.",
+    "specialization": "A miniature white-painted truss-beam scale model pinched between thumb and forefinger, paired with a slim steel caliper folded flat in the same hand.",
+    "expression": "Eyes narrowed in keen, searching focus, head tilted a few degrees and shoulders leaned subtly forward, jaw set and lips slightly parted as if mid-question.",
+    "crew_palette": "A faint violet rim-light grazing the crown of the hair and the outer edge of the blazer shoulder, balanced by a small enameled violet insignia pin set on the left collar point.",
+    "grade_cue": "Three slim polished gunmetal rank bars pinned horizontally in a tidy row to the right lapel notch, each catching a clean highlight."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 1809806139
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A lean, sharp-boned woman in her late thirties with close-cropped dark hair, wearing a structured charcoal wool blazer over a crisp dove-gray collared shirt buttoned to the second button; she holds a small folded structural schematic and a slim mechanical pencil close to her chest, fingers long and precise., A miniature white-painted truss-beam scale model pinched between thumb and forefinger, paired with a slim steel caliper folded flat in the same hand., Eyes narrowed in keen, searching focus, head tilted a few degrees and shoulders leaned subtly forward, jaw set and lips slightly parted as if mid-question., A faint violet rim-light grazing the crown of the hair and the outer edge of the blazer shoulder, balanced by a small enameled violet insignia pin set on the left collar point., Three slim polished gunmetal rank bars pinned horizontally in a tidy row to the right lapel notch, each catching a clean highlight.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Mechanics Scouting"
+    ]
+  }
+}

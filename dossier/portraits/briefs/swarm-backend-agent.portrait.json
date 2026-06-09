@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "swarm-backend-agent",
+  "role": "Swarm Backend Agent",
+  "dossier_ref": "../../examples/swarm-backend-agent.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A determined adult engineer leaning slightly into the frame, wearing a slate-gray Oxford work shirt with sleeves rolled to the forearms, a slim lanyard with an ID badge clipped at the sternum, the right hand gripping a compact black diagnostic tablet angled toward the viewer",
+    "specialization": "A small palm-sized server health monitor with a row of glowing green status LEDs clutched in the off-hand, a faint digital heartbeat glyph visible on its face",
+    "expression": "Forward-leaning shoulders, brow subtly furrowed, eyes locked ahead with focused determination, lips pressed in a tight confident line, forearms taut and squared as if mid-reach to a keyboard",
+    "crew_palette": "Warm orange rim-light tracing the jawline, ear edge, and shoulder, paired with a tiny orange chevron insignia pinned to the left collar point",
+    "grade_cue": "Three slim parallel rank bars embroidered in tonal charcoal thread along the right collar point"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 3498878470
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A determined adult engineer leaning slightly into the frame, wearing a slate-gray Oxford work shirt with sleeves rolled to the forearms, a slim lanyard with an ID badge clipped at the sternum, the right hand gripping a compact black diagnostic tablet angled toward the viewer, A small palm-sized server health monitor with a row of glowing green status LEDs clutched in the off-hand, a faint digital heartbeat glyph visible on its face, Forward-leaning shoulders, brow subtly furrowed, eyes locked ahead with focused determination, lips pressed in a tight confident line, forearms taut and squared as if mid-reach to a keyboard, Warm orange rim-light tracing the jawline, ear edge, and shoulder, paired with a tiny orange chevron insignia pinned to the left collar point, Three slim parallel rank bars embroidered in tonal charcoal thread along the right collar point",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Backend Convergence"
+    ]
+  }
+}

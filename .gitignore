@@ -19,3 +19,9 @@ __pycache__/
 
 # Conformance training run logs/peaks (local; the dataset, scripts + certify receipts ARE tracked)
 tools/conformance-dataset/*.log
+
+# Dossier: portraits are hosted in the brand asset repo (mcp-tool-shop-org/brand,
+# logos/role-dossier/) and referenced by raw-CDN URL — the local renders + scratch
+# helpers are not committed here. The runtime data the package needs is src/role-dossiers.json.
+dossier/portraits/renders/
+dossier/_*.mjs

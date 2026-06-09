@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "swarm-coordinator",
+  "role": "Swarm Coordinator",
+  "dossier_ref": "../../examples/swarm-coordinator.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A composed adult professional in a refined charcoal blazer with narrow peaked lapels, ivory dress shirt, and dark knit tie, framed head-and-shoulders; one hand holds a slim matte tablet tilted toward the viewer, the other a slender pen poised just above the screen as if marking a gating decision.",
+    "specialization": "The tablet screen glows with a compact three-row wave-gate checklist labeled Loop, Advance, and Halt, one row already checked off, a segmented progress bar of accumulated wave findings, and a thin orange gate indicator.",
+    "expression": "An open, warm gaze meeting the viewer with a slight knowing half-smile lifting one corner of the mouth, brows softly raised in attentive interest, chin level, shoulders relaxed yet squared — composed, inviting, and diplomatic.",
+    "crew_palette": "A subtle warm orange rim-light traces the jaw, ear, and shoulder edge, and a small orange enamel collar insignia — a tiny loop-and-gate glyph on a round pin — sits at the throat as the only orange note in an otherwise neutral palette.",
+    "grade_cue": "A discreet brushed-silver five-bar rank pin on the left lapel, paired with contrast-stitched buttonholes and a slim contrast stripe along the inner lapel edge that signal L5 tailoring refinement."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 3143253820
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A composed adult professional in a refined charcoal blazer with narrow peaked lapels, ivory dress shirt, and dark knit tie, framed head-and-shoulders; one hand holds a slim matte tablet tilted toward the viewer, the other a slender pen poised just above the screen as if marking a gating decision., The tablet screen glows with a compact three-row wave-gate checklist labeled Loop, Advance, and Halt, one row already checked off, a segmented progress bar of accumulated wave findings, and a thin orange gate indicator., An open, warm gaze meeting the viewer with a slight knowing half-smile lifting one corner of the mouth, brows softly raised in attentive interest, chin level, shoulders relaxed yet squared — composed, inviting, and diplomatic., A subtle warm orange rim-light traces the jaw, ear, and shoulder edge, and a small orange enamel collar insignia — a tiny loop-and-gate glyph on a round pin — sits at the throat as the only orange note in an otherwise neutral palette., A discreet brushed-silver five-bar rank pin on the left lapel, paired with contrast-stitched buttonholes and a slim contrast stripe along the inner lapel edge that signal L5 tailoring refinement.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Swarm Coordination"
+    ]
+  }
+}

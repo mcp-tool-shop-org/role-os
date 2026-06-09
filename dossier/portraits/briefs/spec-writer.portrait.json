@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "spec-writer",
+  "role": "Spec Writer",
+  "dossier_ref": "../../examples/spec-writer.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A poised adult professional in a tailored charcoal blazer over a crisp white collar-front shirt, head-and-shoulders composition, thin black-framed reading glasses perched at the bridge of the nose, a slim leather-bound notebook held in one hand, a fine-tipped mechanical pencil poised above its open page.",
+    "specialization": "A fine-tipped mechanical pencil hovering over a small leather notepad opened to tightly tiered bullet hierarchies and a neat column of green-tick acceptance criteria.",
+    "expression": "Steel-grey eyes fixed in a precise, scrutinizing stare, jaw set, lips composed in a thin exacting line, chin level, shoulders squared with immaculate, controlled stillness.",
+    "crew_palette": "Faint teal rim-light tracing the jawline and a small enameled teal insignia pin set at the collar.",
+    "grade_cue": "Three slim metallic rank bars stacked horizontally on a dark collar tab at the throat."
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 496527462
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident directional brushwork, soft edge falloff, matte non-photographic finish, hand-painted canvas texture, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled three-point studio lighting, a cohesive muted desaturated palette of slate and charcoal with warm natural skin tones and a single saturated accent color, detailed painterly rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A poised adult professional in a tailored charcoal blazer over a crisp white collar-front shirt, head-and-shoulders composition, thin black-framed reading glasses perched at the bridge of the nose, a slim leather-bound notebook held in one hand, a fine-tipped mechanical pencil poised above its open page., A fine-tipped mechanical pencil hovering over a small leather notepad opened to tightly tiered bullet hierarchies and a neat column of green-tick acceptance criteria., Steel-grey eyes fixed in a precise, scrutinizing stare, jaw set, lips composed in a thin exacting line, chin level, shoulders squared with immaculate, controlled stillness., Faint teal rim-light tracing the jawline and a small enameled teal insignia pin set at the collar., Three slim metallic rank bars stacked horizontally on a dark collar tab at the throat.",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, mangled fingers, glasses in hand, holding eyeglasses, cluttered hands, extra objects in hand, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Specification"
+    ]
+  }
+}

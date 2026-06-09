@@ -1,0 +1,49 @@
+{
+  "schema": "roleos-portrait/v0.1",
+  "id": "component-auditor",
+  "role": "Component Auditor",
+  "dossier_ref": "../../examples/component-auditor.json",
+  "blocks": {
+    "style": "$house",
+    "framing": "$house",
+    "subject": "A composed adult auditor in a charcoal worsted wool blazer with faint chalk pinstripes, immaculate white dress shirt, and slim graphite tie, holding a slim black fountain pen in one hand and a printed code review checklist in the other, narrow tortoiseshell half-rim reading glasses perched on the bridge of the nose, four small slate-blue rank bars stacked on the left lapel above hand-stitched edge tailoring on the notched lapel",
+    "specialization": "A thin leather-bound component file held open in the off-hand, its pages dense with margin annotations, tiny red checkmarks, and bracketed line numbers running down the gutter",
+    "expression": "Fixed unblinking focus, brow drawn in a micro-furrow of concentration, lips pressed in a thin bloodless line of exacting scrutiny, chin lifted a precise fraction, shoulders squared and utterly still as a held breath",
+    "crew_palette": "Slate-blue rendered as a soft cool rim-light grazing the right temple and jaw, plus a small enamel collar insignia shaped like a folded document tucked at the throat",
+    "grade_cue": "Four slim slate-blue rank bars pinned in a tidy column on the left lapel, paired with refined hand-pick stitching along the blazer lapel edge and a precisely broken single-point pocket square fold"
+  },
+  "negative": "$house",
+  "params": {
+    "kind": "chroma",
+    "unet": "Chroma1-HD.safetensors",
+    "clip": "t5xxl_fp8_e4m3fn.safetensors",
+    "clip_type": "chroma",
+    "vae": "ae.safetensors",
+    "sampler": "euler",
+    "scheduler": "beta",
+    "steps": 26,
+    "cfg": 3.5,
+    "shift": 1,
+    "width": 832,
+    "height": 1216,
+    "seed": 1587999939
+  },
+  "assembled": {
+    "positive": "character key-art portrait, painted in a grounded Western concept-art style, digital oil painting with visible confident brushwork and soft edges, semi-realistic and adult, naturalistic anatomy and skin, cinematic controlled lighting, rich restrained palette, detailed rendering in the tradition of AAA character key art and graphic-novel cover painting, head-and-shoulders to chest-up portrait, a slight three-quarter turn, a single adult person centered and facing the viewer, set against a plain dark slate-and-navy studio backdrop with a faint vignette, soft directional key light from the upper left and a cool rim light separating the subject from the background, A composed adult auditor in a charcoal worsted wool blazer with faint chalk pinstripes, immaculate white dress shirt, and slim graphite tie, holding a slim black fountain pen in one hand and a printed code review checklist in the other, narrow tortoiseshell half-rim reading glasses perched on the bridge of the nose, four small slate-blue rank bars stacked on the left lapel above hand-stitched edge tailoring on the notched lapel, A thin leather-bound component file held open in the off-hand, its pages dense with margin annotations, tiny red checkmarks, and bracketed line numbers running down the gutter, Fixed unblinking focus, brow drawn in a micro-furrow of concentration, lips pressed in a thin bloodless line of exacting scrutiny, chin lifted a precise fraction, shoulders squared and utterly still as a held breath, Slate-blue rendered as a soft cool rim-light grazing the right temple and jaw, plus a small enamel collar insignia shaped like a folded document tucked at the throat, Four slim slate-blue rank bars pinned in a tidy column on the left lapel, paired with refined hand-pick stitching along the blazer lapel edge and a precisely broken single-point pocket square fold",
+    "negative": "anime, manga, cel shading, flat colors, bold black outlines, cartoon, chibi, sticker, school uniform, costume, hat, cap, hood, goggles, exposed midriff, bare shoulders, 3d render, photograph, low quality, blurry, greyscale unfinished sketch, chromatic aberration, oversaturated, excessive bloom, deformed hands, extra fingers, malformed limbs, text, watermark, signature, logo, caption, busy background, room, interior, scenery, background props, multiple people, duplicate"
+  },
+  "provenance": {
+    "authored_by": "minimax-m3",
+    "engine": "ollama-cloud",
+    "house_style": "painted-concept-art",
+    "frozen": true
+  },
+  "gate": {
+    "ai_eyes": [
+      "single subject",
+      "chest-up framing",
+      "no legible text",
+      "clearly reads as the role's function: Code Audit"
+    ]
+  }
+}
