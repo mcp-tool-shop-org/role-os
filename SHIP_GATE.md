@@ -44,7 +44,7 @@
 ## D. Shipping Hygiene
 
 - [x] `[all]` `verify` script exists (test + build + smoke in one command) (2026-03-24)
-- [ ] `[all]` Version in manifest matches git tag — tag not yet created, will tag at treatment Phase 6
+- [x] `[all]` Version in manifest matches git tag (2026-06-09) — package.json 2.9.0 == release tag v2.9.0
 - [x] `[all]` Dependency scanning runs in CI (ecosystem-appropriate) (2026-03-24) — zero runtime deps, npm audit in CI
 - [ ] `[all]` SKIP: no runtime dependencies to update — zero-dependency CLI
 - [x] `[npm]` `npm pack --dry-run` includes: dist/, README.md, CHANGELOG.md, LICENSE (2026-03-24) — includes bin/, src/, starter-pack/
@@ -56,9 +56,9 @@
 ## E. Identity (soft gate — does not block ship)
 
 - [x] `[all]` Logo in README header (2026-03-24)
-- [ ] `[all]` Translations (polyglot-mcp, 8 languages)
-- [ ] `[org]` Landing page (@mcptoolshop/site-theme)
-- [ ] `[all]` GitHub repo metadata: description, homepage, topics
+- [x] `[all]` Translations (polyglot-mcp, 8 languages) (2026-06-09) — en + 7 locales via TranslateGemma, ja verified non-degenerate
+- [x] `[org]` Landing page (@mcptoolshop/site-theme) (2026-06-09) — live at mcp-tool-shop-org.github.io/role-os/ + Starlight handbook
+- [x] `[all]` GitHub repo metadata: description, homepage, topics (2026-06-09)
 
 ---
 
