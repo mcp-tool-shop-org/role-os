@@ -1,6 +1,6 @@
-import { describe, it } from "node:test";
+import { describe, it, after } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -37,8 +37,15 @@ const REGISTRY_SPECIALISTS = [
   },
 ];
 
+// Every mkdtemp dir is tracked and removed at the end of the file's run.
+const FIXTURE_DIRS = [];
+after(() => {
+  for (const dir of FIXTURE_DIRS) rmSync(dir, { recursive: true, force: true });
+});
+
 function fixturePaths(specialists = REGISTRY_SPECIALISTS) {
   const dir = mkdtempSync(join(tmpdir(), "roleos-budget-"));
+  FIXTURE_DIRS.push(dir);
   const registry = join(dir, "specialists.json");
   writeFileSync(registry, JSON.stringify({ schema: "roleos-specialist-registry/v1", specialists }));
   return { registry, state: join(dir, "state.json"), events: join(dir, "events.jsonl") };
@@ -93,12 +100,16 @@ describe("budget-consult helpers", () => {
 
   it("budgetConsultEnabled reads the flag (default OFF)", () => {
     const prev = process.env.ROLEOS_BUDGET_CONSULT;
-    delete process.env.ROLEOS_BUDGET_CONSULT;
-    assert.equal(budgetConsultEnabled(), false);
-    process.env.ROLEOS_BUDGET_CONSULT = "1";
-    assert.equal(budgetConsultEnabled(), true);
-    if (prev === undefined) delete process.env.ROLEOS_BUDGET_CONSULT;
-    else process.env.ROLEOS_BUDGET_CONSULT = prev;
+    try {
+      delete process.env.ROLEOS_BUDGET_CONSULT;
+      assert.equal(budgetConsultEnabled(), false);
+      process.env.ROLEOS_BUDGET_CONSULT = "1";
+      assert.equal(budgetConsultEnabled(), true);
+    } finally {
+      // Restore even when an assertion throws, so env state never leaks to later tests.
+      if (prev === undefined) delete process.env.ROLEOS_BUDGET_CONSULT;
+      else process.env.ROLEOS_BUDGET_CONSULT = prev;
+    }
   });
 });
 

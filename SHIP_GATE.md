@@ -9,8 +9,8 @@
 
 ## A. Security Baseline
 
-- [x] `[all]` SECURITY.md exists (report email, supported versions, response timeline) (2026-03-24)
-- [x] `[all]` README includes threat model paragraph (data touched, data NOT touched, permissions required) (2026-03-24)
+- [x] `[all]` SECURITY.md exists (report email, supported versions, response timeline) (2026-06-10) — supported-versions table covers 2.x; opt-in network paths enumerated
+- [x] `[all]` README includes threat model paragraph (data touched, data NOT touched, permissions required) (2026-06-10) — default local-only + the three opt-in network features named
 - [x] `[all]` No secrets, tokens, or credentials in source or diagnostics output (2026-03-24)
 - [x] `[all]` No telemetry by default — state it explicitly even if obvious (2026-03-24)
 
@@ -33,7 +33,7 @@
 
 ## C. Operator Docs
 
-- [x] `[all]` README is current: what it does, install, usage, supported platforms + runtime versions (2026-03-24)
+- [x] `[all]` README is current: what it does, install, usage, supported platforms + runtime versions (2026-06-10) — install step added, role table sums to 61, test count 1404/59; English source only — locale READMEs regenerate at next translation pass. NOTE: README-touching releases invalidate this check date.
 - [x] `[all]` CHANGELOG.md (Keep a Changelog format) (2026-03-24)
 - [x] `[all]` LICENSE file present and repo states support status (2026-03-24)
 - [x] `[cli]` `--help` output accurate for all commands and flags (2026-03-24)

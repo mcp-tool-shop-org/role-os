@@ -13,10 +13,12 @@ import { describe, it, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, rmSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
-const TEST_CWD = join(__dirname, "..", ".test-p5");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_CWD = join(tmpdir(), `roleos-test-p5-${process.pid}`);
 
 function cleanup() {
   if (existsSync(TEST_CWD)) rmSync(TEST_CWD, { recursive: true });
@@ -87,9 +89,28 @@ describe("P5-2: case-insensitive section headers", () => {
     const result = validateArtifact("Backend Engineer", artifact);
     // All three required sections should be found regardless of casing
     assert.ok(result, "validateArtifact should return a result");
-    // Count missing required sections
-    const missing = result.missingSections || [];
+    // validateArtifact returns { valid, missing, warnings, contract }
+    const missing = result.missing;
+    assert.ok(Array.isArray(missing), "validateArtifact must return a missing array");
     assert.equal(missing.length, 0, `No sections should be missing, got: ${missing.join(", ")}`);
+    assert.equal(result.valid, true, "Artifact with all sections (any casing) must be valid");
+  });
+
+  it("negative control: an artifact genuinely missing a section is flagged", async () => {
+    const { validateArtifact } = await import("../src/artifacts.mjs");
+
+    // Omit risk-notes entirely — the assertion above must be able to fail.
+    const artifact = [
+      "## Files to Change",
+      "- src/run.mjs",
+      "",
+      "## Implementation Approach",
+      "Add visited-set parameter.",
+    ].join("\n");
+
+    const result = validateArtifact("Backend Engineer", artifact);
+    assert.equal(result.valid, false, "Missing section must invalidate the artifact");
+    assert.ok(result.missing.length >= 1, "missing must list the absent section");
   });
 });
 

@@ -15,6 +15,8 @@ import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { writeFileSafe } from "./fs-utils.mjs";
 import { scaffoldHooks, generateHooksConfig } from "./hooks.mjs";
+import { ROLE_CATALOG } from "./route.mjs";
+import { TEAM_PACKS } from "./packs.mjs";
 
 // ── roleos init claude ────────────────────────────────────────────────────────
 
@@ -302,7 +304,7 @@ Before starting non-trivial work in this repo, route the task through Role OS:
 3. Use structured handoffs between roles
 4. Review with evidence-based verdicts
 
-Role OS provides 31 specialized roles across 8 packs (engineering, design, product, research, growth, treatment, marketing, core). It detects broken chains, auto-routes recovery, and requires structured evidence in every verdict.
+Role OS provides ${ROLE_CATALOG.length} specialized roles across ${Object.keys(TEAM_PACKS).length} packs (${Object.keys(TEAM_PACKS).join(", ")}). It detects broken chains, auto-routes recovery, and requires structured evidence in every verdict.
 
 If the task is composite (feature + docs + launch), Role OS will recommend splitting into child packets with dependency ordering.
 

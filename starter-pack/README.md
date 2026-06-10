@@ -16,38 +16,46 @@ starter-pack/
     feature-packet.md        Building a new capability
     integration-packet.md    Wiring systems together
     identity-packet.md       Repairing inherited drift
-  agents/                  ← Role contracts. The spine.
-    core/
-      orchestrator.md        Decomposes and routes work
-      product-strategist.md  Shapes scope and intent
-      critic-reviewer.md     Accepts or rejects against contract
-    engineering/
-      frontend-developer.md  Implements user-facing surfaces
-      backend-engineer.md    Implements server/data/contracts
-      test-engineer.md       Verifies and defends against regression
-    design/
-      ui-designer.md         Designs hierarchy and interaction
-    marketing/
-      launch-copywriter.md   Writes truthful launch messaging
+  agents/                  ← 39 role contracts across 8 packs. The spine.
+    core/                    (3)  orchestrator, product-strategist, critic-reviewer
+    product/                 (4)  spec-writer, roadmap-prioritizer, feedback-synthesizer,
+                                  information-architect
+    engineering/             (14) frontend-developer, backend-engineer, test-engineer,
+                                  refactor-engineer, performance-engineer, security-reviewer,
+                                  dependency-auditor, component-auditor, seam-auditor,
+                                  test-truth-auditor, audit-synthesizer, red-teamer,
+                                  caption-auditor, monster-taxonomy-verifier
+    design/                  (2)  ui-designer, brand-guardian
+    marketing/               (1)  launch-copywriter
+    growth/                  (4)  launch-strategist, content-strategist, community-manager,
+                                  support-triage-lead
+    research/                (4)  ux-researcher, competitive-analyst, trend-researcher,
+                                  user-interview-synthesizer
+    treatment/               (7)  repo-researcher, repo-translator, docs-architect,
+                                  metadata-curator, coverage-auditor, deployment-verifier,
+                                  release-engineer
   schemas/                 ← Packet and handoff formats.
     task-packet.md           What work needs doing
     handoff.md               What one role passes to the next
     review-verdict.md        Accept, reject, or block
+    specialist.md            Specialist registry, gate, and consult record formats
   policy/                  ← System law.
     routing-rules.md         Which role handles what
     tool-permissions.md      What each role may and must not do
     escalation-rules.md      When to escalate instead of guess
     done-definition.md       What "done" actually means
+    specialist-tier.md       Law for model-backed specialist roles (registry, gate, probes)
   workflows/               ← Predefined role sequences.
     ship-feature.md          Feature from shaping to review
     fix-bug.md               Bug from report to regression defense
     launch-update.md         Copy from shipped truth to messaging
+    full-treatment.md        Repo polish + publish, integrated with shipcheck
 ```
 
 ## Quick start
 
 1. Copy this pack into your repo's `.claude/` directory
-2. Read `handbook.md` (under 400 words)
+2. Read `handbook.md` (a five-minute read)
 3. Fill the four `context/` files for your project
 4. Create your first packet using `schemas/task-packet.md`
 5. Route it through the smallest chain that covers the work

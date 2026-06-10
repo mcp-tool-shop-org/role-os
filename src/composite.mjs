@@ -124,6 +124,10 @@ export function initExecution(runPlan) {
 export function advance(exec) {
   if (exec.status === "completed" || exec.status === "failed") return null;
 
+  // Preserve the blocked status — blockChild's contract is that the parent
+  // stays blocked until recoverChild; advancing must not mask the block.
+  if (exec.status === "blocked") return null;
+
   if (!exec.startedAt) exec.startedAt = new Date().toISOString();
   exec.status = "running";
 

@@ -145,7 +145,6 @@ export async function dispatchSpecialist({
     if (specialistCall.ok) {
       result = specialistCall.verdict;
       source = "specialist";
-      recordDispatch(state, role, windowSize, parseIsoMs(nowIso));
     } else {
       // Specialist call failed → fail open to Claude. The gate's "route" was specialist, but
       // the realized source is Claude. Both are recorded in the receipt.
@@ -156,6 +155,11 @@ export async function dispatchSpecialist({
     result = await claudeFn(input);
     source = "claude";
   }
+
+  // Record EVERY dispatch (both routes) in the quota window, tagged with the REALIZED source.
+  // The window only rolls when Claude traffic is recorded too — recording only specialist
+  // successes froze the window and locked every role out permanently once the quota tripped.
+  recordDispatch(state, source, windowSize, parseIsoMs(nowIso));
 
   // ── Shadow probe ─────────────────────────────────────────────────────────────────────────
   // Probes only fire when the dispatch actually went to a specialist (source === "specialist").
@@ -175,12 +179,13 @@ export async function dispatchSpecialist({
         claude_summary: summarize(claudeVerdict),
       });
       resetProbeCounter(state, role);
-      const { probes, rate, shouldHalt } = checkHalt(eventsPath, role, N, tau);
+      const { probes, rate, agreed: agreedCount, shouldHalt } = checkHalt(eventsPath, role, N, tau);
       shadow = { fired: true, agreed, probes, rate, halt_triggered: shouldHalt };
       if (shouldHalt && !getHalt(state, role).halted) {
         const reason = contrastiveHaltMessage({ role, probes, rate, tau });
         setHalt(state, role, { reason, since: nowIso });
-        appendHaltEvent(eventsPath, { role, ts: nowIso, reason, probes, agreed: probes - Math.round(probes * (1 - rate)), rate, tau });
+        // `agreed` is checkHalt's exact window count — never recompute it lossily from the rate.
+        appendHaltEvent(eventsPath, { role, ts: nowIso, reason, probes, agreed: agreedCount, rate, tau });
       }
     } else {
       shadow = { fired: false, counter: c };

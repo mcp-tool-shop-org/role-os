@@ -16,6 +16,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -71,6 +72,14 @@ function seedFor(id) {
   return h;
 }
 
+// SHA-256 of the locked blocks (PIN_PER_STEP) — stamped into every brief's provenance
+// so render.mjs can detect briefs frozen against a stale house style.
+function houseSha(h) {
+  return createHash('sha256')
+    .update([h.blocks.style, h.blocks.framing, h.blocks.negative].join('\n'), 'utf8')
+    .digest('hex');
+}
+
 function assemble(blocks) {
   const positive = [house.blocks.style, house.blocks.framing, blocks.subject,
     blocks.specialization, blocks.expression, blocks.crew_palette, blocks.grade_cue]
@@ -107,10 +116,25 @@ async function run() {
     : [argOf('--id')].filter(Boolean);
   if (!ids.length) { console.error('error: pass --id <role> or --all'); process.exit(1); }
 
+  const currentHouseSha = houseSha(house);
+  if (house.sha && house.sha !== currentHouseSha) {
+    console.warn(`warn: house-style.json sha (${house.sha.slice(0, 12)}…) does not match its locked blocks (${currentHouseSha.slice(0, 12)}…) — a locked block was edited without bumping the hash. Update "sha" before authoring.`);
+  }
+
   let ok = 0, fail = 0;
   for (const id of ids) {
     const r = roster[id];
     if (!r) { console.error(`skip: no roster entry "${id}"`); continue; }
+    const outPath = join(OUTDIR, `${id}.portrait.json`);
+    // Seed-mismatch guard: never silently change a frozen portrait identity.
+    if (existsSync(outPath)) {
+      try {
+        const prev = JSON.parse(readFileSync(outPath, 'utf8'));
+        if (prev.params?.seed != null && prev.params.seed !== seedFor(id)) {
+          console.warn(`warn: ${id} existing brief carries a re-rolled seed ${prev.params.seed} (det-hash would be ${seedFor(id)}). Re-authoring writes the det-hash seed and CHANGES the portrait identity — carry the old seed forward manually if that render must be preserved.`);
+        }
+      } catch { /* unreadable previous brief — proceed */ }
+    }
     process.stdout.write(`authoring ${id} via ${MODEL} ... `);
     try {
       const blocks = await authorBlocks(r);
@@ -122,10 +146,10 @@ async function run() {
         negative: '$house',
         params: { ...house.params, seed: seedFor(id) },
         assembled: assemble(blocks),
-        provenance: { authored_by: MODEL, engine: 'ollama-cloud', house_style: house.direction, frozen: true },
+        provenance: { authored_by: MODEL, engine: 'ollama-cloud', house_style: house.direction, house_sha: currentHouseSha, frozen: true },
         gate: { ai_eyes: ['single subject', 'chest-up framing', 'no legible text', `clearly reads as the role's function: ${r.function}`] },
       };
-      writeFileSync(join(OUTDIR, `${id}.portrait.json`), JSON.stringify(brief, null, 2) + '\n');
+      writeFileSync(outPath, JSON.stringify(brief, null, 2) + '\n');
       console.log('ok'); ok++;
     } catch (e) {
       console.log('FAIL'); console.error('  ' + String(e.message || e).slice(0, 240)); fail++;

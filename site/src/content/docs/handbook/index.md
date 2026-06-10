@@ -44,7 +44,7 @@ The system provides three entry levels and ten operating layers:
 | **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason and required artifact |
 | **Evidence** | Role-aware structured evidence in verdicts with sufficiency checks |
 | **Dispatch** | Generates execution manifests for multi-claude with per-role tool profiles and budgets |
-| **Artifacts** | 20 per-role contracts, 7 pack handoff contracts, structural validation |
+| **Artifacts** | 44 per-role contracts, 10 pack handoff contracts, structural validation |
 
 ## Core properties
 
@@ -62,9 +62,9 @@ These are non-negotiable. If a change weakens any of them, reject it.
 - **35 role trials** (30 gold + 5 negative) — full roster proven
 - **7 pack trials** — all executed end-to-end, 3 shipped real code
 - **7 pack comparison trials** — mission vs pack vs free routing measured
-- **6 mission trials** — all 6 missions run through the runner, 5 real-friction findings fixed
+- **6 mission trials** — the original 6 missions run through the runner, 5 real-friction findings fixed (the catalog now ships 9 missions)
 - **Entry path trials** — unified entry tested against 20+ real task descriptions
 - **6 friction trials** — persistent runs measured for operator touches across all entry levels
-- **617 tests**, zero failures
+- **1404 tests**, zero failures (v2.9.0)
 
 [Back to landing page](/role-os/)

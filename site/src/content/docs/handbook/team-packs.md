@@ -137,10 +137,27 @@ Structured multi-perspective inquiry with traceable disagreement and verdict-bea
 
 | | |
 |---|---|
-| **Roles** | Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Normalizer, Cross-Examiner, Rebuttal Defender, Synthesizer, Judge |
-| **Chain** | 4 Analysts (parallel) → Normalize → Cross-Examine → Rebut → Synthesize → Expand → Judge |
+| **Roles** | Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Normalizer, Contrarian Analyst, Synthesizer, Product Expander, Judge |
+| **Optional** | Scenario Expander, Moat Expander |
+| **Chain** | 4 Analysts (parallel) → Normalizer → Contrarian challenge → Normalizer (rebuttal) → Synthesizer → Product Expander → Judge |
 | **Orchestrator** | Not required |
-| **Artifacts** | Role-native schemas, provenance atoms, cross-exam dispute graph, synthesis, verdict |
+| **Artifacts** | Role-native schemas, provenance atoms, challenge set, rebuttal set, synthesis, judge report |
+
+---
+
+### 10. Dogfood Swarm
+
+Multi-pass convergence: three health stages then iterative feature delivery with exclusive file ownership and build gates.
+
+| | |
+|---|---|
+| **Roles** | Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer, Critic Reviewer |
+| **Optional** | (none — domain agents scale from manifest) |
+| **Chain** | Coordinator → [5 domain agents parallel] → Coordinator gate (×4 stages) → Synthesizer → Critic |
+| **Artifacts** | `swarm-gate`, `wave-report` (×5 per wave), `swarm-final-report`, `verdict` |
+| **When** | You want to move a repo from "works" to "production-ready" through systematic convergence |
+| **Not for** | Single bugs, brainstorms, research, launches, docs-only work |
+| **Proven** | claude-collaborate: 35→129 tests, 106 findings fixed, v1.1.0 shipped |
 
 ---
 
@@ -156,22 +173,8 @@ Structured multi-perspective inquiry with traceable disagreement and verdict-bea
 | Research / Strategy | `research` | 5 (+2 optional) | Decision framing and evidence gathering |
 | Treatment | `treatment` | 8 (+3 optional) | Full repo polish and publish |
 | Deep Audit | `deep-audit` | 5 (+2 optional) | Manifest-scaled repo audit |
-| Brainstorm | `brainstorm` | 9 | Multi-perspective inquiry with traceable disagreement |
+| Brainstorm | `brainstorm` | 9 (+2 optional) | Multi-perspective inquiry with traceable disagreement |
 | Dogfood Swarm | `swarm` | 8 (+0 optional) | Multi-pass convergence with exclusive file ownership |
-
-### 10. Dogfood Swarm
-
-Multi-pass convergence: three health stages then iterative feature delivery with exclusive file ownership and build gates.
-
-| | |
-|---|---|
-| **Roles** | Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer, Critic Reviewer |
-| **Optional** | (none — domain agents scale from manifest) |
-| **Chain** | Coordinator → [5 domain agents parallel] → Coordinator gate (×4 stages) → Synthesizer → Critic |
-| **Artifacts** | `swarm-gate`, `wave-report` (×5 per wave), `swarm-final-report`, `verdict` |
-| **When** | You want to move a repo from "works" to "production-ready" through systematic convergence |
-| **Not for** | Single bugs, brainstorms, research, launches, docs-only work |
-| **Proven** | claude-collaborate: 35→129 tests, 106 findings fixed, v1.1.0 shipped |
 
 ## Mismatch detection
 

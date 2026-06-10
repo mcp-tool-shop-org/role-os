@@ -1,8 +1,8 @@
 import { describe, it, before, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, rmSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import {
   recordOutcome,
   readOutcomes,
@@ -12,8 +12,8 @@ import {
   formatCalibrationReport,
 } from "../src/calibration.mjs";
 
-const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
-const TEST_DIR = join(__dirname, "..", ".test-calibration");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_DIR = join(tmpdir(), `roleos-test-calibration-${process.pid}`);
 
 function cleanup() {
   if (existsSync(TEST_DIR)) rmSync(TEST_DIR, { recursive: true });

@@ -13,12 +13,24 @@
  * @returns {{ state: string, action: string, message: string }}
  */
 export function applyFallbackPolicy(bundle, overlay) {
+  // Malformed bundle from a buggy/version-skewed retrieve() → named degraded
+  // state instead of a TypeError that callers would swallow silently.
+  if (!bundle || typeof bundle !== "object" || !Array.isArray(bundle.selected)) {
+    return {
+      state: "malformed_bundle",
+      action: "warn",
+      message: "Retrieval bundle is malformed (missing or invalid selected[]) — knowledge degraded",
+    };
+  }
+
+  const summary = bundle.summary ?? {};
+
   // No overlay → shared corpus only
   if (!overlay) {
     return {
       state: "no_overlay",
       action: "continue",
-      message: `No overlay for role ${bundle.role_id} — using shared corpus only`,
+      message: `No overlay for role ${bundle.role_id ?? "unknown"} — using shared corpus only`,
     };
   }
 
@@ -32,22 +44,22 @@ export function applyFallbackPolicy(bundle, overlay) {
   }
 
   // Check for forbidden source hits
-  if (bundle.summary.forbidden_hits > 0) {
+  if ((summary.forbidden_hits ?? 0) > 0) {
     // Forbidden sources were removed, but log the diagnostic
     return {
       state: "forbidden_hit",
       action: "continue",
-      message: `${bundle.summary.forbidden_hits} forbidden source(s) removed from results`,
+      message: `${summary.forbidden_hits} forbidden source(s) removed from results`,
     };
   }
 
   // Check for stale-dominant results
-  const totalRelevant = bundle.summary.selected_count + bundle.summary.stale_count;
-  if (totalRelevant > 0 && bundle.summary.stale_count / totalRelevant > 0.5) {
+  const totalRelevant = (summary.selected_count ?? 0) + (summary.stale_count ?? 0);
+  if (totalRelevant > 0 && (summary.stale_count ?? 0) / totalRelevant > 0.5) {
     return {
       state: "stale_dominant",
       action: "warn",
-      message: `${bundle.summary.stale_count} of ${totalRelevant} relevant candidates are stale`,
+      message: `${summary.stale_count} of ${totalRelevant} relevant candidates are stale`,
     };
   }
 
@@ -62,7 +74,7 @@ export function applyFallbackPolicy(bundle, overlay) {
   }
 
   // Check for weak trust posture
-  if (bundle.provenance.trust_posture === "weak") {
+  if ((bundle.provenance?.trust_posture ?? "weak") === "weak") {
     return {
       state: "no_strong_match",
       action: "warn",

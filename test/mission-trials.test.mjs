@@ -564,8 +564,8 @@ describe("Phase S findings summary", () => {
       {
         id: "S6-F1",
         severity: "real-friction",
-        summary: "research-launch uses 'Competitive Analyst' role name not in ROLE_CATALOG",
-        fix: "Rename to existing role (Competitive Analyst) or add Competitive Analyst to catalog",
+        summary: "research-launch used 'Research Analyst' role name not in ROLE_CATALOG",
+        fix: "Renamed to existing catalog role (Competitive Analyst)",
       },
       {
         id: "S1-F2",
@@ -593,7 +593,7 @@ describe("Phase S findings summary", () => {
       },
     ];
 
-    // 4 real-friction, 2 minor, 1 deferred
+    // 5 real-friction, 2 minor, 1 deferred
     const realFriction = findings.filter(f => f.severity === "real-friction");
     const minor = findings.filter(f => f.severity === "minor");
     const deferred = findings.filter(f => f.severity === "deferred");

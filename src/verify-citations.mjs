@@ -15,7 +15,7 @@
 
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync, rmSync, readFileSync, existsSync } from "node:fs";
-import { join, extname } from "node:path";
+import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { createHash } from "node:crypto";
 import { runOffloadPanel, applyLocalPanel, buildEvidence } from "./citation-panel.mjs";
@@ -70,11 +70,30 @@ export function extractCitations(markdown) {
   return { citations, unparsed };
 }
 
-/** Count distinct arXiv/DOI identifiers in an item — flags multi-cite items that drop extras. */
+/**
+ * Count DISTINCT arXiv/DOI identifiers in an item — flags multi-cite items that drop extras.
+ * Occurrences are deduplicated after normalization (lowercase, strip arXiv vN suffix, strip
+ * trailing punctuation), because the house citation format — "arXiv:2402.01817 …
+ * https://arxiv.org/abs/2402.01817" (ID + URL of the SAME paper) — is ONE source, not two.
+ * Two genuinely different identifiers still flag.
+ */
 function countIdentifiers(text) {
-  const ax = text.match(new RegExp(ARXIV.source, "ig")) || [];
-  const di = text.match(new RegExp(DOI.source, "ig")) || [];
-  return ax.length + di.length;
+  const ids = new Set();
+  for (const m of text.matchAll(new RegExp(ARXIV.source, "ig"))) {
+    ids.add(`arxiv:${normalizeIdentifier(m[1])}`);
+  }
+  for (const m of text.matchAll(new RegExp(DOI.source, "ig"))) {
+    ids.add(`doi:${normalizeIdentifier(m[1])}`);
+  }
+  return ids.size;
+}
+
+/** Canonical dedup key: lowercase, no trailing punctuation, no arXiv version suffix. */
+function normalizeIdentifier(id) {
+  return String(id)
+    .toLowerCase()
+    .replace(/[.,;]+$/, "")
+    .replace(/v\d+$/, "");
 }
 
 /** Match the first resolvable identifier (arXiv first, then DOI). Returns null if none. */
@@ -358,13 +377,18 @@ function buildPanelInput(artifactCitations, gateCitations) {
 }
 
 function loadCitations(input) {
+  // Extensions are matched case-insensitively (`dispatch.MD` is realistic on Windows) and
+  // `.markdown` is accepted. Strings that are not an existing .md/.markdown/.json path fall
+  // through to inline-markdown mode (the library API); the CLI validates the path FIRST and
+  // errors loudly on a missing file / unsupported extension, so a typo'd path can never be
+  // silently scanned as inline text (see verify-citations-cmd.mjs).
   if (
     typeof input === "string" &&
-    (input.endsWith(".md") || input.endsWith(".json")) &&
+    /\.(md|markdown|json)$/i.test(input) &&
     existsSync(input)
   ) {
     const content = readFileSync(input, "utf8");
-    if (extname(input) === ".json") {
+    if (/\.json$/i.test(input)) {
       let arr;
       try {
         arr = JSON.parse(content);

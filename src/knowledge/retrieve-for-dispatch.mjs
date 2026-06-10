@@ -71,7 +71,7 @@ export async function retrieveForDispatch({ roleId, taskText, packetContextSumma
 
     return {
       bundle,
-      status: deriveStatus(fallback),
+      status: deriveStatus(fallback, bundle),
       fallback,
     };
   }
@@ -82,18 +82,23 @@ export async function retrieveForDispatch({ roleId, taskText, packetContextSumma
 
   return {
     bundle,
-    status: deriveStatus(fallback),
+    status: deriveStatus(fallback, bundle),
     fallback,
   };
 }
 
 /**
  * Derive packet knowledge status from fallback state.
+ *
+ * no_overlay with selected chunks maps to "weak" (shared-corpus-only evidence),
+ * matching fallback-policy's "continue — using shared corpus only" action.
+ * "none" is reserved for genuinely empty retrievals, since renderKnowledgeBlock()
+ * drops the knowledge block entirely for status "none".
  */
-function deriveStatus(fallback) {
+function deriveStatus(fallback, bundle) {
   switch (fallback.state) {
     case "healthy": return "strong";
-    case "no_overlay": return "none";
+    case "no_overlay": return (bundle?.selected?.length ?? 0) > 0 ? "weak" : "none";
     case "no_strong_match": return "weak";
     case "stale_dominant": return "stale";
     case "conflicting": return "conflicted";

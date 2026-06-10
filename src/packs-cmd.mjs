@@ -57,7 +57,7 @@ function runSuggest(packetFile) {
     }
   }
 
-  console.log(`\nNext: roleos route ${packetFile} --pack ${result.pack}\n`);
+  console.log(`\nNext: roleos route ${packetFile} --pack=${result.pack}\n`);
 }
 
 // ── Show ──────────────────────────────────────────────────────────────────────

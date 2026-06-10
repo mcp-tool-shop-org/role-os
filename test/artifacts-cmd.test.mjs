@@ -3,11 +3,13 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, existsSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
 const CLI = join(__dirname, "..", "bin", "roleos.mjs");
-const TEST_DIR = join(__dirname, "..", ".test-artifacts-cmd");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_DIR = join(tmpdir(), `roleos-test-artifacts-cmd-${process.pid}`);
 
 function run(...args) {
   return execFileSync("node", [CLI, ...args], {
@@ -121,9 +123,9 @@ describe("roleos artifacts", () => {
     assert.ok(output.includes("verdict"));
   });
 
-  it("shows all 9 pack chains", () => {
+  it("shows every pack chain (including deep-audit)", () => {
     setup();
-    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm", "swarm"]) {
+    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "deep-audit", "brainstorm", "swarm"]) {
       const output = run("artifacts", "chain", pack);
       assert.ok(output.includes(pack), `Missing pack name for ${pack}`);
       if (pack === "brainstorm") {

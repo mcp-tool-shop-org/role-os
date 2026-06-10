@@ -1,10 +1,14 @@
 # Workflow: Protect Bootstrap Truth
 
+> **Freshness:** re-verified 2026-06-10 against role-os v2.9.0. All counts in this workflow
+> are DERIVED from source at review time, never inlined — if you find a hardcoded count here
+> or in any synchronized surface, treat it as drift and fix it against the source of truth.
+
 ## Use when
 
 A proposed change touches any of these paths:
 - `starter-pack/` — any modification to agent contracts, schemas, policies, workflows, context templates, examples, or handbook
-- `src/route.mjs` — any modification to ROLE_KEYWORDS, CHAINS, or type detection
+- `src/route.mjs` — any modification to ROLE_CATALOG, chain building, or type detection
 - `src/packet.mjs` — any modification to TYPES, TYPICAL_CHAINS, or DELIVERABLE_DEFAULTS
 - `src/review.mjs` — any modification to VERDICTS enum
 - `src/status.mjs` — any modification to context file list, spine file list, or status computation
@@ -21,22 +25,24 @@ Add **Docs Architect** if the change affects handbook, README role table, or sta
 
 ## Required review checks
 
-The Critic must verify ALL of the following against evidence (not impression):
+The Critic must verify ALL of the following against evidence (not impression). Counts are
+derived at review time — never compare against a number written in a doc:
 
-- [ ] Starter-pack agent count is exactly 32 (count files in `starter-pack/agents/`)
-- [ ] README role table matches starter-pack agent files (names, packs, counts)
-- [ ] `routing-rules.md` covers all 32 roles
-- [ ] `tool-permissions.md` covers all 32 roles
-- [ ] `src/route.mjs:ROLE_KEYWORDS` has not silently dropped or added roles
-- [ ] `src/route.mjs:CHAINS` matches `src/packet.mjs:TYPICAL_CHAINS` for all 3 types
+- [ ] Starter-pack agent count matches the synchronized surfaces (derive it: count files in `starter-pack/agents/**`; 39 at v2.9.0). Any doc stating a different count is drift.
+- [ ] README role table matches `ROLE_CATALOG` in `src/route.mjs` (names, families, and rows summing to `ROLE_CATALOG.length` — verify with `node -e "import('./src/route.mjs').then(m => console.log(m.ROLE_CATALOG.length))"`)
+- [ ] `routing-rules.md` covers every contract shipped in `starter-pack/agents/`
+- [ ] `tool-permissions.md` covers every contract shipped in `starter-pack/agents/`
+- [ ] `src/route.mjs:ROLE_CATALOG` has not silently dropped or added roles (diff against git)
+- [ ] `src/packet.mjs:TYPICAL_CHAINS` still defines a chain for each of the 3 packet types, and every role named in it exists in ROLE_CATALOG
 - [ ] `src/packet.mjs:TYPES` still has exactly 3 entries
 - [ ] `src/review.mjs:VERDICTS` still has exactly 4 entries
-- [ ] `src/status.mjs` checks exactly 4 context files and 5 spine files
+- [ ] `src/status.mjs` checks exactly 4 context files and the spine file list
 - [ ] `src/init.mjs` resolves starter-pack from `__dirname/../starter-pack` (no invented paths)
 - [ ] `src/fs-utils.mjs:copyDirSafe()` still skips existing files (never overwrites)
 - [ ] No new dependency added to package.json
-- [ ] `npm test` passes all 18+ test cases
+- [ ] `npm test` passes the full suite (1404 tests / 59 files at v2.9.0 — derive the current count from the run output, do not pin it)
 - [ ] `npm run verify` exits 0
+- [ ] Version claims match `package.json` (never a hardcoded version string)
 - [ ] No canonical memory duplication introduced (no local re-implementation of `memory/` content)
 
 ## Reject criteria — automatic reject
@@ -51,7 +57,7 @@ A change is **automatically rejected** if it:
 
 4. **Expands role surface without synchronized coverage.** Adding a role to `starter-pack/agents/` without corresponding updates to routing-rules, tool-permissions, README role table, and handbook. Adding a keyword-scored role to route.mjs without a starter-pack contract.
 
-5. **Changes starter-pack content without matching README/handbook/examples.** If the README says 32 roles and starter-pack has 33, the bootstrap is a lie. If the handbook describes a workflow that starter-pack doesn't include, the documentation is a lie.
+5. **Changes starter-pack content without matching README/handbook/examples.** If the README states a role count that the starter-pack or catalog does not actually have, the bootstrap is a lie. If the handbook describes a workflow that starter-pack doesn't include, the documentation is a lie. Counts must be re-derived from source, not copied from another doc.
 
 6. **Lets CLI and starter-pack drift apart.** If `src/packet.mjs:TYPES` adds a new type but starter-pack has no example for it. If `src/review.mjs:VERDICTS` adds a verdict but the schema doesn't document it. The CLI and the starter-pack are one product.
 
@@ -62,8 +68,8 @@ A change is **automatically rejected** if it:
 ## Doctrine references
 
 - Starter-pack: `starter-pack/` (canonical bootstrap source)
-- Routing rules: `starter-pack/policy/routing-rules.md` (all 32 roles)
-- Tool permissions: `starter-pack/policy/tool-permissions.md` (all 32 roles)
-- CLI enums: `src/packet.mjs:TYPES`, `src/route.mjs:CHAINS`, `src/review.mjs:VERDICTS`
+- Routing rules: `starter-pack/policy/routing-rules.md` (every shipped role)
+- Tool permissions: `starter-pack/policy/tool-permissions.md` (every shipped role)
+- CLI enums: `src/packet.mjs:TYPES`, `src/packet.mjs:TYPICAL_CHAINS`, `src/review.mjs:VERDICTS`
 - Memory integration: `starter-pack/handbook.md` (memory layer section)
 - Lockdown doctrine: `role-os-rollout/DOCTRINE.md`

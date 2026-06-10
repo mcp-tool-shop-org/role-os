@@ -88,7 +88,7 @@ describe("scoreRole", () => {
 
 // ── Role surfacing — the key acceptance tests ─────────────────────────────────
 
-describe("role surfacing (all 32 reachable)", () => {
+describe("role surfacing (packet keyword reachability)", () => {
   function rolesAboveThreshold(content, type = "feature") {
     return ROLE_CATALOG
       .filter(r => !r.alwaysInclude)

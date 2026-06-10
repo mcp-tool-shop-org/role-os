@@ -30,8 +30,8 @@ Operational. Precise. No ceremony. Role OS tells you what role to assign, what c
 
 ## Truth constraints
 
-1. **Role count must be exact.** README says 32 roles across 8 packs. Starter-pack must have exactly 32 agent files. If the count changes, README, routing-rules, tool-permissions, and handbook must all update.
-2. **Route limitations must be documented.** `roleos route` keyword-scores 6 roles. It does not know about 26 others. This must be stated wherever routing is described.
+1. **Role count must be exact and derived, never inlined.** The source of truth is `ROLE_CATALOG` in `src/route.mjs` (61 roles at v2.9.0; verify with `node -e "import('./src/route.mjs').then(m => console.log(m.ROLE_CATALOG.length))"`). Every surface that states a count (README, routing-rules, tool-permissions, handbook, starter-pack) must match it, and a catalog change requires synchronized updates to all of them.
+2. **Routing scope must be stated accurately.** `roleos route` deterministically keyword-scores the full catalog. Do not claim partial coverage (a v1.0-era limitation), and do not claim the scoring is more than substring matching.
 3. **Verdict enum is closed.** 4 verdicts only. No "soft reject", no "conditional accept", no "defer."
 4. **Packet types are closed.** 3 types only. No "maintenance", no "hotfix", no custom types.
 5. **Init does not update.** Re-running init skips existing files. This must be documented — users expect updates to flow through.
@@ -40,7 +40,7 @@ Operational. Precise. No ceremony. Role OS tells you what role to assign, what c
 
 1. **No "smart routing."** Route uses substring keyword matching. It is not smart. It is deterministic and limited.
 2. **No "automatically handles."** Role OS scaffolds and routes. It does not handle anything automatically.
-3. **No "comprehensive coverage."** Route covers 6 of 32 roles. Policy files cover all 32. Be specific about which surface does what.
+3. **No "comprehensive coverage."** Be specific about which surface does what: route scores the full ROLE_CATALOG with substring matching; policy files govern the roles shipped in the starter-pack. Name the surface, cite the source, never round up.
 4. **No advisory verdicts.** A reject is a reject. Do not soften it with "consider revising" or "might want to look at."
 5. **No implied orchestrator intelligence.** The orchestrator contract says what the orchestrator does. It does not "figure out" anything.
 

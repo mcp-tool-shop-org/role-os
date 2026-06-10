@@ -36,7 +36,9 @@
     "authored_by": "minimax-m3",
     "engine": "ollama-cloud",
     "house_style": "painted-concept-art",
-    "frozen": true
+    "frozen": true,
+    "seed_rerolled": "manual re-roll to 763040777 — deterministic seedFor('scenario-expander') is 763046229; the frozen seed is kept deliberately to preserve the committed render's identity",
+    "edited": "post-freeze: assembled.negative hand-extended beyond the locked house negative with 'cigarette, smoking, cigar, vape' (the dry-erase-marker prop kept rendering as a cigarette)"
   },
   "gate": {
     "ai_eyes": [

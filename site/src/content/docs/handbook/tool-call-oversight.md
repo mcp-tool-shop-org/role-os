@@ -45,9 +45,16 @@ A gated action is **denied** unless the director granted its capability in
 ```json
 {
   "git:push": { "granted": true },
-  "npm:publish": { "granted": true, "scope": "@mcptoolshop/role-os", "expires": "2026-07-01" }
+  "npm:publish": { "granted": true, "scope": "role-os", "expires": "2026-07-01" }
 }
 ```
+
+**What the gate enforces today:** `granted: true` and an unexpired `expires` — nothing else.
+The `scope` field is **informational/audit-only**: it documents intent for review but is not
+read by the gate. A granted `npm:publish` authorizes publishing **any** package, not just the
+one named in `scope`. Treat every grant as action-wide, keep grants short-lived via `expires`,
+and revoke (`"granted": false`) when the release is done. Per-target scope enforcement is
+planned but not yet implemented.
 
 Deterministic least-privilege (POLA), grounded in CaMeL — no model. It is the **preventive** half of
 the named-compensator rule: capability-gating *stops* the unauthorized irreversible call; the

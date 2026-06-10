@@ -120,18 +120,21 @@ Full treatment is a canonical 7-phase protocol defined in Claude project memory 
 
 Order: Shipcheck first, then full treatment. No v1.0.0 without passing hard gates.
 
-## 61 roles across 10 packs
+## The 61-role catalog
 
-| Pack | Roles |
-|------|-------|
-| **Core** (3) | Orchestrator, Product Strategist, Critic Reviewer |
+The catalog groups its 61 roles into 11 families. (Dispatch uses a separate set of 10 **team packs** — feature, bugfix, security, docs, launch, research, treatment, deep-audit, brainstorm, swarm — which draw roles from these families.)
+
+| Family | Roles |
+|--------|-------|
+| **Core** (2) | Orchestrator, Critic Reviewer |
+| **Product** (4) | Product Strategist, Feedback Synthesizer, Roadmap Prioritizer, Spec Writer |
 | **Engineering** (7) | Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer |
 | **Design** (2) | UI Designer, Brand Guardian |
 | **Marketing** (1) | Launch Copywriter |
 | **Treatment** (7) | Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer |
-| **Product** (3) | Feedback Synthesizer, Roadmap Prioritizer, Spec Writer |
 | **Research** (4) | UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer |
 | **Growth** (4) | Launch Strategist, Content Strategist, Community Manager, Support Triage Lead |
+| **Brainstorm** (19) | Context Scout, User Value Scout, Creative Leap Scout, Mechanics Scout, Market Scout, Contrarian Scout, Feasibility Scout, Quality Bar Scout, Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Contrarian Analyst, Normalizer, Synthesizer, Product Expander, Scenario Expander, Moat Expander, Judge |
 | **Deep Audit** (4) | Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer |
 | **Swarm** (7) | Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer |
 
@@ -140,7 +143,13 @@ Every role has a full contract: mission, use when, do not use when, expected inp
 ## Quick start
 
 ```bash
-npx role-os init
+# Install (puts `roleos` on your PATH):
+npm install -g role-os
+
+# Scaffold the role spine into your repo:
+roleos init
+# (one-off alternative without installing: `npx role-os init`,
+#  then prefix every command below with `npx role-os` instead of `roleos`)
 
 # Describe what you need — Role OS picks the right level:
 roleos run "fix the crash in save handler"
@@ -262,13 +271,21 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1150 tests across 37 test files
+  test/                        ← 1404 tests across 59 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Security
 
-Role OS operates **locally only**. It copies markdown templates and writes packet/verdict files to your repository's `.claude/` directory. It does not access the network, handle secrets, or collect telemetry. No dangerous operations — all file writes use skip-if-exists by default. See [SECURITY.md](SECURITY.md) for the full policy.
+By default, Role OS operates on the **local filesystem only**. It copies markdown templates and writes packet/verdict/run files to your repository's `.claude/` directory. Default operation makes no network requests, handles no secrets, and collects no telemetry. No dangerous operations — all file writes use skip-if-exists by default.
+
+Three **opt-in** features touch the network when you explicitly enable them:
+
+- **`roleos verify-citations`** — shells out to the external `prism` CLI, which resolves citation identifiers against public arXiv/Crossref APIs (sends the citation IDs/URLs being verified).
+- **Specialist tier** (`roleos specialist`, registered roles) — POSTs dispatch prompts to the `backend_url` you configure in `.role-os/specialists.json` (typically a local model endpoint).
+- **Budget / conformance consult** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — sends the step/tool-call context to a local model over HTTP for an advisory verdict.
+
+All three are off by default and fail open to local deterministic behavior. See [SECURITY.md](SECURITY.md) for the full policy.
 
 ## The operating system
 

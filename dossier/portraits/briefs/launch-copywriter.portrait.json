@@ -37,7 +37,8 @@
     "engine": "ollama-cloud",
     "house_style": "painted-concept-art",
     "frozen": true,
-    "edited": "2026-06-09: simplified hand props, removed held glasses (fixed hand-glitch)"
+    "edited": "2026-06-09: simplified hand props, removed held glasses (fixed hand-glitch)",
+    "seed_rerolled": "manual re-roll to 718291837 — deterministic seedFor('launch-copywriter') is 4030930831; the frozen seed is kept deliberately to preserve the committed render's identity"
   },
   "gate": {
     "ai_eyes": [

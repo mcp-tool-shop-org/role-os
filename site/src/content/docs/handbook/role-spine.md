@@ -1,34 +1,34 @@
 ---
 title: Role Spine
-description: All 61 specialist roles across 10 packs and their contracts.
+description: All 61 specialist roles, their families, and their contracts.
 sidebar:
   order: 2
 ---
 
-Role OS ships 61 role contracts organized into 10 packs. Each role has a defined mission, scope boundaries, expected inputs, required outputs, a quality bar, and escalation triggers. The router scores all 61 roles against packet content and assembles the smallest valid chain.
+Role OS ships a 61-role catalog organized into 11 role families. Each role has a defined mission, scope boundaries, expected inputs, required outputs, a quality bar, and escalation triggers. The router scores all 61 roles against packet content and assembles the smallest valid chain.
+
+Role *families* group related contracts in the catalog. They are distinct from the 10 dispatch [team packs](/role-os/handbook/team-packs/) (`feature`, `bugfix`, `security`, …), which are curated chains drawn from this catalog.
 
 ## Quick reference
 
-| Pack | Roles | Count |
-|------|-------|-------|
-| **Core** | Orchestrator, Product Strategist, Critic Reviewer | 3 |
+| Family | Roles | Count |
+|--------|-------|-------|
+| **Core** | Orchestrator, Critic Reviewer | 2 |
+| **Product** | Product Strategist, Feedback Synthesizer, Roadmap Prioritizer, Spec Writer | 4 |
 | **Engineering** | Frontend Developer, Backend Engineer, Test Engineer, Refactor Engineer, Performance Engineer, Dependency Auditor, Security Reviewer | 7 |
 | **Design** | UI Designer, Brand Guardian | 2 |
 | **Marketing** | Launch Copywriter | 1 |
 | **Treatment** | Repo Researcher, Repo Translator, Docs Architect, Metadata Curator, Coverage Auditor, Deployment Verifier, Release Engineer | 7 |
-| **Product** | Feedback Synthesizer, Roadmap Prioritizer, Spec Writer | 3 |
 | **Research** | UX Researcher, Competitive Analyst, Trend Researcher, User Interview Synthesizer | 4 |
 | **Growth** | Launch Strategist, Content Strategist, Community Manager, Support Triage Lead | 4 |
+| **Brainstorm** | Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Contrarian Analyst, Normalizer, Synthesizer, Product Expander, Judge, Scenario Expander, Moat Expander, Context Scout, User Value Scout, Creative Leap Scout, Mechanics Scout, Market Scout, Contrarian Scout, Feasibility Scout, Quality Bar Scout | 19 |
 | **Deep Audit** | Component Auditor, Test Truth Auditor, Seam Auditor, Audit Synthesizer | 4 |
 | **Swarm** | Swarm Coordinator, Swarm Backend Agent, Swarm Bridge Agent, Swarm Tests Agent, Swarm Infra Agent, Swarm Frontend Agent, Swarm Synthesizer | 7 |
 
-## Core (3 roles)
+## Core (2 roles)
 
 ### Orchestrator
 Decomposes work into the smallest lawful chain. Routes packets to the right roles, verifies dependencies, and coordinates sequencing. Does not perform specialist work. Included automatically when a task is multi-step and cross-functional.
-
-### Product Strategist
-Shapes scope and protects product intent. Defines what the work is for, what is primary vs noise, and sets success criteria for downstream roles. Does not write implementation code.
 
 ### Critic Reviewer
 Accepts or rejects work based on contract compliance, quality, and truthfulness. Ties every verdict to evidence and the done definition. Does not rewrite the work. Always the final step in every chain.
@@ -92,7 +92,10 @@ Verifies that builds, deployments, and published artifacts are correct and healt
 ### Release Engineer
 Manages version bumps, changelog entries, git tags, and publish readiness. Does not write feature code.
 
-## Product (3 roles)
+## Product (4 roles)
+
+### Product Strategist
+Shapes scope and protects product intent. Defines what the work is for, what is primary vs noise, and sets success criteria for downstream roles. Does not write implementation code.
 
 ### Feedback Synthesizer
 Clusters raw feedback signals into themes. Extracts actionable patterns from complaints, user signals, and sentiment data.
@@ -130,6 +133,67 @@ Manages open-source community health: issue triage, contribution guidance, discu
 
 ### Support Triage Lead
 Classifies support input: bugs vs user errors, recurring patterns, and priority assignment. Produces structured triage output for downstream roles.
+
+## Brainstorm (19 roles)
+
+The brainstorm family powers structured multi-perspective inquiry. The current pipeline runs the five Analysts through Normalizer, Synthesizer, Product Expander, and Judge (the [brainstorm pack](/role-os/handbook/team-packs/)'s chain); the Expanders are optional depth passes, and the Scouts are routable specialists for lighter exploratory tasks.
+
+### Context Analyst
+Answers "what is this, what is it next to, and what is it not?" via terminology genealogy, adjacency maps, and category boundary maps. Produces a ContextMap.
+
+### User Value Analyst
+Answers "where is the felt pull or pain?" via jobs-to-be-done, pain/relief mapping, and willingness/avoidance signals. Produces a UserValueMap.
+
+### Mechanics Analyst
+Answers "what has to be true for this to work?" via loop decomposition, dependency chains, and failure-mode analysis. Produces a MechanicsMap.
+
+### Positioning Analyst
+Answers "what claim could this own, and when is it legal to make it?" via substitute comparison, wedge identification, and claim timing analysis. Produces a PositioningMap.
+
+### Contrarian Analyst
+Attacks claim by claim: identifies overstated, premature, or structurally false claims and exposes contradictions. Produces a ChallengeSet. Does not generate ideas of its own.
+
+### Normalizer
+Translates role-native outputs into provenance-preserving atoms: dedups, clusters, detects conflicts, and calibrates evidence. Also runs the rebuttal pass after the Contrarian challenge.
+
+### Synthesizer
+Extracts themes and candidate directions from the normalized atom pool, preserving tensions and disagreement rather than flattening them into false consensus.
+
+### Product Expander
+Expands the chosen direction into a product shape: features, core loop, target user, and the smallest provable version.
+
+### Judge
+The brainstorm quality gate. Issues an accept/revise/reject disposition with targeted revision routing. The brainstorm counterpart of the Critic Reviewer.
+
+### Scenario Expander *(optional)*
+Grounds a concept in concrete user situations, edge cases, and failure modes.
+
+### Moat Expander *(optional)*
+Assesses defensibility: differentiation, stickiness, competitive moat, and phase planning.
+
+### Context Scout
+Maps the domain landscape: terminology, adjacent spaces, and prior art.
+
+### User Value Scout
+Maps user pain, desire, behavior, and unmet needs across segments.
+
+### Creative Leap Scout
+Proposes the bold bets: cross-domain analogies, unexpected combinations, and divergent directions.
+
+### Mechanics Scout
+Probes structural and operational feasibility — how the idea actually works.
+
+### Market Scout
+Surveys existing solutions, whitespace, and sameness traps in positioning.
+
+### Contrarian Scout
+Challenges scout findings: weak evidence, overgeneralization, and false novelty.
+
+### Feasibility Scout
+Assesses buildability, complexity, and the timeline to a provable result.
+
+### Quality Bar Scout
+Defines the excellence threshold the concept must clear — what "adequate" vs "excellent" means for this idea.
 
 ## Deep Audit (4 roles)
 

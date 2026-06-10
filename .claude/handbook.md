@@ -8,10 +8,10 @@ Each role has a contract: what it owns, what it must produce, when to escalate. 
 
 ## What Role OS provides
 
-1. **Role Spine** — eight specialist role contracts with hard boundaries
-2. **Workflows** — canonical problem shapes: feature, integration, identity, full treatment
-3. **Schemas** — structured packet, handoff, and verdict formats
-4. **Policy** — routing, permissions, escalation, and done definition
+1. **Role Spine** — 39 specialist role contracts in the pack, each with hard boundaries (the runtime catalog routes 61 roles in total)
+2. **Workflows** — canonical problem shapes: ship-feature, fix-bug, launch-update, full-treatment
+3. **Schemas** — structured packet, handoff, verdict, and specialist formats
+4. **Policy** — routing, permissions, escalation, done definition, and specialist-tier law
 5. **Context templates** — product brief, repo map, priorities, brand rules
 
 ## What Role OS does not own

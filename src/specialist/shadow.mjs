@@ -67,6 +67,13 @@ export function recordProbe(eventsPath, probe) {
  * narrow fine-tunes show step changes, so an early halt on a small sample would be a noise
  * trigger, not a real disagreement signal).
  *
+ * Only probes recorded AFTER the role's most recent clear-halt event count. A clear-halt is
+ * an operator decision that the disagreement evidence before it is adjudicated; without this
+ * boundary the stale disagreeing probes keep dominating the window and the role re-halts on
+ * the very next probe — the documented recovery command could never actually recover a role.
+ * The fresh-start window also restarts the ≥N thin-sample guard, so a cleared role gets a
+ * full new sample before it can halt again.
+ *
  * @param {string} eventsPath
  * @param {string} role
  * @param {number} [N]
@@ -74,8 +81,10 @@ export function recordProbe(eventsPath, probe) {
  * @returns {{ probes: number, agreed: number, rate: number, shouldHalt: boolean }}
  */
 export function checkHalt(eventsPath, role, N = SHADOW_DEFAULTS.N, tau = SHADOW_DEFAULTS.TAU) {
-  const events = readEvents(eventsPath, { role, kind: "shadow-probe" });
-  const window = events.slice(-N);
+  const events = readEvents(eventsPath, { role, kind: ["shadow-probe", "clear-halt"] });
+  const lastClear = events.map((e) => e.kind).lastIndexOf("clear-halt");
+  const probesSinceClear = events.slice(lastClear + 1).filter((e) => e.kind === "shadow-probe");
+  const window = probesSinceClear.slice(-N);
   const probes = window.length;
   const agreed = window.filter((e) => e.data && e.data.agreed === true).length;
   const rate = probes === 0 ? 1 : agreed / probes;
@@ -94,7 +103,8 @@ export function contrastiveHaltMessage({ role, probes, rate, tau }) {
   return (
     `specialist for role "${role}" halted: shadow-probe agreement ${pct}% over the last ` +
     `${probes} probes < required ${required}% (τ=${tau}). The specialist's verdicts have ` +
-    `drifted from Claude's on the same inputs. Clear with: roleos specialist clear-halt ${role}`
+    // Role names contain spaces ("Token Budget Analyst") — the copy-pasteable command must quote.
+    `drifted from Claude's on the same inputs. Clear with: roleos specialist clear-halt "${role}"`
   );
 }
 

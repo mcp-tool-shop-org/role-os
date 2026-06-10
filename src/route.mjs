@@ -1,11 +1,11 @@
 import { existsSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { resolve, dirname, join } from "node:path";
 import { readFileSafe } from "./fs-utils.mjs";
 import { detectConflicts } from "./conflicts.mjs";
 import { resolveConflict, resolveSplit, formatEscalation } from "./escalation.mjs";
 import { suggestPack, getPack, checkPackMismatch, getPackRoles } from "./packs.mjs";
 
-// ── Full 31-Role Catalog ─────────────────────────────────────────────────────
+// ── Full Role Catalog ────────────────────────────────────────────────────────
 // Every role in the OS is scoreable. Keywords from routing-rules.md + contracts.
 // Triggers are strong multi-word signals worth bonus points.
 
@@ -502,7 +502,7 @@ function scoreRole(role, content, packetType, deliverableType) {
 // ── Type detection ────────────────────────────────────────────────────────────
 
 function detectType(content) {
-  const typeMatch = content.match(/## Packet Type\n(\w+)/);
+  const typeMatch = content.match(/## Packet Type\r?\n(\w+)/);
   if (typeMatch && ["feature", "integration", "identity"].includes(typeMatch[1])) {
     return typeMatch[1];
   }
@@ -521,7 +521,7 @@ function detectType(content) {
 // ── Deliverable type extraction ───────────────────────────────────────────────
 
 function extractDeliverableType(content) {
-  const match = content.match(/## Deliverable Type\n(\w+)/);
+  const match = content.match(/## Deliverable Type\r?\n(\w+)/);
   if (match && DELIVERABLE_TYPES.includes(match[1])) return match[1];
   return null;
 }
@@ -553,17 +553,34 @@ function assessConfidence(scoredRoles) {
 
 // ── File reference extraction ─────────────────────────────────────────────────
 
-function extractFileRefs(content, packetDir) {
+/**
+ * Find the base directory file refs should resolve against: the nearest
+ * ancestor of the packet that contains .claude/ (the repo root), falling
+ * back to the current working directory for packets outside any repo.
+ */
+function repoBaseFor(packetFile) {
+  let dir = dirname(packetFile);
+  for (let i = 0; i < 20; i++) {
+    if (existsSync(join(dir, ".claude"))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return process.cwd();
+}
+
+function extractFileRefs(content, packetFile) {
   const refs = [];
-  const inputsMatch = content.match(/## Inputs\n([\s\S]*?)(?=\n## |\n---)/);
+  const inputsMatch = content.match(/## Inputs\r?\n([\s\S]*?)(?=\r?\n## |\r?\n---)/);
   if (!inputsMatch) return refs;
 
+  const base = repoBaseFor(packetFile);
   const inputsSection = inputsMatch[1];
   const pathPattern = /(?:^|\s|`)((?:\.\/|\.\.\/|[a-zA-Z][\w\-]*\/)[^\s`\n,)]+\.\w+)/gm;
   let match;
   while ((match = pathPattern.exec(inputsSection)) !== null) {
     const ref = match[1];
-    const resolved = resolve(dirname(packetDir), "..", "..", ref);
+    const resolved = resolve(base, ref);
     refs.push({ ref, resolved, exists: existsSync(resolved) });
   }
 
@@ -610,6 +627,22 @@ const HANDOFF_HINTS = {
 
 export async function routeCommand(args) {
   const verbose = args.includes("--verbose");
+
+  // A bare --pack would be silently swallowed as a flag and the pack name
+  // treated as the packet file — reject loudly instead of mis-routing.
+  if (args.includes("--pack")) {
+    const err = new Error("The --pack flag requires a value: use --pack=<name> (e.g. --pack=feature)");
+    err.exitCode = 1;
+    err.hint = "Run 'roleos packs list' for available pack names.";
+    throw err;
+  }
+
+  const knownFlag = a => a === "--verbose" || a === "--debug" || a.startsWith("--pack=");
+  const unknownFlags = args.filter(a => a.startsWith("--") && !knownFlag(a));
+  if (unknownFlags.length > 0) {
+    console.log(`! Ignoring unrecognized flag(s): ${unknownFlags.join(", ")}`);
+  }
+
   const packFlag = args.find(a => a.startsWith("--pack="));
   const requestedPack = packFlag ? packFlag.split("=")[1] : null;
   const packetFile = args.find(a => !a.startsWith("--"));
@@ -632,7 +665,7 @@ export async function routeCommand(args) {
   const type = detectType(content);
   const deliverableType = extractDeliverableType(content);
 
-  // Score all 32 roles
+  // Score every role in the catalog
   const allScored = ROLE_CATALOG.map(role => ({
     role,
     ...scoreRole(role, content, type, deliverableType),

@@ -107,6 +107,9 @@ Runs a componentized deep audit against the current repo. The audit decomposes a
 **Workflow:**
 1. `roleos audit manifest --generate` — creates a skeleton `audit-manifest.json`
 2. Edit the manifest to define components, boundaries, and dependencies
+3. `roleos audit` — starts a persistent run using the `deep-audit` mission
+4. `roleos next` — step through each auditor
+5. `roleos audit verify` — confirms manifest and outputs are consistent
 
 ### swarm
 
@@ -129,20 +132,17 @@ Runs a multi-pass convergence swarm on the current repo. The swarm moves through
 4. `roleos swarm status` — check progress by stage
 5. `roleos swarm approve` — approve feature findings when prompted
 6. `roleos swarm verify` — verify final state
-3. `roleos audit` — starts a persistent run using the `deep-audit` mission
-4. `roleos next` — step through each auditor
-5. `roleos audit verify` — confirms manifest and outputs are consistent
 
 ### mission
 
 ```bash
-roleos mission list                    # List all 8 missions
+roleos mission list                    # List all 9 missions
 roleos mission show <key>              # Full detail for a mission
 roleos mission suggest <text>          # Suggest a mission for a task
 roleos mission validate [key]          # Validate mission wiring
 ```
 
-Inspect and validate the mission library. Available missions: `feature-ship`, `bugfix`, `treatment`, `docs-release`, `security-hardening`, `research-launch`, `brainstorm`, `deep-audit`.
+Inspect and validate the mission library. Available missions: `feature-ship`, `bugfix`, `treatment`, `docs-release`, `security-hardening`, `research-launch`, `brainstorm`, `deep-audit`, `dogfood-swarm`.
 
 ### init
 
@@ -153,9 +153,9 @@ roleos init claude             # Scaffold Claude Code integration (CLAUDE.md, co
 roleos init claude --force     # Update Claude Code integration files
 ```
 
-Scaffolds the full Role Spine (54 roles across 9 packs) into `.claude/` under the current directory. Includes role contracts, schemas, policies, workflows, context templates, and example packets. Existing files are never overwritten.
+Scaffolds the full Role Spine (39 role contracts across 8 packs, as of v2.9.0) into `.claude/` under the current directory. Includes role contracts, schemas, policies, workflows, context templates, and example packets. Existing files are never overwritten.
 
-`roleos init claude` adds Claude Code session integration: appends a Role OS section to CLAUDE.md, creates `/roleos-route`, `/roleos-review`, and `/roleos-status` slash commands, and configures 5 lifecycle hooks (SessionStart, PromptSubmit, PreToolUse, SubagentStart, Stop). Use `roleos doctor` to verify the wiring. Hooks provide advisory enforcement: route card reminders, write-tool gating, subagent role injection, and completion audits.
+`roleos init claude` adds Claude Code session integration: appends a Role OS section to CLAUDE.md, creates `/roleos-route`, `/roleos-review`, and `/roleos-status` slash commands, and configures 5 lifecycle hooks (SessionStart, UserPromptSubmit, PreToolUse, SubagentStart, Stop). Use `roleos doctor` to verify the wiring. Hooks provide advisory enforcement: route card reminders, write-tool gating, subagent role injection, and completion audits.
 
 ### packet new
 
@@ -189,7 +189,7 @@ Records a review verdict. Verdicts: `accept`, `accept-with-notes`, `reject`, `bl
 ### packs
 
 ```bash
-roleos packs list                      # List all 9 team packs
+roleos packs list                      # List all 10 team packs
 roleos packs suggest <packet-file>     # Suggest a pack for a packet
 roleos packs show <pack-key>           # Show full pack detail
 ```

@@ -197,3 +197,45 @@ Use the smallest number of roles needed to complete the task correctly.
 - Mental model mapping
 - Unmet needs ranking
 - Sample-aware confidence assessment
+
+## Route to Component Auditor
+- Deep audit of a bounded code component (assigned parcel with owned paths)
+- Per-file findings with quoted evidence, severity, and confidence
+- Truthful per-component understanding, not surface scanning
+- Not for tests (Test Truth Auditor) or cross-component interfaces (Seam Auditor)
+
+## Route to Seam Auditor
+- Interface inspection between components (boundary clusters)
+- Caller-assumption vs callee-contract verification
+- Content ↔ code drift detection (schemas/docs vs implementation)
+- Dependency-direction assessment of the import graph
+
+## Route to Test Truth Auditor
+- Test suite truthfulness assessment (proves correctness vs merely exists)
+- Ceremonial-test and test-theater detection
+- Untested-but-risky flow identification
+- Mock fidelity and integration-gap analysis
+
+## Route to Audit Synthesizer
+- Synthesis of completed component/seam/test audit parcels into one repo verdict
+- Ranked action plan (P0-P3) grouped by root cause
+- Cross-cutting finding identification and parcel-contradiction adjudication
+- Only after all audit parcels complete — never audits code directly
+
+## Route to Red-Teamer
+- Adversarial stress-testing of validators, caption rules, and pipeline contracts
+- Independent validation of canon-checking critics
+- Pre-freeze attack passes on training datasets and prompt libraries
+- Catch-rate measurement with named, categorized attack vectors
+
+## Route to Caption Auditor
+- Static caption compliance audit against the research-backed caption rules
+- Training-manifest pre-freeze verification
+- Post-rule-change dataset re-verification
+- Periodic drift checks against frozen manifests
+
+## Route to Monster Taxonomy Verifier
+- Creature/monster canon entry audit for LoRA-trainable schema fields
+- Monster-dataset separability assessment (apart from human-character data)
+- Anatomy/species/scale field coverage verification
+- Pre-assembly checks before a Monster LoRA dataset is built

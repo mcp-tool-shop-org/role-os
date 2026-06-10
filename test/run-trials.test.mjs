@@ -20,6 +20,7 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
 import {
   createPersistentRun, startNext, completeCurrentStep, failCurrentStep,
   pauseRun, resumeRun, reroute, escalate, retry, reopenStep,
@@ -27,7 +28,8 @@ import {
   loadRun, findActiveRun, measureFriction, saveRun,
 } from "../src/run.mjs";
 
-const TEST_CWD = join(process.cwd(), ".test-trials-tmp");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_CWD = join(tmpdir(), `roleos-test-trials-${process.pid}`);
 
 function setup() {
   rmSync(TEST_CWD, { recursive: true, force: true });
@@ -41,10 +43,9 @@ function teardown() {
 // ── Trial U1: Bugfix — clean run through ─────────────────────────────────────
 
 describe("U1 — Bugfix mission clean run", () => {
-  let run, findings;
+  let run;
   beforeEach(async () => {
     setup();
-    findings = [];
     run = await createPersistentRun("fix the crash in save handler when file is locked", TEST_CWD);
   });
   afterEach(teardown);
@@ -71,11 +72,8 @@ describe("U1 — Bugfix mission clean run", () => {
     assert.equal(touches, stepCount * 2);
 
     if (touches > 10) {
-      findings.push({
-        id: "U1-F1",
-        severity: "observation",
-        summary: `${touches} operator touches for ${stepCount}-step bugfix — consider auto-advance`,
-      });
+      // Friction observation, surfaced in the run report rather than silently collected.
+      console.log(`[U1 friction] ${touches} operator touches for ${stepCount}-step bugfix — consider auto-advance`);
     }
   });
 

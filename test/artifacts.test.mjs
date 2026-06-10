@@ -257,8 +257,9 @@ describe("validatePackChain", () => {
     assert.ok(result.steps.some(s => s.status === "incomplete"));
   });
 
-  it("validates all 9 pack contracts exist", () => {
-    for (const pack of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "brainstorm", "swarm"]) {
+  it("validates every pack contract in PACK_HANDOFF_CONTRACTS", () => {
+    // Derived from the source object so a new pack can never be silently uncovered.
+    for (const pack of Object.keys(PACK_HANDOFF_CONTRACTS)) {
       const result = validatePackChain(pack, {});
       assert.ok(result.steps.length > 0, `${pack} has no steps`);
     }

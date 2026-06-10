@@ -168,7 +168,7 @@ button{font-family:inherit;cursor:pointer}
     const byCrew = {};
     for(const r of Object.values(ROSTER)){ (byCrew[r.crew]=byCrew[r.crew]||[]).push(r); }
     const total = Object.keys(ROSTER).length;
-    let h = `<div class="gallery"><div class="lead">The crew — <b>${total} roles</b>. Click any operative to open their dossier. Painted by Chroma1-HD; the Judge card is fully statted, the rest show identity with aptitudes pending.</div>`;
+    let h = `<div class="gallery"><div class="lead">The crew — <b>${total} roles</b>, fully statted. Click any operative to open their dossier. Painted by Chroma1-HD.</div>`;
     for(const crew of CREW_ORDER){
       const list = (byCrew[crew]||[]).slice().sort((a,b)=>a.role.localeCompare(b.role));
       if(!list.length) continue;
@@ -194,7 +194,7 @@ button{font-family:inherit;cursor:pointer}
     AXES.forEach((k,i)=>{const[ex,ey]=pt(i,5);axes+=`<line class="axis" x1="${cx}" y1="${cy}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}"/>`;
       const[lx,ly]=pt(i,5.9),anchor=Math.abs(lx-cx)<6?'middle':(lx>cx?'start':'end');
       labels+=`<text class="lbl" x="${lx.toFixed(1)}" y="${(ly+(ly<cy?-2:10)).toFixed(1)}" text-anchor="${anchor}">${LABEL[k]}</text>`;
-      labels+=`<text class="lblv" x="${lx.toFixed(1)}" y="${(ly+(ly<cy?10:22)).toFixed(1)}" text-anchor="${anchor}">${apt[k]}/5</text>`;
+      labels+=`<text class="lblv" x="${lx.toFixed(1)}" y="${(ly+(ly<cy?10:22)).toFixed(1)}" text-anchor="${anchor}">${apt[k]??0}/5</text>`;
       const[dx,dy]=pt(i,apt[k]??0);dots+=`<circle class="cur-dot" cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="3"/>`;});
     return `<svg class="radar" viewBox="0 0 ${W} ${H}">${rings}${axes}<polygon class="ideal" points="${poly(ideal)}"/><polygon class="cur" points="${poly(apt)}"/>${dots}${labels}</svg>`;
   }
@@ -232,7 +232,7 @@ button{font-family:inherit;cursor:pointer}
     const c = color(r.crew);
     const expr = (HOUSE.disposition_expression||{})[r.disposition];
     return headHTML(r.role, r.specialization, r.function, r.crew, r.portrait, r.grade)
-      + `<div class="section"><div class="section-h">Aptitudes</div><div class="pending">Aptitude profile pending — this role's six-axis build is filled in dossier Phase 2.<br>Disposition default: <b style="color:${c}">${esc(r.disposition)}</b>${expr?` — <span class="muted">${esc(expr)}</span>`:''}</div></div>`
+      + `<div class="section"><div class="section-h">Aptitudes</div><div class="pending">Aptitude profile pending — this role has no dossier entry yet (all 64 roster roles ship statted; this is a fallback for newly added roles).<br>Disposition default: <b style="color:${c}">${esc(r.disposition)}</b>${expr?` — <span class="muted">${esc(expr)}</span>`:''}</div></div>`
       + `<div class="section"><div class="section-h">Charter</div><div class="charter">${esc(r.charter)}</div></div>`
       + `<div class="foot"><span class="mono">roleos-dossier/v0.1 · identity</span><span>painted portrait · Chroma1-HD</span></div>`;
   }

@@ -3,12 +3,15 @@ import assert from "node:assert/strict";
 import { execSync } from "node:child_process";
 import { mkdirSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
 
 const BIN = join(process.cwd(), "bin", "roleos.mjs");
-const TEST_CWD = join(process.cwd(), ".test-cmd-runs-tmp");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_CWD = join(tmpdir(), `roleos-test-cmd-runs-${process.pid}`);
 
 function run(cmd) {
-  return execSync(`node ${BIN} ${cmd}`, {
+  // BIN is quoted so checkouts under paths containing spaces still work.
+  return execSync(`node "${BIN}" ${cmd}`, {
     cwd: TEST_CWD,
     encoding: "utf-8",
     timeout: 10000,

@@ -11,7 +11,7 @@ Role OS is an operating system for multi-agent AI workflows. When you use multip
 
 Think of it as a staffing system. You describe a task, and Role OS decides which specialist roles should handle it, in what order, and what each role must produce before passing work to the next. Every step has a contract, every handoff has structure, and every verdict requires evidence.
 
-Role OS is a CLI tool that runs locally. It writes markdown files to your repository's `.claude/` directory. It does not access the network, collect telemetry, or handle secrets.
+Role OS is a CLI tool that runs locally. It writes markdown files to your repository's `.claude/` directory. By default it does not access the network, collect telemetry, or handle secrets; a few opt-in features (citation verification, specialist consults) make network calls only when you explicitly enable them.
 
 ## Why does it exist?
 
@@ -27,13 +27,13 @@ Role OS solves these by enforcing role contracts (each role has a defined scope 
 
 ## Key concepts
 
-**Roles** are specialist contracts. Role OS has 31 roles across 8 packs (Core, Engineering, Design, Marketing, Treatment, Product, Research, Growth). Each role declares what it does, when to use it, when not to use it, what inputs it needs, what outputs it must produce, and when to escalate. Roles do not overlap: a Backend Engineer does not make product decisions, and a Product Strategist does not write code.
+**Roles** are specialist contracts. Role OS has 61 roles spanning every discipline (core orchestration, product, design, engineering, treatment, growth, marketing, research, brainstorm, deep audit, and swarm). Each role declares what it does, when to use it, when not to use it, what inputs it needs, what outputs it must produce, and when to escalate. Roles do not overlap: a Backend Engineer does not make product decisions, and a Product Strategist does not write code.
 
 **Packets** are structured task descriptions. A packet declares what the task is, what outcome is expected, what is in scope, what is not, and what the done definition looks like. Packets are the unit of work that gets routed, reviewed, and tracked.
 
-**Packs** are pre-assembled teams. Instead of choosing individual roles, you pick a named pack (like "bugfix" or "feature") that contains the right roles in the right order. There are 7 packs for common work types.
+**Packs** are pre-assembled teams. Instead of choosing individual roles, you pick a named pack (like "bugfix" or "feature") that contains the right roles in the right order. There are 10 packs for common work types.
 
-**Missions** are named recurring workflows. A mission combines a pack with a proven role chain, artifact flow, escalation branches, and an honest-partial definition. There are 6 missions: feature-ship, bugfix, treatment, docs-release, security-hardening, and research-launch.
+**Missions** are named recurring workflows. A mission combines a pack with a proven role chain, artifact flow, escalation branches, and an honest-partial definition. There are 9 missions: feature-ship, bugfix, treatment, docs-release, security-hardening, research-launch, brainstorm, deep-audit, and dogfood-swarm.
 
 **Runs** are persistent executions. When you start a run with `roleos run`, the system creates a disk-backed execution that tracks every step, artifact, escalation, and intervention. Runs survive session interruptions and can be resumed.
 
@@ -136,7 +136,7 @@ roleos review .claude/packets/my-feature.md accept  # Record a verdict
 
 ## Troubleshooting
 
-**"No mission or pack matched"** — Your task description is too vague or too novel. The system falls back to free routing, which scores all 31 roles against the content. Try making your description more specific, or create a packet with `roleos packet new` and use `roleos route` for role-level routing.
+**"No mission or pack matched"** — Your task description is too vague or too novel. The system falls back to free routing, which scores all 61 roles against the content. Try making your description more specific, or create a packet with `roleos packet new` and use `roleos route` for role-level routing.
 
 **"Mismatch detected"** — You routed a task through the wrong pack. The system tells you which pack is right. Re-run with the suggested pack or let `roleos start` decide automatically.
 
@@ -151,7 +151,7 @@ roleos review .claude/packets/my-feature.md accept  # Record a verdict
 ## Next steps
 
 - **[Getting Started](/role-os/handbook/getting-started/)** — The full bootstrap walkthrough with context files and packet flow
-- **[Missions](/role-os/handbook/missions/)** — Deep dive into the 6 mission types and honest-partial reporting
-- **[Role Spine](/role-os/handbook/role-spine/)** — Browse all 31 roles and their contracts
-- **[Team Packs](/role-os/handbook/team-packs/)** — See the 7 packs and how mismatch detection works
+- **[Missions](/role-os/handbook/missions/)** — Deep dive into the 9 mission types and honest-partial reporting
+- **[Role Spine](/role-os/handbook/role-spine/)** — Browse all 61 roles and their contracts
+- **[Team Packs](/role-os/handbook/team-packs/)** — See the 10 packs and how mismatch detection works
 - **[Reference](/role-os/handbook/reference/)** — Full CLI command reference with all options

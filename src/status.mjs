@@ -9,7 +9,8 @@ function parsePacket(filePath) {
   if (!content) return null;
 
   const get = (heading) => {
-    const re = new RegExp(`## ${heading}\\n([\\s\\S]*?)(?=\\n## |\\n---|$)`);
+    // \r?\n keeps CRLF packets (git autocrlf / Windows editors) parseable
+    const re = new RegExp(`## ${heading}\\r?\\n([\\s\\S]*?)(?=\\r?\\n## |\\r?\\n---|$)`);
     const m = content.match(re);
     return m ? m[1].trim() : null;
   };
@@ -48,7 +49,8 @@ function parseVerdict(filePath) {
   if (!content) return null;
 
   const get = (heading) => {
-    const re = new RegExp(`## ${heading}\\n([\\s\\S]*?)(?=\\n## |$)`);
+    // \r?\n keeps CRLF verdicts (git autocrlf / Windows editors) parseable
+    const re = new RegExp(`## ${heading}\\r?\\n([\\s\\S]*?)(?=\\r?\\n## |$)`);
     const m = content.match(re);
     return m ? m[1].trim() : null;
   };

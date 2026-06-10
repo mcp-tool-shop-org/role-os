@@ -27,7 +27,7 @@ npx role-os init
 roleos init
 ```
 
-This scaffolds `.claude/` with the full Role Spine: 31 role contracts across 8 packs, schemas, policies, workflows, context templates, and example packets.
+This scaffolds `.claude/` with the full Role Spine: 39 role contracts across 8 packs (as of v2.9.0), schemas, policies, workflows, context templates, and example packets. The runtime catalog routes 61 roles in total — the scaffolded contracts cover the hands-on subset.
 
 ### 2. Fill context (5 min)
 

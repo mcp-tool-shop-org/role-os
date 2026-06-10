@@ -16,9 +16,11 @@ import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync, rename
 import { join } from "node:path";
 import { decideEntry } from "./entry.mjs";
 import { getMission } from "./mission.mjs";
-import { TEAM_PACKS, getPack } from "./packs.mjs";
+import { TEAM_PACKS, getPack, getPackRoles } from "./packs.mjs";
 import { ROLE_CATALOG } from "./route.mjs";
 import { ROLE_ARTIFACT_CONTRACTS, validateArtifact, getHandoffContract } from "./artifacts.mjs";
+import { buildSwarmSteps, buildDynamicSteps } from "./mission-run.mjs";
+import { isValidStepTransition } from "./state-machine.mjs";
 import { retrieveForDispatch, isKnowledgeConfigured } from "./knowledge/index.mjs";
 
 // ── Run directory ────────────────────────────────────────────────────────────
@@ -87,6 +89,9 @@ let _counter = 0;
  * @param {object} [opts]
  * @param {string} [opts.forceMission] - force a specific mission key
  * @param {string} [opts.forcePack] - force a specific pack key
+ * @param {object} [opts.manifest] - dispatch manifest for dynamic missions
+ *   (swarm-manifest.json for dogfood-swarm, audit-manifest.json for deep-audit);
+ *   scales steps per domain/component instead of using the static artifactFlow
  * @returns {PersistentRun}
  */
 export async function createPersistentRun(taskDescription, cwd, opts = {}) {
@@ -106,7 +111,7 @@ export async function createPersistentRun(taskDescription, cwd, opts = {}) {
     if (!mission) throw new Error(`Mission "${opts.forceMission}" not found`);
     level = "mission";
     missionKey = opts.forceMission;
-    steps = buildMissionSteps(opts.forceMission);
+    steps = buildMissionSteps(opts.forceMission, opts.manifest);
   } else if (opts.forcePack) {
     const pack = getPack(opts.forcePack);
     if (!pack) throw new Error(`Pack "${opts.forcePack}" not found`);
@@ -172,9 +177,23 @@ export async function createPersistentRun(taskDescription, cwd, opts = {}) {
 
 // ── Step builders ────────────────────────────────────────────────────────────
 
-function buildMissionSteps(missionKey) {
+function buildMissionSteps(missionKey, manifest = null) {
   const mission = getMission(missionKey);
-  return mission.artifactFlow.map((step, i) => ({
+
+  // Dynamic dispatch — when a manifest is supplied, scale steps from it:
+  // dogfood-swarm builds per-domain steps with stage/gate metadata,
+  // deep-audit builds one auditor step per component/boundary.
+  let flow = mission.artifactFlow;
+  if (manifest && mission.dynamicDispatch) {
+    flow = missionKey === "dogfood-swarm"
+      ? buildSwarmSteps(mission, manifest)
+      : buildDynamicSteps(mission, manifest);
+  }
+
+  // Spread first so dispatch metadata (stage, domain, isGate, userApproval,
+  // parcel, consumedBy, …) carries through, then pin the run.mjs step shape.
+  return flow.map((step, i) => ({
+    ...step,
     index: i,
     role: step.role,
     produces: step.produces,
@@ -190,12 +209,26 @@ function buildMissionSteps(missionKey) {
 function buildPackSteps(packKey) {
   const pack = getPack(packKey);
   const handoff = getHandoffContract(packKey);
-  const roles = pack.chainOrder
-    ? pack.chainOrder.split(" → ")
-    : pack.roles;
+
+  // Derive steps from the pack's real roster (includes the final review gate
+  // and conditional Orchestrator) — never from chainOrder prose, which for
+  // brainstorm/deep-audit/swarm contains pseudo-role fragments.
+  const roles = getPackRoles(packKey) || pack.roles;
+
+  // Fail loudly on roles missing from the catalog — a run built around a
+  // nonexistent role breaks guidance, artifact contracts, and escalation.
+  const unknown = roles.filter(name => !ROLE_CATALOG.some(r => r.name === name));
+  if (unknown.length > 0) {
+    throw new Error(
+      `Pack "${packKey}" contains roles not in the role catalog: ${unknown.join(", ")}`
+    );
+  }
 
   return roles.map((roleName, i) => {
-    const artifact = handoff?.flow?.[i]?.produces || guessArtifact(roleName);
+    // Resolve produces by role lookup into the handoff flow — index alignment
+    // is wrong whenever the roster and flow are ordered differently.
+    const flowEntry = handoff?.flow?.find(f => f.role === roleName);
+    const artifact = flowEntry?.produces || guessArtifact(roleName);
     return {
       index: i,
       role: roleName,
@@ -279,6 +312,7 @@ function buildStepGuidance(roleName, produces, mission) {
 
 function guessArtifact(roleName) {
   const map = {
+    "Orchestrator": "decomposition-plan",
     "Product Strategist": "strategy-brief",
     "Spec Writer": "implementation-spec",
     "Backend Engineer": "change-plan",
@@ -512,6 +546,13 @@ export function escalate(run, from, to, trigger, action, cwd) {
         run.steps[i].note = `Unblocked: ${to} re-opened for escalation`;
       }
     }
+
+    // A completed run with a re-opened step is no longer complete —
+    // mirror reopenStep so formatNext doesn't report "All done."
+    if (run.status === "completed") {
+      run.status = "paused";
+      run.completedAt = null;
+    }
   } else {
     const inChain = run.steps.some(s => s.role === to);
     escalation.warning = inChain
@@ -540,13 +581,15 @@ export function escalate(run, from, to, trigger, action, cwd) {
 export function retry(run, stepIndex, cwd) {
   const step = run.steps[stepIndex];
   if (!step) throw new Error(`Invalid step index: ${stepIndex}`);
-  if (step.status !== "failed" && step.status !== "partial") {
-    throw new Error(`Step ${stepIndex} is "${step.status}", not failed/partial`);
+  // blocked is retryable so an operator block (or a mistaken one) has a recovery path
+  if (step.status !== "failed" && step.status !== "partial" && step.status !== "blocked") {
+    throw new Error(`Step ${stepIndex} is "${step.status}", not failed/partial/blocked`);
   }
 
+  const previousStatus = step.status;
   step.status = "pending";
   step.artifact = null;
-  step.note = `Retried (was ${step.status})`;
+  step.note = `Retried (was ${previousStatus})`;
   step.completedAt = null;
 
   // Unblock downstream
@@ -583,6 +626,14 @@ export function retry(run, stepIndex, cwd) {
 export function blockStep(run, stepIndex, reason, cwd) {
   const step = run.steps[stepIndex];
   if (!step) throw new Error(`Invalid step index: ${stepIndex}`);
+  // Enforce the canonical state machine — blocking a completed/failed step
+  // would strand the run with no CLI recovery path.
+  if (!isValidStepTransition(step.status, "blocked")) {
+    throw new Error(
+      `Cannot block step ${stepIndex} (${step.role}) — invalid transition "${step.status}" → "blocked". ` +
+      `Only pending or active steps can be blocked.`
+    );
+  }
 
   step.status = "blocked";
   step.note = reason;
@@ -609,8 +660,8 @@ export function blockStep(run, stepIndex, reason, cwd) {
 export function reopenStep(run, stepIndex, reason, cwd) {
   const step = run.steps[stepIndex];
   if (!step) throw new Error(`Invalid step index: ${stepIndex}`);
-  if (step.status !== "completed" && step.status !== "partial") {
-    throw new Error(`Step ${stepIndex} is "${step.status}", can only reopen completed/partial`);
+  if (step.status !== "completed" && step.status !== "partial" && step.status !== "blocked") {
+    throw new Error(`Step ${stepIndex} is "${step.status}", can only reopen completed/partial/blocked`);
   }
 
   step.status = "pending";
@@ -743,7 +794,7 @@ export function formatNext(run) {
 
   if (run.status === "failed" || run.status === "partial") {
     const failedStep = run.steps.find(s => s.status === "failed" || s.status === "partial");
-    return `Run ${run.status} at step ${failedStep?.index || "?"} (${failedStep?.role || "?"}). ` +
+    return `Run ${run.status} at step ${failedStep?.index ?? "?"} (${failedStep?.role || "?"}). ` +
            `Use \`roleos retry ${failedStep?.index}\` to retry or \`roleos escalate\` to reroute.`;
   }
 
@@ -920,7 +971,7 @@ export function loadRun(cwd, id) {
 /**
  * List all runs in the working directory.
  * @param {string} cwd
- * @returns {Array<{id: string, task: string, status: string, level: string, createdAt: string}>}
+ * @returns {Array<{id: string, task: string, status: string, level: string, missionKey: string|null, createdAt: string}>}
  */
 export function listRuns(cwd) {
   const dir = runsDir(cwd);
@@ -936,6 +987,7 @@ export function listRuns(cwd) {
           task: run.taskDescription,
           status: run.status,
           level: run.entryLevel,
+          missionKey: run.missionKey ?? null,
           createdAt: run.createdAt,
         };
       } catch { return null; }

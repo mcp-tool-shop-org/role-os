@@ -1,6 +1,6 @@
-import { test } from "node:test";
+import { test, after } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -15,12 +15,27 @@ import { onPreToolUse } from "../src/hooks.mjs";
 
 const bash = (command) => ({ command });
 
+// Every mkdtemp dir is tracked and removed at the end of the file's run.
+const TEMP_DIRS = [];
+after(() => {
+  for (const dir of TEMP_DIRS) rmSync(dir, { recursive: true, force: true });
+});
+function tempDir() {
+  const dir = mkdtempSync(join(tmpdir(), "roleos-cap-"));
+  TEMP_DIRS.push(dir);
+  return dir;
+}
+
 test("disabled by default -> never denies, even an irreversible action", () => {
   const prev = process.env.ROLEOS_CAPABILITY_GATE;
-  delete process.env.ROLEOS_CAPABILITY_GATE;
-  const r = capabilityGate("/x", "Bash", bash("npm publish"));
-  assert.equal(r.denied, false);
-  if (prev !== undefined) process.env.ROLEOS_CAPABILITY_GATE = prev;
+  try {
+    delete process.env.ROLEOS_CAPABILITY_GATE;
+    const r = capabilityGate("/x", "Bash", bash("npm publish"));
+    assert.equal(r.denied, false);
+  } finally {
+    // Restore even when an assertion throws, so env state never leaks to later tests.
+    if (prev !== undefined) process.env.ROLEOS_CAPABILITY_GATE = prev;
+  }
 });
 
 test("enabled (force) + no grant -> npm publish DENIED (fail-closed)", () => {
@@ -104,21 +119,25 @@ test("every GATED_ACTIONS entry has a stable id + label + test fn", () => {
 
 test("capabilityGateEnabled reads the env flag", () => {
   const prev = process.env.ROLEOS_CAPABILITY_GATE;
-  process.env.ROLEOS_CAPABILITY_GATE = "1";
-  assert.equal(capabilityGateEnabled(), true);
-  process.env.ROLEOS_CAPABILITY_GATE = "0";
-  assert.equal(capabilityGateEnabled(), false);
-  if (prev === undefined) delete process.env.ROLEOS_CAPABILITY_GATE;
-  else process.env.ROLEOS_CAPABILITY_GATE = prev;
+  try {
+    process.env.ROLEOS_CAPABILITY_GATE = "1";
+    assert.equal(capabilityGateEnabled(), true);
+    process.env.ROLEOS_CAPABILITY_GATE = "0";
+    assert.equal(capabilityGateEnabled(), false);
+  } finally {
+    // Restore even when an assertion throws, so env state never leaks to later tests.
+    if (prev === undefined) delete process.env.ROLEOS_CAPABILITY_GATE;
+    else process.env.ROLEOS_CAPABILITY_GATE = prev;
+  }
 });
 
 test("loadCapabilities returns {} for a missing manifest", () => {
-  const dir = mkdtempSync(join(tmpdir(), "roleos-cap-"));
+  const dir = tempDir();
   assert.deepEqual(loadCapabilities(dir), {});
 });
 
 test("onPreToolUse denies a gated action when enabled + ungranted (fail-closed)", () => {
-  const dir = mkdtempSync(join(tmpdir(), "roleos-cap-"));
+  const dir = tempDir();
   const r = onPreToolUse(
     { tool_name: "Bash", tool_input: bash("npm publish"), cwd: dir },
     { force: true, capabilities: {} },
@@ -128,7 +147,7 @@ test("onPreToolUse denies a gated action when enabled + ungranted (fail-closed)"
 });
 
 test("onPreToolUse allows a granted gated action", () => {
-  const dir = mkdtempSync(join(tmpdir(), "roleos-cap-"));
+  const dir = tempDir();
   const r = onPreToolUse(
     { tool_name: "Bash", tool_input: bash("npm publish"), cwd: dir },
     { force: true, capabilities: { "npm:publish": { granted: true } } },

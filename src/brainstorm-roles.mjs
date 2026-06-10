@@ -308,6 +308,12 @@ export function validateRoleNativeOutput(roleName, output) {
       // Validate item shape for object items
       if (typeof spec.items === "object" && !Array.isArray(spec.items)) {
         for (let i = 0; i < value.length; i++) {
+          // Guard malformed (null / non-object) items — the validator must
+          // report bad LLM output, not crash on it.
+          if (value[i] === null || typeof value[i] !== "object" || Array.isArray(value[i])) {
+            issues.push(`${fieldName}[${i}] must be an object`);
+            continue;
+          }
           for (const [itemField, itemType] of Object.entries(spec.items)) {
             if (value[i][itemField] === undefined) {
               issues.push(`${fieldName}[${i}].${itemField} is required`);

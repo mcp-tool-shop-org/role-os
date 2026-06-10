@@ -36,7 +36,8 @@
     "authored_by": "minimax-m3",
     "engine": "ollama-cloud",
     "house_style": "painted-concept-art",
-    "frozen": true
+    "frozen": true,
+    "seed_rerolled": "manual re-roll to 3663100777 — deterministic seedFor('moat-expander') is 3663196036; the frozen seed is kept deliberately to preserve the committed render's identity"
   },
   "gate": {
     "ai_eyes": [

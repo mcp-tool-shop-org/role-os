@@ -6,13 +6,15 @@ import { describe, it, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, rmSync, existsSync, writeFileSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
 import { validateManifest } from "../src/audit-cmd.mjs";
 
 const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
 const BIN = join(__dirname, "..", "bin", "roleos.mjs");
-const TEST_DIR = join(__dirname, "..", ".test-audit-cmd");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_DIR = join(tmpdir(), `roleos-test-audit-cmd-${process.pid}`);
 
 function cleanup() {
   if (existsSync(TEST_DIR)) rmSync(TEST_DIR, { recursive: true });

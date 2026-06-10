@@ -3,11 +3,13 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLI = join(__dirname, "..", "bin", "roleos.mjs");
-const TMP = join(__dirname, "..", ".test-packs-sandbox");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TMP = join(tmpdir(), `roleos-test-packs-sandbox-${process.pid}`);
 
 function run(args, opts = {}) {
   return execFileSync("node", [CLI, ...args], {
@@ -56,9 +58,9 @@ describe("roleos packs", () => {
       assert.match(out, /10 packs available/);
     });
 
-    it("T2: shows all 9 pack keys", () => {
+    it("T2: shows every pack key including swarm", () => {
       const out = run(["packs", "list"]);
-      for (const key of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "deep-audit", "brainstorm"]) {
+      for (const key of ["feature", "bugfix", "security", "docs", "launch", "research", "treatment", "deep-audit", "brainstorm", "swarm"]) {
         assert.ok(out.includes(key), `Missing pack key: ${key}`);
       }
     });

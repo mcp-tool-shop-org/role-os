@@ -18,9 +18,11 @@ Skepticism and it actually refutes harder. The dossier is the role's *config UI 
 costume*. This aligns with `PIN_PER_STEP`: the sheet is the pinned per-step config, made
 legible and editable.
 
-v0.1 ships the **visual surface and a real data model**; live wiring of aptitudes →
-dispatch (`dispatch.mjs` `buildRolePrompt` / `buildDispatchManifest`) is Phase 3. The schema
-is functional-capable today so wiring is a swap, not a rewrite.
+**Shipped (v2.9.0):** the live wiring of aptitudes → dispatch is real. `src/dossier-block.mjs`
+compiles each role's disposition `prompt_delta` + tuned aptitudes into an "Operating Posture"
+block that `dispatch.mjs` (`buildRolePrompt` / `buildDispatchManifest`) injects into every
+dispatch prompt. Runtime data ships in `src/role-dossiers.json` (compiled by
+`build-runtime.mjs` from `examples/*.json` — all 64 roster roles filled and panel-tuned).
 
 ## The six Aptitudes (0–5)
 
@@ -76,7 +78,7 @@ Role OS already tracks `certified_level` (L0–L5) + `exam_hash` per specialist 
   "crew": [{ "pack": "brainstorm", "label": "Brainstorm", "role_in_pack": "final verdict" }],
   "grade": { "level": "L5", "label": "Distinguished", "path": ["L0", …, "L5"] },
   "reps": { "completed": 0, "toNext": null, "unit": "adjudications", "note": "…" },
-  "aptitudes": { "rigor":5, "pace":2, "range":1, "skepticism":5, "autonomy":3, "candor":4 },
+  "aptitudes": { "rigor":5, "pace":1, "range":1, "skepticism":5, "autonomy":3, "candor":4 },
   "ideal":     { "rigor":5, "pace":2, "range":1, "skepticism":4, "autonomy":3, "candor":4 },
   "disposition": { "active":"Skeptic", "blurb":"…", "delta":{…}, "prompt_delta":"…",
                    "voice":"…", "roster":[ … 8 … ] },
@@ -89,33 +91,45 @@ Role OS already tracks `certified_level` (L0–L5) + `exam_hash` per specialist 
 }
 ```
 
-`portrait` is intentionally absent in v0.1 — bespoke per-role+specialization renders are a
-separate pipeline phase (sdlab, canon-bound house style). The card shows a framed
-placeholder tinted by crew + bordered by grade until the render lands.
+`portrait` is intentionally absent from the dossier JSON — portraits live in the separate
+portrait pipeline (`portraits/` — locked house style on Chroma1-HD, frozen per-role briefs).
+All 64 portraits are rendered and wired into `dossier.html` via `portraits/web/<id>.jpg`
+(resolved by `build-gallery.mjs`, not stored on the dossier record).
 
 ## Standards compliance (per `workflow-standards.md`)
 
 - **PIN_PER_STEP — 2 (PRESENT):** `loadout.model` pins model + maxTurns + budget, and
   `loadout.tools` pins the role's read/write surface. The dossier *is* the pinned config.
 - **ANDON_AUTHORITY — 1 (PARTIAL):** the card surfaces `guards` loudly but doesn't yet halt
-  a pipeline. *Remediation (Phase 3 wiring, owner: dossier):* a build whose Calibration
-  drops below a floor blocks dispatch with a contrastive ANDON.
-- **NAMED_COMPENSATORS — 1 (PARTIAL):** no irreversible calls in v0.1 (read-only render).
-  *Remediation (Phase 3):* when a build writes dispatch config, the named undo is "restore
-  canonical (ideal) build"; owner: dossier wiring. No skip — it applies the moment we write.
+  a pipeline. *Remediation (open — owner: dossier):* a build whose Calibration drops below a
+  floor blocks dispatch with a contrastive ANDON. Still unbuilt even though the dispatch
+  wiring shipped (see Roadmap item 5).
+- **NAMED_COMPENSATORS — 2 (PRESENT):** dispatch wiring reads committed
+  `src/role-dossiers.json` and injects a prompt block — no runtime writes. The named undo for
+  a bad build is "restore canonical (ideal) build": revert `examples/<id>.json`, re-run
+  `build-runtime.mjs`, commit. Owner: dossier.
 - **DECOMPOSE_BY_SECRETS — 2 (PRESENT):** schema groups what changes often (aptitudes,
   disposition, reps) apart from what's stable (charter, guards, artifact contract).
 - **UNCERTAINTY_GATED_HUMANS — 2 (PRESENT):** the Autonomy aptitude *is* the escalation
   threshold; the Calibration gauge surfaces uncertainty about a build before it ships.
-- **EXTERNAL_VERIFIER — 2 (PRESENT):** Skepticism encodes verifier strength; the 61-role
-  fill (Phase 2) verifies each stat→knob mapping with a different-family adversarial critic.
+- **EXTERNAL_VERIFIER — 2 (PRESENT):** Skepticism encodes verifier strength; the 64-role
+  fill (shipped) verified each stat→knob mapping with a different-family adversarial critic
+  (corrections applied via `apply-tuning-fixes.mjs`).
 
 ## Roadmap
 
-1. **Foundation (this) —** schema + Judge worked example + openable card matching engine-room.
-2. **Fill the roster —** draft all 61 aptitude arrays + ideals (workflow fan-out, one agent
-   per role; adversarial verify that every stat→knob mapping is real, not decoration).
-3. **Wire to dispatch —** aptitudes / disposition read by `dispatch.mjs`; Calibration floor as
-   ANDON; "restore canonical build" compensator.
-4. **Portraits —** bespoke diffusion per role + specialization via sdlab (canon house style).
-5. **Progression hookup —** reps fed by real mission / eval completion; visible level-ups.
+Shipped (as of v2.9.0):
+
+1. ~~**Foundation —** schema + Judge worked example + openable card matching engine-room.~~ ✅
+2. ~~**Fill the roster —** all 64 aptitude arrays + ideals drafted, panel-tuned, and
+   adversarially verified (external-verifier corrections via `apply-tuning-fixes.mjs`).~~ ✅
+3. ~~**Wire to dispatch —** aptitudes / disposition read at dispatch time via
+   `src/dossier-block.mjs` → Operating Posture block in every dispatch prompt.~~ ✅
+4. ~~**Portraits —** all 64 rendered in the locked Chroma1-HD house style and wired into
+   `dossier.html`.~~ ✅
+
+Open:
+
+5. **Calibration ANDON —** a build whose Calibration drops below a floor blocks dispatch with
+   a contrastive ANDON (the ANDON_AUTHORITY remediation above — genuinely unbuilt).
+6. **Progression hookup —** reps fed by real mission / eval completion; visible level-ups.

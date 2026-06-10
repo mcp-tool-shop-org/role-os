@@ -182,7 +182,10 @@ export function runOffloadPanel(supported, options = {}) {
     }
   }
 
-  const checked = perCitation.filter((p) => p.panel_verdict === "supported" || disagreements.some((d) => d.id === p.id)).length;
+  // `checked` = citations the panel actually ADJUDICATED (a real verdict came back). "error" and
+  // "no_evidence" entries were never re-judged — counting them (or join-by-nullable-id tricks)
+  // would overstate the second seat's coverage in the receipt.
+  const checked = perCitation.filter((p) => p.panel_verdict !== "error" && p.panel_verdict !== "no_evidence").length;
   return {
     requested: true,
     reachable,
@@ -217,6 +220,9 @@ function contrastiveDetail(disagreements) {
  *   - gate passing + panel DISAGREES on ≥1 supported citation -> escalate (local_panel_disagreement)
  *   - gate passing + panel UNREACHABLE (and it was requested) -> escalate (local_panel_unreachable)
  *     ("an unreachable gate is a closed gate" — same invariant prism uses)
+ *   - gate passing + panel ERRORED on ≥1 citation it was asked to re-check -> escalate
+ *     (local_panel_incomplete — per-citation errors are per-citation unreachability; a citation
+ *     the second seat never adjudicated cannot be stamped fully verified)
  *   - gate already blocking/advisory                          -> unchanged (panel adds notes only)
  *
  * @param {object} gate    GateResult from gateCitations / runCitationGate
@@ -245,6 +251,25 @@ export function applyLocalPanel(gate, panel) {
       advisory: true,
       reason: "local_panel_disagreement",
       detail: contrastiveDetail(panel.disagreements),
+    };
+  }
+  // A flaky session that adjudicates 1 of 10 citations must not let the other 9 pass as
+  // "fully verified": every per-citation error closes the gate for the whole accept.
+  // ("no_evidence" entries stay notes — prism surfaced nothing to re-judge, and absence of
+  // evidence is not a contradiction; they are visible in perCitation and excluded from `checked`.)
+  const unadjudicated = (panel.perCitation || []).filter((p) => p.panel_verdict === "error");
+  if (unadjudicated.length > 0) {
+    const names = unadjudicated.slice(0, 5).map((p) => p.identifier || p.id || "(unidentified)").join(", ");
+    return {
+      ...annotated,
+      verdict: "escalate",
+      pass: false,
+      advisory: true,
+      reason: "local_panel_incomplete",
+      detail:
+        `the local panel errored on ${unadjudicated.length} citation(s) it was asked to re-check (${names}) — ` +
+        `these were never adjudicated by the second seat, so the accept cannot stand` +
+        (panel.detail ? `; ${panel.detail}` : ""),
     };
   }
   return annotated; // panel agrees (or had nothing to challenge) -> pass stands

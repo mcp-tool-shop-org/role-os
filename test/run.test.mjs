@@ -2,6 +2,7 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
 import {
   createPersistentRun, startNext, completeCurrentStep, failCurrentStep,
   pauseRun, resumeRun, reroute, escalate, retry, blockStep, reopenStep,
@@ -9,7 +10,8 @@ import {
   saveRun, loadRun, listRuns, findActiveRun, measureFriction,
 } from "../src/run.mjs";
 
-const TEST_CWD = join(process.cwd(), ".test-runs-tmp");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_CWD = join(tmpdir(), `roleos-test-runs-${process.pid}`);
 
 function setup() {
   rmSync(TEST_CWD, { recursive: true, force: true });

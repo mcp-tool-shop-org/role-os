@@ -20,7 +20,7 @@
     "unit": "adjudications",
     "note": "reps fed by real mission/eval completion in Phase 5"
   },
-  "aptitudes": { "rigor": 5, "pace": 2, "range": 1, "skepticism": 5, "autonomy": 3, "candor": 4 },
+  "aptitudes": { "rigor": 5, "pace": 1, "range": 1, "skepticism": 5, "autonomy": 3, "candor": 4 },
   "ideal":     { "rigor": 5, "pace": 2, "range": 1, "skepticism": 4, "autonomy": 3, "candor": 4 },
   "disposition": {
     "active": "Skeptic",

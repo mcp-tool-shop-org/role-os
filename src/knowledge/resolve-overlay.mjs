@@ -11,13 +11,26 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Default overlay search paths (relative to knowledge-core root)
-const OVERLAY_PATHS = [
-  // Local knowledge-core checkout (development)
-  join(resolve(__dirname, "..", ".."), "knowledge-core", "knowledge", "roles"),
-  // Fallback: role-os local knowledge dir
-  join(resolve(__dirname, ".."), "knowledge", "roles"),
-];
+// Default overlay search paths. ROLEOS_KNOWLEDGE_ROLES overrides everything;
+// otherwise we look for a knowledge-core checkout SIBLING to the role-os repo
+// (e.g. <workspace>/knowledge-core next to <workspace>/role-os), then a nested
+// checkout, then role-os's own local knowledge dir.
+function defaultOverlayPaths() {
+  const paths = [];
+  if (process.env.ROLEOS_KNOWLEDGE_ROLES) {
+    paths.push(resolve(process.env.ROLEOS_KNOWLEDGE_ROLES));
+  }
+  paths.push(
+    // Sibling knowledge-core checkout (development) — __dirname is <role-os>/src/knowledge,
+    // so three levels up is the workspace that contains both repos.
+    join(resolve(__dirname, "..", "..", ".."), "knowledge-core", "knowledge", "roles"),
+    // Nested knowledge-core checkout inside role-os
+    join(resolve(__dirname, "..", ".."), "knowledge-core", "knowledge", "roles"),
+    // Fallback: role-os local knowledge dir
+    join(resolve(__dirname, ".."), "knowledge", "roles"),
+  );
+  return paths;
+}
 
 /**
  * Resolve the overlay for a role.
@@ -28,7 +41,7 @@ const OVERLAY_PATHS = [
  * @returns {{ overlay: object, path: string } | null}
  */
 export function resolveOverlay(roleId, options = {}) {
-  const paths = options.searchPaths || OVERLAY_PATHS;
+  const paths = options.searchPaths || defaultOverlayPaths();
 
   for (const dir of paths) {
     const filePath = join(dir, `${roleId}.json`);

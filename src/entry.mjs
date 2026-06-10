@@ -274,7 +274,7 @@ function applyLadder(text, missionSug, missionScore, packSug, packScore, agreeme
       confidence: packScore,
     } : null,
     isComposite,
-    warnings: [...warnings, "Free routing selected — task will be scored against all 31 roles"],
+    warnings: [...warnings, `Free routing selected — task will be scored against all ${ROLE_CATALOG.length} roles`],
   };
 }
 
@@ -284,7 +284,7 @@ function buildFreeRoutingHints(text, missionSug, packSug, isComposite, composite
     reason = `Task looks composite (${composite.detectedCategories.map(c => c.category).join(" + ")}). ` +
              `No single mission or pack covers all parts — use free routing with decomposition.`;
   } else if (!missionSug && !packSug) {
-    reason = "No mission or pack matched. Task is novel — free routing will score all 31 roles.";
+    reason = `No mission or pack matched. Task is novel — free routing will score all ${ROLE_CATALOG.length} roles.`;
   } else {
     reason = "Mission and pack matches were too weak to commit. Free routing will let role scoring decide.";
   }

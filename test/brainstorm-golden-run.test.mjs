@@ -12,7 +12,7 @@
  * If this suite passes, v0.4 is stable — not just impressive.
  */
 
-import { describe, it } from "node:test";
+import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 
 import {
@@ -233,24 +233,29 @@ describe("Golden Run — Phase 2: Analyze (Truth Layer)", () => {
 // ── Phase 3: Normalize (Provenance-preserving atoms) ─────────────────────────
 
 describe("Golden Run — Phase 3: Normalize", () => {
-  const allAtoms = [];
+  const ROLE_OUTPUTS = [
+    ["Context Analyst", CONTEXT_MAP_OUTPUT],
+    ["User Value Analyst", USER_VALUE_MAP_OUTPUT],
+    ["Mechanics Analyst", MECHANICS_MAP_OUTPUT],
+    ["Positioning Analyst", POSITIONING_MAP_OUTPUT],
+  ];
+  // Built in before() so consuming tests never iterate an empty pool when an
+  // earlier test fails or --test-name-pattern filters the builder out.
+  let allAtoms = [];
+
+  before(() => {
+    allAtoms = ROLE_OUTPUTS.flatMap(([role, output]) => translateToAtoms(role, output));
+  });
 
   it("translates all 4 role outputs to provenance atoms", () => {
-    const roles = [
-      ["Context Analyst", CONTEXT_MAP_OUTPUT],
-      ["User Value Analyst", USER_VALUE_MAP_OUTPUT],
-      ["Mechanics Analyst", MECHANICS_MAP_OUTPUT],
-      ["Positioning Analyst", POSITIONING_MAP_OUTPUT],
-    ];
-
-    for (const [role, output] of roles) {
+    for (const [role, output] of ROLE_OUTPUTS) {
       const atoms = translateToAtoms(role, output);
       assert.ok(atoms.length > 0, `${role} produced no atoms`);
-      allAtoms.push(...atoms);
     }
   });
 
   it("every atom has complete provenance", () => {
+    assert.ok(allAtoms.length > 0, "atom pool must be non-empty (vacuous-pass guard)");
     for (const atom of allAtoms) {
       const result = validateAtomProvenance(atom);
       assert.ok(result.valid, `Atom ${atom.id} missing provenance: ${result.issues.join(", ")}`);
@@ -258,6 +263,7 @@ describe("Golden Run — Phase 3: Normalize", () => {
   });
 
   it("atoms carry distinct claim kinds per role", () => {
+    assert.ok(allAtoms.length > 0, "atom pool must be non-empty (vacuous-pass guard)");
     const kindsByRole = new Map();
     for (const atom of allAtoms) {
       if (!kindsByRole.has(atom.source_role)) kindsByRole.set(atom.source_role, new Set());
@@ -278,6 +284,7 @@ describe("Golden Run — Phase 3: Normalize", () => {
   });
 
   it("atoms carry allowed_challengers from cross-exam matrix", () => {
+    assert.ok(allAtoms.length > 0, "atom pool must be non-empty (vacuous-pass guard)");
     for (const atom of allAtoms) {
       assert.ok(Array.isArray(atom.allowed_challengers), `${atom.id} missing allowed_challengers`);
       // Every non-Contrarian atom should be challengeable by Contrarian
@@ -289,6 +296,7 @@ describe("Golden Run — Phase 3: Normalize", () => {
   });
 
   it("builds valid NormalizedFindingSet from atoms", () => {
+    assert.ok(allAtoms.length > 0, "atom pool must be non-empty (vacuous-pass guard)");
     const findingSet = {
       atoms: allAtoms.map((a, i) => ({
         id: a.id,
@@ -349,16 +357,19 @@ const CONTRARIAN_CHALLENGES = [
 ];
 
 describe("Golden Run — Phase 4: Cross-Examine", () => {
-  let allAtoms;
+  let allAtoms = [];
 
-  // Rebuild atoms for this describe block
-  it("rebuilds atom pool for cross-exam", () => {
+  // Built in before() so consumers never run against an empty pool.
+  before(() => {
     allAtoms = [
       ...translateToAtoms("Context Analyst", CONTEXT_MAP_OUTPUT),
       ...translateToAtoms("User Value Analyst", USER_VALUE_MAP_OUTPUT),
       ...translateToAtoms("Mechanics Analyst", MECHANICS_MAP_OUTPUT),
       ...translateToAtoms("Positioning Analyst", POSITIONING_MAP_OUTPUT),
     ];
+  });
+
+  it("builds a non-empty atom pool for cross-exam", () => {
     assert.ok(allAtoms.length > 0);
   });
 
@@ -386,6 +397,7 @@ describe("Golden Run — Phase 4: Cross-Examine", () => {
   });
 
   it("challenge filter permits legal challenges and rejects illegal ones", () => {
+    assert.ok(allAtoms.length > 0, "atom pool must be non-empty (vacuous-pass guard)");
     const illegal = {
       target_claim_id: "atom-context-analyst-1",
       challenger_role: "Positioning Analyst", // Positioning CANNOT challenge Context
@@ -396,7 +408,9 @@ describe("Golden Run — Phase 4: Cross-Examine", () => {
     const allChallenges = [...CONTRARIAN_CHALLENGES, illegal];
     const { permitted, rejected } = filterChallenges(allChallenges, allAtoms);
 
-    // Illegal one should be rejected (either not found or not permitted)
+    // Both directions: all four golden challenges are legal, the planted one is not.
+    assert.equal(permitted.length, CONTRARIAN_CHALLENGES.length,
+      "Every golden challenge should be permitted");
     assert.ok(rejected.length >= 1, "Should have at least one rejected challenge");
   });
 });
@@ -837,16 +851,20 @@ describe("Golden Run — Layer 2: Rendered Artifacts", () => {
 // ── Debate Transcript ────────────────────────────────────────────────────────
 
 describe("Golden Run — Debate Transcript", () => {
-  let allAtoms;
+  let allAtoms = [];
 
-  it("generates debate transcript from dispute graph", () => {
+  // Built in before() so consumers never run against an empty pool.
+  before(() => {
     allAtoms = [
       ...translateToAtoms("Context Analyst", CONTEXT_MAP_OUTPUT),
       ...translateToAtoms("User Value Analyst", USER_VALUE_MAP_OUTPUT),
       ...translateToAtoms("Mechanics Analyst", MECHANICS_MAP_OUTPUT),
       ...translateToAtoms("Positioning Analyst", POSITIONING_MAP_OUTPUT),
     ];
+  });
 
+  it("generates debate transcript from dispute graph", () => {
+    assert.ok(allAtoms.length > 0, "atom pool must be non-empty (vacuous-pass guard)");
     const transcript = generateDebateTranscript(CONTRARIAN_CHALLENGES, REBUTTALS, allAtoms);
 
     assert.ok(transcript.includes("## Debate Transcript"), "Should have header");
@@ -856,6 +874,7 @@ describe("Golden Run — Debate Transcript", () => {
   });
 
   it("transcript summary matches rebuttal counts", () => {
+    assert.ok(allAtoms.length > 0, "atom pool must be non-empty (vacuous-pass guard)");
     const transcript = generateDebateTranscript(CONTRARIAN_CHALLENGES, REBUTTALS, allAtoms);
     assert.ok(transcript.includes("Claims narrowed: 3"));
     assert.ok(transcript.includes("Claims unresolved: 1"));
@@ -869,16 +888,19 @@ describe("Golden Run — Debate Transcript", () => {
 // can be traced back to a specific truth-layer atom or structural artifact.
 
 describe("Golden Run — Trace Links (Rendered → Truth)", () => {
-  let allAtoms;
+  let allAtoms = [];
 
-  // Build the full atom pool once
-  it("builds atom pool for trace verification", () => {
+  // Build the full atom pool once, in before() so consumers never see an empty pool.
+  before(() => {
     allAtoms = [
       ...translateToAtoms("Context Analyst", CONTEXT_MAP_OUTPUT),
       ...translateToAtoms("User Value Analyst", USER_VALUE_MAP_OUTPUT),
       ...translateToAtoms("Mechanics Analyst", MECHANICS_MAP_OUTPUT),
       ...translateToAtoms("Positioning Analyst", POSITIONING_MAP_OUTPUT),
     ];
+  });
+
+  it("builds atom pool for trace verification", () => {
     assert.ok(allAtoms.length >= 15, `Expected 15+ atoms, got ${allAtoms.length}`);
   });
 

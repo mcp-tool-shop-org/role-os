@@ -32,8 +32,17 @@ export async function reviewCommand(args) {
   }
 
   // Extract task ID from the packet
-  const taskIdMatch = content.match(/## Task ID\n(.+)/);
+  const taskIdMatch = content.match(/## Task ID\r?\n(.+)/);
   const taskId = taskIdMatch ? taskIdMatch[1].trim() : basename(packetFile, ".md");
+
+  // Extract the producing role from the packet — reject escalations route the
+  // retry back to the role that PRODUCED the output, never the reviewer.
+  // Falls back to Orchestrator when the section is absent or unassigned.
+  const assignedRoleMatch = content.match(/## Assigned Role\r?\n(.+)/);
+  const assignedRole = assignedRoleMatch ? assignedRoleMatch[1].trim() : null;
+  const producingRole = assignedRole && !assignedRole.startsWith("<!--")
+    ? assignedRole
+    : "Orchestrator";
 
   console.log(`\nroleos review — ${verdict}\n`);
   console.log(`Packet: ${packetFile}`);
@@ -99,7 +108,7 @@ ${nextOwner}
     console.log(`\nEscalation (auto-routed):`);
     console.log(formatEscalation(escalation));
   } else if (verdict === "reject") {
-    const escalation = resolveRejected(reason, reviewer);
+    const escalation = resolveRejected(reason, producingRole);
     console.log(`\nEscalation (auto-routed):`);
     console.log(formatEscalation(escalation));
   }

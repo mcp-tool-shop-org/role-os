@@ -62,9 +62,11 @@ describe("runner-native dispatch from real manifest", () => {
   it("creates the correct total step count", () => {
     const run = createRun("deep-audit", "Role-OS self-audit", { manifest });
     // N components + N test truth + K boundaries + non-scaling (2 synth + 1 critic) = 2N + K + 3
-    const N = manifest.components.length;   // 6
-    const K = manifest.boundaries.length;   // 8
-    const expected = (2 * N) + K + 3;       // 23
+    // Counts are derived from the manifest, never hardcoded, so growing the
+    // decomposition (new components/boundaries) never breaks this proof.
+    const N = manifest.components.length;
+    const K = manifest.boundaries.length;
+    const expected = (2 * N) + K + 3;
     assert.equal(run.steps.length, expected,
       `Expected ${expected} steps (2×${N} + ${K} + 3), got ${run.steps.length}`);
   });
@@ -160,7 +162,7 @@ describe("artifact validation in dynamic run", () => {
 // ── Full lifecycle proof ────────────────────────────────────────────────────
 
 describe("full runner-native audit lifecycle", () => {
-  it("completes all 23 steps and generates report", () => {
+  it("completes every step and generates report", () => {
     const run = createRun("deep-audit", "Role-OS v2.1.1 self-audit", { manifest });
     const totalSteps = run.steps.length;
 
@@ -315,12 +317,16 @@ describe("scaling verification", () => {
     }
   });
 
-  it("real manifest produces exactly 23 steps", () => {
+  it("real manifest produces 2N + K + 3 steps with per-role counts derived from the manifest", () => {
+    // Derived from the live manifest rather than pinned at 6/8/23, so the proof
+    // tracks the decomposition as it grows instead of enforcing a stale one.
+    const N = manifest.components.length;
+    const K = manifest.boundaries.length;
     const run = createRun("deep-audit", "real manifest", { manifest });
-    assert.equal(run.steps.length, 23);
-    assert.equal(run.steps.filter(s => s.role === "Component Auditor").length, 6);
-    assert.equal(run.steps.filter(s => s.role === "Test Truth Auditor").length, 6);
-    assert.equal(run.steps.filter(s => s.role === "Seam Auditor").length, 8);
+    assert.equal(run.steps.length, (2 * N) + K + 3);
+    assert.equal(run.steps.filter(s => s.role === "Component Auditor").length, N);
+    assert.equal(run.steps.filter(s => s.role === "Test Truth Auditor").length, N);
+    assert.equal(run.steps.filter(s => s.role === "Seam Auditor").length, K);
     assert.equal(run.steps.filter(s => s.role === "Audit Synthesizer").length, 2);
     assert.equal(run.steps.filter(s => s.role === "Critic Reviewer").length, 1);
   });

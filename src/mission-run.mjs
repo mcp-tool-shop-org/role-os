@@ -114,11 +114,12 @@ export function createRun(missionKey, taskDescription, options = {}) {
 
 /**
  * Build steps from manifest for dynamic dispatch missions.
+ * Exported so the persistent runner (run.mjs) can scale steps from a manifest.
  * @param {Object} mission
  * @param {Object} manifest - The audit-manifest.json content
  * @returns {MissionStep[]}
  */
-function buildDynamicSteps(mission, manifest) {
+export function buildDynamicSteps(mission, manifest) {
   const dd = mission.dynamicDispatch;
   const steps = [];
 
@@ -198,11 +199,12 @@ function buildDynamicSteps(mission, manifest) {
 /**
  * Build steps from swarm manifest for dogfood-swarm missions.
  * Creates domain agent steps per stage with coordinator gates.
+ * Exported so the persistent runner (run.mjs) can scale steps from a manifest.
  * @param {Object} mission
  * @param {Object} manifest - The swarm-manifest.json content
  * @returns {MissionStep[]}
  */
-function buildSwarmSteps(mission, manifest) {
+export function buildSwarmSteps(mission, manifest) {
   const steps = [];
   const domains = manifest.domains || [];
   const stages = manifest.stages || ["health-a", "health-b", "health-c", "feature", "treatment"];
@@ -412,6 +414,13 @@ export function recordEscalation(run, from, to, trigger, action) {
     targetStep.note = `Re-opened by escalation: ${trigger}`;
     targetStep.completedAt = null;
     escalation.reopened = true;
+
+    // A completed run with a re-opened step is no longer complete —
+    // reset run status so the pending step is actionable again.
+    if (run.status === "completed") {
+      run.status = "running";
+      run.completedAt = null;
+    }
   } else {
     // S4-F2: Target role not found in chain (or no completed step to re-open).
     // Warn the operator instead of silently doing nothing.

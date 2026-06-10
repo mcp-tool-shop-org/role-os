@@ -521,15 +521,22 @@ export const PACK_HANDOFF_CONTRACTS = {
       { role: "Critic Reviewer", produces: "verdict", consumedBy: null },
     ],
   },
+  // v0.4 pipeline — mirrors the brainstorm mission's artifactFlow:
+  // Analysts (parallel) → Normalizer → Contrarian → Normalizer (rebut) →
+  // Synthesizer → Product Expander → Judge.
   brainstorm: {
     flow: [
-      { role: "Context Scout",       produces: "scout-finding",          consumedBy: "Normalizer" },
-      { role: "User Value Scout",    produces: "scout-finding",          consumedBy: "Normalizer" },
-      { role: "Creative Leap Scout", produces: "scout-finding",          consumedBy: "Normalizer" },
-      { role: "Normalizer",          produces: "normalized-finding-set", consumedBy: "Synthesizer" },
-      { role: "Synthesizer",         produces: "synthesis-report",       consumedBy: "Product Expander" },
-      { role: "Product Expander",    produces: "expanded-concept",       consumedBy: "Judge" },
-      { role: "Judge",               produces: "judge-report",           consumedBy: null },
+      { role: "Context Analyst",     produces: "context-map",      consumedBy: "Normalizer" },
+      { role: "User Value Analyst",  produces: "user-value-map",   consumedBy: "Normalizer" },
+      { role: "Mechanics Analyst",   produces: "mechanics-map",    consumedBy: "Normalizer" },
+      { role: "Positioning Analyst", produces: "positioning-map",  consumedBy: "Normalizer" },
+      { role: "Normalizer",          produces: "provenance-atoms", consumedBy: "Contrarian Analyst" },
+      { role: "Contrarian Analyst",  produces: "challenge-set",    consumedBy: "Normalizer" },
+      // Rebut pass: Normalizer routes analyst responses (defend/narrow/retract)
+      { role: "Normalizer",          produces: "rebuttal-set",     consumedBy: "Synthesizer" },
+      { role: "Synthesizer",         produces: "synthesis-report", consumedBy: "Product Expander" },
+      { role: "Product Expander",    produces: "expanded-concept", consumedBy: "Judge" },
+      { role: "Judge",               produces: "judge-report",     consumedBy: null },
     ],
   },
   treatment: {

@@ -26,7 +26,9 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
       - name: Use an OIDC-capable npm (Trusted Publishing needs npm >= 11.5)
-        run: npm install -g npm@latest
+        # Pinned exact version on the publish path — bump deliberately, never float @latest
+        # with Trusted Publishing rights.
+        run: npm install -g npm@11.5.1
       - run: npm ci
       - run: npm test
       - name: Publish to npm via Trusted Publishing (OIDC)

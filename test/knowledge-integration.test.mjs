@@ -12,6 +12,7 @@ import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, rmSync, mkdirSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -19,7 +20,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const KNOWLEDGE_CORE = resolve(__dirname, "..", "..", "knowledge-core");
 const HAS_KNOWLEDGE_CORE = existsSync(join(KNOWLEDGE_CORE, "knowledge", "corpus", "fixtures", "corpus-divergence.json"));
 
-const TEST_CWD = join(process.cwd(), ".test-knowledge-integration-tmp");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_CWD = join(tmpdir(), `roleos-test-knowledge-integration-${process.pid}`);
 
 function setup() {
   rmSync(TEST_CWD, { recursive: true, force: true });
@@ -32,21 +34,16 @@ function teardown() {
 
 describe("Phase 5E — end-to-end knowledge integration", () => {
   if (!HAS_KNOWLEDGE_CORE) {
-    it("skips in CI (no knowledge-core checkout)", () => {});
+    // Reported as SKIPPED (not passed) so a green run never implies this proof executed.
+    it("full chain proof", (t) => t.skip("knowledge-core sibling not checked out"));
     return;
   }
 
   beforeEach(setup);
   afterEach(teardown);
 
-  it("full chain: corpus → retrieval → run → report", async () => {
+  it("full chain: corpus → retrieval → run → report", async (t) => {
     // 1. Import knowledge-core engine
-    const { CorpusStore } = await import(
-      resolve(KNOWLEDGE_CORE, "dist", "storage", "corpus-store.js")
-    ).catch(() => null) ?? {};
-
-    // If knowledge-core isn't built, try source via ts
-    // Fall back to building in-process
     let store, ingestFn, retrieveFn;
 
     try {
@@ -55,7 +52,7 @@ describe("Phase 5E — end-to-end knowledge integration", () => {
       ingestFn = coreMod.ingestFixtureCorpus;
       retrieveFn = coreMod.retrieve;
     } catch {
-      console.log("  [skip] knowledge-core not built (run: cd knowledge-core && npm run build)");
+      t.skip("knowledge-core not built (run: cd knowledge-core && npm run build)");
       return;
     }
 
@@ -116,7 +113,7 @@ describe("Phase 5E — end-to-end knowledge integration", () => {
     console.log("  ── Chain intact ──\n");
   });
 
-  it("brainstorm task retrieves product/strategy evidence", async () => {
+  it("brainstorm task retrieves product/strategy evidence", async (t) => {
     let store, ingestFn, retrieveFn;
     try {
       const coreMod = await import(resolve(KNOWLEDGE_CORE, "dist", "index.js"));
@@ -124,7 +121,8 @@ describe("Phase 5E — end-to-end knowledge integration", () => {
       ingestFn = coreMod.ingestFixtureCorpus;
       retrieveFn = coreMod.retrieve;
     } catch {
-      return; // not built
+      t.skip("knowledge-core not built");
+      return;
     }
 
     const corpusPath = join(KNOWLEDGE_CORE, "knowledge", "corpus", "fixtures", "corpus-divergence.json");
@@ -141,20 +139,13 @@ describe("Phase 5E — end-to-end knowledge integration", () => {
     );
 
     assert.ok(run.knowledge);
-    assert.ok(run.knowledge.retrieval_bundle.selected.length > 0);
-
-    // Brainstorm primary role is Context Analyst — should get product/strategy content
-    const productChunks = run.knowledge.retrieval_bundle.selected.filter(
-      (c) => c.metadata?.domain === "product" || c.metadata?.domain === "market"
-    );
-    // Relaxed assertion — just verify retrieval happened with real content
     assert.ok(
       run.knowledge.retrieval_bundle.selected.length > 0,
       "Should retrieve evidence for brainstorm task",
     );
   });
 
-  it("docs treatment task retrieves docs-domain evidence", async () => {
+  it("docs treatment task retrieves docs-domain evidence", async (t) => {
     let store, ingestFn, retrieveFn;
     try {
       const coreMod = await import(resolve(KNOWLEDGE_CORE, "dist", "index.js"));
@@ -162,7 +153,8 @@ describe("Phase 5E — end-to-end knowledge integration", () => {
       ingestFn = coreMod.ingestFixtureCorpus;
       retrieveFn = coreMod.retrieve;
     } catch {
-      return; // not built
+      t.skip("knowledge-core not built");
+      return;
     }
 
     const corpusPath = join(KNOWLEDGE_CORE, "knowledge", "corpus", "fixtures", "corpus-divergence.json");

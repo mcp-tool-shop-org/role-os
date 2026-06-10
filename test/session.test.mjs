@@ -1,12 +1,12 @@
 import { describe, it, before, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, rmSync, existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { scaffoldClaude, doctor, generateRouteCard, formatDoctor } from "../src/session.mjs";
 
-const __dirname = import.meta.dirname || dirname(fileURLToPath(import.meta.url));
-const TEST_DIR = join(__dirname, "..", ".test-session");
+// Scratch dir lives in the OS tmpdir so an interrupted run never litters the repo root.
+const TEST_DIR = join(tmpdir(), `roleos-test-session-${process.pid}`);
 
 function cleanup() {
   if (existsSync(TEST_DIR)) rmSync(TEST_DIR, { recursive: true });

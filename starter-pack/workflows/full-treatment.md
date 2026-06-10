@@ -2,6 +2,11 @@
 
 Every tool repo gets the full treatment before it's "whole." This is the complete 7-phase protocol — not a pointer to an external file.
 
+> **Adapting this workflow:** this protocol was written for the MCP Tool Shop org. Steps
+> marked **[org-internal]** reference that org's private infrastructure (brand repo,
+> repo-knowledge database, translation tooling). Substitute your own equivalents or skip
+> those steps — the phase structure and role owners are the portable part.
+
 ## Gate: Shipcheck runs first
 
 Full treatment does not start until shipcheck passes. Shipcheck is the 31-item quality gate (hard gates A-D block release).
@@ -14,20 +19,23 @@ No v1.0.0 bump without passing hard gates A-D.
 
 a) Clone repo, verify Pages source is "GitHub Actions", enable if not. Check for existing site/ and pages.yml.
 b) Note whether root package.json has "private": true (controls npm badge/link decisions).
-c) Push logo to brand repo: `mcp-tool-shop-org/brand/logos/<slug>/readme.png`, run `brand manifest`, commit+push. Min 530x530px.
-d) Update README: brand logo URL (`https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/<slug>/readme.png`), width="400", centered.
+c) **[org-internal]** Push logo to your brand repo (e.g. `<org>/brand/logos/<slug>/readme.png`), regenerate the manifest, commit+push. Min 530x530px.
+d) Update README: brand logo raw URL (e.g. `https://raw.githubusercontent.com/<org>/brand/main/logos/<slug>/readme.png`), width="400", centered.
 e) Badges (after logo, centered): CI status, Codecov coverage, MIT license, Landing Page. Only if published: npm/PyPI version badges.
 f) If logo contains product name, remove redundant `<h1>`.
 g) Update footer: `Built by <a href="https://mcp-tool-shop.github.io/">MCP Tool Shop</a>`
-h) README is now final — hand the user the translation command(s).
+h) README is now final — run the translation step.
 
-Translation command (user runs in PowerShell, NOT Claude):
+Translation step **[org-internal]**: translations run on a local model (e.g. TranslateGemma
+via Ollama — zero API cost, ~2-4 min/README) using your translation tooling:
 ```
-node F:/AI/polyglot-mcp/scripts/translate-all.mjs F:/AI/<repo>/README.md
+node <path-to-translation-tooling>/translate-all.mjs <path-to-repo>/README.md
 ```
 Monorepos: chain with semicolons. Large monorepos: batch into groups of 5-7.
 
-WARNING: NEVER run translations from Claude — wastes Claude points. User runs locally (TranslateGemma 12B, Ollama, zero API cost, ~2-4 min/README).
+Translations must land BEFORE `npm publish` and BEFORE the GitHub release is tagged —
+release tags are immutable, and a tag cut before translations leaves stale locale READMEs
+on that tag forever. If you have no translation tooling, skip this step.
 
 ### Role owners
 - **Repo Researcher** — verify repo state, Pages config, package.json
@@ -98,8 +106,8 @@ g) Build and verify: `cd site && npm run build` — check dist/index.html + dist
 
 a) Set GitHub metadata:
 ```
-gh repo edit mcp-tool-shop-org/<repo> --description "<from package.json>" --homepage "https://mcp-tool-shop-org.github.io/<repo-name>/"
-gh repo edit mcp-tool-shop-org/<repo> --add-topic <tags>
+gh repo edit <org>/<repo> --description "<from package.json>" --homepage "https://<org>.github.io/<repo-name>/"
+gh repo edit <org>/<repo> --add-topic <tags>
 ```
 b) Code coverage: add coverage dep, coverage CI step (one matrix entry), codecov upload, badge in README
 c) Verify site builds, .gitignore complete, logo renders at brand URL
@@ -109,13 +117,15 @@ d) Review README for typos, broken links, stale content
 - **Metadata Curator** — GitHub metadata, badges, manifest
 - **Coverage Auditor** — test coverage assessment, CI integration
 
-## Phase 5 — Repo Knowledge DB entry
+## Phase 5 — Repo Knowledge DB entry **[org-internal]**
 
-Every treated repo gets a proper entry in the repo-knowledge database. This is NOT optional.
+Every treated repo gets a proper entry in the repo-knowledge database. This is NOT optional
+inside the org; consumers without a repo-knowledge deployment substitute their own
+catalog/inventory system or skip.
 
 a) Sync the repo if not already in the DB:
 ```
-rk sync --owners mcp-tool-shop-org
+rk sync --owners <org>
 ```
 
 b) Add required notes using MCP tools or CLI:
@@ -151,13 +161,13 @@ Push to main. Verify landing page + handbook render.
 
 ## Phase 7 — Post-deploy verification
 
-- Landing page renders at `https://mcp-tool-shop-org.github.io/<repo-name>/`
+- Landing page renders at `https://<org>.github.io/<repo-name>/`
 - Handbook renders at `.../handbook/`
 - Pagefind search works in handbook
 - Translations are complete (check ja for degenerate output)
 - Coverage badge shows real data
-- `rk show <slug>` returns complete knowledge entry
-- Repo-knowledge DB has thesis, architecture, and relationships
+- **[org-internal]** `rk show <slug>` returns complete knowledge entry
+- **[org-internal]** Repo-knowledge DB has thesis, architecture, and relationships
 
 ### Role owners
 - **Deployment Verifier** — landing page, handbook, package, badges, translations
@@ -171,6 +181,7 @@ Push to main. Verify landing page + handbook render.
 - Add extra Astro pages beyond index.astro unless requested
 - Skip the init CLI and scaffold manually
 - Add npm badges for private/unpublished repos
-- Skip the repo-knowledge DB entry — it's part of the treatment now
-- Run translations from Claude
+- Skip the repo-knowledge DB entry (org-internal) — it's part of the treatment
+- Tag a release or publish before translations land — release tags are immutable
 - Reference "memory/" paths without absolute paths — protocols must be self-contained
+- Hardcode machine-specific paths in this workflow — it ships to other people's repos

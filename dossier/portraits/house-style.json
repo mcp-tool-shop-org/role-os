@@ -60,5 +60,6 @@
     "Investigator": "keen attentive eyes, leaning in slightly, searching",
     "Maverick": "a confident off-center half-smile, relaxed defiance, a glint of independence"
   },
-  "sha": null
+  "sha": "0f085b6a888adf3700115e4de31b36ddd1c3e7aaa51b8f5f8cfe6349aab59644",
+  "sha_note": "SHA-256 hex of the locked blocks: sha256(blocks.style + '\\n' + blocks.framing + '\\n' + blocks.negative). Recompute and update whenever a locked block changes (write-prompt.mjs stamps it into each brief's provenance as house_sha; render.mjs warns on mismatch)."
 }

@@ -11,19 +11,9 @@
  */
 
 import { existsSync, readFileSync, writeFileSync, readdirSync } from "node:fs";
-import { join, resolve } from "node:path";
-import { getMission, suggestMission } from "./mission.mjs";
+import { join } from "node:path";
 import {
-  createRun,
-  startNextStep,
-  getRunPosition,
-  getArtifactChain,
-  generateCompletionReport,
-  formatCompletionReport,
-} from "./mission-run.mjs";
-import {
-  createPersistentRun, findActiveRun, listRuns, loadRun,
-  startNext, explainRun, getPosition, saveRun,
+  createPersistentRun, listRuns, loadRun, getPosition,
 } from "./run.mjs";
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -61,7 +51,7 @@ export async function auditCommand(args) {
 
 // ── roleos audit [run] ───────────────────────────────────────────────────────
 
-function cmdRun(extraArgs) {
+async function cmdRun(extraArgs) {
   const cwd = process.cwd();
   const manifestPath = join(cwd, MANIFEST_FILE);
 
@@ -91,20 +81,28 @@ function cmdRun(extraArgs) {
     ? extraArgs.join(" ")
     : `Deep audit of ${manifest.repo || "current repo"}`;
 
-  // Create a persistent run via the deep-audit mission
-  const run = createPersistentRun(taskDesc, cwd, { forceMission: "deep-audit" });
+  // Create a persistent run via the deep-audit mission.
+  // Forwarding the manifest routes step construction through buildDynamicSteps,
+  // so auditor steps scale with components/boundaries instead of the static flow.
+  const run = await createPersistentRun(taskDesc, cwd, {
+    forceMission: "deep-audit",
+    manifest,
+  });
+
+  const componentCount = manifest.components?.length || 0;
+  const boundaryCount = manifest.boundary_clusters?.length ?? manifest.boundaries?.length ?? 0;
 
   console.log(`\nDeep Audit Started`);
   console.log(`──────────────────`);
   console.log(`Run:        ${run.id}`);
   console.log(`Repo:       ${manifest.repo || "unknown"}`);
-  console.log(`Components: ${manifest.components?.length || 0}`);
-  console.log(`Boundaries: ${manifest.boundaries?.length || 0}`);
+  console.log(`Components: ${componentCount}`);
+  console.log(`Boundaries: ${boundaryCount}`);
   console.log(`Steps:      ${run.steps.length}`);
   console.log(`\nThe audit will dispatch:`);
-  console.log(`  - Component Auditor  ×${manifest.components?.length || 0}`);
-  console.log(`  - Test Truth Auditor ×${manifest.components?.length || 0}`);
-  console.log(`  - Seam Auditor       ×${manifest.boundaries?.length || 0}`);
+  console.log(`  - Component Auditor  ×${componentCount}`);
+  console.log(`  - Test Truth Auditor ×${componentCount}`);
+  console.log(`  - Seam Auditor       ×${boundaryCount}`);
   console.log(`  - Audit Synthesizer  ×1`);
   console.log(`  - Critic Reviewer    ×1`);
   console.log(`\nRun 'roleos next' to begin the first step.`);
@@ -228,11 +226,13 @@ function generateManifest(cwd, manifestPath) {
 function cmdStatus() {
   const cwd = process.cwd();
 
-  // Find the most recent deep-audit run
+  // Find the most recent deep-audit run.
+  // missionKey is authoritative; task keywords cover legacy runs created
+  // before missionKey was exposed by listRuns.
   const runs = listRuns(cwd);
   const auditRuns = runs.filter(r =>
-    r.task.toLowerCase().includes("audit") ||
-    r.level === "mission"
+    r.missionKey === "deep-audit" ||
+    r.task.toLowerCase().includes("audit")
   );
 
   if (auditRuns.length === 0) {

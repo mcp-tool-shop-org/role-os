@@ -2,8 +2,9 @@
  * Evidence Persistence Bridge — Optional connection to dogfood-lab/testing-os.
  *
  * Converts swarm wave results into dogfood submission format and audit DB
- * payloads. The core swarm mission works without this — it's activated by
- * the --persist-evidence flag on `roleos swarm`.
+ * payloads. The core swarm mission works without this — this module is a
+ * library consumed by external tooling (e.g. dogfood-lab/testing-os); the
+ * roleos CLI does not currently invoke it.
  *
  * This mirrors the logic from dogfood-lab/testing-os/packages/dogfood-swarm/persist-results.js
  * but produces the payloads without requiring testing-os to be present.
@@ -70,7 +71,7 @@ export function buildScenarioResults(waveReports) {
       product_surface: surfaceFromDomain(domain),
       verdict: deriveVerdict(allFindings),
       step_results: [
-        { step: "audit", status: allFindings.length > 0 ? "pass" : "pass" },
+        { step: "audit", status: allFindings.length > 0 ? "pass" : "skip" },
         { step: "remediate", status: allRemediations.length > 0 ? "pass" : "skip" },
       ],
       evidence: {

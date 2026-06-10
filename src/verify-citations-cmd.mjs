@@ -7,7 +7,7 @@
  * operator can branch on it.
  */
 
-import { writeFileSync } from "node:fs";
+import { writeFileSync, existsSync } from "node:fs";
 import { resolve, dirname, basename } from "node:path";
 import { runCitationGate } from "./verify-citations.mjs";
 
@@ -22,6 +22,22 @@ export async function verifyCitationsCommand(args) {
     err.exitCode = 1;
     err.hint =
       "Provide a research dispatch — markdown with a Research-grounding section, or a citations JSON array.";
+    throw err;
+  }
+
+  // The CLI positional is a dispatch FILE (inline-markdown input is the library API). Validate it
+  // up front: a missing file or odd extension must fail loudly — never silently degrade into
+  // scanning the path STRING for citations and reporting "no citations found".
+  if (!existsSync(dispatch)) {
+    const err = new Error(`dispatch file not found: ${dispatch}`);
+    err.exitCode = 1;
+    err.hint = "Pass the path to an existing research dispatch (.md, .markdown, or .json).";
+    throw err;
+  }
+  if (!/\.(md|markdown|json)$/i.test(dispatch)) {
+    const err = new Error(`unsupported dispatch file extension: ${dispatch}`);
+    err.exitCode = 1;
+    err.hint = "Supported extensions: .md, .markdown, .json (matched case-insensitively).";
     throw err;
   }
 

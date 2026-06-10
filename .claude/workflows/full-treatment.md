@@ -2,6 +2,10 @@
 
 Every tool repo gets the full treatment before it's "whole." This is the complete 7-phase protocol — not a pointer to an external file.
 
+> **In-repo copy (MCP Tool Shop internal):** steps marked **[org-internal]** are live here —
+> the concrete commands below are filled in for this org and the Robot rig (workspace
+> `E:/AI`). The shipped starter-pack copy keeps them parameterized.
+
 ## Gate: Shipcheck runs first
 
 Full treatment does not start until shipcheck passes. Shipcheck is the 31-item quality gate (hard gates A-D block release).
@@ -14,20 +18,25 @@ No v1.0.0 bump without passing hard gates A-D.
 
 a) Clone repo, verify Pages source is "GitHub Actions", enable if not. Check for existing site/ and pages.yml.
 b) Note whether root package.json has "private": true (controls npm badge/link decisions).
-c) Push logo to brand repo: `mcp-tool-shop-org/brand/logos/<slug>/readme.png`, run `brand manifest`, commit+push. Min 530x530px.
-d) Update README: brand logo URL (`https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/<slug>/readme.png`), width="400", centered.
+c) **[org-internal]** Push logo to the brand repo: `mcp-tool-shop-org/brand/logos/<slug>/readme.png`, run `brand manifest`, commit+push. Min 530x530px.
+d) Update README: brand logo raw URL (`https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/<slug>/readme.png`), width="400", centered.
 e) Badges (after logo, centered): CI status, Codecov coverage, MIT license, Landing Page. Only if published: npm/PyPI version badges.
 f) If logo contains product name, remove redundant `<h1>`.
 g) Update footer: `Built by <a href="https://mcp-tool-shop.github.io/">MCP Tool Shop</a>`
-h) README is now final — hand the user the translation command(s).
+h) README is now final — run the translation step.
 
-Translation command (user runs in PowerShell, NOT Claude):
+Translation step **[org-internal]**: translations run locally on TranslateGemma 27B via
+Ollama (zero API cost, ~2-4 min/README — the local GPU model does the generating, so no
+Claude tokens are spent in any path). Advisor sessions may invoke the script directly;
+Sonnet kickoff sessions defer to the user/advisor:
 ```
-node F:/AI/polyglot-mcp/scripts/translate-all.mjs F:/AI/<repo>/README.md
+node E:/AI/polyglot-mcp/scripts/translate-all.mjs E:/AI/<repo>/README.md
 ```
 Monorepos: chain with semicolons. Large monorepos: batch into groups of 5-7.
 
-WARNING: NEVER run translations from Claude — wastes Claude points. User runs locally (TranslateGemma 12B, Ollama, zero API cost, ~2-4 min/README).
+Translations must land BEFORE `npm publish` and BEFORE the GitHub release is tagged —
+release tags are immutable, and a tag cut before translations leaves stale locale READMEs
+on that tag forever.
 
 ### Role owners
 - **Repo Researcher** — verify repo state, Pages config, package.json
@@ -109,7 +118,7 @@ d) Review README for typos, broken links, stale content
 - **Metadata Curator** — GitHub metadata, badges, manifest
 - **Coverage Auditor** — test coverage assessment, CI integration
 
-## Phase 5 — Repo Knowledge DB entry
+## Phase 5 — Repo Knowledge DB entry **[org-internal]**
 
 Every treated repo gets a proper entry in the repo-knowledge database. This is NOT optional.
 
@@ -156,8 +165,8 @@ Push to main. Verify landing page + handbook render.
 - Pagefind search works in handbook
 - Translations are complete (check ja for degenerate output)
 - Coverage badge shows real data
-- `rk show <slug>` returns complete knowledge entry
-- Repo-knowledge DB has thesis, architecture, and relationships
+- **[org-internal]** `rk show <slug>` returns complete knowledge entry
+- **[org-internal]** Repo-knowledge DB has thesis, architecture, and relationships
 
 ### Role owners
 - **Deployment Verifier** — landing page, handbook, package, badges, translations
@@ -171,6 +180,7 @@ Push to main. Verify landing page + handbook render.
 - Add extra Astro pages beyond index.astro unless requested
 - Skip the init CLI and scaffold manually
 - Add npm badges for private/unpublished repos
-- Skip the repo-knowledge DB entry — it's part of the treatment now
-- Run translations from Claude
+- Skip the repo-knowledge DB entry (org-internal) — it's part of the treatment
+- Tag a release or publish before translations land — release tags are immutable
 - Reference "memory/" paths without absolute paths — protocols must be self-contained
+- Copy this rig-specific version into starter-pack/ — the shipped copy stays parameterized (no machine paths)

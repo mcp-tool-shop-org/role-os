@@ -50,6 +50,7 @@ Usage:
   roleos friction [id]               Measure operator friction
   roleos init                        Scaffold Role OS into .claude/
   roleos init --force                Update canonical files (protects context/)
+  roleos init claude [--force]       Scaffold Claude Code session integration (CLAUDE.md, commands, hooks)
   roleos packet new <type>           Create a new packet (feature|integration|identity)
   roleos route <packet-file> [--verbose]  Recommend the smallest valid chain
   roleos review <packet-file> <verdict>  Record a review verdict
@@ -72,8 +73,8 @@ Usage:
   roleos swarm manifest               Show the swarm manifest
   roleos swarm manifest --generate    Auto-detect domains and generate manifest
   roleos swarm status                 Show swarm run progress
-  roleos swarm findings               List findings by severity
-  roleos swarm approve                Approve the current feature gate
+  roleos swarm findings               List findings captured from wave reports
+  roleos swarm approve                Approve the current user gate
   roleos swarm verify                 Verify manifest and run state
   roleos verify-citations <dispatch>  Verify a research dispatch's citations via prism (gate)
   roleos specialist list              List all specialists in the registry (active version + cert)

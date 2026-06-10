@@ -2043,7 +2043,7 @@ window.DOSSIERS = {
     },
     "aptitudes": {
       "rigor": 5,
-      "pace": 2,
+      "pace": 1,
       "range": 1,
       "skepticism": 5,
       "autonomy": 3,

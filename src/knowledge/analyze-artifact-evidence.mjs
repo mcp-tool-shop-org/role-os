@@ -206,11 +206,12 @@ export function analyzeArtifactEvidence({
         locations.push("title-match");
       }
       // Check for source ID reference
-      if (artifactLower.includes(chunk.source_id.toLowerCase())) {
+      const sourceId = (chunk.source_id ?? "").toLowerCase();
+      if (sourceId && artifactLower.includes(sourceId)) {
         locations.push("source-id");
       }
       // Check for key content phrases (first 50 chars of content)
-      const contentSnippet = chunk.content.slice(0, 50).toLowerCase();
+      const contentSnippet = (chunk.content ?? "").slice(0, 50).toLowerCase();
       if (contentSnippet.length > 20 && artifactLower.includes(contentSnippet)) {
         locations.push("content-echo");
       }
@@ -236,7 +237,7 @@ export function analyzeArtifactEvidence({
   const knownRefs = new Set([
     ...(bundle?.selected?.map((c) => (c.citation?.reference ?? c.chunk_id).toLowerCase()) ?? []),
     ...(bundle?.selected?.map((c) => c.title?.toLowerCase()).filter(Boolean) ?? []),
-    ...(bundle?.selected?.map((c) => c.source_id.toLowerCase()) ?? []),
+    ...(bundle?.selected?.map((c) => (c.source_id ?? "").toLowerCase()).filter(Boolean) ?? []),
     ...known_external_refs.map((r) => r.toLowerCase()),
   ]);
 
@@ -268,7 +269,14 @@ export function analyzeArtifactEvidence({
 
   if (!postureCompliance.compliant) {
     verdict = verdict === "fail" ? "fail" : "warn";
-    reasons.push(`Posture compliance failed: missing ${postureCompliance.missing_signals.join(", ")}`);
+    const parts = [];
+    if (postureCompliance.missing_signals.length > 0) {
+      parts.push(`missing ${postureCompliance.missing_signals.join(", ")}`);
+    }
+    if ((postureCompliance.banned_violations ?? []).length > 0) {
+      parts.push(`banned phrase(s): ${postureCompliance.banned_violations.join(", ")}`);
+    }
+    reasons.push(`Posture compliance failed: ${parts.join("; ") || "expected posture signals absent"}`);
   }
 
   if (driftViolations.length > 0) {
@@ -390,16 +398,18 @@ function checkDrift(artifactLower, roleId) {
 function extractCitationPatterns(text) {
   const patterns = [];
 
-  // Bracketed references: [Something]
-  const bracketMatches = text.match(/\[([^\]]{5,80})\]/g) ?? [];
+  // Bracketed references: [Something] — but not markdown links [text](url)
+  // (checkbox brackets like [x] fall below the 5-char minimum already)
+  const bracketMatches = text.match(/\[([^\]]{5,80})\](?!\()/g) ?? [];
   for (const m of bracketMatches) {
     patterns.push(m.slice(1, -1));
   }
 
-  // "Source: X" or "Reference: X"
-  const sourceMatches = text.match(/(?:source|reference|per|according to):?\s+([^\n.]{5,80})/gi) ?? [];
+  // "Source: X" or "Reference: X" — word boundaries so "per" can't match
+  // inside words like "Super" or "paper"
+  const sourceMatches = text.match(/\b(?:source|reference|per|according to)\b:?\s+([^\n.]{5,80})/gi) ?? [];
   for (const m of sourceMatches) {
-    const cleaned = m.replace(/^(?:source|reference|per|according to):?\s+/i, "").trim();
+    const cleaned = m.replace(/^(?:source|reference|per|according to)\b:?\s+/i, "").trim();
     if (cleaned) patterns.push(cleaned);
   }
 

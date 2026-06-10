@@ -77,7 +77,7 @@ export function detectBuildSystem(cwd) {
  * @param {object} [options]
  * @param {object} [options.buildSystem] - Override auto-detected build system
  * @param {number} [options.timeout] - Per-command timeout in ms (default: 120000)
- * @returns {{ pass: boolean, lint: StepResult, typecheck: StepResult, test: StepResult, duration: number }}
+ * @returns {{ pass: boolean, vacuous: boolean, reason: string|null, lint: StepResult, typecheck: StepResult, test: StepResult, duration: number }}
  *
  * @typedef {{ status: "pass"|"fail"|"skip", output: string, duration: number }} StepResult
  */
@@ -90,10 +90,19 @@ export function runBuildGate(cwd, options = {}) {
   const typecheck = runStep(bs.typecheckCmd, cwd, timeout);
   const test = runStep(bs.testCmd, cwd, timeout);
 
-  const pass = lint.status !== "fail" && typecheck.status !== "fail" && test.status !== "fail";
+  // A gate that ran nothing verified nothing — fail loudly instead of
+  // passing vacuously, so an undetected build system can't silently
+  // disable the after-every-wave safety check (ANDON_AUTHORITY).
+  const vacuous = lint.status === "skip" && typecheck.status === "skip" && test.status === "skip";
+  const pass = !vacuous &&
+    lint.status !== "fail" && typecheck.status !== "fail" && test.status !== "fail";
 
   return {
     pass,
+    vacuous,
+    reason: vacuous
+      ? `No verification commands found (build system: ${bs.type}) — the gate could not verify anything. Add lint/typecheck/test commands or pass options.buildSystem.`
+      : null,
     lint,
     typecheck,
     test,

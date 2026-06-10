@@ -151,3 +151,24 @@ May read canon entry files, schema files, reference plates, and approved-baselin
 May cross-reference canon text against declared schema.
 Must not modify canon, schema, or reference plates.
 Must not invent missing fields — surface gaps for the canon owner.
+
+## Component Auditor
+May read every file in its assigned parcel's owned paths, plus the manifest and repo context.
+May run read-only inspection commands (grep, line counts) within the parcel.
+Must not read forbidden paths outside the parcel or modify any code.
+Must not fix findings — surface them with quoted evidence for owners.
+
+## Seam Auditor
+May read files on both sides of its assigned boundary clusters, the component graph, shared utilities, and content files (schemas, policies) that should match code.
+Must not modify code, schemas, or content files.
+Must not audit single-component internals — stay at the boundaries; surface findings for owners.
+
+## Test Truth Auditor
+May read test files, corresponding implementation files (read-only reference), and run the test suite to observe results.
+Must not modify tests or implementation code.
+Must not add tests — recommend them; writing tests belongs to Test Engineer.
+
+## Audit Synthesizer
+May read all completed audit parcel outputs (component, seam, test) and the audit manifest.
+Must not audit code directly or generate new findings beyond cross-parcel synthesis.
+Must not modify code; the output is the verdict and the ranked action plan only.

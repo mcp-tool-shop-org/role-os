@@ -11,12 +11,12 @@
  * Key: current status. Value: array of allowed next statuses.
  */
 export const STEP_TRANSITIONS = {
-  pending:   ["active"],
+  pending:   ["active", "blocked"], // blocked: upstream failure or operator block
   active:    ["completed", "partial", "failed", "blocked"],
   completed: ["pending"],          // re-opened by escalation
   partial:   ["pending"],          // retried
   failed:    ["pending"],          // retried
-  blocked:   ["pending"],          // unblocked
+  blocked:   ["pending"],          // unblocked / retried / reopened
   skipped:   [],                   // terminal
 };
 

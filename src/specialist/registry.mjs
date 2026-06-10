@@ -199,6 +199,12 @@ function validateVersion(v, tag) {
   if (v.exam_centroid !== undefined && !Array.isArray(v.exam_centroid)) {
     errors.push(`${tag}: exam_centroid, if present, must be an array of numbers`);
   }
+  // ood_floor feeds defaultOodFn directly (gate.mjs): a string silently falls back to the 0.4
+  // default and a value outside cosine range disables routing entirely — both must fail loudly
+  // at load time, mirroring the R5 gate_threshold check.
+  if (v.ood_floor !== undefined && (typeof v.ood_floor !== "number" || !(v.ood_floor >= -1 && v.ood_floor <= 1))) {
+    errors.push(`${tag}: R5 — ood_floor, if present, must be a number in [-1, 1] (cosine range; got ${JSON.stringify(v.ood_floor)})`);
+  }
   return errors;
 }
 

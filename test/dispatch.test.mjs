@@ -30,7 +30,7 @@ feature
 // ── Tool profiles ─────────────────────────────────────────────────────────────
 
 describe("tool profiles", () => {
-  it("has profiles for all 54 roles", () => {
+  it("has profiles for every role in ROLE_CATALOG", () => {
     for (const role of ROLE_CATALOG) {
       assert.ok(
         TOOL_PROFILES[role.name],

@@ -14,6 +14,7 @@
 import { readFileSync, readdirSync, mkdirSync, copyFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -26,6 +27,17 @@ const LORA_STR = Number(argOf('--lora-strength', '0.8'));
 const SUFFIX = argOf('--suffix', '');
 const BRIEFS = join(HERE, 'briefs');
 const RENDERS = join(HERE, 'renders');
+
+// House-style staleness check (PIN_PER_STEP): the SHA-256 of the locked blocks is recorded
+// in house-style.json and stamped into briefs at authoring time. Warn when they diverge so
+// a re-render can't silently mix house styles.
+const HOUSE = JSON.parse(readFileSync(join(HERE, 'house-style.json'), 'utf8'));
+const HOUSE_SHA = createHash('sha256')
+  .update([HOUSE.blocks.style, HOUSE.blocks.framing, HOUSE.blocks.negative].join('\n'), 'utf8')
+  .digest('hex');
+if (HOUSE.sha && HOUSE.sha !== HOUSE_SHA) {
+  console.warn(`warn: house-style.json sha (${HOUSE.sha.slice(0, 12)}…) does not match its locked blocks (${HOUSE_SHA.slice(0, 12)}…) — a locked block was edited without bumping the hash.`);
+}
 
 // Chroma1-HD (FLUX-class): UNET + t5xxl(CLIPLoader type=chroma) + ae VAE, AuraFlow flow-shift,
 // CFGGuider + SamplerCustomAdvanced (euler / beta). Mirrors the verified Chroma workflow.
@@ -124,14 +136,16 @@ async function run() {
     const briefPath = join(BRIEFS, `${id}.portrait.json`);
     if (!existsSync(briefPath)) { console.error(`skip: no brief ${id}`); continue; }
     const b = JSON.parse(readFileSync(briefPath, 'utf8'));
+    if (b.provenance?.house_sha && b.provenance.house_sha !== HOUSE_SHA) {
+      console.warn(`warn: ${id} brief was frozen against house sha ${b.provenance.house_sha.slice(0, 12)}… (current ${HOUSE_SHA.slice(0, 12)}…) — rendering it reproduces the OLD house style.`);
+    }
     process.stdout.write(`rendering ${id} [${b.params.kind || 'sdxl'}] (seed ${b.params.seed}) ... `);
     try {
       const img = await wait(await submit(buildGraph(b)));
       const src = join(COMFY_OUT, img.subfolder || '', img.filename);
       const dst = join(RENDERS, `${id}${SUFFIX}.png`);
-      if (existsSync(src)) { copyFileSync(src, dst); console.log(`ok -> renders/${id}.png`); }
-      else { console.log(`done (ComfyUI: ${img.subfolder}/${img.filename}) — copy source not found at ${src}`); }
-      ok++;
+      if (existsSync(src)) { copyFileSync(src, dst); console.log(`ok -> renders/${id}${SUFFIX}.png`); ok++; }
+      else { console.log(`FAIL — rendered (ComfyUI: ${img.subfolder}/${img.filename}) but copy source not found at ${src}`); fail++; }
     } catch (e) { console.log('FAIL'); console.error('  ' + String(e.message || e).slice(0, 280)); fail++; }
   }
   console.log(`\ndone: ${ok} ok, ${fail} failed → ${RENDERS}`);

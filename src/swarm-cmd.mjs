@@ -5,8 +5,8 @@
  * roleos swarm manifest               Show the swarm manifest
  * roleos swarm manifest --generate    Auto-detect domains and generate manifest
  * roleos swarm status                 Show swarm run progress
- * roleos swarm findings               List all findings by severity
- * roleos swarm approve                Approve the current feature gate
+ * roleos swarm findings               List findings captured from wave reports
+ * roleos swarm approve                Approve the current user gate
  * roleos swarm verify                 Run Phase 9 final verification
  *
  * This is a first-class shortcut into the dogfood-swarm mission.
@@ -14,9 +14,9 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import {
-  createPersistentRun, listRuns, loadRun, getPosition,
+  createPersistentRun, listRuns, loadRun, getPosition, saveRun,
 } from "./run.mjs";
 import {
   generateSwarmManifest, validateSwarmManifest,
@@ -25,6 +25,19 @@ import {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const MANIFEST_FILE = "swarm-manifest.json";
+const DEFAULT_STAGES = ["health-a", "health-b", "health-c", "feature", "treatment"];
+
+/**
+ * Filter listRuns output down to swarm runs.
+ * missionKey is authoritative; task keywords cover legacy runs.
+ */
+function filterSwarmRuns(runs) {
+  return runs.filter(r =>
+    r.missionKey === "dogfood-swarm" ||
+    r.task.toLowerCase().includes("swarm") ||
+    r.task.toLowerCase().includes("dogfood")
+  );
+}
 
 // ── Main dispatch ────────────────────────────────────────────────────────────
 
@@ -60,7 +73,7 @@ export async function swarmCommand(args) {
 
 // ── roleos swarm [run] ──────────────────────────────────────────────────────
 
-function cmdRun(extraArgs) {
+async function cmdRun(extraArgs) {
   const cwd = process.cwd();
   const manifestPath = join(cwd, MANIFEST_FILE);
 
@@ -99,11 +112,18 @@ function cmdRun(extraArgs) {
     ? extraArgs.join(" ")
     : `Dogfood swarm of ${manifest.repo || "current repo"}`;
 
-  // Create persistent run via the dogfood-swarm mission
-  const run = createPersistentRun(taskDesc, cwd, { forceMission: "dogfood-swarm" });
+  // Create persistent run via the dogfood-swarm mission.
+  // Forwarding the manifest routes step construction through buildSwarmSteps,
+  // so steps carry stage/domain/gate metadata and scale with the domains.
+  const run = await createPersistentRun(taskDesc, cwd, {
+    forceMission: "dogfood-swarm",
+    manifest,
+  });
 
   const domainCount = manifest.domains?.length || 0;
-  const stageCount = manifest.stages?.length || 4;
+  const stages = Array.isArray(manifest.stages) && manifest.stages.length > 0
+    ? manifest.stages
+    : DEFAULT_STAGES;
 
   console.log(`\nDogfood Swarm Started`);
   console.log(`─────────────────────`);
@@ -111,18 +131,19 @@ function cmdRun(extraArgs) {
   console.log(`Repo:     ${manifest.repo || "unknown"}`);
   console.log(`Type:     ${manifest.repoType || "unknown"}`);
   console.log(`Domains:  ${domainCount}`);
-  console.log(`Stages:   ${stageCount} (health-a → health-b → health-c → feature)`);
+  console.log(`Stages:   ${stages.length} (${stages.join(" → ")})`);
   console.log(`Steps:    ${run.steps.length}`);
   console.log(`\nDomain Agents:`);
   for (const d of manifest.domains || []) {
     console.log(`  - ${d.id}: ${d.role} (${d.patterns.length} patterns)`);
   }
   console.log(`\nStage Pipeline:`);
-  console.log(`  1. Health-A  Bug/Security Fix     (loop until 0 CRITICAL + 0 HIGH)`);
-  console.log(`  2. Health-B  Proactive Hardening   (user review gate)`);
-  console.log(`  3. Health-C  Humanization          (loop until 0 CRITICAL + 0 HIGH)`);
-  console.log(`  4. Feature   Capability Audit      (user approval gate)`);
-  console.log(`  5. Final     Synthesis + Verdict`);
+  console.log(`  1. Health-A   Bug/Security Fix      (loop until 0 CRITICAL + 0 HIGH)`);
+  console.log(`  2. Health-B   Proactive Hardening   (user review gate)`);
+  console.log(`  3. Health-C   Humanization          (loop until 0 CRITICAL + 0 HIGH)`);
+  console.log(`  4. Feature    Capability Audit      (user approval gate)`);
+  console.log(`  5. Treatment  Full Treatment        (shipcheck, docs, handbook — user gate)`);
+  console.log(`  6. Final      Synthesis + Verdict`);
   console.log(`\nRun 'roleos next' to begin the first wave.`);
   console.log(`Run 'roleos swarm status' to check progress.\n`);
 }
@@ -209,11 +230,7 @@ function generateManifestFile(cwd, manifestPath) {
 
 function cmdStatus() {
   const cwd = process.cwd();
-  const runs = listRuns(cwd);
-  const swarmRuns = runs.filter(r =>
-    r.task.toLowerCase().includes("swarm") ||
-    r.task.toLowerCase().includes("dogfood")
-  );
+  const swarmRuns = filterSwarmRuns(listRuns(cwd));
 
   if (swarmRuns.length === 0) {
     console.log("\nNo swarm runs found. Start one with: roleos swarm\n");
@@ -258,11 +275,7 @@ function cmdStatus() {
 
 function cmdFindings() {
   const cwd = process.cwd();
-  const runs = listRuns(cwd);
-  const swarmRuns = runs.filter(r =>
-    r.task.toLowerCase().includes("swarm") ||
-    r.task.toLowerCase().includes("dogfood")
-  );
+  const swarmRuns = filterSwarmRuns(listRuns(cwd));
 
   if (swarmRuns.length === 0) {
     console.log("\nNo swarm runs found.\n");
@@ -275,12 +288,22 @@ function cmdFindings() {
     return;
   }
 
-  // Extract findings from wave-report artifacts
+  // Extract findings from wave-report artifacts.
+  // step.artifact is usually a short reference (often a file path) — when it
+  // points at a readable file, scan the file content instead of the reference.
   const findings = [];
   for (const step of full.steps) {
     if (step.produces === "wave-report" && step.artifact) {
-      // Try to parse findings from artifact
-      const match = step.artifact.match(/## findings\n([\s\S]*?)(?=\n## |$)/i);
+      let body = step.artifact;
+      try {
+        const artifactPath = resolve(cwd, step.artifact);
+        if (existsSync(artifactPath)) {
+          body = readFileSync(artifactPath, "utf-8");
+        }
+      } catch { /* not a readable file — treat the reference as inline content */ }
+
+      // Normalize line endings so CRLF artifacts parse on Windows checkouts
+      const match = body.replace(/\r\n/g, "\n").match(/## findings\n([\s\S]*?)(?=\n## |$)/i);
       if (match) {
         findings.push({
           domain: step.domain || "unknown",
@@ -292,7 +315,9 @@ function cmdFindings() {
   }
 
   if (findings.length === 0) {
-    console.log("\nNo findings captured yet. Run waves first.\n");
+    console.log("\nNo findings captured yet. Run waves first.");
+    console.log("Findings are read from each wave-report artifact's '## Findings' section");
+    console.log("(complete steps with a wave-report file path to make them scannable).\n");
     return;
   }
 
@@ -309,11 +334,7 @@ function cmdFindings() {
 
 function cmdApprove() {
   const cwd = process.cwd();
-  const runs = listRuns(cwd);
-  const swarmRuns = runs.filter(r =>
-    r.task.toLowerCase().includes("swarm") ||
-    r.task.toLowerCase().includes("dogfood")
-  );
+  const swarmRuns = filterSwarmRuns(listRuns(cwd));
 
   if (swarmRuns.length === 0) {
     console.log("\nNo swarm runs found.\n");
@@ -326,9 +347,10 @@ function cmdApprove() {
     return;
   }
 
-  // Find the next gate step waiting for approval
+  // Find the next gate step waiting for approval (not yet approved)
   const gateStep = full.steps.find(s =>
-    s.isGate && s.userApproval && s.status === "active"
+    s.isGate && s.userApproval && s.status === "active" &&
+    s.userApprovalStatus !== "approved"
   );
 
   if (!gateStep) {
@@ -337,8 +359,26 @@ function cmdApprove() {
     return;
   }
 
-  console.log(`\nApproved: ${gateStep.stage} gate`);
-  console.log(`The swarm will proceed to the next stage.\n`);
+  // Record the approval on the persisted run — an approval that isn't
+  // saved is not a control.
+  const approvedAt = new Date().toISOString();
+  gateStep.userApprovalStatus = "approved";
+  gateStep.approvedAt = approvedAt;
+  gateStep.note = gateStep.note
+    ? `${gateStep.note}; user approved ${gateStep.stage} gate`
+    : `User approved ${gateStep.stage} gate`;
+  full.interventions = full.interventions || [];
+  full.interventions.push({
+    type: "gate-approval",
+    stepIndex: gateStep.index,
+    stage: gateStep.stage,
+    timestamp: approvedAt,
+  });
+  saveRun(cwd, full);
+
+  console.log(`\nApproved: ${gateStep.stage} gate (recorded at ${approvedAt})`);
+  console.log(`The swarm will proceed to the next stage.`);
+  console.log(`Complete the gate step with 'roleos complete <swarm-gate-artifact>' to advance.\n`);
 }
 
 // ── roleos swarm verify ─────────────────────────────────────────────────────
@@ -358,10 +398,13 @@ function cmdVerify() {
   console.log(`\nSwarm Verification`);
   console.log(`──────────────────`);
 
+  let healthy = true;
+
   // 1. Manifest valid
   if (validation.valid) {
     console.log(`  [PASS] Manifest is valid`);
   } else {
+    healthy = false;
     console.log(`  [FAIL] Manifest has ${validation.issues.length} issue(s)`);
     for (const i of validation.issues) console.log(`         - ${i}`);
   }
@@ -371,15 +414,12 @@ function cmdVerify() {
   if (domainCount >= 1 && domainCount <= 10) {
     console.log(`  [PASS] ${domainCount} domains (within 1-10 range)`);
   } else {
+    healthy = false;
     console.log(`  [FAIL] ${domainCount} domains (must be 1-10)`);
   }
 
   // 3. Check for swarm run
-  const runs = listRuns(cwd);
-  const swarmRuns = runs.filter(r =>
-    r.task.toLowerCase().includes("swarm") ||
-    r.task.toLowerCase().includes("dogfood")
-  );
+  const swarmRuns = filterSwarmRuns(listRuns(cwd));
 
   if (swarmRuns.length > 0) {
     const latest = swarmRuns[0];
@@ -393,7 +433,8 @@ function cmdVerify() {
     console.log(`  [INFO] No swarm runs yet — run 'roleos swarm' to start`);
   }
 
-  console.log("");
+  console.log(`\n${healthy ? "Swarm infrastructure verified." : "Verification failed — fix the issues above and re-run."}\n`);
+  if (!healthy) process.exit(1);
 }
 
 // ── Help ────────────────────────────────────────────────────────────────────
@@ -407,16 +448,17 @@ Usage:
   roleos swarm manifest            Show the swarm manifest
   roleos swarm manifest --generate Auto-detect domains and generate manifest
   roleos swarm status              Show swarm run progress
-  roleos swarm findings            List all findings by severity
-  roleos swarm approve             Approve the current feature gate
+  roleos swarm findings            List findings captured from wave reports
+  roleos swarm approve             Approve the current user gate
   roleos swarm verify              Verify manifest and run state
   roleos swarm help                Show this help
 
-The swarm runs 4 stages in sequence:
+The swarm runs 5 stages in sequence:
   1. Health-A   Bug/Security Fix      (loops until 0 CRITICAL + 0 HIGH)
   2. Health-B   Proactive Hardening   (user review gate)
   3. Health-C   Humanization          (loops until 0 CRITICAL + 0 HIGH)
   4. Feature    Capability Audit      (user approval before execution)
+  5. Treatment  Full Treatment        (shipcheck, docs, handbook — user gate)
 
 Each stage dispatches parallel domain agents with exclusive file ownership.
 A build gate (lint + typecheck + test) runs after every wave.

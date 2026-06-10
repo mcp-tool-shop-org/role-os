@@ -1,4 +1,7 @@
 import type { SiteConfig } from '@mcptoolshop/site-theme';
+import pkg from '../../package.json';
+
+const minorVersion = `v${pkg.version.split('.').slice(0, 2).join('.')}`;
 
 export const config: SiteConfig = {
   title: 'Role OS',
@@ -6,18 +9,18 @@ export const config: SiteConfig = {
   logoBadge: 'RO',
   brandName: 'role-os',
   repoUrl: 'https://github.com/mcp-tool-shop-org/role-os',
-  npmUrl: 'https://www.npmjs.com/package/@mcptoolshop/role-os',
+  npmUrl: 'https://www.npmjs.com/package/role-os',
   footerText: 'MIT Licensed — built by <a href="https://mcp-tool-shop.github.io/" style="color:var(--color-muted);text-decoration:underline">MCP Tool Shop</a>',
 
   hero: {
-    badge: 'v2.7',
+    badge: minorVersion,
     headline: 'Role OS',
     headlineAccent: 'contracts over vibes.',
     description: 'A repo-native operating layer that prevents drift, false completion, and contamination through role contracts, structured handoffs, and truthful review.',
     primaryCta: { href: '#usage', label: 'Get started' },
     secondaryCta: { href: 'handbook/', label: 'Read the Handbook' },
     previews: [
-      { label: 'Install', code: 'npx @mcptoolshop/role-os init' },
+      { label: 'Install', code: 'npx role-os init' },
       { label: 'Create', code: 'roleos packet new feature' },
       { label: 'Review', code: 'roleos review packet.md accept' },
     ],
@@ -40,7 +43,7 @@ export const config: SiteConfig = {
       id: 'usage',
       title: 'Quick start',
       cards: [
-        { title: 'Bootstrap', code: 'npx @mcptoolshop/role-os init\n\n# Fill context/ files for your project\n# Then create your first packet' },
+        { title: 'Bootstrap', code: 'npx role-os init\n\n# Fill context/ files for your project\n# Then create your first packet' },
         { title: 'Feature packet', code: 'roleos packet new feature\nroleos route packets/my-feature.md\n# Work through the chain\nroleos review packets/my-feature.md accept' },
         { title: 'Budget-aware dispatch (opt-in)', code: 'export ROLEOS_BUDGET_CONSULT=1\n# attaches an advisory spend forecast to each dispatch step\n# fail-open, never blocks. Off by default.' },
       ],

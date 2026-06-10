@@ -5,7 +5,11 @@
  * pairwise distinct. Usage: node apply-tuning-fixes.mjs <verifier-output-or-corrections.json>
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-const TUNED = 'E:/AI/role-os/dossier/aptitude-tuned.json';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const TUNED = join(HERE, 'aptitude-tuned.json');
 const AX = ['rigor', 'pace', 'range', 'skepticism', 'autonomy', 'candor'];
 const clamp = (v) => Math.max(0, Math.min(5, Math.round(Number(v))));
 const key = (o) => AX.map((a) => o[a]).join('-');

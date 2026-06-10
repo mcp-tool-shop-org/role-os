@@ -94,7 +94,6 @@ export async function runCommand(args) {
   }
 
   // roleos run "<task>"
-  const task = args.join(" ");
   const opts = {};
 
   // Parse --mission= and --pack= flags

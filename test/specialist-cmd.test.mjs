@@ -7,7 +7,7 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { execSync } from "node:child_process";
+import { execSync, execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -30,17 +30,31 @@ function tmpDir() {
   };
 }
 
-/** Run roleos with env pointing to the tmp dir. */
+/**
+ * Run roleos with env pointing to the tmp dir.
+ * Accepts a string (shell-parsed) or an args array (execFileSync, no shell parsing —
+ * required for multi-word values like --reason on Windows, where single quotes
+ * are not quote characters in cmd.exe).
+ */
 function run(paths, args, opts = {}) {
+  const env = {
+    ...process.env,
+    ROLEOS_SPECIALISTS_PATH: paths.registry,
+    ROLEOS_SPECIALIST_STATE_PATH: paths.state,
+    ROLEOS_SPECIALIST_EVENTS_PATH: paths.events,
+  };
+  if (Array.isArray(args)) {
+    return execFileSync("node", [BIN, "specialist", ...args], {
+      encoding: "utf8",
+      timeout: 15000,
+      env,
+      ...opts,
+    });
+  }
   return execSync(`node "${BIN}" specialist ${args}`, {
     encoding: "utf8",
     timeout: 15000,
-    env: {
-      ...process.env,
-      ROLEOS_SPECIALISTS_PATH: paths.registry,
-      ROLEOS_SPECIALIST_STATE_PATH: paths.state,
-      ROLEOS_SPECIALIST_EVENTS_PATH: paths.events,
-    },
+    env,
     ...opts,
   });
 }
@@ -347,11 +361,13 @@ describe("roleos specialist clear-halt", () => {
           },
         },
       }), "utf8");
-      const out = run(paths, "clear-halt Verifier --operator mike --reason 'reviewed false alarm'");
+      const out = run(paths, ["clear-halt", "Verifier", "--operator", "mike", "--reason", "reviewed false alarm"]);
       assert.match(out, /cleared halt for "Verifier"/);
       const events = readFileSync(paths.events, "utf8");
       assert.match(events, /"kind":"clear-halt"/);
       assert.match(events, /"operator":"mike"/);
+      // The multi-word reason must arrive intact (no shell mangling on Windows).
+      assert.match(events, /"reason":"reviewed false alarm"/);
     } finally { cleanup(); }
   });
 });
