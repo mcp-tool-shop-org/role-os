@@ -1,6 +1,6 @@
 # Workflow: Protect Bootstrap Truth
 
-> **Freshness:** re-verified 2026-06-10 against role-os v2.9.0. All counts in this workflow
+> **Freshness:** re-verified 2026-06-10 against role-os v2.9.1. All counts in this workflow
 > are DERIVED from source at review time, never inlined — if you find a hardcoded count here
 > or in any synchronized surface, treat it as drift and fix it against the source of truth.
 
@@ -40,7 +40,7 @@ derived at review time — never compare against a number written in a doc:
 - [ ] `src/init.mjs` resolves starter-pack from `__dirname/../starter-pack` (no invented paths)
 - [ ] `src/fs-utils.mjs:copyDirSafe()` still skips existing files (never overwrites)
 - [ ] No new dependency added to package.json
-- [ ] `npm test` passes the full suite (1404 tests / 59 files at v2.9.0 — derive the current count from the run output, do not pin it)
+- [ ] `npm test` passes the full suite (1435 tests / 65 files at v2.9.1 — derive the current count from the run output, do not pin it)
 - [ ] `npm run verify` exits 0
 - [ ] Version claims match `package.json` (never a hardcoded version string)
 - [ ] No canonical memory duplication introduced (no local re-implementation of `memory/` content)

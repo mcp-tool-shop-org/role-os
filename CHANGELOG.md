@@ -1,5 +1,42 @@
 # Changelog
 
+## 2.9.1
+
+### Fixed — health pass (134 verified findings, adversarially confirmed)
+
+- **`roleos swarm` and `roleos audit` work again.** Both crashed on every invocation (unawaited
+  async run creation printing `Run: undefined` then a TypeError). The validated manifest now
+  actually drives run construction: swarm runs carry stage/domain/gate metadata (status groups by
+  stage, `swarm approve` finds and persists gate approvals), audit runs scale 2N+K+3 with the
+  manifest's components instead of a static 6 steps.
+- **Pack-level runs are built from real roles.** Steps derive from `getPackRoles` instead of
+  parsing `chainOrder` prose — every step role is a catalog name, artifacts resolve by role lookup,
+  and the final review gate is restored (Critic Reviewer → `verdict` for 9 packs, Judge →
+  `judge-report` for brainstorm).
+- **Reject verdicts route to the producing role,** parsed from the packet's `## Assigned Role`
+  (was: routed back to the reviewer).
+- **Specialist quota window actually slides.** Route-tagged window (state schema v2, tolerant
+  migration): no more permanent specialist lockout after `windowSize` dispatches. Citation gate
+  counts distinct identifiers, so the house "arXiv ID + URL" format no longer flags as
+  multi-source. Generated capability-gate hook is self-contained (worked only in dev checkouts
+  before; silent catches replaced with one-time warnings; fail-closed exit 2 preserved).
+- **Docs tell the truth again.** README quick start gains the missing install step; role table sums
+  to 61; threat model names the three opt-in network paths (SECURITY.md supported versions → 2.x);
+  agent-facing `.claude/context` law rewritten from v1.0-era invariants to v2.9 truth with
+  freshness headers; landing page + handbook install commands point at the real unscoped `role-os`
+  package (the scoped name 404'd); handbook counts source-verified; starter-pack genericized
+  (39 contracts documented, 7 missing routing entries + 4 permission blocks added); release
+  workflow npm pinned on the OIDC path.
+- 6 new regression suites pin the above as contracts. Suite: 1404 → **1435 tests (1432 pass,
+  3 deliberate skips), 0 fail.**
+
+### Added
+
+- **`design/specialists-layer.md`** — design lock for the specialists progression layer
+  (athletic-certification register: grade bands, the Record, cross-training, techniques, operating
+  profiles, form). Research-grounded by a 40-finding study-swarm; grounding marked provisional
+  pending family-different citation verification. Implementation lands in future minors.
+
 ## 2.9.0
 
 ### Added

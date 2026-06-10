@@ -96,11 +96,11 @@ Role OS verifica y controla las llamadas a herramientas en el punto `PreToolUse`
 - **Monitor de conformidad** (asesoramiento, permite el acceso por defecto) — un esquema determinista + comprobaciones de contrato computables verifican una llamada propuesta con respecto a su contrato de herramienta catalogado y adjuntan un veredicto asesor sobre una llamada *comprobada* como no conforme; nunca bloquea. Un límite opcional para LLM (`ROLEOS_CONFORMANCE_CONSULT`) gestiona el residuo genuinamente semántico.
 - **Control de capacidades** (bloquea por defecto, `ROLEOS_CAPABILITY_GATE` opcional, desactivado por defecto) — control determinista del principio de mínimo privilegio en acciones *irreversibles* (publicación en npm/PyPI, `gh release`, `git push`, edición de repositorios, despliegue de Pages). Se deniega una acción controlada a menos que el administrador haya concedido su capacidad en `.claude/role-os/capabilities.json`, por lo que un paso incorrecto (un error honesto o uno provocado) no puede desencadenar una acción irreversible no autorizada. El complemento preventivo de la regla del compensador nombrado. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/).
 
-## Expediente de la tripulación
+## Expediente del equipo
 
-Cada rol tiene un **expediente**, una ficha de personaje que también sirve como configuración para el tiempo de ejecución. Seis aptitudes (Rigurosidad, Ritmo, Alcance, Escepticismo, Autonomía, Sinceridad) se corresponden con parámetros reales; una capa de **disposición** de ocho arquetipos (Escéptico, Constructor, Investigador, Rebelde…) incluye una instrucción conductual; y cada rol tiene un retrato pintado y una calificación. Consulte toda la tripulación como una galería (`dossier/dossier.html`); el radar de cada rol muestra su configuración ajustada en comparación con su ideal canónico.
+Cada rol tiene un **expediente**, una ficha de personaje que también sirve como configuración para el tiempo de ejecución. Seis aptitudes (Rigidez, Ritmo, Alcance, Escepticismo, Autonomía, Franqueza) se corresponden con parámetros reales; una capa de **disposición** de ocho arquetipos (Escéptico, Constructor, Investigador, Iconoclasta…) incluye una instrucción conductual; y cada rol tiene un retrato pintado y una calificación. Consulte todo el equipo como una galería (`dossier/dossier.html`); el radar de cada rol muestra su configuración ajustada en comparación con su ideal canónico.
 
-Cuando un rol tiene un expediente, el sistema inyecta una **postura operativa**, que es la instrucción conductual de la disposición más una línea de postura de las aptitudes del rol; así, la ficha realmente configura el rol. Es opcional y aditivo: los roles sin un expediente se comportan exactamente como antes. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).
+Cuando un rol tiene un expediente, la herramienta inyecta una **postura operativa**, que es la instrucción conductual de la disposición más una línea de postura de las aptitudes del rol, por lo que la ficha realmente configura el rol. Es opcional y aditivo: los roles sin un expediente se comportan exactamente como antes. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).
 
 ## Estado de la implementación a nivel de organización
 
@@ -120,18 +120,21 @@ La **verificación final** es la puerta de control de calidad de 31 elementos qu
 
 Orden: verificación final primero, luego tratamiento completo. No se lanzará la versión 1.0.0 sin superar las puertas de control obligatorias.
 
-## 61 roles en 10 paquetes
+## El catálogo de 61 roles
 
-| Paquete | Roles |
-|------|-------|
-| **Core** (3) | Orquestador, estratega de producto, revisor crítico |
+El catálogo agrupa sus 61 roles en 11 familias. (La herramienta utiliza un conjunto separado de 10 **paquetes de equipo** —características, corrección de errores, seguridad, documentación, lanzamiento, investigación, tratamiento, auditoría exhaustiva, lluvia de ideas, trabajo en equipo— que toman roles de estas familias).
+
+| Familia | Roles |
+|--------|-------|
+| **Core** (2) | Orquestador, Crítico |
+| **Product** (4) | Estratega de producto, Sintetizador de comentarios, Priorizador de la hoja de ruta, Redactor de especificaciones |
 | **Engineering** (7) | Desarrollador frontend, ingeniero backend, ingeniero de pruebas, ingeniero de refactorización, ingeniero de rendimiento, auditor de dependencias, revisor de seguridad |
 | **Design** (2) | Diseñador de UI, guardián de la marca |
 | **Marketing** (1) | Redactor de textos de lanzamiento |
 | **Treatment** (7) | Investigador de repositorios, traductor de repositorios, arquitecto de documentación, curador de metadatos, auditor de cobertura, verificador de implementación, ingeniero de lanzamiento |
-| **Product** (3) | Sintetizador de comentarios, priorizador de la hoja de ruta, redactor de especificaciones |
 | **Research** (4) | Investigador de UX, analista de la competencia, investigador de tendencias, sintetizador de entrevistas con usuarios |
 | **Growth** (4) | Estratega de lanzamiento, estratega de contenido, gestor de la comunidad, responsable de la gestión de incidencias de soporte |
+| **Brainstorm** (19) | Explorador de contexto, Explorador del valor para el usuario, Explorador de ideas creativas, Explorador de mecánicas, Explorador de mercado, Explorador disidente, Explorador de viabilidad, Explorador de estándares de calidad, Analista de contexto, Analista del valor para el usuario, Analista de mecánicas, Analista de posicionamiento, Analista disidente, Normalizador, Sintetizador, Ampliador de productos, Ampliador de escenarios, Ampliador de ventajas competitivas, Juez |
 | **Deep Audit** (4) | Auditor de componentes, auditor de la verdad de las pruebas, auditor de las uniones, sintetizador de auditorías |
 | **Swarm** (7) | Coordinador de la colmena, agente backend de la colmena, agente puente de la colmena, agente de pruebas de la colmena, agente de infraestructura de la colmena, agente frontend de la colmena, sintetizador de la colmena |
 
@@ -140,7 +143,13 @@ Cada rol tiene un contrato completo: misión, cuándo usar, cuándo no usar, ent
 ## Inicio rápido
 
 ```bash
-npx role-os init
+# Install (puts `roleos` on your PATH):
+npm install -g role-os
+
+# Scaffold the role spine into your repo:
+roleos init
+# (one-off alternative without installing: `npx role-os init`,
+#  then prefix every command below with `npx role-os` instead of `roleos`)
 
 # Describe what you need — Role OS picks the right level:
 roleos run "fix the crash in save handler"
@@ -262,13 +271,21 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1150 tests across 37 test files
+  test/                        ← 1435 tests across 65 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Seguridad
 
-Role OS opera **solo localmente**. Copia las plantillas de Markdown y escribe los archivos de paquetes/verdictos en el directorio `.claude/` de su repositorio. No accede a la red, no gestiona secretos ni recopila datos de telemetría. No realiza operaciones peligrosas: todos los archivos se escriben utilizando la opción "omitir si existe" de forma predeterminada. Consulte [SECURITY.md](SECURITY.md) para obtener la política completa.
+De forma predeterminada, Role OS opera solo en el **sistema de archivos local**. Copia plantillas Markdown y escribe archivos de paquetes/verdictos/ejecución en el directorio `.claude/` de su repositorio. El funcionamiento predeterminado no realiza solicitudes de red, no gestiona secretos y no recopila datos de telemetría. No se realizan operaciones peligrosas; todas las escrituras de archivos utilizan la opción "omitir si existe" de forma predeterminada.
+
+Tres **funciones opcionales** acceden a la red cuando las habilita explícitamente:
+
+- **`roleos verify-citations`**: ejecuta comandos en la herramienta externa `prism`, que resuelve los identificadores de citas con las API públicas de arXiv/Crossref (envía los ID/URL de las citas que se están verificando).
+- **Nivel de especialista** (`roleos specialist`, roles registrados): envía indicaciones a la herramienta al `backend_url` que configure en `.role-os/specialists.json` (normalmente, un punto final de modelo local).
+- **Consulta de presupuesto/conformidad** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`): envía el contexto del paso/llamada a la herramienta a un modelo local a través de HTTP para obtener una opinión.
+
+Las tres están desactivadas por defecto y, en caso de fallo, recurren al comportamiento determinista local. Consulte [SECURITY.md](SECURITY.md) para conocer la política completa.
 
 ## El sistema operativo
 

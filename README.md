@@ -271,7 +271,7 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1404 tests across 59 test files
+  test/                        ← 1435 tests across 65 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 

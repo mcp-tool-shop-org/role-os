@@ -33,10 +33,10 @@
 
 ## C. Operator Docs
 
-- [x] `[all]` README is current: what it does, install, usage, supported platforms + runtime versions (2026-06-10) — install step added, role table sums to 61, test count 1404/59; English source only — locale READMEs regenerate at next translation pass. NOTE: README-touching releases invalidate this check date.
+- [x] `[all]` README is current: what it does, install, usage, supported platforms + runtime versions (2026-06-10) — install step added, role table sums to 61, test count 1435/65; locale READMEs regenerated 2026-06-10 from the fixed source. NOTE: README-touching releases invalidate this check date.
 - [x] `[all]` CHANGELOG.md (Keep a Changelog format) (2026-03-24)
 - [x] `[all]` LICENSE file present and repo states support status (2026-03-24)
-- [x] `[cli]` `--help` output accurate for all commands and flags (2026-03-24)
+- [x] `[cli]` `--help` output accurate for all commands and flags (2026-06-10 — `init claude` + `doctor` now listed; re-verified against bin/roleos.mjs help)
 - [ ] `[cli|mcp|desktop]` SKIP: no logging levels — CLI outputs structured results or plain text, no log framework
 - [ ] `[mcp]` SKIP: not an MCP server
 - [ ] `[complex]` SKIP: not a complex tool with operational surface
@@ -44,7 +44,7 @@
 ## D. Shipping Hygiene
 
 - [x] `[all]` `verify` script exists (test + build + smoke in one command) (2026-03-24)
-- [x] `[all]` Version in manifest matches git tag (2026-06-09) — package.json 2.9.0 == release tag v2.9.0
+- [x] `[all]` Version in manifest matches git tag (2026-06-10) — package.json 2.9.1 == release tag v2.9.1
 - [x] `[all]` Dependency scanning runs in CI (ecosystem-appropriate) (2026-03-24) — zero runtime deps, npm audit in CI
 - [ ] `[all]` SKIP: no runtime dependencies to update — zero-dependency CLI
 - [x] `[npm]` `npm pack --dry-run` includes: dist/, README.md, CHANGELOG.md, LICENSE (2026-03-24) — includes bin/, src/, starter-pack/

@@ -6503,6 +6503,349 @@
       "timestamp": 1781006103054,
       "source": "When a role has a dossier, dispatch injects an **Operating Posture** — the disposition's behavioral instruction plus a posture line from the role's aptitudes — so the sheet actually configures the role. Opt-in and additive: roles without a dossier behave exactly as before. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).\r",
       "targetLang": "pt"
+    },
+    "620a2518574a8439": {
+      "translation": "クルーの資料",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "Crew dossier",
+      "targetLang": "ja"
+    },
+    "0e0c364ce5c68219": {
+      "translation": "各役割には、実行時の設定としても機能する「**資料**」があります。これはキャラクターシートです。6つの能力（厳格さ、ペース、範囲、懐疑心、自律性、率直さ）は、実際の割り当てノブに対応しています。8つのアーキタイプに基づく「**性格特性**」（懐疑的な人、建設者、調査員、異端者など）には、行動指示が含まれており、各役割には描かれた肖像画と評価が与えられます。クルー全体をギャラリーとして参照できます（`dossier/dossier.html`）。各役割のレーダーには、その調整されたビルドと理想的な状態との比較が表示されます。",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "Every role has a **dossier** — a character sheet that doubles as run-time config. Six aptitudes (Rigor, Pace, Range, Skepticism, Autonomy, Candor) map to real dispatch knobs; an eight-archetype **disposition** layer (Skeptic, Builder, Investigator, Maverick…) carries a behavioral instruction; and each role has a painted portrait and a grade. Browse the whole crew as a gallery (`dossier/dossier.html`) — each role's radar shows its tuned build against its canonical ideal.\r",
+      "targetLang": "ja"
+    },
+    "447c24ff000354b6": {
+      "translation": "役割に資料がある場合、割り当てプロセスは「**運用姿勢**」を注入します。これは、性格特性の行動指示と、役割の能力からの姿勢ラインで構成され、実際に役割を設定します。オプションで追加できます。資料を持たない役割は、以前と同様に動作します。[ハンドブック](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/)を参照してください。",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "When a role has a dossier, dispatch injects an **Operating Posture** — the disposition's behavioral instruction plus a posture line from the role's aptitudes — so the sheet actually configures the role. Opt-in and additive: roles without a dossier behave exactly as before. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).\r",
+      "targetLang": "ja"
+    },
+    "5740a8f77603a4bd": {
+      "translation": "61の役割カタログ",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "The 61-role catalog",
+      "targetLang": "ja"
+    },
+    "e80b2ad8bbacd920": {
+      "translation": "このカタログは、61の役割を11のファミリーに分類しています。（割り当てプロセスでは、別の10種類の「**チームパック**」（機能、バグ修正、セキュリティ、ドキュメント、リリース、調査、治療、詳細監査、ブレインストーミング、スウォーム）を使用します。これらのチームパックは、上記のファミリーから役割を選択します。）",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "The catalog groups its 61 roles into 11 families. (Dispatch uses a separate set of 10 **team packs** — feature, bugfix, security, docs, launch, research, treatment, deep-audit, brainstorm, swarm — which draw roles from these families.)\r",
+      "targetLang": "ja"
+    },
+    "8e6c47d2e4cd3a9c": {
+      "translation": "ファミリー",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "Family",
+      "targetLang": "ja"
+    },
+    "f26eb3b55f168042": {
+      "translation": "オーケストレーター、批判的レビュー担当者",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "Orchestrator, Critic Reviewer",
+      "targetLang": "ja"
+    },
+    "42ba12e2ce6951eb": {
+      "translation": "製品戦略家、フィードバック統合担当者、ロードマップ優先順位付け担当者、仕様書作成者",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "Product Strategist, Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "ja"
+    },
+    "47995d087444b424": {
+      "translation": "コンテキスト調査員、ユーザー価値調査員、創造的な飛躍調査員、メカニズム調査員、市場調査員、異端調査員、実現可能性調査員、品質基準調査員、コンテキストアナリスト、ユーザー価値アナリスト、メカニズムアナリスト、ポジショニングアナリスト、異端アナリスト、正規化担当者、統合担当者、製品拡張担当者、シナリオ拡張担当者、競争優位性拡張担当者、審査官",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "Context Scout, User Value Scout, Creative Leap Scout, Mechanics Scout, Market Scout, Contrarian Scout, Feasibility Scout, Quality Bar Scout, Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Contrarian Analyst, Normalizer, Synthesizer, Product Expander, Scenario Expander, Moat Expander, Judge",
+      "targetLang": "ja"
+    },
+    "8847ac6bc9cc2fbd": {
+      "translation": "デフォルトでは、Role OSは**ローカルファイルシステムでのみ**動作します。マークダウンテンプレートをコピーし、パケット/評価/実行ファイルをリポジトリの`.claude/`ディレクトリに書き込みます。デフォルトの操作では、ネットワーク要求を行わず、機密情報を処理せず、テレメトリーデータを収集しません。危険な操作は行われず、すべてのファイルへの書き込みは、デフォルトで「存在する場合はスキップ」されます。",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "By default, Role OS operates on the **local filesystem only**. It copies markdown templates and writes packet/verdict/run files to your repository's `.claude/` directory. Default operation makes no network requests, handles no secrets, and collects no telemetry. No dangerous operations — all file writes use skip-if-exists by default.\r",
+      "targetLang": "ja"
+    },
+    "f761fbe96bb88bd0": {
+      "translation": "3つの**オプション機能**があり、これらを明示的に有効にするとネットワークにアクセスします。",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "Three **opt-in** features touch the network when you explicitly enable them:\r",
+      "targetLang": "ja"
+    },
+    "92243ee79980f28b": {
+      "translation": "- **`roleos verify-citations`** — 外部の`prism` CLIを実行し、公開されているarXiv/Crossref APIに対して引用識別子を解決します（検証中の引用ID/URLを送信します）。\n- **スペシャリストティア** (`roleos specialist`, 登録された役割) — `.role-os/specialists.json`で設定した`backend_url`に割り当てプロンプトをPOSTします（通常はローカルモデルのエンドポイントです）。\n- **予算/適合性コンサルテーション** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — ステップ/ツール呼び出しのコンテキストをHTTP経由でローカルモデルに送信し、助言的な評価を受けます。",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "- **`roleos verify-citations`** — shells out to the external `prism` CLI, which resolves citation identifiers against public arXiv/Crossref APIs (sends the citation IDs/URLs being verified).\r\n- **Specialist tier** (`roleos specialist`, registered roles) — POSTs dispatch prompts to the `backend_url` you configure in `.role-os/specialists.json` (typically a local model endpoint).\r\n- **Budget / conformance consult** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — sends the step/tool-call context to a local model over HTTP for an advisory verdict.\r",
+      "targetLang": "ja"
+    },
+    "40e73b5848b517fc": {
+      "translation": "これら3つはすべてデフォルトではオフになっており、ローカルでの決定論的動作にフォールバックします。[SECURITY.md](SECURITY.md)には、完全なポリシーが記載されています。",
+      "model": "translategemma:27b",
+      "timestamp": 1781082846189,
+      "source": "All three are off by default and fail open to local deterministic behavior. See [SECURITY.md](SECURITY.md) for the full policy.\r",
+      "targetLang": "ja"
+    },
+    "9484c90b252549a1": {
+      "translation": "Expediente del equipo",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "Crew dossier",
+      "targetLang": "es"
+    },
+    "9af440d1ed525745": {
+      "translation": "Cada rol tiene un **expediente**, una ficha de personaje que también sirve como configuración para el tiempo de ejecución. Seis aptitudes (Rigidez, Ritmo, Alcance, Escepticismo, Autonomía, Franqueza) se corresponden con parámetros reales; una capa de **disposición** de ocho arquetipos (Escéptico, Constructor, Investigador, Iconoclasta…) incluye una instrucción conductual; y cada rol tiene un retrato pintado y una calificación. Consulte todo el equipo como una galería (`dossier/dossier.html`); el radar de cada rol muestra su configuración ajustada en comparación con su ideal canónico.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "Every role has a **dossier** — a character sheet that doubles as run-time config. Six aptitudes (Rigor, Pace, Range, Skepticism, Autonomy, Candor) map to real dispatch knobs; an eight-archetype **disposition** layer (Skeptic, Builder, Investigator, Maverick…) carries a behavioral instruction; and each role has a painted portrait and a grade. Browse the whole crew as a gallery (`dossier/dossier.html`) — each role's radar shows its tuned build against its canonical ideal.\r",
+      "targetLang": "es"
+    },
+    "640462007be5a92b": {
+      "translation": "Cuando un rol tiene un expediente, la herramienta inyecta una **postura operativa**, que es la instrucción conductual de la disposición más una línea de postura de las aptitudes del rol, por lo que la ficha realmente configura el rol. Es opcional y aditivo: los roles sin un expediente se comportan exactamente como antes. Consulte el [manual](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "When a role has a dossier, dispatch injects an **Operating Posture** — the disposition's behavioral instruction plus a posture line from the role's aptitudes — so the sheet actually configures the role. Opt-in and additive: roles without a dossier behave exactly as before. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).\r",
+      "targetLang": "es"
+    },
+    "09729ff87e86304c": {
+      "translation": "El catálogo de 61 roles",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "The 61-role catalog",
+      "targetLang": "es"
+    },
+    "4ef3a8003d220950": {
+      "translation": "El catálogo agrupa sus 61 roles en 11 familias. (La herramienta utiliza un conjunto separado de 10 **paquetes de equipo** —características, corrección de errores, seguridad, documentación, lanzamiento, investigación, tratamiento, auditoría exhaustiva, lluvia de ideas, trabajo en equipo— que toman roles de estas familias).",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "The catalog groups its 61 roles into 11 families. (Dispatch uses a separate set of 10 **team packs** — feature, bugfix, security, docs, launch, research, treatment, deep-audit, brainstorm, swarm — which draw roles from these families.)\r",
+      "targetLang": "es"
+    },
+    "1840a11606c94b8c": {
+      "translation": "Familia",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "Family",
+      "targetLang": "es"
+    },
+    "17ddb0a04cfaa622": {
+      "translation": "Orquestador, Crítico",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "Orchestrator, Critic Reviewer",
+      "targetLang": "es"
+    },
+    "a34558e9ef8ed484": {
+      "translation": "Estratega de producto, Sintetizador de comentarios, Priorizador de la hoja de ruta, Redactor de especificaciones",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "Product Strategist, Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "es"
+    },
+    "35bb5c8b5516f36f": {
+      "translation": "Explorador de contexto, Explorador del valor para el usuario, Explorador de ideas creativas, Explorador de mecánicas, Explorador de mercado, Explorador disidente, Explorador de viabilidad, Explorador de estándares de calidad, Analista de contexto, Analista del valor para el usuario, Analista de mecánicas, Analista de posicionamiento, Analista disidente, Normalizador, Sintetizador, Ampliador de productos, Ampliador de escenarios, Ampliador de ventajas competitivas, Juez",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "Context Scout, User Value Scout, Creative Leap Scout, Mechanics Scout, Market Scout, Contrarian Scout, Feasibility Scout, Quality Bar Scout, Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Contrarian Analyst, Normalizer, Synthesizer, Product Expander, Scenario Expander, Moat Expander, Judge",
+      "targetLang": "es"
+    },
+    "50c4b2948ac7c28d": {
+      "translation": "De forma predeterminada, Role OS opera solo en el **sistema de archivos local**. Copia plantillas Markdown y escribe archivos de paquetes/verdictos/ejecución en el directorio `.claude/` de su repositorio. El funcionamiento predeterminado no realiza solicitudes de red, no gestiona secretos y no recopila datos de telemetría. No se realizan operaciones peligrosas; todas las escrituras de archivos utilizan la opción \"omitir si existe\" de forma predeterminada.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "By default, Role OS operates on the **local filesystem only**. It copies markdown templates and writes packet/verdict/run files to your repository's `.claude/` directory. Default operation makes no network requests, handles no secrets, and collects no telemetry. No dangerous operations — all file writes use skip-if-exists by default.\r",
+      "targetLang": "es"
+    },
+    "23dcdfbf33645f6b": {
+      "translation": "Tres **funciones opcionales** acceden a la red cuando las habilita explícitamente:",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "Three **opt-in** features touch the network when you explicitly enable them:\r",
+      "targetLang": "es"
+    },
+    "a43a35626d2af19c": {
+      "translation": "- **`roleos verify-citations`**: ejecuta comandos en la herramienta externa `prism`, que resuelve los identificadores de citas con las API públicas de arXiv/Crossref (envía los ID/URL de las citas que se están verificando).\n- **Nivel de especialista** (`roleos specialist`, roles registrados): envía indicaciones a la herramienta al `backend_url` que configure en `.role-os/specialists.json` (normalmente, un punto final de modelo local).\n- **Consulta de presupuesto/conformidad** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`): envía el contexto del paso/llamada a la herramienta a un modelo local a través de HTTP para obtener una opinión.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "- **`roleos verify-citations`** — shells out to the external `prism` CLI, which resolves citation identifiers against public arXiv/Crossref APIs (sends the citation IDs/URLs being verified).\r\n- **Specialist tier** (`roleos specialist`, registered roles) — POSTs dispatch prompts to the `backend_url` you configure in `.role-os/specialists.json` (typically a local model endpoint).\r\n- **Budget / conformance consult** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — sends the step/tool-call context to a local model over HTTP for an advisory verdict.\r",
+      "targetLang": "es"
+    },
+    "e0144a921c6b9e29": {
+      "translation": "Las tres están desactivadas por defecto y, en caso de fallo, recurren al comportamiento determinista local. Consulte [SECURITY.md](SECURITY.md) para conocer la política completa.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082869918,
+      "source": "All three are off by default and fail open to local deterministic behavior. See [SECURITY.md](SECURITY.md) for the full policy.\r",
+      "targetLang": "es"
+    },
+    "13cb5fe55ab2b89f": {
+      "translation": "Scheda del personale",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "Crew dossier",
+      "targetLang": "it"
+    },
+    "932f4f91b980ed6c": {
+      "translation": "Ogni ruolo ha una **scheda** — un foglio con le caratteristiche che funge anche da configurazione per l’esecuzione. Sei attitudini (Rigore, Ritmo, Portata, Scetticismo, Autonomia, Sincerità) corrispondono a parametri reali; uno strato di **disposizione** diviso in otto archetipi (Scettico, Costruttore, Investigatore, Ribelle…) contiene istruzioni comportamentali; e ogni ruolo ha un ritratto illustrato e una valutazione. Esplora l’intero gruppo come una galleria (`dossier/dossier.html`) — il radar di ciascun ruolo mostra la sua configurazione ottimizzata rispetto all’ideale canonico.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "Every role has a **dossier** — a character sheet that doubles as run-time config. Six aptitudes (Rigor, Pace, Range, Skepticism, Autonomy, Candor) map to real dispatch knobs; an eight-archetype **disposition** layer (Skeptic, Builder, Investigator, Maverick…) carries a behavioral instruction; and each role has a painted portrait and a grade. Browse the whole crew as a gallery (`dossier/dossier.html`) — each role's radar shows its tuned build against its canonical ideal.\r",
+      "targetLang": "it"
+    },
+    "3d826e11ff50b104": {
+      "translation": "Quando un ruolo ha una scheda, il sistema inserisce una **modalità operativa** — l’istruzione comportamentale della disposizione più una linea relativa alle attitudini del ruolo — in modo che la scheda configuri effettivamente il ruolo. Opzionale e aggiuntiva: i ruoli senza una scheda si comportano esattamente come prima. Consulta il [manuale](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "When a role has a dossier, dispatch injects an **Operating Posture** — the disposition's behavioral instruction plus a posture line from the role's aptitudes — so the sheet actually configures the role. Opt-in and additive: roles without a dossier behave exactly as before. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).\r",
+      "targetLang": "it"
+    },
+    "c26c684d52344e6f": {
+      "translation": "Il catalogo dei 61 ruoli",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "The 61-role catalog",
+      "targetLang": "it"
+    },
+    "b43426226a7cffa3": {
+      "translation": "Il catalogo raggruppa i suoi 61 ruoli in 11 famiglie. (Il sistema utilizza un set separato di 10 **pacchetti di team** — funzionalità, correzioni di bug, sicurezza, documentazione, lancio, ricerca, trattamento, analisi approfondita, brainstorming, gruppo di lavoro — che attingono ai ruoli di queste famiglie.)",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "The catalog groups its 61 roles into 11 families. (Dispatch uses a separate set of 10 **team packs** — feature, bugfix, security, docs, launch, research, treatment, deep-audit, brainstorm, swarm — which draw roles from these families.)\r",
+      "targetLang": "it"
+    },
+    "ce87eb26633f20f6": {
+      "translation": "Famiglia",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "Family",
+      "targetLang": "it"
+    },
+    "1053167e5a8c8b5c": {
+      "translation": "Orchestratore, Revisore critico",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "Orchestrator, Critic Reviewer",
+      "targetLang": "it"
+    },
+    "c0d913fe9576154e": {
+      "translation": "Responsabile della strategia del prodotto, Sintetizzatore dei feedback, Responsabile delle priorità della roadmap, Redattore delle specifiche",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "Product Strategist, Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "it"
+    },
+    "5d747e3bd9937bbd": {
+      "translation": "Esploratore del contesto, Esploratore del valore per l’utente, Esploratore di soluzioni creative, Esploratore delle meccaniche, Esploratore del mercato, Esploratore anticonformista, Esploratore della fattibilità, Esploratore degli standard di qualità, Analista del contesto, Analista del valore per l’utente, Analista delle meccaniche, Analista del posizionamento, Analista anticonformista, Normalizzatore, Sintetizzatore, Amplificatore del prodotto, Amplificatore dello scenario, Amplificatore dei vantaggi competitivi, Giudice",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "Context Scout, User Value Scout, Creative Leap Scout, Mechanics Scout, Market Scout, Contrarian Scout, Feasibility Scout, Quality Bar Scout, Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Contrarian Analyst, Normalizer, Synthesizer, Product Expander, Scenario Expander, Moat Expander, Judge",
+      "targetLang": "it"
+    },
+    "9cd7d57a6be8c28d": {
+      "translation": "Per impostazione predefinita, Role OS opera solo sul **file system locale**. Copia i modelli Markdown e scrive i file di pacchetto/verdetto/esecuzione nella directory `.claude/` del tuo repository. L’operazione predefinita non effettua richieste di rete, non gestisce segreti e non raccoglie dati di telemetria. Nessuna operazione pericolosa: tutte le scritture su file utilizzano per impostazione predefinita la funzione “salta se esiste”.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "By default, Role OS operates on the **local filesystem only**. It copies markdown templates and writes packet/verdict/run files to your repository's `.claude/` directory. Default operation makes no network requests, handles no secrets, and collects no telemetry. No dangerous operations — all file writes use skip-if-exists by default.\r",
+      "targetLang": "it"
+    },
+    "be37ceb8b9f6e27d": {
+      "translation": "Tre **funzionalità opzionali** accedono alla rete quando vengono esplicitamente abilitate:",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "Three **opt-in** features touch the network when you explicitly enable them:\r",
+      "targetLang": "it"
+    },
+    "54c71b3e67e7e532": {
+      "translation": "- **`roleos verify-citations`** — avvia l’esecuzione dell’applicazione esterna `prism`, che risolve gli identificatori delle citazioni rispetto alle API pubbliche di arXiv/Crossref (invia gli ID/URL delle citazioni in fase di verifica).\n- **Livello specialista** (`roleos specialist`, ruoli registrati) — invia le richieste al sistema tramite POST all’indirizzo `backend_url` che si configura in `.role-os/specialists.json` (in genere un endpoint del modello locale).\n- **Consultazione sul budget / conformità** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — invia il contesto della fase/chiamata allo strumento a un modello locale tramite HTTP per ottenere un parere.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "- **`roleos verify-citations`** — shells out to the external `prism` CLI, which resolves citation identifiers against public arXiv/Crossref APIs (sends the citation IDs/URLs being verified).\r\n- **Specialist tier** (`roleos specialist`, registered roles) — POSTs dispatch prompts to the `backend_url` you configure in `.role-os/specialists.json` (typically a local model endpoint).\r\n- **Budget / conformance consult** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — sends the step/tool-call context to a local model over HTTP for an advisory verdict.\r",
+      "targetLang": "it"
+    },
+    "71f9ba2f30174ccc": {
+      "translation": "Tutte e tre sono disattivate per impostazione predefinita e, in caso di errore, tornano al comportamento deterministico locale. Consulta [SECURITY.md](SECURITY.md) per la politica completa.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082894723,
+      "source": "All three are off by default and fail open to local deterministic behavior. See [SECURITY.md](SECURITY.md) for the full policy.\r",
+      "targetLang": "it"
+    },
+    "58a5d8b4d56a1194": {
+      "translation": "O catálogo de 61 funções",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "The 61-role catalog",
+      "targetLang": "pt"
+    },
+    "35a01487c1f37a98": {
+      "translation": "O catálogo agrupa as suas 61 funções em 11 famílias. (O Dispatch utiliza um conjunto separado de 10 **pacotes de equipa** — funcionalidades, correção de erros, segurança, documentação, lançamento, pesquisa, tratamento, auditoria aprofundada, brainstorming, trabalho colaborativo — que retiram funções destas famílias.)",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "The catalog groups its 61 roles into 11 families. (Dispatch uses a separate set of 10 **team packs** — feature, bugfix, security, docs, launch, research, treatment, deep-audit, brainstorm, swarm — which draw roles from these families.)\r",
+      "targetLang": "pt"
+    },
+    "5fdddbdc45acce5c": {
+      "translation": "Família",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "Family",
+      "targetLang": "pt"
+    },
+    "7f857b7c9ca6e806": {
+      "translation": "Orquestrador, Avaliador Crítico",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "Orchestrator, Critic Reviewer",
+      "targetLang": "pt"
+    },
+    "5e60ab8966cba9bb": {
+      "translation": "Estrategista de Produto, Sintetizador de Feedback, Priorizador do Roteiro, Redator de Especificações",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "Product Strategist, Feedback Synthesizer, Roadmap Prioritizer, Spec Writer",
+      "targetLang": "pt"
+    },
+    "a5e14b2377f024fe": {
+      "translation": "Explorador de Contexto, Explorador de Valor para o Utilizador, Explorador de Ideias Criativas, Explorador de Mecânicas, Explorador de Mercado, Explorador Contrário, Explorador de Viabilidade, Explorador de Qualidade, Analista de Contexto, Analista de Valor para o Utilizador, Analista de Mecânicas, Analista de Posicionamento, Analista Contrário, Normalizador, Sintetizador, Expansor de Produto, Expansor de Cenários, Expansor de Vantagem Competitiva, Juiz",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "Context Scout, User Value Scout, Creative Leap Scout, Mechanics Scout, Market Scout, Contrarian Scout, Feasibility Scout, Quality Bar Scout, Context Analyst, User Value Analyst, Mechanics Analyst, Positioning Analyst, Contrarian Analyst, Normalizer, Synthesizer, Product Expander, Scenario Expander, Moat Expander, Judge",
+      "targetLang": "pt"
+    },
+    "5a8d572cb0c02d40": {
+      "translation": "Por padrão, o Role OS opera apenas no **sistema de arquivos local**. Copia modelos Markdown e escreve ficheiros de pacote/verificação/execução para o diretório `.claude/` do seu repositório. A operação padrão não faz pedidos de rede, não lida com segredos e não recolhe dados de telemetria. Não realiza operações perigosas — todas as escritas de ficheiros utilizam a opção \"ignorar se existir\" por padrão.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "By default, Role OS operates on the **local filesystem only**. It copies markdown templates and writes packet/verdict/run files to your repository's `.claude/` directory. Default operation makes no network requests, handles no secrets, and collects no telemetry. No dangerous operations — all file writes use skip-if-exists by default.\r",
+      "targetLang": "pt"
+    },
+    "863f322c906183be": {
+      "translation": "Três **funcionalidades opcionais** interagem com a rede quando são ativadas explicitamente:",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "Three **opt-in** features touch the network when you explicitly enable them:\r",
+      "targetLang": "pt"
+    },
+    "e58031c4f9b2b5f4": {
+      "translation": "- **`roleos verify-citations`** — executa o comando externo `prism` na linha de comandos, que resolve os identificadores de citação em relação às APIs públicas do arXiv/Crossref (envia os IDs/URLs das citações a serem verificadas).\n- **Nível Especialista** (`roleos specialist`, funções registadas) — envia pedidos para o `backend_url` que configura em `.role-os/specialists.json` (normalmente, um ponto final de modelo local).\n- **Consulta de orçamento / conformidade** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — envia o contexto da etapa/chamada de ferramenta para um modelo local através de HTTP para obter uma avaliação consultiva.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "- **`roleos verify-citations`** — shells out to the external `prism` CLI, which resolves citation identifiers against public arXiv/Crossref APIs (sends the citation IDs/URLs being verified).\r\n- **Specialist tier** (`roleos specialist`, registered roles) — POSTs dispatch prompts to the `backend_url` you configure in `.role-os/specialists.json` (typically a local model endpoint).\r\n- **Budget / conformance consult** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — sends the step/tool-call context to a local model over HTTP for an advisory verdict.\r",
+      "targetLang": "pt"
+    },
+    "cd6e67bcb4c1ed24": {
+      "translation": "As três estão desativadas por padrão e, em caso de falha, recorrem ao comportamento determinístico local. Consulte [SECURITY.md](SECURITY.md) para a política completa.",
+      "model": "translategemma:27b",
+      "timestamp": 1781082905056,
+      "source": "All three are off by default and fail open to local deterministic behavior. See [SECURITY.md](SECURITY.md) for the full policy.\r",
+      "targetLang": "pt"
     }
   }
 }

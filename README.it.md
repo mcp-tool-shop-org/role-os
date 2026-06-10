@@ -96,11 +96,11 @@ Il sistema Role OS verifica e gestisce le chiamate agli strumenti nel punto di c
 - **Monitoraggio della conformità** (a titolo consultivo, con tolleranza agli errori) — uno schema deterministico e controlli basati su contratti verificabili analizzano una chiamata proposta rispetto al contratto dello strumento corrispondente e forniscono un parere consultivo su eventuali chiamate che si discostano dai requisiti; non blocca mai l’esecuzione. Un limite opzionale per il modello linguistico (`ROLEOS_CONFORMANCE_CONSULT`) gestisce i residui di significato effettivo.
 - **Controllo delle capacità** (blocco in caso di errore, attivabile tramite `ROLEOS_CAPABILITY_GATE`, disattivato per impostazione predefinita) — applica il principio del minimo privilegio alle azioni *irreversibili* (pubblicazione su npm/PyPI, creazione di una release con `gh release`, esecuzione di `git push`, modifiche al repository, distribuzione tramite Pages). Un’azione controllata viene negata a meno che l’amministratore non abbia autorizzato la relativa capacità nel file `.claude/role-os/capabilities.json`; pertanto, un errore (un errore involontario o uno causato da un attacco) non può innescare un’azione irreversibile non autorizzata. Rappresenta il complemento preventivo alla regola del compensatore denominato. Consultare la [guida](https://mcp-tool-shop-org.github.io/role-os/handbook/).
 
-## Scheda dell’equipaggio
+## Scheda del personale
 
-Ogni ruolo ha una **scheda** (o dossier), ovvero una scheda personaggio che funge anche da configurazione per il tempo di esecuzione. Sei attitudini (Rigore, Ritmo, Portata, Scetticismo, Autonomia, Sincerità) corrispondono a parametri reali; un livello di **disposizione** suddiviso in otto archetipi (Scettico, Costruttore, Investigatore, Ribelle…) contiene istruzioni comportamentali; e ogni ruolo ha un ritratto illustrato e una valutazione. È possibile visualizzare l’intero equipaggio come una galleria (`dossier/dossier.html`); la schermata radar di ciascun ruolo mostra la sua configurazione ottimizzata rispetto all’ideale canonico.
+Ogni ruolo ha una **scheda** — un foglio con le caratteristiche che funge anche da configurazione per l’esecuzione. Sei attitudini (Rigore, Ritmo, Portata, Scetticismo, Autonomia, Sincerità) corrispondono a parametri reali; uno strato di **disposizione** diviso in otto archetipi (Scettico, Costruttore, Investigatore, Ribelle…) contiene istruzioni comportamentali; e ogni ruolo ha un ritratto illustrato e una valutazione. Esplora l’intero gruppo come una galleria (`dossier/dossier.html`) — il radar di ciascun ruolo mostra la sua configurazione ottimizzata rispetto all’ideale canonico.
 
-Quando un ruolo ha una scheda, il sistema inserisce una **modalità operativa**, ovvero le istruzioni comportamentali della disposizione più una linea relativa alla postura tratta dalle attitudini del ruolo; in questo modo, la scheda configura effettivamente il ruolo. È possibile scegliere di attivare questa funzione: i ruoli senza una scheda si comportano esattamente come prima. Consultare il [manuale](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).
+Quando un ruolo ha una scheda, il sistema inserisce una **modalità operativa** — l’istruzione comportamentale della disposizione più una linea relativa alle attitudini del ruolo — in modo che la scheda configuri effettivamente il ruolo. Opzionale e aggiuntiva: i ruoli senza una scheda si comportano esattamente come prima. Consulta il [manuale](https://mcp-tool-shop-org.github.io/role-os/handbook/crew-dossier/).
 
 ## Stato di implementazione a livello di organizzazione
 
@@ -120,18 +120,21 @@ Il trattamento completo è un protocollo canonico di 7 fasi definito nella memor
 
 Ordine: prima il controllo finale, poi il trattamento completo. Nessuna versione 1.0.0 senza il superamento delle porte rigide.
 
-## 61 ruoli suddivisi in 10 pacchetti
+## Il catalogo dei 61 ruoli
 
-| Pacchetto | Ruoli |
-|------|-------|
-| **Core** (3) | Orchestratore, stratega del prodotto, revisore critico |
+Il catalogo raggruppa i suoi 61 ruoli in 11 famiglie. (Il sistema utilizza un set separato di 10 **pacchetti di team** — funzionalità, correzioni di bug, sicurezza, documentazione, lancio, ricerca, trattamento, analisi approfondita, brainstorming, gruppo di lavoro — che attingono ai ruoli di queste famiglie.)
+
+| Famiglia | Ruoli |
+|--------|-------|
+| **Core** (2) | Orchestratore, Revisore critico |
+| **Product** (4) | Responsabile della strategia del prodotto, Sintetizzatore dei feedback, Responsabile delle priorità della roadmap, Redattore delle specifiche |
 | **Engineering** (7) | Sviluppatore frontend, ingegnere backend, ingegnere di test, ingegnere di refactoring, ingegnere delle prestazioni, revisore delle dipendenze, revisore della sicurezza |
 | **Design** (2) | Designer dell'interfaccia utente, responsabile del marchio |
 | **Marketing** (1) | Copywriter per il lancio |
 | **Treatment** (7) | Ricercatore del repository, traduttore del repository, architetto della documentazione, curatore dei metadati, revisore della copertura, verificatore della distribuzione, ingegnere del rilascio |
-| **Product** (3) | Sintetizzatore di feedback, prioritizzatore della roadmap, scrittore di specifiche |
 | **Research** (4) | Ricercatore UX, analista della concorrenza, ricercatore di tendenze, sintetizzatore di interviste con gli utenti |
 | **Growth** (4) | Stratega del lancio, stratega dei contenuti, responsabile della community, responsabile del triage del supporto |
+| **Brainstorm** (19) | Esploratore del contesto, Esploratore del valore per l’utente, Esploratore di soluzioni creative, Esploratore delle meccaniche, Esploratore del mercato, Esploratore anticonformista, Esploratore della fattibilità, Esploratore degli standard di qualità, Analista del contesto, Analista del valore per l’utente, Analista delle meccaniche, Analista del posizionamento, Analista anticonformista, Normalizzatore, Sintetizzatore, Amplificatore del prodotto, Amplificatore dello scenario, Amplificatore dei vantaggi competitivi, Giudice |
 | **Deep Audit** (4) | Revisore dei componenti, revisore della verità dei test, revisore dei punti di connessione, sintetizzatore di audit |
 | **Swarm** (7) | Coordinatore dello swarm, agente backend dello swarm, agente di collegamento dello swarm, agente di test dello swarm, agente dell'infrastruttura dello swarm, agente frontend dello swarm, sintetizzatore dello swarm |
 
@@ -140,7 +143,13 @@ Ogni ruolo ha un contratto completo: missione, quando usarlo, quando non usarlo,
 ## Avvio rapido
 
 ```bash
-npx role-os init
+# Install (puts `roleos` on your PATH):
+npm install -g role-os
+
+# Scaffold the role spine into your repo:
+roleos init
+# (one-off alternative without installing: `npx role-os init`,
+#  then prefix every command below with `npx role-os` instead of `roleos`)
 
 # Describe what you need — Role OS picks the right level:
 roleos run "fix the crash in save handler"
@@ -262,13 +271,21 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1150 tests across 37 test files
+  test/                        ← 1435 tests across 65 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Sicurezza
 
-Role OS opera **solo a livello locale**. Copia i modelli Markdown e scrive i file di pacchetto/verdetto nella directory `.claude/` del repository. Non accede alla rete, non gestisce segreti e non raccoglie dati di telemetria. Non esegue operazioni pericolose: tutte le scritture di file utilizzano di default l'opzione "salta se esiste". Consultare [SECURITY.md](SECURITY.md) per la politica completa.
+Per impostazione predefinita, Role OS opera solo sul **file system locale**. Copia i modelli Markdown e scrive i file di pacchetto/verdetto/esecuzione nella directory `.claude/` del tuo repository. L’operazione predefinita non effettua richieste di rete, non gestisce segreti e non raccoglie dati di telemetria. Nessuna operazione pericolosa: tutte le scritture su file utilizzano per impostazione predefinita la funzione “salta se esiste”.
+
+Tre **funzionalità opzionali** accedono alla rete quando vengono esplicitamente abilitate:
+
+- **`roleos verify-citations`** — avvia l’esecuzione dell’applicazione esterna `prism`, che risolve gli identificatori delle citazioni rispetto alle API pubbliche di arXiv/Crossref (invia gli ID/URL delle citazioni in fase di verifica).
+- **Livello specialista** (`roleos specialist`, ruoli registrati) — invia le richieste al sistema tramite POST all’indirizzo `backend_url` che si configura in `.role-os/specialists.json` (in genere un endpoint del modello locale).
+- **Consultazione sul budget / conformità** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — invia il contesto della fase/chiamata allo strumento a un modello locale tramite HTTP per ottenere un parere.
+
+Tutte e tre sono disattivate per impostazione predefinita e, in caso di errore, tornano al comportamento deterministico locale. Consulta [SECURITY.md](SECURITY.md) per la politica completa.
 
 ## Il sistema operativo
 

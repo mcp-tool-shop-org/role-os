@@ -120,18 +120,21 @@ La **vérification finale** est la grille de qualité en 31 éléments qui s’
 
 Ordre : vérification finale d’abord, puis traitement complet. Pas de version 1.0.0 sans avoir réussi les étapes obligatoires.
 
-## 61 rôles répartis en 10 ensembles
+## Le catalogue des 61 rôles
 
-| Ensemble | Rôles |
-|------|-------|
-| **Core** (3) | Orchestrateur, stratège produit, critique |
+Le catalogue regroupe ses 61 rôles en 11 familles. (Dispatch utilise un ensemble distinct de 10 « packs d’équipe » — fonctionnalités, corrections de bugs, sécurité, documentation, lancement, recherche, traitement, audit approfondi, brainstorming, travail collaboratif — qui puisent dans ces familles.)
+
+| Famille | Rôles |
+|--------|-------|
+| **Core** (2) | Orchestrateur, critique |
+| **Product** (4) | Stratège produit, synthétiseur de commentaires, priorisateur de feuille de route, rédacteur de spécifications |
 | **Engineering** (7) | Développeur frontend, ingénieur backend, ingénieur de test, ingénieur de refactoring, ingénieur de performance, auditeur des dépendances, examinateur de sécurité |
 | **Design** (2) | Concepteur d’interface utilisateur, gardien de la marque |
 | **Marketing** (1) | Rédacteur pour les lancements |
 | **Treatment** (7) | Chercheur sur les dépôts, traducteur pour les dépôts, architecte de la documentation, conservateur des métadonnées, auditeur de la couverture, vérificateur du déploiement, ingénieur en charge des versions |
-| **Product** (3) | Synthétiseur de commentaires, priorisateur de feuille de route, rédacteur de spécifications |
 | **Research** (4) | Chercheur UX, analyste concurrentiel, chercheur sur les tendances, synthétiseur d’entretiens avec les utilisateurs |
 | **Growth** (4) | Stratège pour les lancements, stratège en matière de contenu, responsable de la communauté, responsable du tri des demandes d’assistance |
+| **Brainstorm** (19) | Explorateur de contexte, explorateur de valeur utilisateur, explorateur d’innovations créatives, explorateur de mécanismes, explorateur de marché, explorateur dissident, explorateur de faisabilité, explorateur de normes de qualité, analyste de contexte, analyste de valeur utilisateur, analyste de mécanismes, analyste de positionnement, analyste dissident, normalisateur, synthétiseur, développeur de produits, développeur de scénarios, développeur d’avantages concurrentiels, juge |
 | **Deep Audit** (4) | Auditeur des composants, auditeur de la véracité des tests, auditeur des interfaces, synthétiseur d’audits |
 | **Swarm** (7) | Coordinateur de l’essaim, agent backend de l’essaim, agent de pont de l’essaim, agent de test de l’essaim, agent d’infrastructure de l’essaim, agent frontend de l’essaim, synthétiseur de l’essaim |
 
@@ -140,7 +143,13 @@ Chaque rôle est associé à un contrat complet : mission, cas d’utilisation,
 ## Démarrage rapide
 
 ```bash
-npx role-os init
+# Install (puts `roleos` on your PATH):
+npm install -g role-os
+
+# Scaffold the role spine into your repo:
+roleos init
+# (one-off alternative without installing: `npx role-os init`,
+#  then prefix every command below with `npx role-os` instead of `roleos`)
 
 # Describe what you need — Role OS picks the right level:
 roleos run "fix the crash in save handler"
@@ -262,13 +271,21 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1150 tests across 37 test files
+  test/                        ← 1435 tests across 65 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Sécurité
 
-Role OS fonctionne **uniquement en local**. Il copie les modèles Markdown et écrit les fichiers de paquets/décisions dans le répertoire `.claude/` de votre dépôt. Il n’accède pas au réseau, ne gère pas les secrets et ne collecte pas de données de télémétrie. Aucune opération dangereuse — par défaut, toutes les écritures de fichiers utilisent l’option « ignorer si existant ». Consultez le fichier [SECURITY.md](SECURITY.md) pour connaître la politique complète.
+Par défaut, Role OS fonctionne uniquement sur le **système de fichiers local**. Il copie les modèles Markdown et écrit les fichiers de paquets/résultats/exécutions dans le répertoire `.claude/` de votre dépôt. Le fonctionnement par défaut n’effectue aucune requête réseau, ne gère aucun secret et ne collecte aucune télémétrie. Aucune opération dangereuse ; toutes les écritures de fichiers utilisent l’option « ignorer si existant » par défaut.
+
+Trois fonctionnalités **facultatives** interagissent avec le réseau lorsque vous les activez explicitement :
+
+- **`roleos verify-citations`** — exécute la commande externe `prism`, qui résout les identifiants de citation par rapport aux API publiques arXiv/Crossref (envoie les ID/URL des citations en cours de vérification).
+- **Niveau spécialiste** (`roleos specialist`, rôles enregistrés) : envoie des requêtes à l’adresse `backend_url` que vous configurez dans `.role-os/specialists.json` (généralement un point de terminaison de modèle local).
+- **Consultation sur le budget / la conformité** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) : envoie le contexte de l’étape/de l’appel d’outil à un modèle local via HTTP pour obtenir une évaluation consultative.
+
+Les trois sont désactivées par défaut et basculent vers un comportement déterministe local en cas d’échec. Consultez [SECURITY.md](SECURITY.md) pour connaître l’intégralité de la politique.
 
 ## Le système d’exploitation
 

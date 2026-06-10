@@ -120,18 +120,21 @@ roleos reopen 0 "found issue in review"
 
 顺序：首先进行发布检查，然后进行完整的治疗。如果没有通过硬性闸，则不能发布 v1.0.0 版本。
 
-## 10 个包中的 61 个角色
+## 包含 61 个角色的目录
 
-| 包 | 角色 |
-|------|-------|
-| **Core** (3) | 协调员、产品战略家、审核者 |
+该目录将这 61 个角色分为 11 个类别。（Dispatch 使用一套独立的 10 个“团队包”——功能、bug 修复、安全、文档、发布、研究、处理、深度审计、头脑风暴、协作——这些团队包会从这些类别中选择相应的角色。）
+
+| 类别 | 角色 |
+|--------|-------|
+| **Core** (2) | 协调者，批评评审员 |
+| **Product** (4) | 产品策略师，反馈整合者，路线图优先级排序者，规范撰写者 |
 | **Engineering** (7) | 前端开发人员、后端工程师、测试工程师、重构工程师、性能工程师、依赖关系审计员、安全审查员 |
 | **Design** (2) | UI 设计师，品牌守护者 |
 | **Marketing** (1) | 发布文案撰写员 |
 | **Treatment** (7) | 仓库研究员、仓库翻译员、文档架构师、元数据管理员、覆盖审计员、部署验证员、发布工程师 |
-| **Product** (3) | 反馈综合分析员、路线图优先级排序者、规范编写者 |
 | **Research** (4) | 用户体验研究员、竞争对手分析师、趋势研究员、用户访谈结果综合分析员 |
 | **Growth** (4) | 发布策略制定者、内容策略制定者、社区经理、支持问题分流负责人 |
+| **Brainstorm** (19) | 背景调查员、用户价值调查员、创意突破调查员、机制调查员、市场调查员、逆向思维调查员、可行性调查员、质量标准调查员、背景分析师、用户价值分析师、机制分析师、定位分析师、逆向思维分析师、标准化者、整合者、产品拓展者、场景拓展者、护城河拓展者、评估者 |
 | **Deep Audit** (4) | 组件审计员、测试真实性审计员、接口审计员、审计综合分析员 |
 | **Swarm** (7) | 蜂群协调员、蜂群后端代理、蜂群桥接代理、蜂群测试代理、蜂群基础设施代理、蜂群前端代理、蜂群综合分析员 |
 
@@ -140,7 +143,13 @@ roleos reopen 0 "found issue in review"
 ## 快速入门
 
 ```bash
-npx role-os init
+# Install (puts `roleos` on your PATH):
+npm install -g role-os
+
+# Scaffold the role spine into your repo:
+roleos init
+# (one-off alternative without installing: `npx role-os init`,
+#  then prefix every command below with `npx role-os` instead of `roleos`)
 
 # Describe what you need — Role OS picks the right level:
 roleos run "fix the crash in save handler"
@@ -262,13 +271,21 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1150 tests across 37 test files
+  test/                        ← 1435 tests across 65 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## 安全性
 
-Role OS **仅在本地运行**。它会复制 Markdown 模板并将数据包/结果文件写入到您的仓库的 `.claude/` 目录中。它不会访问网络、处理密钥或收集遥测数据。没有危险的操作——所有文件写入默认使用“如果存在则跳过”的方式。有关完整策略，请参阅 [SECURITY.md](SECURITY.md)。
+默认情况下，Role OS 仅在**本地文件系统上运行**。它会复制 Markdown 模板，并将数据包/结果/运行文件写入到您的仓库的 `.claude/` 目录中。默认操作不会进行任何网络请求，也不会处理任何敏感信息，也不会收集任何遥测数据。不执行任何危险的操作——所有文件写入操作默认使用“如果存在则跳过”的方式。
+
+有三个**可选**功能会在您明确启用时连接到网络：
+
+- **`roleos verify-citations`** — 调用外部 `prism` CLI，该工具会根据公共 arXiv/Crossref API 解析引用标识符（发送正在验证的引用 ID/URL）。
+- **专家级别** (`roleos specialist`，已注册的角色）— 将 Dispatch 提示发布到您在 `.role-os/specialists.json` 中配置的 `backend_url`（通常是本地模型端点）。
+- **预算/合规性咨询** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — 通过 HTTP 将步骤/工具调用上下文发送到本地模型，以获取建议结果。
+
+这三个功能默认情况下都是关闭的，并且会回退到本地确定性行为。有关完整策略，请参阅 [SECURITY.md](SECURITY.md)。
 
 ## 操作系统
 

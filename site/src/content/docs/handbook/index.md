@@ -65,6 +65,6 @@ These are non-negotiable. If a change weakens any of them, reject it.
 - **6 mission trials** — the original 6 missions run through the runner, 5 real-friction findings fixed (the catalog now ships 9 missions)
 - **Entry path trials** — unified entry tested against 20+ real task descriptions
 - **6 friction trials** — persistent runs measured for operator touches across all entry levels
-- **1404 tests**, zero failures (v2.9.0)
+- **1435 tests** (1432 pass, 3 deliberate skips), zero failures (v2.9.1)
 
 [Back to landing page](/role-os/)

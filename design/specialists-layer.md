@@ -1,6 +1,6 @@
 # The Specialists Layer — design lock
 
-**Status:** DESIGN LOCKED (director-approved 2026-06-10) · **Research grounding: PROVISIONAL** — Step-4 family-different citation verification (`roleos verify-citations`) is GPU-blocked (live training run); the receipt must land before implementation of any evidence-load-bearing mechanic begins. If a finding dies in verification, the affected mechanic is re-grounded or cut (`requalify_dependent_slices` compensator).
+**Status:** DESIGN LOCKED (director-approved 2026-06-10) · **Research grounding: VERIFIED-WITH-NOTES** — Step-4 ran 2026-06-10 via `roleos verify-citations` (prism, dev-mode receipt: `specialists-layer.citation-receipt.json`). Verdict `revise` (advisory): 19 identifiers checked, **0 fabricated, 0 misattributed**; 1 numeric phrasing corrected to match source (finding 12); 10 claims are grounded in paper bodies beyond the title+abstract lens (research agents retrieved full pages — see `findings.json`); 9 items carry SSRN/PMC/journal identifiers outside the oracle's arXiv/DOI resolvers (manually retrieval-verified at research time). Re-sign with a real `PRISM_SIGNING_KEY` when prism key provisioning lands.
 **Dispatch:** study-swarm `wf_31d82709-c5c` (5 questions, 40 retrieval-backed findings) — evidence at `dogfood-labs/swarms/swarm-1781065638-70d5/study-swarm-specialists/{findings.json,dispatch.lock.json}`.
 
 ## What this is
@@ -109,7 +109,7 @@ Provisional pending Step-4 receipt. Full 40-finding set: `findings.json`. Load-b
 9. **Competence-feedback framing crowds motivation in; quota framing flips it.** Huang, Chen & Zhou 2024 (Frontiers in Psychology, PMC10807424). Every number is a PR, never a target.
 10. **Task vectors compose additively and negate selectively.** Ilharco et al. 2022 (arXiv:2212.04089). Cross-training and untraining are real algebra.
 11. **Merge interference is measurable (sign disagreement); trimming + sign-election recovers it.** Yadav et al. 2023 (TIES, arXiv:2306.01708). Compatibility readout before fusion.
-12. **Skill-pair composition works (learned concatenation), but merged adapters fail knowledge integration.** Prabhakar et al. 2024 (arXiv:2410.13025); Chen et al. 2025 (arXiv:2506.13479). Union, never alchemy-into-novel-C.
+12. **Skill-pair composition works — learned concatenation (CAT) beat merging baselines by ~43% and joint data-mixing by ~12% — but merged adapters fail knowledge integration.** Prabhakar et al. 2024 (arXiv:2410.13025); Chen et al. 2025 (arXiv:2506.13479). Union, never alchemy-into-novel-C.
 13. **Merging is most fragile at small scale (4–14B).** Yadav et al. 2024 (arXiv:2410.03617). Exam-gated birth; failure designed-in.
 14. **Prerequisite-ordered curricula measurably cut data needs.** Chen et al. 2023 (Skill-It, arXiv:2307.14430). Training programs are real mechanics.
 15. **LoRA learns less, forgets less — depth vs range is a measured axis.** Biderman et al. 2024 (arXiv:2405.09673). The depth gauge.

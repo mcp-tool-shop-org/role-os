@@ -1,6 +1,6 @@
 # Repo Map — role-os
 
-> **Freshness:** last verified 2026-06-10 against role-os **v2.9.0**. Counts below are
+> **Freshness:** last verified 2026-06-10 against role-os **v2.9.1**. Counts below are
 > point-in-time; when in doubt, derive from source (`ls src/`, `ROLE_CATALOG` in
 > `src/route.mjs`, `ls test/*.test.mjs`).
 
@@ -52,7 +52,7 @@ starter-pack/
   handbook.md              # Operational field manual
   README.md                # Starter-pack intro
 dossier/                   # Role character sheets, portraits pipeline, gallery (dossier.html)
-test/                      # 59 test files, 1404 tests (node --test)
+test/                      # 65 test files, 1435 tests (node --test)
 site/                      # Astro/Starlight landing page + handbook docs
 ```
 
@@ -114,7 +114,7 @@ Route, review, and status parse packet markdown via regex on `## ` headings. Sen
 
 ## Validation law
 
-- `npm test` runs the full suite (1404 tests / 59 files at v2.9.0)
+- `npm test` runs the full suite (1435 tests / 65 files at v2.9.1)
 - `npm run verify` smoke-tests the CLI
 - CI runs on Node 18 + 22 (matrix)
 - All validation is terminal-based. No browser, no visual verification.

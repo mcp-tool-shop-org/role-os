@@ -1,6 +1,6 @@
 # Current Priorities — role-os
 
-> **Freshness:** last verified 2026-06-10 against role-os **v2.9.0**. If `package.json` version
+> **Freshness:** last verified 2026-06-10 against role-os **v2.9.1**. If `package.json` version
 > no longer matches, treat every count and law below as suspect and re-verify against source
 > (`src/route.mjs` ROLE_CATALOG, `src/packs.mjs` TEAM_PACKS, `src/mission.mjs` MISSIONS,
 > CHANGELOG.md) before enforcing anything.
@@ -19,7 +19,7 @@
 
 ## Completed recently
 
-- v2.9.0 published (current) — role character-sheet dossier system wired into dispatch
+- v2.9.1 published (current) — role character-sheet dossier system wired into dispatch
 - v2.8.0 — capability gate + conformance live-catalog rollout
 - Specialist tier shipped (registry, gate, shadow probes, budget/conformance consults)
 - Deep-audit and dogfood-swarm missions shipped (dynamic, manifest-scaled dispatch)
@@ -51,7 +51,7 @@ These cannot be traded away without explicit human approval:
 
 ## Validation law
 
-- `npm test` runs the full suite — 1404 tests across 59 test files at v2.9.0 (see CHANGELOG for the current count)
+- `npm test` runs the full suite — 1435 tests across 65 test files at v2.9.1 (1432 pass, 3 deliberate skips) (see CHANGELOG for the current count)
 - `npm run verify` smoke-tests the CLI
 - CI matrix: Node 18 + 22
 - All validation is terminal-based. No browser, no visual verification.

@@ -120,18 +120,21 @@ O tratamento completo é um protocolo canônico de 7 fases definido na memória 
 
 Ordem: Verificação de lançamento primeiro, depois tratamento completo. Sem v1.0.0 sem a aprovação dos portões rígidos.
 
-## 61 funções em 10 pacotes
+## O catálogo de 61 funções
 
-| Pacote | Funções |
-|------|-------|
-| **Core** (3) | Orquestrador, Estrategista de Produto, Revisor Crítico |
+O catálogo agrupa as suas 61 funções em 11 famílias. (O Dispatch utiliza um conjunto separado de 10 **pacotes de equipa** — funcionalidades, correção de erros, segurança, documentação, lançamento, pesquisa, tratamento, auditoria aprofundada, brainstorming, trabalho colaborativo — que retiram funções destas famílias.)
+
+| Família | Funções |
+|--------|-------|
+| **Core** (2) | Orquestrador, Avaliador Crítico |
+| **Product** (4) | Estrategista de Produto, Sintetizador de Feedback, Priorizador do Roteiro, Redator de Especificações |
 | **Engineering** (7) | Desenvolvedor Frontend, Engenheiro Backend, Engenheiro de Testes, Engenheiro de Refatoração, Engenheiro de Desempenho, Auditor de Dependências, Revisor de Segurança |
 | **Design** (2) | Designer de UI, Guardião da Marca |
 | **Marketing** (1) | Redator de Conteúdo de Lançamento |
 | **Treatment** (7) | Pesquisador de Repositório, Tradutor de Repositório, Arquiteto de Documentação, Curador de Metadados, Auditor de Cobertura, Verificador de Implantação, Engenheiro de Lançamento |
-| **Product** (3) | Sintetizador de Feedback, Priorizador de Roadmap, Redator de Especificações |
 | **Research** (4) | Pesquisador de UX, Analista Competitivo, Pesquisador de Tendências, Sintetizador de Entrevistas com Usuários |
 | **Growth** (4) | Estrategista de Lançamento, Estrategista de Conteúdo, Gerente de Comunidade, Líder de Triagem de Suporte |
+| **Brainstorm** (19) | Explorador de Contexto, Explorador de Valor para o Utilizador, Explorador de Ideias Criativas, Explorador de Mecânicas, Explorador de Mercado, Explorador Contrário, Explorador de Viabilidade, Explorador de Qualidade, Analista de Contexto, Analista de Valor para o Utilizador, Analista de Mecânicas, Analista de Posicionamento, Analista Contrário, Normalizador, Sintetizador, Expansor de Produto, Expansor de Cenários, Expansor de Vantagem Competitiva, Juiz |
 | **Deep Audit** (4) | Auditor de Componentes, Auditor de Verdade de Testes, Auditor de Interface, Sintetizador de Auditoria |
 | **Swarm** (7) | Coordenador de Grupo, Agente Backend do Grupo, Agente de Ponte do Grupo, Agente de Testes do Grupo, Agente de Infraestrutura do Grupo, Agente Frontend do Grupo, Sintetizador do Grupo |
 
@@ -140,7 +143,13 @@ Cada função tem um contrato completo: missão, quando usar, quando não usar, 
 ## Guia rápido
 
 ```bash
-npx role-os init
+# Install (puts `roleos` on your PATH):
+npm install -g role-os
+
+# Scaffold the role spine into your repo:
+roleos init
+# (one-off alternative without installing: `npx role-os init`,
+#  then prefix every command below with `npx role-os` instead of `roleos`)
 
 # Describe what you need — Role OS picks the right level:
 roleos run "fix the crash in save handler"
@@ -262,13 +271,21 @@ role-os/
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1150 tests across 37 test files
+  test/                        ← 1435 tests across 65 test files
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
 
 ## Segurança
 
-O Role OS opera **apenas localmente**. Ele copia modelos Markdown e grava arquivos de pacote/veredicto no diretório `.claude/` do seu repositório. Ele não acessa a rede, manipula segredos ou coleta dados de telemetria. Nenhuma operação perigosa — todas as gravações de arquivos usam o recurso "ignorar se já existir" por padrão. Consulte [SECURITY.md](SECURITY.md) para obter a política completa.
+Por padrão, o Role OS opera apenas no **sistema de arquivos local**. Copia modelos Markdown e escreve ficheiros de pacote/verificação/execução para o diretório `.claude/` do seu repositório. A operação padrão não faz pedidos de rede, não lida com segredos e não recolhe dados de telemetria. Não realiza operações perigosas — todas as escritas de ficheiros utilizam a opção "ignorar se existir" por padrão.
+
+Três **funcionalidades opcionais** interagem com a rede quando são ativadas explicitamente:
+
+- **`roleos verify-citations`** — executa o comando externo `prism` na linha de comandos, que resolve os identificadores de citação em relação às APIs públicas do arXiv/Crossref (envia os IDs/URLs das citações a serem verificadas).
+- **Nível Especialista** (`roleos specialist`, funções registadas) — envia pedidos para o `backend_url` que configura em `.role-os/specialists.json` (normalmente, um ponto final de modelo local).
+- **Consulta de orçamento / conformidade** (`ROLEOS_BUDGET_CONSULT` / `ROLEOS_CONFORMANCE_CONSULT`) — envia o contexto da etapa/chamada de ferramenta para um modelo local através de HTTP para obter uma avaliação consultiva.
+
+As três estão desativadas por padrão e, em caso de falha, recorrem ao comportamento determinístico local. Consulte [SECURITY.md](SECURITY.md) para a política completa.
 
 ## O sistema operacional
 
