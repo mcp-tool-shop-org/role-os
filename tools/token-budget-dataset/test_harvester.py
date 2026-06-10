@@ -11,7 +11,7 @@ import os
 import sys
 import tempfile
 
-from harvester import scrub, manifest, join, config, label, freeze, puzzles
+from harvester import scrub, manifest, join, config, label, freeze, puzzles, parse_outcomes
 
 FAILS = []
 
@@ -201,12 +201,49 @@ def test_puzzles_self_check():
     check("L3 split", puzzles.level3_fit_or_split(r3, 10000)["answer"] == "split")
 
 
+def test_scrub_record_drops_internal_fields():
+    print("test_scrub_record_drops_internal_fields")
+    rec = {"task_text": "fix the thing", "cwd": "E:/AI/some-repo",
+           "source_file": "E:/AI/some-repo/x.jsonl", "_session_id": "sess-123",
+           "tier_used_raw": "claude-opus", "git_branch": "main", "dispatch_id": "d9"}
+    out = scrub.scrub_record(rec, {})
+    check("cwd dropped", "cwd" not in out)
+    check("_session_id dropped", "_session_id" not in out)
+    check("tier_used_raw dropped", "tier_used_raw" not in out)
+    check("git_branch kept", out.get("git_branch") == "main")
+    check("cwd_repo still derived", out["cwd_repo"] == "some-repo")
+    check("input record not mutated", rec.get("cwd") == "E:/AI/some-repo")
+
+
+def test_roleos_receipt_outcomes():
+    print("test_roleos_receipt_outcomes")
+    # roleos-citation-receipt/v1 fixture shapes (src/verify-citations.mjs buildReceipt):
+    # verdict/blocking/advisory — there is NO 'pass' field.
+    with tempfile.TemporaryDirectory() as td:
+        fixtures = {
+            "a.citation-receipt.json": {"schema": "roleos-citation-receipt/v1",
+                                        "verdict": "accept", "blocking": False, "advisory": False},
+            "b.citation-receipt.json": {"schema": "roleos-citation-receipt/v1",
+                                        "verdict": "refuse", "blocking": True, "advisory": False},
+            "c.citation-receipt.json": {"schema": "roleos-citation-receipt/v1",
+                                        "verdict": "escalate", "blocking": False, "advisory": True},
+        }
+        for name, body in fixtures.items():
+            with open(os.path.join(td, name), "w", encoding="utf-8") as f:
+                json.dump(body, f)
+        got = {v["verdict"]: v["outcome"] for v in parse_outcomes.load_roleos_verdicts(td)}
+        check("accept -> success", got.get("accept") == "success")
+        check("blocking refuse -> failed", got.get("refuse") == "failed")
+        check("non-blocking escalate -> unknown", got.get("escalate") == "unknown")
+
+
 def main():
     for t in (test_scrub_redacts_real_secrets, test_andon_catches_unscrubbed_secret,
               test_contamination_check_raises, test_canon_truncation,
               test_path_email_redaction, test_baseline, test_cost_weighting,
               test_join_does_not_overclaim, test_freeze_folds_human_verdicts,
-              test_puzzles_self_check):
+              test_puzzles_self_check, test_scrub_record_drops_internal_fields,
+              test_roleos_receipt_outcomes):
         t()
     print()
     if FAILS:

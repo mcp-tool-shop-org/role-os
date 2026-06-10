@@ -95,11 +95,7 @@ const SESSION_STATE_FILE = ".claude/hooks/session-state.json";
  */
 export function getSessionState(cwd) {
   const path = join(cwd, SESSION_STATE_FILE);
-  if (existsSync(path)) {
-    try { return JSON.parse(readFileSync(path, "utf-8")); }
-    catch { /* fall through */ }
-  }
-  return {
+  const defaults = {
     sessionId: null,
     routeCardPresent: false,
     activeRole: null,
@@ -110,6 +106,18 @@ export function getSessionState(cwd) {
     outcomeRecorded: false,
     startedAt: null,
   };
+  if (existsSync(path)) {
+    try {
+      const parsed = JSON.parse(readFileSync(path, "utf-8"));
+      // Merge over the default shape: a PARTIAL state file (e.g. created from {} by the generated
+      // prompt-submit script when SessionStart never ran) must not crash the library hook functions
+      // — the generated scripts guard field-by-field; the library tolerates the same files.
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return { ...defaults, ...parsed };
+      }
+    } catch { /* fall through */ }
+  }
+  return defaults;
 }
 
 /**
@@ -450,20 +458,93 @@ process.exit(0);
 
 function generatePreToolUseScript() {
   return `#!/usr/bin/env node
-// Role OS PreToolUse hook — enforce role-specific tool law + Tool-Call Conformance floor (advisory)
+// Role OS PreToolUse hook — role tool law + capability gate (fail-closed) + conformance floor (advisory).
+// SELF-CONTAINED: stdlib-only. A bare role-os import specifier resolves in NO npx/global-install
+// consumer repo (the package has no "exports" self-reference), so the fail-closed gate logic is
+// INLINED below — a security control must never depend on a best-effort import. Internal failures
+// warn on stderr (once per repo, marker-file throttled); they are never a silent catch.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
+const toolName = input.tool_name || "";
+
+// One-time stderr warning: degraded hook behavior must be VISIBLE, but must not spam every call.
+function warnOnce(key, message) {
+  let line = "[role-os hook] " + message;
+  try {
+    const marker = join(cwd, ".claude", "hooks", "." + key + ".warned");
+    if (existsSync(marker)) return; // already surfaced in this repo
+    writeFileSync(marker, new Date().toISOString() + " " + message + "\\n");
+  } catch (err) {
+    line += " (warn-marker write failed: " + err.message + ")";
+  }
+  process.stderr.write(line + "\\n");
+}
+
+// ── Capability gate (opt-in via ROLEOS_CAPABILITY_GATE, FAIL-CLOSED) ─────────────────────────────
+// Inlined gated set + grant law — keep in sync with src/specialist/capability-gate.mjs in the
+// role-os repo. A gated irreversible action (NAMED_COMPENSATORS list) with no matching grant in
+// .claude/role-os/capabilities.json is DENIED (exit 2 blocks). Default OFF => pure no-op. The
+// patterns allow flags between command word and verb without crossing a shell separator; an
+// unparseable "expires" DENIES (a typo'd date must never become a permanent grant).
+const gateEnabled = process.env.ROLEOS_CAPABILITY_GATE === "1" || process.env.ROLEOS_CAPABILITY_GATE === "true";
+if (gateEnabled && toolName === "Bash") {
+  const command = (input.tool_input && typeof input.tool_input.command === "string") ? input.tool_input.command : "";
+  const GATED = [
+    { id: "npm:publish", label: "npm/pnpm/yarn publish", re: /\\b(?:npm|pnpm|yarn)\\b[^|;&\\n]*\\bpublish\\b/ },
+    { id: "pypi:publish", label: "PyPI publish (twine/uv)", re: /\\btwine\\b[^|;&\\n]*\\bupload\\b|\\buv\\b[^|;&\\n]*\\bpublish\\b/ },
+    { id: "gh:release", label: "gh release create", re: /\\bgh\\b[^|;&\\n]*\\brelease\\b[^|;&\\n]*\\bcreate\\b/ },
+    { id: "gh:pr-create", label: "gh pr create", re: /\\bgh\\b[^|;&\\n]*\\bpr\\b[^|;&\\n]*\\bcreate\\b/ },
+    { id: "gh:repo-edit", label: "gh repo edit/delete", re: /\\bgh\\b[^|;&\\n]*\\brepo\\b[^|;&\\n]*\\b(?:edit|delete)\\b/ },
+    { id: "git:push", label: "git push", re: /\\bgit\\b[^|;&\\n]*\\bpush\\b/ },
+    { id: "pages:deploy", label: "GitHub Pages / gh-pages deploy", re: /\\bgh-pages\\b|\\bpages\\b[^|;&\\n]*\\bdeploy\\b/ },
+  ];
+  const action = command ? GATED.find((a) => a.re.test(command)) : undefined;
+  if (action) {
+    let problem = null;
+    try {
+      const capPath = join(cwd, ".claude", "role-os", "capabilities.json");
+      const manifest = existsSync(capPath) ? JSON.parse(readFileSync(capPath, "utf-8")) : {};
+      const g = manifest && typeof manifest === "object" ? manifest[action.id] : undefined;
+      if (!g || typeof g !== "object" || g.granted !== true) {
+        problem = 'No capability "' + action.id + '" is granted in .claude/role-os/capabilities.json';
+      } else if (typeof g.expires === "string") {
+        const t = Date.parse(g.expires);
+        if (Number.isNaN(t)) {
+          problem = 'the grant for "' + action.id + '" has an unparseable "expires" ("' + g.expires + '") — an invalid expiry DENIES (fail-closed), it never extends the grant; fix the date';
+        } else if (t < Date.now()) {
+          problem = 'the grant for "' + action.id + '" expired at ' + g.expires;
+        }
+      }
+    } catch (err) {
+      // FAIL CLOSED: a gated action whose grant cannot be evaluated is denied, with the cause named.
+      problem = "the grant could not be evaluated (" + err.message + ") — failing closed on an irreversible action";
+    }
+    if (problem) {
+      process.stderr.write(
+        'Capability gate: "' + action.label + '" is an irreversible action requiring an explicit grant. ' +
+        problem + '. To authorize it, the director adds {"' + action.id + '": {"granted": true}} to ' +
+        '.claude/role-os/capabilities.json, optionally with an "expires" date. (The gate enforces only ' +
+        '"granted"/"expires" — a grant authorizes ALL matching ' + action.label + ' calls; a "scope" field is informational only.)\\n'
+      );
+      process.exit(2);
+    }
+  }
+}
 
 let state = {};
 if (existsSync(statePath)) {
-  try { state = JSON.parse(readFileSync(statePath, "utf-8")); } catch {}
+  try { state = JSON.parse(readFileSync(statePath, "utf-8")); }
+  catch (err) {
+    warnOnce("session-state-unreadable", "session-state.json was unreadable (" + err.message + ") — continuing with fresh session state.");
+    state = {};
+  }
 }
 
-const toolName = input.tool_name || "";
 if (!state.toolsUsed) state.toolsUsed = [];
 if (!state.toolsUsed.includes(toolName)) {
   state.toolsUsed.push(toolName);
@@ -476,33 +557,32 @@ if (writeTools.includes(toolName) && !state.routeCardPresent && (state.substanti
   notes.push(\`Write tool "\${toolName}" used without route card. Consider /roleos-route.\`);
 }
 
-// Tool-Call Conformance floor (advisory, deterministic). Best-effort: runs only when this tool has a
-// .claude/role-os/tool-contracts.json catalog entry AND the role-os library is resolvable. ANY failure
-// is a silent no-op — a hook must never break a tool call; the watcher is advisory + fail-open.
+// Tool-Call Conformance floor (advisory, deterministic, fail-open). Runs only when this tool has a
+// .claude/role-os/tool-contracts.json catalog entry AND the role-os library is installed where this
+// repo can resolve it (local node_modules). Unlike the inlined capability gate above (fail-closed),
+// the advisory floor may degrade — but it must SAY so once on stderr, never silently no-op.
 try {
   const catPath = join(cwd, ".claude", "role-os", "tool-contracts.json");
   if (existsSync(catPath)) {
     const catalog = JSON.parse(readFileSync(catPath, "utf-8"));
     const entry = catalog && catalog[toolName];
     if (entry) {
-      const { schemaFloor, contractFloor } = await import("role-os/src/specialist/conformance-consult.mjs");
-      const tool = { name: toolName, contract: entry.contract, params: entry.params || [], constraints: entry.constraints || [] };
-      const call = (input.tool_input && typeof input.tool_input === "object") ? input.tool_input : {};
-      const v = [...schemaFloor(tool, call).violations, ...contractFloor(tool, call, entry.state_struct || null).violations];
-      if (v.length) notes.push(\`Tool-Call Conformance (advisory): "\${toolName}" appears NONCONFORMANT — \${v.join("; ")}.\`);
+      const libPath = join(cwd, "node_modules", "role-os", "src", "specialist", "conformance-consult.mjs");
+      if (!existsSync(libPath)) {
+        warnOnce("conformance-lib-unresolvable", "tool-contracts.json catalogs this tool but the role-os library is not installed locally (" + libPath + " not found) — the advisory conformance floor is OFF. Run: npm i -D role-os");
+      } else {
+        const { schemaFloor, contractFloor } = await import(pathToFileURL(libPath).href);
+        const tool = { name: toolName, contract: entry.contract, params: entry.params || [], constraints: entry.constraints || [] };
+        const call = (input.tool_input && typeof input.tool_input === "object") ? input.tool_input : {};
+        const v = [...schemaFloor(tool, call).violations, ...contractFloor(tool, call, entry.state_struct || null).violations];
+        if (v.length) notes.push(\`Tool-Call Conformance (advisory): "\${toolName}" appears NONCONFORMANT — \${v.join("; ")}.\`);
+      }
     }
   }
-} catch { /* role-os not resolvable here, or internal error -> no-op (never block a tool call) */ }
-
-// Capability gate (opt-in via ROLEOS_CAPABILITY_GATE, FAIL-CLOSED): an irreversible action without a
-// granted capability is DENIED (exit 2 blocks). Default OFF => no-op. Bounds what a wrong verdict can
-// DO (POLA / CaMeL). Best-effort: if role-os is not resolvable here a hook-resolution failure must not
-// itself block a call; the in-process onPreToolUse path still enforces it where role-os is resolvable.
-try {
-  const { capabilityGate } = await import("role-os/src/specialist/capability-gate.mjs");
-  const cap = capabilityGate(cwd, toolName, input.tool_input || {});
-  if (cap.denied) { process.stderr.write(cap.reason + "\\n"); process.exit(2); }
-} catch { /* role-os not resolvable / internal error -> no-op (in-process path enforces) */ }
+} catch (err) {
+  // Advisory stays fail-open (never blocks a call) but never SILENT: surface the failure once.
+  warnOnce("conformance-floor-error", "Tool-Call Conformance advisory errored (" + err.message + ") — the advisory floor was skipped.");
+}
 
 // PreToolUse wire protocol (current Claude Code): inject advisory context via
 // hookSpecificOutput.additionalContext + exit 0. A bare { addContext } is IGNORED; exit 2 would BLOCK.

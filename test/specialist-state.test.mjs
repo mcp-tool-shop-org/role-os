@@ -41,11 +41,14 @@ describe("state — emptyState + loadState + saveState", () => {
     const { path, cleanup } = tmpFile();
     try {
       const s = emptyState();
-      recordDispatch(s, "Verifier", 100, 1717545600000);
+      recordDispatch(s, "specialist", 100, 1717545600000);
+      recordDispatch(s, "claude", 100, 1717545601000);
       saveState(path, s);
       const back = loadState(path);
-      assert.equal(back.roles.Verifier.dispatch_timestamps.length, 1);
-      assert.equal(back.roles.Verifier.dispatch_timestamps[0], 1717545600000);
+      assert.deepEqual(back.dispatches, [
+        { t: 1717545600000, route: "specialist" },
+        { t: 1717545601000, route: "claude" },
+      ]);
     } finally { cleanup(); }
   });
 
@@ -69,10 +72,11 @@ describe("state — emptyState + loadState + saveState", () => {
 // ── ensureRole + recordDispatch ──────────────────────────────────────────────────────────────
 
 describe("state — ensureRole", () => {
-  it("creates a fresh slot with empty arrays and null halt", () => {
+  it("creates a fresh slot with zero probe counter and null halt", () => {
     const s = emptyState();
     const slot = ensureRole(s, "Verifier");
-    assert.deepEqual(slot, { dispatch_timestamps: [], probe_counter: 0, halt: null });
+    // v2: dispatches live in the shared state.dispatches window, not in per-role slots
+    assert.deepEqual(slot, { probe_counter: 0, halt: null });
   });
 
   it("does not overwrite an existing slot", () => {
@@ -84,17 +88,20 @@ describe("state — ensureRole", () => {
 });
 
 describe("state — recordDispatch (sliding window)", () => {
-  it("appends timestamps in order", () => {
+  it("appends route-tagged records in order", () => {
     const s = emptyState();
-    recordDispatch(s, "Verifier", 100, 1000);
-    recordDispatch(s, "Verifier", 100, 2000);
-    assert.deepEqual(s.roles.Verifier.dispatch_timestamps, [1000, 2000]);
+    recordDispatch(s, "specialist", 100, 1000);
+    recordDispatch(s, "claude", 100, 2000);
+    assert.deepEqual(s.dispatches, [
+      { t: 1000, route: "specialist" },
+      { t: 2000, route: "claude" },
+    ]);
   });
 
   it("trims to window size", () => {
     const s = emptyState();
-    for (let i = 0; i < 5; i++) recordDispatch(s, "Verifier", 3, 1000 + i);
-    assert.deepEqual(s.roles.Verifier.dispatch_timestamps, [1002, 1003, 1004]);
+    for (let i = 0; i < 5; i++) recordDispatch(s, "specialist", 3, 1000 + i);
+    assert.deepEqual(s.dispatches.map((d) => d.t), [1002, 1003, 1004]);
   });
 });
 
@@ -105,12 +112,12 @@ describe("state — quotaStateFor", () => {
     assert.deepEqual(quotaStateFor(emptyState(), "Verifier", 100), { used: 0, window: 100 });
   });
 
-  it("counts only dispatch_timestamps in the slot", () => {
+  it("counts only specialist-routed records in the shared window", () => {
     const s = emptyState();
-    recordDispatch(s, "Verifier", 100, 1);
-    recordDispatch(s, "Verifier", 100, 2);
-    recordDispatch(s, "Verifier", 100, 3);
-    assert.deepEqual(quotaStateFor(s, "Verifier", 100), { used: 3, window: 100 });
+    recordDispatch(s, "specialist", 100, 1);
+    recordDispatch(s, "claude", 100, 2);
+    recordDispatch(s, "specialist", 100, 3);
+    assert.deepEqual(quotaStateFor(s, "Verifier", 100), { used: 2, window: 100 });
   });
 });
 

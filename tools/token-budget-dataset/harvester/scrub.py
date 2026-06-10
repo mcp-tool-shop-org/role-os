@@ -81,8 +81,11 @@ def _repo_base(path):
 
 
 def scrub_record(rec: dict, counts: dict) -> dict:
-    """Scrub task_text + source path, derive cwd_repo, drop internal raw fields.
-    Returns a NEW dict containing only schema fields (plus nothing else)."""
+    """Scrub task_text + source path, derive cwd_repo, drop internal-only raw fields
+    (cwd, _session_id, tier_used_raw). Returns a NEW dict: the record with text fields
+    scrubbed and raw provenance removed — no raw local path or session id survives.
+    (Final projection onto schema.FIELDS happens in build.py:_finalize; this function
+    must hold its own contract so any OTHER consumer also gets scrubbed records.)"""
     cwd = rec.get("cwd")
     cwd_repo = _repo_base(cwd)
     is_canon = cwd_repo in config.CANON_REPOS
@@ -98,10 +101,10 @@ def scrub_record(rec: dict, counts: dict) -> dict:
     out["task_text"] = scrubbed
     out["cwd_repo"] = cwd_repo
     out["source_file"] = scrub_text(rec.get("source_file") or "", {})  # redact path in provenance
-    # drop internal-only fields not in the schema
-    for k in ("cwd", "_session_id", "tier_used_raw", "git_branch"):
-        pass
-    out["git_branch"] = rec.get("git_branch")  # keep (scrubbed of nothing sensitive: branch name)
+    # drop internal-only raw fields not in the schema (git_branch is KEPT: a branch name
+    # carries no local path/user info and feeds the join)
+    for k in ("cwd", "_session_id", "tier_used_raw"):
+        out.pop(k, None)
     return out
 
 

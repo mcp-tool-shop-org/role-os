@@ -115,7 +115,8 @@ describe("contrastiveHaltMessage", () => {
     assert.match(msg, /80\.0%/);
     assert.match(msg, /50 probes/);
     assert.match(msg, /85\.0%/);
-    assert.match(msg, /roleos specialist clear-halt Verifier/);
+    // Role names contain spaces in the live registry — the copy-pasteable command MUST quote.
+    assert.match(msg, /roleos specialist clear-halt "Verifier"/);
   });
 });
 

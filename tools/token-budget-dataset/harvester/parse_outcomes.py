@@ -141,9 +141,18 @@ def load_roleos_verdicts(repo: str = None) -> list[dict]:
                 d = json.load(f)
         except Exception:
             continue
+        # roleos-citation-receipt/v1 has NO 'pass' field — outcome derives from verdict/blocking
+        # (src/verify-citations.mjs buildReceipt): accept = success, a blocking reason = failed,
+        # anything else (escalate without blocking detail) = unknown.
+        if d.get("verdict") == "accept":
+            outcome = "success"
+        elif d.get("blocking"):
+            outcome = "failed"
+        else:
+            outcome = "unknown"
         out.append({
             "source": "mission",
-            "outcome": "success" if d.get("pass") else "failed",
+            "outcome": outcome,
             "verdict": d.get("verdict"),
             "path": path.replace("\\", "/"),
         })

@@ -15,7 +15,7 @@ per contract-class accuracy + flip-consistency (whole tool group right) + false-
 
 Usage: python dogfood_conformance.py --endpoint http://localhost:8092 --cases ood/fresh_cases.jsonl --label v0.2 [--out f.json]
 """
-import argparse, collections, json, urllib.request, os, sys
+import argparse, collections, json, re, urllib.request, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -51,7 +51,12 @@ def parse_verdict(text):
     if "</think>" in text:
         text = text.split("</think>")[-1]
     t = text.lower()
+    # Same normalization as certify_conformance.py: hyphen/space variants and explicit negation
+    # must read nonconformant — never fall through to the dangerous bare 'conformant' substring.
+    t = re.sub(r"non[\s-]+conformant", "nonconformant", t)
     if "nonconformant" in t:
+        return "nonconformant"
+    if re.search(r"\b(?:not|never|isn't|isnt|is not)\s+conformant", t):
         return "nonconformant"
     if "abstain" in t:
         return "abstain"

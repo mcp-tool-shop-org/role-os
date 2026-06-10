@@ -52,6 +52,13 @@ for (const t of corpus) {
   if (r.verdict === "nonconformant") { fp++; console.log(`  !! FP ${t.name}: ${r.violations.join("; ")}`); }
 }
 
+// ANDON: a catalog that false-flags a known-good call must never ship — hard-fail BEFORE the
+// write, mirroring live-tools/build_live_contracts.mjs.
+if (fp > 0) {
+  console.error(`FP GATE FAILED: ${fp} conformant call(s) false-flagged by the final catalog — tool-constraints.json NOT written.`);
+  process.exit(1);
+}
+
 writeFileSync(P("tool-constraints.json"), JSON.stringify(catalog, null, 2) + "\n");
 console.log("=== tool-constraints.json (rollout seed catalog) ===");
 console.log(`tools with >=1 valid constraint: ${toolsWith}/${corpus.length}`);
@@ -59,4 +66,4 @@ console.log(`constraints: kept=${kept}  dropped(mis-authored, auto-guarded)=${dr
 if (droppedDetail.length) console.log(`  dropped: ${droppedDetail.join(", ")}`);
 console.log(`known l4 violations now caught DETERMINISTICALLY by the floor: ${l4Caught}/${l4Total} (${(100 * l4Caught / l4Total).toFixed(0)}%)`);
 console.log(`  remaining ${l4Total - l4Caught} are genuinely-semantic -> stay the LLM ceiling's job (${semanticOnly.length} tools)`);
-console.log(`final-catalog conformant false-positives: ${fp}  (must be 0)`);
+console.log(`final-catalog conformant false-positives: ${fp}  (must be 0 — enforced above)`);

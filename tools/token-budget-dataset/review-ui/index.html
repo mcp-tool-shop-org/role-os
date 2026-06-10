@@ -652,13 +652,14 @@
       ["context_tokens", fmt(num(r.context_tokens))],
       ["peak_context", fmt(num(r.peak_context_tokens))],
       ["num_turns", fmt(num(cs.num_turns))],
-      ["tier_used", dash(r.tier_used)],
-      ["final_stop", dash(r.final_stop_reason)],
+      // record fields originate from harvested transcript JSONL — always esc() before innerHTML
+      ["tier_used", esc(dash(r.tier_used))],
+      ["final_stop", esc(dash(r.final_stop_reason))],
       ["compaction", compactionBadge(r)],
-      ["grain", dash(r.grain)],
-      ["cwd_repo", dash(r.cwd_repo)],
-      ["outcome_source", dash(r.outcome_source)],
-      ["join_confidence", dash(r.join_confidence)],
+      ["grain", esc(dash(r.grain))],
+      ["cwd_repo", esc(dash(r.cwd_repo))],
+      ["outcome_source", esc(dash(r.outcome_source))],
+      ["join_confidence", esc(dash(r.join_confidence))],
       ["weak_label", boolBadge(r.weak_label)],
       ["baseline_spend", fmt(num(r.baseline_spend))]
     ];
