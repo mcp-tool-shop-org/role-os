@@ -3,6 +3,7 @@ import { describe, it, before, after } from "node:test";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { buildRecord, deriveTechniques, SHADOW_VERIFIED_MIN_PROBES } from "../src/specialist/record.mjs";
 
 // The Record: assembled read-only from real ledgers; absent ledgers yield explicit empty
@@ -173,7 +174,9 @@ describe("buildRecord — against this repo's committed registry (smoke)", () =>
   // ledger (.role-os/specialist-events.jsonl) is gitignored runtime state, so ledger and
   // technique behavior is covered by the fixture suites above, not here (CI has no ledger).
   it("Token Budget Analyst reads as certified L5 from the committed registry", () => {
-    const r = buildRecord("Token Budget Analyst", { cwd: join(import.meta.dirname, "..") });
+    // fileURLToPath, not import.meta.dirname — engines >=18 and dirname landed in 20.11.
+    const repoRoot = fileURLToPath(new URL("..", import.meta.url));
+    const r = buildRecord("Token Budget Analyst", { cwd: repoRoot });
     assert.equal(r.certification.basis, "certified");
     assert.equal(r.certification.current.certified_level, "L5");
     assert.equal(r.certification.band, null);

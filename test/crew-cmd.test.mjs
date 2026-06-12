@@ -4,11 +4,13 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { renderDossierBlock } from "../src/dossier-block.mjs";
 import { markFor } from "../src/crew-cmd.mjs";
 
-const BIN = join(import.meta.dirname, "..", "bin", "roleos.mjs");
-const REPO = join(import.meta.dirname, "..");
+// fileURLToPath, not import.meta.dirname — engines >=18 and dirname landed in 20.11.
+const REPO = fileURLToPath(new URL("..", import.meta.url));
+const BIN = join(REPO, "bin", "roleos.mjs");
 
 const run = (args, cwd = REPO) =>
   execFileSync(process.execPath, [BIN, ...args], { cwd, encoding: "utf8" });
