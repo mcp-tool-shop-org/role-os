@@ -171,8 +171,13 @@ Shipped:
 
 Open (specialists layer, `design/specialists-layer.md`):
 
-8. **S4 — cross-training + untraining:** compatibility readout, exam-gated birth, lineage
-   (GPU; spans gpu-container/specialist-training).
+8. **S4 — cross-training (machinery ✅, first birth honestly failed):** compatibility
+   readout + merge tooling live (`gpu-container/specialist-training/cross_train.py`);
+   registry lineage + all-attempts ledger + cross-trained technique shipped. First live
+   fusion (budgeter × conformance, add-r32) FAILED its preregistered exam gate — receipted,
+   unregistered, exactly as designed (the delicate grokked circuits broke). Next fusion
+   protocol: learned-concatenation (CAT) calibration on TRAIN data, exams untouched.
+   Untraining (task-vector negation) still open.
 9. **S5 — form:** drift checks against the exam distribution; stale-marking +
    re-certification triggers (the Record's `divergence` field is the hookup point).
 10. **S6 — training programs:** prerequisite curricula + recipe previews via the readouts
