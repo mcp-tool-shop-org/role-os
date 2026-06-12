@@ -199,13 +199,13 @@ button{font-family:inherit;cursor:pointer}
     return `<svg class="radar" viewBox="0 0 ${W} ${H}">${rings}${axes}<polygon class="ideal" points="${poly(ideal)}"/><polygon class="cur" points="${poly(apt)}"/>${dots}${labels}</svg>`;
   }
 
-  function headHTML(name, spec, fn, crew, portrait, gradeLevel, extraGauge){
+  function headHTML(name, spec, fn, crew, portrait, gradeLevel, extraGauge, gradeBasis){
     const c = color(crew);
     const face = portrait ? `<img class="pface" src="${portrait}" alt="${esc(name)}">` : `<div class="ph">portrait pending</div>`;
     return `<div class="head"><div class="portrait" style="--crew:${c}"><span class="gstamp">${esc(gradeLevel)}</span>${face}</div>
       <div class="idblock"><div class="role-name">${esc(name)}</div><div class="role-spec">${esc(spec)}</div>
       <div class="chiprow"><span class="chip fn">${esc(fn)}</span><span class="chip"><span class="dot" style="background:${c}"></span>${esc(CREW_LABEL[crew]||crew)}</span></div>
-      <div class="gauges"><div class="gauge"><div class="gauge-k">Grade</div><div class="gauge-v">${esc(gradeLevel)}</div><div class="grade-path" style="--crew:${c}">${GRADES.map((g,k)=>`<div class="gp ${k<=GRADES.indexOf(gradeLevel)?'on':''}"></div>`).join('')}</div></div>${extraGauge||''}</div></div></div>`;
+      <div class="gauges"><div class="gauge"><div class="gauge-k">Grade${gradeBasis?` · ${esc(gradeBasis)}`:''}</div><div class="gauge-v">${esc(gradeLevel)}</div><div class="grade-path" style="--crew:${c}">${GRADES.map((g,k)=>`<div class="gp ${k<=GRADES.indexOf(gradeLevel)?'on':''}"></div>`).join('')}</div>${gradeBasis==='assessed'?`<div style="font-size:10px;margin-top:3px;opacity:.55">band unmeasured</div>`:''}</div>${extraGauge||''}</div></div></div>`;
   }
 
   function fullCardHTML(d, r){
@@ -219,7 +219,7 @@ button{font-family:inherit;cursor:pointer}
     const guards = (d.guards||[]).map(g=>`<li><span class="g">▲</span>${esc(g)}</li>`).join('');
     const deltaStr = Object.entries(prof.delta||{}).map(([k,v])=>`${LABEL[k]||k} ${v}`).join(' · ');
     const injected = (window.INJECTED||{})[d.id];
-    let h = headHTML(d.role, d.specialization, d.function, r.crew, r.portrait, d.grade.level, calGauge)
+    let h = headHTML(d.role, d.specialization, d.function, r.crew, r.portrait, d.grade.level, calGauge, d.grade.basis || 'assessed')
       + `<div class="section"><div class="section-h">Aptitudes</div><div class="apt-grid">${radarSVG(d.aptitudes,d.ideal)}<div><div class="bars">${bars}</div><div class="legend"><span><span class="lz"></span> current build</span><span><span class="lz id"></span> canonical ideal</span></div></div></div><div class="maps"><div class="mh">What these numbers do</div><dl>${maps}</dl></div></div>`
       + `<div class="section"><div class="section-h">Operating Profile</div><div class="disp-top"><span class="disp-name" style="--crew:${c}">${esc(prof.active)}</span><span class="disp-blurb">${esc(prof.blurb)}</span></div><div class="voice" style="--crew:${c}">“${esc(prof.voice)}”</div><div class="pdelta"><div class="ph">Behavioral delta <span class="d mono">${esc(deltaStr)}</span></div><p>${esc(prof.prompt_delta)}</p></div>${injected?`<div class="pdelta"><div class="ph">As dispatched <span class="d mono">verbatim — what you read is what the model gets</span></div><pre class="mono" style="white-space:pre-wrap;margin:6px 0 0;font-size:12px;opacity:.85">${esc(injected)}</pre></div>`:''}</div>`;
     if (d.loadout?.model) h += `<div class="section"><div class="section-h">Loadout</div><div class="lo-row"><span class="pin">${esc(d.loadout.model.pin)} · ${d.loadout.model.maxTurns} turns · $${Number(d.loadout.model.budgetUsd).toFixed(0)} ceiling</span>${tools}</div></div>`;

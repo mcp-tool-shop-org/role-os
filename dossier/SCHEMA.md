@@ -159,12 +159,23 @@ Shipped:
    basis/band + verified-events reps + earned-only techniques + verbatim "As dispatched"
    panel.~~ ✅
 
+6. ~~**S2 — the Record** (`src/specialist/record.mjs`): certification ledger + field
+   stats + reps feed assembled read-only from real receipts; techniques v1
+   (clean-promotion, shadow-verified) earned-only; `basis: "certified"` from the live
+   registry.~~ ✅ (bands still null pending the exam-interval pipeline; calibration/ECE
+   pending forecast-receipt instrumentation)
+7. ~~**S3 — crew report:** `roleos crew` roster + sheet (verbatim dispatch block, the
+   Record, honest empty states); gallery grade chips carry basis; quiet ceremony on
+   `specialist promote` (mark + one-line record).~~ ✅ (HTML event-driven glyph pulse
+   lands with live-record views; GlyphStudio marks replace the typographic placeholders)
+
 Open (specialists layer, `design/specialists-layer.md`):
 
-6. **S2 — the Record:** all-attempts certification ledger, per-task field stats,
-   calibration, reps feed, technique derivation from receipts; `basis: "certified"` +
-   real bands from the registry.
-7. **S3 — crew report:** `roleos crew` CLI + the gallery's Crew Report evolution; glyph
-   pulse on certification (quiet ceremony).
-8. **Calibration ANDON** — a build whose Calibration drops below a floor blocks dispatch
-   with a contrastive ANDON (carried from v0.1 roadmap).
+8. **S4 — cross-training + untraining:** compatibility readout, exam-gated birth, lineage
+   (GPU; spans gpu-container/specialist-training).
+9. **S5 — form:** drift checks against the exam distribution; stale-marking +
+   re-certification triggers (the Record's `divergence` field is the hookup point).
+10. **S6 — training programs:** prerequisite curricula + recipe previews via the readouts
+    training-knowledge KB.
+11. **Calibration ANDON** — a build whose Calibration drops below a floor blocks dispatch
+    with a contrastive ANDON (carried from v0.1 roadmap).

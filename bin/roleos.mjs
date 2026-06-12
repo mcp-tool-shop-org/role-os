@@ -17,6 +17,7 @@ import { swarmCommand } from "../src/swarm-cmd.mjs";
 import { startCommand } from "../src/entry-cmd.mjs";
 import { verifyCitationsCommand } from "../src/verify-citations-cmd.mjs";
 import { specialistCommand } from "../src/specialist-cmd.mjs";
+import { crewCommand } from "../src/crew-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
@@ -83,6 +84,8 @@ Usage:
   roleos specialist promote <r> <v>   Promote a certified version to active (refused on L0)
   roleos specialist rollback <r> <v>  NAMED COMPENSATOR — pointer-swap to a prior certified version
   roleos specialist clear-halt <r>    Clear a shadow-probe halt on a role
+  roleos crew                         Crew report — grades (by basis), reps, techniques per role
+  roleos crew <role>                  Full sheet: grade band, verbatim dispatch profile, the Record
   roleos mission list                List all missions
   roleos mission show <key>          Show full mission detail
   roleos mission suggest <text>      Suggest a mission for a task
@@ -216,6 +219,9 @@ try {
       break;
     case "specialist":
       await specialistCommand(args);
+      break;
+    case "crew":
+      await crewCommand(args);
       break;
     case "mission":
       await missionCommand(args);

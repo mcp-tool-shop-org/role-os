@@ -1,0 +1,194 @@
+/**
+ * crew-cmd.mjs — `roleos crew`: the crew report. A scientific-instrument readout over the
+ * dossier config (src/role-dossiers.json) merged with the live Record
+ * (src/specialist/record.mjs). Read-only; renders real state only — measurement bases are
+ * always labelled, unmeasured values say so, and the operating profile is shown VERBATIM as
+ * dispatch injects it (design/specialists-layer.md: findings 16-17, 20-21).
+ *
+ *   roleos crew              roster: mark, grade·basis, band, form, reps, profile
+ *   roleos crew <role>       full sheet for one crew member
+ *
+ * Marks are deterministic per crew pack — typographic placeholders until the GlyphStudio
+ * glyphs land (design open item). The quiet ceremony (mark + one-line record on
+ * certification) lives in specialist-cmd's promote path.
+ */
+
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { readFileSafe } from "./fs-utils.mjs";
+import { deriveProfile, renderDossierBlock } from "./dossier-block.mjs";
+import { buildRecord } from "./specialist/record.mjs";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+
+// Placeholder marks until GlyphStudio glyphs land — deterministic by crew pack.
+const MARKS = {
+  core: "◆", engineering: "▲", design: "◇", marketing: "●", product: "■",
+  research: "✦", growth: "▷", treatment: "◈", "deep-audit": "⬡",
+  brainstorm: "✺", swarm: "⬢",
+};
+const DEFAULT_MARK = "·";
+
+export function markFor(crew) {
+  const pack = (Array.isArray(crew) ? crew[0]?.pack : crew) || "";
+  return MARKS[String(pack).toLowerCase()] || DEFAULT_MARK;
+}
+
+function loadDossiers() {
+  const raw = readFileSafe(join(HERE, "role-dossiers.json"));
+  if (!raw) return {};
+  try { return JSON.parse(raw); } catch { return {}; }
+}
+
+function loadRegistryRoles(cwd) {
+  const raw = readFileSafe(join(cwd, ".role-os", "specialists.json"));
+  if (!raw) return [];
+  try { return (JSON.parse(raw)?.specialists || []).map((s) => s.role); } catch { return []; }
+}
+
+function toId(roleName) {
+  return String(roleName || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function gradeLine(dossier, record) {
+  // The Record outranks the static sheet: a registry certification is measured truth.
+  if (record.certification.basis === "certified") {
+    const c = record.certification.current;
+    return `${c.certified_level} · certified — band unmeasured (interval pipeline pending)`;
+  }
+  const g = dossier?.grade;
+  if (!g) return "ungraded";
+  const band = g.band ? `band ${g.band.floor}–${g.band.ceiling}` : "band unmeasured";
+  return `${g.level} ${g.label || ""} · ${g.basis || "assessed"} — ${band}`.replace(/\s+/g, " ");
+}
+
+function repsLine(dossier, record) {
+  const n = record.repsEvents.length;
+  const unit = dossier?.reps?.unit || "verified events";
+  return `${n} verified event${n === 1 ? "" : "s"}${unit !== "verified events" ? ` (${unit})` : ""}`;
+}
+
+function formLine(record) {
+  return record.divergence.status === "unmonitored"
+    ? "unmonitored (drift checks land in S5)"
+    : record.divergence.status;
+}
+
+function indent(text, prefix) {
+  return String(text).split("\n").map((l) => `${prefix}${l}`).join("\n");
+}
+
+function rosterRow(name, dossier, record) {
+  const mark = markFor(dossier?.crew || null);
+  const grade = gradeLine(dossier, record).split(" — ")[0];
+  const profile = dossier ? (dossier.operatingProfile?.active || "—") : "registry specialist";
+  const reps = record.repsEvents.length;
+  const tech = record.techniques.length;
+  return `  ${mark} ${name.padEnd(28)} ${grade.padEnd(22)} reps ${String(reps).padStart(3)}  techniques ${tech}  ${profile}`;
+}
+
+function renderSheet(name, dossier, record) {
+  const lines = [];
+  const mark = markFor(dossier?.crew || null);
+  const title = dossier
+    ? `${mark} ${name} — ${dossier.function || ""}${dossier.specialization ? ` · ${dossier.specialization}` : ""}`
+    : `${mark} ${name} — registry specialist (no dossier)`;
+  lines.push(title);
+  if (dossier?.crew?.length) {
+    lines.push(`  crew: ${dossier.crew.map((c) => `${c.pack}${c.role_in_pack ? ` (${c.role_in_pack})` : ""}`).join(", ")}`);
+  }
+  lines.push("");
+  lines.push(`  GRADE   ${gradeLine(dossier, record)}`);
+  lines.push(`  REPS    ${repsLine(dossier, record)}`);
+  lines.push(`  FORM    ${formLine(record)}`);
+  lines.push("");
+
+  const injected = dossier ? renderDossierBlock(dossier.role || name) : null;
+  if (injected) {
+    lines.push("  OPERATING PROFILE — as dispatched (verbatim: what you read is what the model gets)");
+    lines.push(indent(injected, "  | "));
+    lines.push("");
+  } else if (dossier) {
+    const p = deriveProfile(dossier);
+    if (p.archetype) lines.push(`  OPERATING PROFILE  ${p.archetype}`, "");
+  }
+
+  lines.push("  RECORD");
+  if (record.certification.current) {
+    const c = record.certification.current;
+    lines.push(`  certification: ${c.certified_level} (${c.version_id}), certified ${c.certified_at || "—"}, exam ${c.exam_hash ? c.exam_hash.slice(0, 12) : "—"}`);
+    for (const e of record.certification.ledger) {
+      lines.push(`    ${e.ts}  ${e.kind}${e?.data?.to_version ? ` → ${e.data.to_version}` : ""}${e?.data?.backfilled ? " (backfilled)" : ""}`);
+    }
+  } else {
+    lines.push("  certification: none on the registry (basis: assessed)");
+  }
+  if (record.field.perTask.length) {
+    for (const t of record.field.perTask) {
+      lines.push(`  field: ${t.produces} — ${t.complete} complete / ${t.failed} failed / ${t.blocked} blocked`);
+    }
+  } else {
+    lines.push("  field: no run history in this repo");
+  }
+  lines.push(`  probes: ${record.field.probes ? `${record.field.probes.agreed}/${record.field.probes.count} agreed` : "—"}`);
+  if (record.field.outcomes) {
+    const o = record.field.outcomes;
+    lines.push(`  outcomes: ${o.completed}/${o.runs} runs completed, ${o.corrections} correction${o.corrections === 1 ? "" : "s"}`);
+  }
+  lines.push("");
+
+  lines.push("  TECHNIQUES");
+  if (record.techniques.length) {
+    for (const t of record.techniques) {
+      lines.push(`  ◆ ${t.name} — ${t.desc}`);
+      for (const r of t.receipts) lines.push(`      receipt: ${r}`);
+    }
+  } else {
+    lines.push("  none earned yet — techniques derive from certification and field receipts; they cannot be authored");
+  }
+
+  if (dossier?.charter) {
+    lines.push("", "  CHARTER", indent(dossier.charter, "  "));
+  }
+  if (dossier?.guards?.length) {
+    lines.push("", "  GUARDS");
+    for (const g of dossier.guards) lines.push(`  ▲ ${g}`);
+  }
+  return lines.join("\n");
+}
+
+export async function crewCommand(args, cwd = process.cwd()) {
+  const dossiers = loadDossiers();
+  const query = args.filter((a) => !a.startsWith("--")).join(" ").trim();
+
+  if (!query) {
+    const names = Object.values(dossiers).map((d) => d.role);
+    const registryOnly = loadRegistryRoles(cwd).filter((r) => !dossiers[toId(r)]);
+    console.log(`Crew report — ${names.length + registryOnly.length} members (${registryOnly.length} registry specialist${registryOnly.length === 1 ? "" : "s"})`);
+    console.log("");
+    for (const r of registryOnly.sort()) {
+      console.log(rosterRow(r, null, buildRecord(r, { cwd })));
+    }
+    for (const d of Object.values(dossiers).sort((a, b) => a.role.localeCompare(b.role))) {
+      console.log(rosterRow(d.role, d, buildRecord(d.role, { cwd })));
+    }
+    console.log("");
+    console.log("roleos crew <role> — full sheet · grades labelled by basis (assessed | certified) · bands appear when measured");
+    return;
+  }
+
+  const id = toId(query);
+  const dossier = dossiers[id] || Object.values(dossiers).find((d) => d.role.toLowerCase() === query.toLowerCase()) || null;
+  const registryRoles = loadRegistryRoles(cwd);
+  const registryName = registryRoles.find((r) => toId(r) === id || r.toLowerCase() === query.toLowerCase()) || null;
+
+  if (!dossier && !registryName) {
+    const err = new Error(`No crew member matches "${query}"`);
+    err.exitCode = 1;
+    err.hint = "Run 'roleos crew' for the roster.";
+    throw err;
+  }
+
+  const name = dossier?.role || registryName;
+  console.log(renderSheet(name, dossier, buildRecord(name, { cwd })));
+}

@@ -34,6 +34,10 @@ import {
   readEvents,
 } from "./specialist/events.mjs";
 import { appendClearHaltEvent } from "./specialist/shadow.mjs";
+import { markFor } from "./crew-cmd.mjs";
+import { readFileSafe } from "./fs-utils.mjs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const DEFAULT_REGISTRY_PATH = ".role-os/specialists.json";
 const DEFAULT_STATE_PATH = ".role-os/specialist-state.json";
@@ -307,6 +311,26 @@ function pointerSwap({ role, versionId, flags, kind }) {
 
   const arrow = kind === "rollback" ? "←" : "→";
   console.log(`${kind} ${role}: ${previous || "(none)"} ${arrow} ${versionId} (${version.certified_level})`);
+
+  // The quiet ceremony (design/specialists-layer.md): on certification the mark prints once
+  // with a one-line record. No fanfare — the instrument confirms; the reward is the new
+  // capability in action and the record it leaves.
+  if (kind === "promote") {
+    const mark = markFor(dossierCrewFor(role));
+    console.log("");
+    console.log(`  ${mark}  ${role} — ${version.certified_level} certified · ${versionId}${version.exam_hash ? ` · exam ${version.exam_hash.slice(0, 12)}` : ""}`);
+  }
+}
+
+/** Crew pack for the ceremony mark, when the role has a dossier (registry-only roles get the default mark). */
+function dossierCrewFor(role) {
+  const raw = readFileSafe(join(dirname(fileURLToPath(import.meta.url)), "role-dossiers.json"));
+  if (!raw) return null;
+  try {
+    const dossiers = JSON.parse(raw);
+    const id = String(role).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    return dossiers[id]?.crew || null;
+  } catch { return null; }
 }
 
 // ── clear-halt ──────────────────────────────────────────────────────────────────────────────
