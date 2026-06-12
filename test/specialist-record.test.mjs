@@ -168,12 +168,14 @@ describe("buildRecord — field signals from runs and the outcome ledger", () =>
   });
 });
 
-describe("buildRecord — against this repo's real ledgers (smoke)", () => {
+describe("buildRecord — against this repo's committed registry (smoke)", () => {
+  // Only asserts COMMITTED truth: .role-os/specialists.json ships in git, but the events
+  // ledger (.role-os/specialist-events.jsonl) is gitignored runtime state, so ledger and
+  // technique behavior is covered by the fixture suites above, not here (CI has no ledger).
   it("Token Budget Analyst reads as certified L5 from the committed registry", () => {
     const r = buildRecord("Token Budget Analyst", { cwd: join(import.meta.dirname, "..") });
     assert.equal(r.certification.basis, "certified");
     assert.equal(r.certification.current.certified_level, "L5");
-    assert.ok(r.certification.ledger.length >= 2);
     assert.equal(r.certification.band, null);
   });
 });

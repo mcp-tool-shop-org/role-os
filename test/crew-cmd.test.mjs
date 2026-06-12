@@ -40,11 +40,12 @@ describe("roleos crew <role> — the sheet", () => {
     assert.ok(out.includes("what you read is what the model gets"));
   });
 
-  it("renders the certified specialist from the live registry with its earned technique", () => {
+  it("renders the certified specialist from the committed registry", () => {
+    // The events ledger is gitignored runtime state — technique earning is covered by the
+    // fixture suites in specialist-record.test.mjs; here we assert committed truth only.
     const out = run(["crew", "Token Budget Analyst"]);
     assert.ok(out.includes("L5 · certified"));
-    assert.ok(out.includes("Clean promotion"));
-    assert.ok(out.includes("receipt: promote:budgeter-14b600-soup"));
+    assert.ok(out.includes("budgeter-14b600-soup"));
     assert.ok(out.includes("FORM    unmonitored"));
   });
 
