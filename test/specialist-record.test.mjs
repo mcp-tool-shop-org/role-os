@@ -169,6 +169,57 @@ describe("buildRecord — field signals from runs and the outcome ledger", () =>
   });
 });
 
+describe("lineage (S4 cross-training)", () => {
+  let dir;
+  before(() => {
+    dir = mkdtempSync(join(tmpdir(), "roleos-record-lineage-"));
+    mkdirSync(join(dir, ".role-os"), { recursive: true });
+    writeFileSync(join(dir, ".role-os", "specialists.json"), JSON.stringify({
+      schema: "roleos-specialist-registry/v1",
+      specialists: [{
+        role: ROLE, backend_url: "http://localhost:8000", fallback: "claude", workload_quota: 0.5,
+        active_version: "x-1",
+        versions: [{
+          id: "x-1", adapter_id: "budgeter-x-conformance-add", base_model: "Qwen/Qwen3-14B",
+          gate_threshold: 0.6, certified_level: "L5", exam_hash: "deadbeef1234",
+          field_audit_window: 200, created_at: "2026-06-12T00:00:00Z",
+          lineage: { parents: ["budgeter-14b600-soup-20260605", "conformance-14b-soup-20260606"], method: "add-r32" },
+        }],
+      }],
+    }));
+    appendEvents(dir, [
+      { kind: "register", role: ROLE, ts: "2026-06-12T00:00:00Z", data: { version_id: "x-1", certified_level: "L5" } },
+      { kind: "promote", role: ROLE, ts: "2026-06-12T00:00:01Z", data: { from_version: null, to_version: "x-1", certified_level: "L5" } },
+    ]);
+  });
+  after(() => { rmSync(dir, { recursive: true, force: true }); });
+
+  it("surfaces lineage on the certification and earns the cross-trained technique", () => {
+    const r = buildRecord(ROLE, { cwd: dir });
+    assert.deepEqual(r.certification.current.lineage.parents,
+      ["budgeter-14b600-soup-20260605", "conformance-14b-soup-20260606"]);
+    const t = r.techniques.find((x) => x.id === "cross-trained");
+    assert.ok(t, "cross-trained earned");
+    assert.ok(t.receipts.includes("parent:budgeter-14b600-soup-20260605"));
+    assert.ok(t.receipts.includes("exam:deadbeef1234"));
+  });
+
+  it("validateRegistry accepts well-formed lineage and rejects malformed lineage", async () => {
+    const { validateRegistry } = await import("../src/specialist/registry.mjs");
+    const base = {
+      id: "v1", adapter_id: "a", base_model: "Qwen/Qwen3-14B", gate_threshold: 0.5,
+      certified_level: "L1", exam_hash: "h", field_audit_window: 200, created_at: "2026-06-12T00:00:00Z",
+    };
+    const reg = (version) => ({
+      schema: "roleos-specialist-registry/v1",
+      specialists: [{ role: "R", backend_url: "http://x", fallback: "claude", workload_quota: 0.5, active_version: null, versions: [version] }],
+    });
+    assert.equal(validateRegistry(reg({ ...base, lineage: { parents: ["p1", "p2"], method: "add-r32" } })).ok, true);
+    assert.equal(validateRegistry(reg({ ...base, lineage: { parents: ["only-one"], method: "add" } })).ok, false);
+    assert.equal(validateRegistry(reg({ ...base, lineage: { parents: ["p1", "p2"] } })).ok, false);
+  });
+});
+
 describe("buildRecord — against this repo's committed registry (smoke)", () => {
   // Only asserts COMMITTED truth: .role-os/specialists.json ships in git, but the events
   // ledger (.role-os/specialist-events.jsonl) is gitignored runtime state, so ledger and

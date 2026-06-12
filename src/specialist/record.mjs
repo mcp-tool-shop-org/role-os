@@ -114,6 +114,9 @@ function verifiedEvents(events, runSteps) {
   for (const e of events) {
     if (e.kind === "register" || e.kind === "promote" || e.kind === "rollback") {
       out.push({ t: e.ts, kind: e.kind === "register" ? "certification" : e.kind, ref: e?.data?.version_id || e?.data?.to_version || null });
+    } else if (e.kind === "certification-attempt") {
+      // A failed attempt is still a verified exam event — every attempt counts (finding 16).
+      out.push({ t: e.ts, kind: "exam-attempt", ref: e?.data?.candidate || null });
     }
   }
   for (const s of runSteps) {
@@ -155,6 +158,22 @@ export function deriveTechniques({ certification, events }) {
     });
   }
 
+  // Cross-trained: the certified version was born by merging certified parents and passed
+  // BOTH parents' exams (lineage only enters the registry through the exam gate — S4).
+  const cur = certification?.current;
+  if (cur?.lineage?.parents?.length >= 2) {
+    techniques.push({
+      id: "cross-trained",
+      name: "Cross-trained",
+      desc: `Born from ${cur.lineage.parents.join(" × ")} via ${cur.lineage.method}; certified on every parent's exam.`,
+      earned: cur.certified_at,
+      receipts: [
+        ...cur.lineage.parents.map((p) => `parent:${p}`),
+        `exam:${cur.exam_hash ? cur.exam_hash.slice(0, 12) : "?"}`,
+      ],
+    });
+  }
+
   return techniques;
 }
 
@@ -178,11 +197,12 @@ export function buildRecord(role, { cwd = process.cwd() } = {}) {
           exam_hash: reg.active.exam_hash || null,
           exam_artifact: reg.active.exam_artifact || null,
           certified_at: reg.active.created_at || null,
+          lineage: reg.active.lineage || null,
         }
       : null,
     basis: reg?.active ? "certified" : "assessed",
     band: null, // conservative skill interval — null until the exam pipeline emits one
-    ledger: events.filter((e) => ["register", "promote", "rollback", "halt", "clear-halt"].includes(e.kind)),
+    ledger: events.filter((e) => ["register", "promote", "rollback", "halt", "clear-halt", "certification-attempt"].includes(e.kind)),
   };
 
   const perTaskMap = new Map();

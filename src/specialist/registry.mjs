@@ -199,6 +199,16 @@ function validateVersion(v, tag) {
   if (v.exam_centroid !== undefined && !Array.isArray(v.exam_centroid)) {
     errors.push(`${tag}: exam_centroid, if present, must be an array of numbers`);
   }
+  // lineage: cross-trained versions record their ancestry (specialists layer S4) — the
+  // parents are version ids (possibly from other roles' entries) and method names the merge.
+  if (v.lineage !== undefined) {
+    const l = v.lineage;
+    if (!l || typeof l !== "object" || !Array.isArray(l.parents) || l.parents.length < 2
+        || !l.parents.every((p) => typeof p === "string" && p)
+        || typeof l.method !== "string" || !l.method) {
+      errors.push(`${tag}: lineage, if present, must be { parents: [>=2 version-id strings], method: string }`);
+    }
+  }
   // ood_floor feeds defaultOodFn directly (gate.mjs): a string silently falls back to the 0.4
   // default and a value outside cosine range disables routing entirely — both must fail loudly
   // at load time, mirroring the R5 gate_threshold check.
