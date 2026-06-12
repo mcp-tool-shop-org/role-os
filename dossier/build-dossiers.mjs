@@ -50,16 +50,21 @@ for (const [id, r] of Object.entries(roster)) {
   for (const [k, v] of Object.entries(delta)) deltaStr[k] = signed(v);
 
   const dossier = {
-    schema: 'roleos-dossier/v0.1',
+    schema: 'roleos-dossier/v0.2',
     id, role: r.role, specialization: r.specialization, function: r.function,
     crew: [{ pack: r.crew, label: r.crew, role_in_pack: '' }],
     archetype: arch,
-    grade: { level: r.grade, label: GRADE_LABEL[r.grade] || r.grade, path: GRADES },
+    // basis 'assessed' = panel-tuned editorial assessment, no exam behind it; band stays null
+    // until the certification pipeline measures one (basis 'certified', S2). Honest by
+    // construction per design/specialists-layer.md findings 16-17.
+    grade: { level: r.grade, label: GRADE_LABEL[r.grade] || r.grade, path: GRADES, basis: 'assessed', band: null },
+    reps: { unit: 'verified events', count: 0, events: [], note: 'verified training/exam/field events only — never calendar units' },
     aptitudes, ideal: idealOut,
-    disposition: {
+    operatingProfile: {
       active: r.disposition, blurb: disp.blurb, delta: deltaStr,
       prompt_delta: disp.prompt_delta, voice: disp.voice,
     },
+    techniques: [],
     charter: r.charter,
     maps_to: MAPS,
   };

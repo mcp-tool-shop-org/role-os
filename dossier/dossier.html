@@ -214,17 +214,19 @@ button{font-family:inherit;cursor:pointer}
     const bars = AXES.map(k=>{const v=d.aptitudes[k]??0,id=d.ideal[k]??0;return `<div class="bar-row"><span class="bar-k">${LABEL[k]}</span><div class="bar-track"><div class="bar-fill" style="width:${v/5*100}%"></div><div class="bar-ideal" style="left:${id/5*100}%"></div></div><span class="bar-v">${v}/5</span></div>`;}).join('');
     const maps = AXES.map(k=>`<dt>${LABEL[k]}</dt><dd>${esc(d.maps_to&&d.maps_to[k]||'')}</dd>`).join('');
     const tools = (d.loadout?.tools||[]).map(t=>`<span class="tool ${t.access}">${esc(t.name)}<span class="acc">${t.access}</span></span>`).join('');
-    const moves = (d.signatureMoves||[]).map(m=>`<div class="move"><span class="mi">◆</span><div><b>${esc(m.name)}</b>${m.earned?`<span class="earn">via ${esc(m.earned)}</span>`:''}<div class="md">${esc(m.desc)}</div></div></div>`).join('');
+    const prof = d.operatingProfile || d.disposition || {};
+    const techniques = (d.techniques||[]).map(m=>`<div class="move"><span class="mi">◆</span><div><b>${esc(m.name)}</b>${m.earned?`<span class="earn">${esc(m.earned)}</span>`:''}<div class="md">${esc(m.desc)}</div></div></div>`).join('');
     const guards = (d.guards||[]).map(g=>`<li><span class="g">▲</span>${esc(g)}</li>`).join('');
-    const deltaStr = Object.entries(d.disposition?.delta||{}).map(([k,v])=>`${LABEL[k]||k} ${v}`).join(' · ');
+    const deltaStr = Object.entries(prof.delta||{}).map(([k,v])=>`${LABEL[k]||k} ${v}`).join(' · ');
+    const injected = (window.INJECTED||{})[d.id];
     let h = headHTML(d.role, d.specialization, d.function, r.crew, r.portrait, d.grade.level, calGauge)
       + `<div class="section"><div class="section-h">Aptitudes</div><div class="apt-grid">${radarSVG(d.aptitudes,d.ideal)}<div><div class="bars">${bars}</div><div class="legend"><span><span class="lz"></span> current build</span><span><span class="lz id"></span> canonical ideal</span></div></div></div><div class="maps"><div class="mh">What these numbers do</div><dl>${maps}</dl></div></div>`
-      + `<div class="section"><div class="section-h">Disposition</div><div class="disp-top"><span class="disp-name" style="--crew:${c}">${esc(d.disposition.active)}</span><span class="disp-blurb">${esc(d.disposition.blurb)}</span></div><div class="voice" style="--crew:${c}">“${esc(d.disposition.voice)}”</div><div class="pdelta"><div class="ph">Behavioral delta <span class="d mono">${esc(deltaStr)}</span></div><p>${esc(d.disposition.prompt_delta)}</p></div></div>`;
+      + `<div class="section"><div class="section-h">Operating Profile</div><div class="disp-top"><span class="disp-name" style="--crew:${c}">${esc(prof.active)}</span><span class="disp-blurb">${esc(prof.blurb)}</span></div><div class="voice" style="--crew:${c}">“${esc(prof.voice)}”</div><div class="pdelta"><div class="ph">Behavioral delta <span class="d mono">${esc(deltaStr)}</span></div><p>${esc(prof.prompt_delta)}</p></div>${injected?`<div class="pdelta"><div class="ph">As dispatched <span class="d mono">verbatim — what you read is what the model gets</span></div><pre class="mono" style="white-space:pre-wrap;margin:6px 0 0;font-size:12px;opacity:.85">${esc(injected)}</pre></div>`:''}</div>`;
     if (d.loadout?.model) h += `<div class="section"><div class="section-h">Loadout</div><div class="lo-row"><span class="pin">${esc(d.loadout.model.pin)} · ${d.loadout.model.maxTurns} turns · $${Number(d.loadout.model.budgetUsd).toFixed(0)} ceiling</span>${tools}</div></div>`;
-    if ((d.signatureMoves||[]).length) h += `<div class="section"><div class="section-h">Signature Moves</div><div class="moves">${moves}</div></div>`;
+    h += `<div class="section"><div class="section-h">Techniques</div>${(d.techniques||[]).length?`<div class="moves">${techniques}</div>`:`<div class="pending">None earned yet — techniques derive automatically from certification and field receipts; they cannot be authored.</div>`}</div>`;
     h += `<div class="section"><div class="section-h">Charter</div><div class="charter">${esc(d.charter)}</div></div>`;
     if ((d.guards||[]).length) h += `<div class="section"><div class="section-h">Guards</div><ul class="guards">${guards}</ul></div>`;
-    h += `<div class="foot"><span class="mono">${esc(d.schema||'roleos-dossier/v0.1')}</span><span>painted portrait · Chroma1-HD</span></div>`;
+    h += `<div class="foot"><span class="mono">${esc(d.schema||'roleos-dossier/v0.2')}</span><span>painted portrait · Chroma1-HD</span></div>`;
     return h;
   }
 
@@ -232,9 +234,9 @@ button{font-family:inherit;cursor:pointer}
     const c = color(r.crew);
     const expr = (HOUSE.disposition_expression||{})[r.disposition];
     return headHTML(r.role, r.specialization, r.function, r.crew, r.portrait, r.grade)
-      + `<div class="section"><div class="section-h">Aptitudes</div><div class="pending">Aptitude profile pending — this role has no dossier entry yet (all 64 roster roles ship statted; this is a fallback for newly added roles).<br>Disposition default: <b style="color:${c}">${esc(r.disposition)}</b>${expr?` — <span class="muted">${esc(expr)}</span>`:''}</div></div>`
+      + `<div class="section"><div class="section-h">Aptitudes</div><div class="pending">Aptitude profile pending — this role has no dossier entry yet (all 64 roster roles ship statted; this is a fallback for newly added roles).<br>Profile default: <b style="color:${c}">${esc(r.disposition)}</b>${expr?` — <span class="muted">${esc(expr)}</span>`:''}</div></div>`
       + `<div class="section"><div class="section-h">Charter</div><div class="charter">${esc(r.charter)}</div></div>`
-      + `<div class="foot"><span class="mono">roleos-dossier/v0.1 · identity</span><span>painted portrait · Chroma1-HD</span></div>`;
+      + `<div class="foot"><span class="mono">roleos-dossier/v0.2 · identity</span><span>painted portrait · Chroma1-HD</span></div>`;
   }
 
   function showDetail(id){
