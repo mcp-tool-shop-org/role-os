@@ -114,6 +114,9 @@ function tryParseJson(text) {
  * @param {string} [options.python]    default DEFAULT_OFFLOAD_PYTHON
  * @param {string} [options.script]    default DEFAULT_OFFLOAD_SCRIPT
  * @param {string} [options.base]      LLAMASWAP_BASE passed to the child (default offload's own)
+ * @param {string} [options.seats]     OFFLOAD_PANEL_SEATS for the child — CSV of model tags (PIN_PER_STEP).
+ *                                      Lets the panel run on Ollama's /v1 (base http://localhost:11434,
+ *                                      seats e.g. "mistral-small:24b,granite4.1:30b,gemma4:31b").
  * @param {number} [options.timeout]   per-call ms (default 300000 — first call may swap 3 models)
  * @param {string} [options.cwd]
  * @returns {PanelResult}
@@ -124,6 +127,7 @@ export function runOffloadPanel(supported, options = {}) {
     python = DEFAULT_OFFLOAD_PYTHON,
     script = DEFAULT_OFFLOAD_SCRIPT,
     base = process.env.LLAMASWAP_BASE || "",
+    seats = process.env.OFFLOAD_PANEL_SEATS || "",
     timeout = 300_000,
     cwd = process.cwd(),
   } = options;
@@ -133,6 +137,10 @@ export function runOffloadPanel(supported, options = {}) {
     PYTHONIOENCODING: "utf-8",
     PYTHONUTF8: "1",
     ...(base ? { LLAMASWAP_BASE: base } : {}),
+    // The panel seat models (PIN_PER_STEP). Forwarded to offload's OFFLOAD_PANEL_SEATS so the second
+    // seat can run on Ollama's OpenAI-compat endpoint (base http://localhost:11434, seats e.g.
+    // "mistral-small:24b,granite4.1:30b,gemma4:31b") when the default llama-swap server is not up.
+    ...(seats ? { OFFLOAD_PANEL_SEATS: seats } : {}),
   };
 
   const perCitation = [];

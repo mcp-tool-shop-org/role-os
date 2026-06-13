@@ -233,7 +233,7 @@ describe("runCitationGate with --local-panel", () => {
     assert.equal(r.receipt.local_panel, null);
   });
 
-  it("prism BLOCKING + localPanel on -> panel skipped (gate not pass), floor stands", () => {
+  it("prism BLOCKING + localPanel on -> panel skipped (dispatch already rejected), floor stands", () => {
     let called = false;
     const r = runCitationGate(ONE, {
       exec: prismExec(
@@ -248,8 +248,116 @@ describe("runCitationGate with --local-panel", () => {
         return { status: 0, stdout: "{}", stderr: "" };
       },
     });
-    assert.equal(called, false); // panel only runs on a still-passing gate
+    assert.equal(called, false); // a fabricated citation rejects the dispatch wholesale — no second seat
     assert.equal(r.blocking, true);
     assert.equal(r.receipt.local_panel, null);
+  });
+
+  // Regression for the "local_panel always null on real dispatches" bug: a realistic dispatch mixes
+  // supported + not_addressed citations, so the OVERALL verdict is `escalate` (not a clean accept).
+  // The second seat must STILL run on the supported subset — that is the whole point of
+  // EXTERNAL_VERIFIER — and record its seats in the receipt. Before the fix it was gated on
+  // `gate.pass`, so it never ran here and `receipt.local_panel` was null.
+  it("prism ESCALATE (mixed supported + not_addressed) -> panel STILL runs on the supported subset", () => {
+    const TWO =
+      "1. **Autoregressive LLMs cannot self-verify.** Kambhampati et al. 2024 (arXiv:2402.01817).\n\n" +
+      "2. **Task arithmetic edits a model by adding task vectors.** Ilharco et al. 2022 (arXiv:2212.04089).";
+    const mixed = {
+      verdict: "escalate",
+      confidence: 1.0,
+      retryable: false,
+      lens_results: [],
+      pairwise_rho: {},
+      citation_results: [
+        {
+          citation_id: "c1",
+          identifier: "arXiv:2402.01817",
+          existence: "resolved",
+          finding_match: "supported",
+          verdict: "accept",
+          action: "OK",
+          detail: "source supports the claim",
+          source_title: "LLMs Can't Plan, But Can Help Planning in LLM-Modulo Frameworks",
+          source_abstract: "We argue that autoregressive LLMs cannot self-verify; the LLM-Modulo framework pairs the LLM with external sound critics.",
+          supporting_span: "We argue LLMs cannot self-verify their own outputs.",
+        },
+        {
+          citation_id: "c2",
+          identifier: "arXiv:2212.04089",
+          existence: "resolved",
+          finding_match: "not_addressed",
+          verdict: "escalate",
+          action: "RETRIEVE FULL TEXT",
+          detail: "claim is not addressed in the title+abstract",
+          source_title: "Editing Models with Task Arithmetic",
+          source_abstract: "We present a paradigm for steering neural network behavior via task vectors.",
+        },
+      ],
+      receipt: { id: "prism-mixed", signature: "deadbeef", retrieval_pins: [] },
+    };
+    let called = 0;
+    const offload = (cmd, args, opts) => {
+      called += 1;
+      return offloadExecReturning("supported")(cmd, args, opts);
+    };
+    const r = runCitationGate(TWO, { exec: prismExec(mixed), localPanel: true, offloadExec: offload });
+
+    // Overall verdict stays escalate (never loosened by the panel)...
+    assert.equal(r.pass, false);
+    assert.equal(r.verdict, "escalate");
+    assert.equal(exitCodeFor(r), 30);
+    // ...but the second seat RAN — once, on the single supported citation — and is in the receipt.
+    assert.equal(called, 1);
+    assert.notEqual(r.receipt.local_panel, null);
+    assert.equal(r.receipt.local_panel.checked, 1);
+    assert.deepEqual(r.receipt.local_panel.seats, ["qwen3-4b", "qwen3-14b", "mistral-nemo-12b"]);
+    assert.equal(r.receipt.local_panel.disagreements.length, 0);
+  });
+
+  it("prism ESCALATE + panel DISAGREES on a supported citation -> disagreement recorded (verdict stays escalate)", () => {
+    const TWO =
+      "1. **Autoregressive LLMs cannot self-verify.** Kambhampati et al. 2024 (arXiv:2402.01817).\n\n" +
+      "2. **Task arithmetic edits a model by adding task vectors.** Ilharco et al. 2022 (arXiv:2212.04089).";
+    const mixed = {
+      verdict: "escalate",
+      confidence: 1.0,
+      retryable: false,
+      lens_results: [],
+      pairwise_rho: {},
+      citation_results: [
+        {
+          citation_id: "c1",
+          identifier: "arXiv:2402.01817",
+          existence: "resolved",
+          finding_match: "supported",
+          verdict: "accept",
+          action: "OK",
+          detail: "source supports the claim",
+          source_title: "T",
+          source_abstract: "A real abstract that the panel will judge against.",
+          supporting_span: "span",
+        },
+        {
+          citation_id: "c2",
+          identifier: "arXiv:2212.04089",
+          existence: "resolved",
+          finding_match: "not_addressed",
+          verdict: "escalate",
+          action: "RETRIEVE FULL TEXT",
+          detail: "claim is not addressed in the title+abstract",
+          source_title: "T2",
+          source_abstract: "Another abstract.",
+        },
+      ],
+      receipt: { id: "prism-mixed2", signature: "deadbeef", retrieval_pins: [] },
+    };
+    const r = runCitationGate(TWO, {
+      exec: prismExec(mixed),
+      localPanel: true,
+      offloadExec: offloadExecReturning("refuted"),
+    });
+    assert.equal(r.verdict, "escalate"); // already escalate; panel never loosens, doesn't double-escalate
+    assert.equal(r.receipt.local_panel.disagreements.length, 1);
+    assert.equal(r.receipt.local_panel.disagreements[0].panel, "refuted");
   });
 });

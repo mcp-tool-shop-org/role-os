@@ -145,10 +145,19 @@ on llama-swap). It re-judges each citation prism marked `supported`, using prism
 evidence (`source_title` + `supporting_span`) as the source — so if even prism's best span does not
 entail the claim under a strict panel, that is the false-confirm worth catching.
 
-- **Monotone-tightening (the safety invariant).** The panel can only downgrade a *passing* gate to
-  `escalate` (`local_panel_disagreement`); it never loosens, never overrides the existence floor
-  (blocking dominates), and never runs on an already non-passing gate. A requested-but-unreachable
-  panel escalates (`local_panel_unreachable`) — the closed-gate rule, applied to the seat.
+- **When it runs.** The panel re-judges every citation prism marked `supported`, whenever there is at
+  least one — NOT only on a clean accept. A realistic multi-citation dispatch almost always has ≥1
+  `not_addressed` (abstract-only RAG can't confirm everything), so the OVERALL gate is `escalate`; but
+  the citations prism DID vouch for still deserve the independent second seat — that IS the point of
+  EXTERNAL_VERIFIER. The only skip is a BLOCKING gate (a fabricated citation already rejects the
+  dispatch wholesale). *(Before this fix the panel was gated on a passing gate, so on any real
+  dispatch with one unconfirmable citation it never ran and the `local_panel` receipt block was always
+  null — the bug that made the second seat look broken.)*
+- **Monotone-tightening (the safety invariant).** The panel never loosens and never overrides the
+  existence floor (blocking dominates). On a *passing* gate a disagreement downgrades it to `escalate`
+  (`local_panel_disagreement`); on an already-`escalate`/advisory gate it records its per-citation
+  verdicts + seat models WITHOUT changing the verdict. A requested-but-unreachable panel escalates a
+  *passing* gate (`local_panel_unreachable`) — the closed-gate rule, applied to the seat.
 - **Why it is sound to add (not just more models).** The panel's measured property (tensor-engine-
   knowledge #156, re-proven wave-6 on a real arXiv set in `verifier/citation-panel-receipt.json`) is
   **zero false-confirms**: a 3-seat conservative majority never stamps a false claim "supported,"
@@ -161,8 +170,21 @@ entail the claim under a strict panel, that is the false-confirm worth catching.
   verdicts, and disagreements; the panel digest + the (possibly-downgraded) verdict fold into the
   receipt hash chain.
 - **Module.** `src/citation-panel.mjs` — pure/injectable (`offloadExec`), mirroring verify-citations'
-  exec discipline. Off by default. Evidence is presently prism's single span; surfacing prism's full
-  retrieved abstract would strengthen the panel (a prism follow-up).
+  exec discipline. Off by default. Evidence is prism's full retrieved abstract (v2.6.0), falling back
+  to the single span on older prism builds.
+- **Backends (where the seats run).** `offload` posts to an OpenAI-compatible `/v1/chat/completions`
+  at `$LLAMASWAP_BASE`. Two interchangeable options: **(a)** llama-swap at `:9090` with its default
+  seats (`qwen3-4b,qwen3-14b,mistral-nemo-12b`); or **(b) Ollama** at `:11434` (its OpenAI-compat
+  endpoint) with decorrelated Ollama families — the recipe when llama-swap is not running but Ollama
+  is:
+  ```
+  roleos verify-citations <dispatch> --local-panel \
+    --llamaswap-base http://localhost:11434 \
+    --panel-seats mistral-small:24b,granite4.1:30b,gemma4:31b
+  ```
+  `--panel-seats` → the child's `OFFLOAD_PANEL_SEATS`; `--llamaswap-base` → `LLAMASWAP_BASE` (both
+  also honoured from the environment). The seats must be a non-thinking instruct model that returns
+  clean JSON; on this rig mistral-small / granite4.1 / gemma4 are known-good.
 
 ## Standards compliance
 
@@ -175,7 +197,7 @@ Scored against the six workflow standards (this gate IS a new workflow).
 | NAMED_COMPENSATORS | **skip** | Read-only: extraction reads the dispatch, prism verify is a read-only GET-backed call, the receipt is git-reversible. No irreversible world-touching write ⇒ no compensator (documented skip, per the rule's own example). |
 | DECOMPOSE_BY_SECRETS | 3 | `verify-citations.mjs` hides extraction + the prism shell-out + the tiering; the CLI command hides arg/output formatting; prism hides verification. One secret per module (Parnas). |
 | UNCERTAINTY_GATED_HUMANS | 3 | The Tier-3 **escalate** path is a genuine uncertainty-gated human checkpoint (gated on the verifier's own low confidence, not step count), with a **contrastive** message and a forcing function (view the source span before accepting). This is where role-os — the interactive layer — implements the standard prism (non-interactive) could only defer. |
-| EXTERNAL_VERIFIER | 3 | The whole point: role-os (generator) defers citation adjudication to prism, a **different model family**, reasoning-stripped, by construction (L1 routing). role-os never grades its own dispatch — and enforces prism's existence floor *itself* (blocking dominates accept). It **records** prism's signed receipt (chain-of-custody; cryptographic inner-HMAC verification is a v2 item). **v2.5.0 adds `--local-panel`: a SECOND family-different seat (a 3-seat Qwen+Mistral entailment panel, no Anthropic model, decorrelated from both Claude and prism) with a measured 0-false-confirm property and a receipt of it catching a real single-model false-confirm — multi-lens ≥ 3, runnable locally for free.** |
+| EXTERNAL_VERIFIER | 3 | The whole point: role-os (generator) defers citation adjudication to prism, a **different model family**, reasoning-stripped, by construction (L1 routing). role-os never grades its own dispatch — and enforces prism's existence floor *itself* (blocking dominates accept). It **records** prism's signed receipt (chain-of-custody; cryptographic inner-HMAC verification is a v2 item). **v2.5.0 adds `--local-panel`: a SECOND family-different seat (a 3-seat Qwen+Mistral entailment panel, no Anthropic model, decorrelated from both Claude and prism) with a measured 0-false-confirm property and a receipt of it catching a real single-model false-confirm — multi-lens ≥ 3, runnable locally for free. The second seat runs on ANY dispatch that has ≥1 prism-`supported` citation (not only a clean accept), and runs on Ollama's decorrelated families (`--llamaswap-base http://localhost:11434 --panel-seats mistral-small:24b,granite4.1:30b,gemma4:31b`) when llama-swap is not up.** |
 
 ### Irreversible actions & compensators
 None. The gate **reads** a dispatch, **shells a read-only verifier** (prism verify resolves

@@ -280,6 +280,9 @@ export function runCitationGate(input, options = {}) {
     offloadPython,
     offloadScript,
     llamaswapBase,
+    // CSV of panel seat models (PIN_PER_STEP) -> offload's OFFLOAD_PANEL_SEATS. Lets the second seat
+    // run on Ollama's OpenAI-compat endpoint (pair with llamaswapBase="http://localhost:11434").
+    panelSeats,
   } = options;
 
   const start = Date.now();
@@ -334,10 +337,16 @@ export function runCitationGate(input, options = {}) {
     };
   }
   // Local-panel seat: re-check prism's `supported` citations with a family-different entailment
-  // panel on local models. Runs only when requested AND the gate is still passing — it can only
-  // tighten, so there is nothing to challenge on an already-blocking/advisory gate.
+  // panel on local models. Runs whenever requested AND there is ≥1 supported citation to challenge —
+  // NOT only on a clean accept. A realistic dispatch almost always has ≥1 not_addressed (abstract-only
+  // RAG can't confirm everything), so the overall gate is `escalate`; but the citations prism DID mark
+  // `supported` still deserve the independent second seat — that IS the point of EXTERNAL_VERIFIER.
+  // Monotone-tightening is preserved: on a passing gate a panel disagreement downgrades accept ->
+  // escalate; on an already-escalate/advisory gate the panel records its per-citation verdicts + seat
+  // models in the receipt WITHOUT loosening anything (applyLocalPanel annotates-only there). Skipped
+  // on a BLOCKING gate — a fabricated citation already rejects the dispatch wholesale.
   let panel = null;
-  if (localPanel && gate.pass) {
+  if (localPanel && !gate.blocking) {
     const supported = buildPanelInput(citations, gate.citations);
     if (supported.length > 0) {
       panel = runOffloadPanel(supported, {
@@ -345,6 +354,7 @@ export function runCitationGate(input, options = {}) {
         ...(offloadPython ? { python: offloadPython } : {}),
         ...(offloadScript ? { script: offloadScript } : {}),
         ...(llamaswapBase ? { base: llamaswapBase } : {}),
+        ...(panelSeats ? { seats: panelSeats } : {}),
         cwd,
       });
       gate = applyLocalPanel(gate, panel);

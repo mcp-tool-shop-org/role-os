@@ -17,7 +17,7 @@ export async function verifyCitationsCommand(args) {
 
   if (!dispatch) {
     const err = new Error(
-      "Usage: roleos verify-citations <dispatch.md|.json> [--provider ollama] [--intent <text>] [--local-panel] [--json] [--receipt <path>]",
+      "Usage: roleos verify-citations <dispatch.md|.json> [--provider ollama] [--intent <text>] [--local-panel] [--panel-seats <csv>] [--llamaswap-base <url>] [--json] [--receipt <path>]",
     );
     err.exitCode = 1;
     err.hint =
@@ -50,6 +50,9 @@ export async function verifyCitationsCommand(args) {
     localPanel: flags["local-panel"] === true,
     ...(typeof flags["offload-script"] === "string" ? { offloadScript: flags["offload-script"] } : {}),
     ...(typeof flags["llamaswap-base"] === "string" ? { llamaswapBase: flags["llamaswap-base"] } : {}),
+    // --panel-seats: CSV of second-seat models -> offload's OFFLOAD_PANEL_SEATS. Pair with
+    // --llamaswap-base http://localhost:11434 to run the panel on Ollama's OpenAI-compat endpoint.
+    ...(typeof flags["panel-seats"] === "string" ? { panelSeats: flags["panel-seats"] } : {}),
   });
 
   // Persist the chained receipt (audit trail) unless --no-receipt.
@@ -117,6 +120,11 @@ function printReport(dispatch, r) {
   console.log(`Verdict:  ${r.verdict}  (${r.citations.length} citation(s) checked, ${r.duration}ms)`);
   if (r.reason) console.log(`Reason:   ${r.reason} — ${r.detail || ""}`);
 
+  // Full groundedness distribution — SUPPORTED citations must be visible. The per-citation list below
+  // prints only the problems (accept/supported are skipped), which read as "every citation failed"
+  // when most were actually supported; this line is the honest denominator (14 supported · 8 ...).
+  printFindingsDistribution(r.citations);
+
   for (const c of r.citations) {
     if (c.verdict === "accept") continue;
     const mark = c.existence === "fabricated" ? "DROP" : (c.action || c.verdict);
@@ -151,4 +159,34 @@ function printReport(dispatch, r) {
       `\nADVISORY: citations resolved but need revision / human review — accept-with-notes or escalate per the items above.`,
     );
   }
+}
+
+/**
+ * Print the per-citation groundedness distribution (e.g. "Findings: 14 supported · 8 not_addressed").
+ * Keyed on finding_match, falling back to existence for citations that never reached the lens
+ * (fabricated / unresolvable / metadata_mismatch). Ordered worst-last so `supported` leads.
+ */
+function printFindingsDistribution(citations) {
+  if (!citations || citations.length === 0) return;
+  const dist = {};
+  for (const c of citations) {
+    const key = c.finding_match || c.existence || "unknown";
+    dist[key] = (dist[key] || 0) + 1;
+  }
+  const order = [
+    "supported",
+    "not_addressed",
+    "contradicted",
+    "metadata_mismatch",
+    "unresolvable",
+    "fabricated",
+  ];
+  const rank = (k) => {
+    const i = order.indexOf(k);
+    return i === -1 ? order.length : i;
+  };
+  const parts = Object.entries(dist)
+    .sort((a, b) => rank(a[0]) - rank(b[0]))
+    .map(([k, n]) => `${n} ${k}`);
+  console.log(`Findings: ${parts.join(" · ")}`);
 }
