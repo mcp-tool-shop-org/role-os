@@ -24,6 +24,8 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
 /** Pinned witness weights (PIN_PER_STEP). Directional signals dominate; co-occurrence corroborates. */
 export const WITNESS_WEIGHTS = {
@@ -198,15 +200,38 @@ export function cheapestChain(graph, targetId) {
   return chain.length ? { chain, steps_saved_frac: verified ? Math.round(saved * 1e4) / 1e4 : null, verified } : null;
 }
 
-const DEFAULT_CURRICULUM_PATH = ".role-os/curriculum.json";
+/**
+ * Resolve the curriculum.json path (first existing wins), so `roleos crew --programs` works by
+ * default on the standard sibling workspace layout (role-os and readouts both under .../AI/):
+ *   1. ROLEOS_CURRICULUM_PATH — explicit override, used verbatim (missing → unavailable; lets tests force it)
+ *   2. <cwd>/.role-os/curriculum.json — a repo-local vendored copy, if any
+ *   3. <role-os repo>/../readouts/training-knowledge/curriculum.json — the sibling KB export (the default)
+ */
+function resolveCurriculumPath(cwd) {
+  if (process.env.ROLEOS_CURRICULUM_PATH) return process.env.ROLEOS_CURRICULUM_PATH;
+  const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+  for (const c of [
+    join(cwd, ".role-os", "curriculum.json"),
+    join(repoRoot, "..", "readouts", "training-knowledge", "curriculum.json"),
+  ]) {
+    if (existsSync(c)) return c;
+  }
+  return null;
+}
 
 /**
  * Load + build the curriculum from a published export. Absent export → "unavailable" (honest).
- * @param {object} [opts] { cwd, path }
+ * @param {object} [opts] { cwd, path }  (path overrides resolution entirely)
  */
 export function loadCurriculum({ cwd = process.cwd(), path } = {}) {
-  const p = path || process.env.ROLEOS_CURRICULUM_PATH || `${cwd.replace(/[\\/]$/, "")}/${DEFAULT_CURRICULUM_PATH}`;
-  if (!existsSync(p)) return { status: "unavailable", note: "no curriculum.json export present", techniques: [], edges: [] };
+  const p = path || resolveCurriculumPath(cwd);
+  if (!p || !existsSync(p)) {
+    return {
+      status: "unavailable",
+      note: "no curriculum.json export found — point ROLEOS_CURRICULUM_PATH at the KB's gen_curriculum.py output, or vendor it at .role-os/curriculum.json",
+      techniques: [], edges: [],
+    };
+  }
   let doc;
   try { doc = JSON.parse(readFileSync(p, "utf8")); }
   catch { return { status: "unavailable", note: "curriculum.json unreadable", techniques: [], edges: [] }; }

@@ -133,10 +133,10 @@ describe("cheapestChain", () => {
 
 describe("loadCurriculum — from a published export", () => {
   it("absent export → unavailable", () => {
-    const dir = mkdtempSync(join(tmpdir(), "roleos-curriculum-"));
-    try {
-      assert.equal(loadCurriculum({ cwd: dir }).status, "unavailable");
-    } finally { rmSync(dir, { recursive: true, force: true }); }
+    // An explicit missing path bypasses resolution (env / .role-os / sibling-readouts default) →
+    // deterministic unavailable regardless of whether a sibling readouts export exists on this machine.
+    const r = loadCurriculum({ path: join(tmpdir(), "roleos-no-such-curriculum.json") });
+    assert.equal(r.status, "unavailable");
   });
 
   it("reads and builds from a curriculum.json file", () => {

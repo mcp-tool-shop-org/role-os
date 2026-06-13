@@ -81,14 +81,14 @@ describe("roleos crew <role> — the sheet", () => {
 });
 
 describe("roleos crew --programs — the curriculum tech tree", () => {
-  it("honest unavailable state when no export is present", () => {
-    const dir = mkdtempSync(join(tmpdir(), "roleos-programs-bare-"));
-    try {
-      const out = run(["crew", "--programs"], dir);
-      assert.ok(out.includes("Training programs — curriculum tech tree"));
-      assert.ok(out.includes("no curriculum.json export present") || out.includes("no curriculum export found"));
-      assert.ok(out.includes("ROLEOS_CURRICULUM_PATH"));
-    } finally { rmSync(dir, { recursive: true, force: true }); }
+  it("honest unavailable state when the export cannot be found", () => {
+    // Force the override to a missing path so the sibling-readouts default is bypassed deterministically.
+    const out = execFileSync(process.execPath, [BIN, "crew", "--programs"], {
+      cwd: REPO, encoding: "utf8",
+      env: { ...process.env, ROLEOS_CURRICULUM_PATH: join(tmpdir(), "roleos-no-such-curriculum.json") },
+    });
+    assert.ok(out.includes("Training programs — curriculum tech tree"));
+    assert.ok(out.includes("ROLEOS_CURRICULUM_PATH"));
   });
 
   it("renders roots, prerequisites, and the unverified-until-S6.3 honesty footer", () => {
