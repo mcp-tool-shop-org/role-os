@@ -69,12 +69,24 @@ function repsLine(dossier, record) {
 }
 
 function formLine(record) {
-  const d = record.divergence;
-  if (d.status === "unmonitored") return "unmonitored (drift checks land in S5)";
-  if (d.status === "accumulating") {
-    return `accumulating (${d.samples}/${d.min_samples} field inputs${d.test_ready ? ", drift test ready" : ""})`;
+  const d = record.divergence || {};
+  const n = d.samples ?? d.n;
+  switch (d.status) {
+    case "unmonitored":
+      return "unmonitored (drift checks land in S5)";
+    case "accumulating":
+      return `accumulating (${n}/${d.min_samples} field inputs${d.test_ready ? ", drift test ready" : ""})`;
+    case "stale":
+      return `STALE — re-certification recommended (${d.reason || "output drift + degraded performance"})`;
+    case "watch":
+      return `watch — ${d.reason || "covariate drift; performance holding"} (n=${n})`;
+    case "monitored":
+      return `monitored — no drift, adequate power (n=${n})`;
+    case "monitored-lowpower":
+      return `monitored — no drift but low power (n=${n}; inconclusive)`;
+    default:
+      return d.status || "unknown";
   }
-  return d.status;
 }
 
 function indent(text, prefix) {

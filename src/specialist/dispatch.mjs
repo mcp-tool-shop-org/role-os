@@ -173,7 +173,11 @@ export async function dispatchSpecialist({
   // source. Best-effort: a logging failure must never break a dispatch (same contract as state
   // persistence below). The embedder is NOT pinned here — embedding is deferred to analysis time.
   try {
-    logDispatchInput(fieldLogPath, { role, ts: nowIso, traceId, route: decision.route, source, input });
+    logDispatchInput(fieldLogPath, {
+      role, ts: nowIso, traceId, route: decision.route, source, input,
+      verdict: result,
+      score: source === "specialist" && specialistCall ? specialistCall.score : undefined,
+    });
   } catch { /* best-effort */ }
 
   // ── Shadow probe ─────────────────────────────────────────────────────────────────────────

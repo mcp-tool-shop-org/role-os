@@ -15,6 +15,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { readEvents } from "./events.mjs";
 import { summarizeFieldInputs } from "./field-log.mjs";
+import { assessDriftFromLog } from "./drift.mjs";
 import { loadState, quotaStateFor, DEFAULT_WINDOW } from "./state.mjs";
 import { readOutcomes } from "../calibration.mjs";
 
@@ -22,6 +23,7 @@ const REGISTRY_PATH = ".role-os/specialists.json";
 const STATE_PATH = ".role-os/specialist-state.json";
 const EVENTS_PATH = ".role-os/specialist-events.jsonl";
 const FIELD_LOG_PATH = ".role-os/specialist-field-log.jsonl";
+const EXAM_REF_DIR = ".role-os/exam-references";
 const RUNS_DIR = ".claude/runs";
 
 /** Shadow-probe streak required before the shadow-verified technique is earned. */
@@ -46,16 +48,35 @@ function readRoleEvents(role, cwd) {
   try { return readEvents(path, { role }); } catch { return []; }
 }
 
+/** Role display name → exam-reference filename slug. */
+function examRefSlug(role) {
+  return String(role).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+/** The sealed-exam reference (roleos-exam-reference/v1) for a role, or null if not captured yet. */
+function readExamReference(role, cwd) {
+  const path = join(cwd, EXAM_REF_DIR, `${examRefSlug(role)}.json`);
+  if (!existsSync(path)) return null;
+  try { return JSON.parse(readFileSync(path, "utf8")); } catch { return null; }
+}
+
 /**
- * Field-vs-exam drift state: accumulation counts from the field-input log (S5). Honest counts
- * only — the fresh/stale verdict lands once the two-sample test is wired and enough inputs
- * exist. Absent log → "unmonitored" (matches the pre-S5 placeholder so the crew sheet and the
- * empty-state contract are unchanged at zero traffic).
+ * Field-vs-exam drift state (S5). Two regimes:
+ *  - No sealed-exam reference yet → accumulation counts only (the reference is a cert-time
+ *    capture; until it exists the detector cannot test). Absent log → "unmonitored", matching the
+ *    pre-S5 placeholder so the crew sheet and the empty-state contract are unchanged at zero traffic.
+ *  - Reference present → the two-arm staleness detector (drift.mjs): status in
+ *    {accumulating, watch, stale, monitored, monitored-lowpower}. `stale` is advisory only.
  */
 function readDivergence(role, cwd) {
-  const path = join(cwd, FIELD_LOG_PATH);
-  try { return summarizeFieldInputs(path, { role }); }
-  catch { return { status: "unmonitored", samples: 0, note: "field log unreadable" }; }
+  const logPath = join(cwd, FIELD_LOG_PATH);
+  const reference = readExamReference(role, cwd);
+  if (!reference) {
+    try { return summarizeFieldInputs(logPath, { role }); }
+    catch { return { status: "unmonitored", samples: 0, note: "field log unreadable" }; }
+  }
+  try { return assessDriftFromLog(logPath, { role, reference }); }
+  catch { return { status: "unmonitored", note: "drift assessment failed" }; }
 }
 
 function readDispatchWindow(cwd) {

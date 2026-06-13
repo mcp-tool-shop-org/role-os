@@ -40,9 +40,20 @@ function stableStringify(v) {
   return "{" + keys.map((k) => JSON.stringify(k) + ":" + stableStringify(v[k])).join(",") + "}";
 }
 
+/** Reduce a verdict to a short categorical label (the BBSDh reducer's class). */
+function verdictLabel(v) {
+  if (v === null || v === undefined) return null;
+  if (typeof v === "string") return v.slice(0, 64);
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  try { return JSON.stringify(v).slice(0, 64); } catch { return null; }
+}
+
 /**
- * Append one field-input observation. Best-effort by contract: the caller wraps this so a
- * logging failure never breaks a dispatch.
+ * Append one field observation. Best-effort by contract: the caller wraps this so a logging
+ * failure never breaks a dispatch. The OUTPUT (verdict + score) is logged alongside the input so
+ * the drift detector can reduce each dispatch through the specialist's own output (BBSD — the
+ * empirically best reducer, Rabanser et al. 2019) without re-running the model. See
+ * design/specialist-drift-detection.md.
  *
  * @param {string} path
  * @param {object} obs
@@ -52,10 +63,13 @@ function stableStringify(v) {
  * @param {string} obs.route     gate decision: specialist | claude
  * @param {string} obs.source    realized source: specialist | claude
  * @param {*}      obs.input      the dispatch input (any shape)
+ * @param {*}      [obs.verdict]  the realized result/verdict (reduced to a categorical label)
+ * @param {number} [obs.score]    the specialist's self-reported confidence in [0,1] (specialist source only)
  */
-export function logDispatchInput(path, { role, ts, traceId, route, source, input }) {
+export function logDispatchInput(path, { role, ts, traceId, route, source, input, verdict, score }) {
   const text = canonical(input);
   const truncated = text.length > FIELD_INPUT_MAX_CHARS;
+  const label = verdictLabel(verdict);
   const record = {
     role,
     ts,
@@ -66,6 +80,8 @@ export function logDispatchInput(path, { role, ts, traceId, route, source, input
     input_len: text.length,
     input: truncated ? text.slice(0, FIELD_INPUT_MAX_CHARS) : text,
     ...(truncated ? { input_truncated: true } : {}),
+    ...(label !== null ? { verdict: label } : {}),
+    ...(typeof score === "number" ? { score } : {}),
   };
   mkdirSync(dirname(path), { recursive: true });
   appendFileSync(path, JSON.stringify(record) + "\n", "utf8");

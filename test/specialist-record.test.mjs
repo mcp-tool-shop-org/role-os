@@ -233,3 +233,32 @@ describe("buildRecord — against this repo's committed registry (smoke)", () =>
     assert.equal(r.certification.band, null);
   });
 });
+
+describe("buildRecord — divergence runs the drift detector when an exam reference exists", () => {
+  let dir;
+  before(() => {
+    dir = mkdtempSync(join(tmpdir(), "roleos-record-drift-"));
+    mkdirSync(join(dir, ".role-os", "exam-references"), { recursive: true });
+    writeFileSync(join(dir, ".role-os", "exam-references", "token-budget-analyst.json"), JSON.stringify({
+      schema: "roleos-exam-reference/v1", role: ROLE, classes: ["a", "b"],
+      label_marginal: { a: 0.5, b: 0.5 }, n_exam: 300, exam_accuracy: 0.9, atc_threshold: 0.7, exam_ece: 0.03,
+    }));
+    // 200 specialist-routed dispatches: matched marginal + good confidence → no drift, but N<500.
+    const lines = [];
+    for (let i = 0; i < 200; i++) {
+      lines.push(JSON.stringify({
+        role: ROLE, ts: "2026-06-13T00:00:00Z", source: "specialist",
+        verdict: i % 2 === 0 ? "a" : "b", score: 0.9,
+      }));
+    }
+    writeFileSync(join(dir, ".role-os", "specialist-field-log.jsonl"), lines.join("\n") + "\n");
+  });
+  after(() => { rmSync(dir, { recursive: true, force: true }); });
+
+  it("returns a detector status (not the bare accumulation placeholder)", () => {
+    const r = buildRecord(ROLE, { cwd: dir });
+    assert.equal(r.divergence.status, "monitored-lowpower"); // no drift, N=200 < N_TRUST → inconclusive
+    assert.equal(r.divergence.drift.fires, false);
+    assert.equal(r.divergence.n, 200);
+  });
+});
