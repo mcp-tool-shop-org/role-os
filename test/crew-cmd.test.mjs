@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -77,6 +77,39 @@ describe("roleos crew <role> — the sheet", () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe("roleos crew --programs — the curriculum tech tree", () => {
+  it("honest unavailable state when no export is present", () => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-programs-bare-"));
+    try {
+      const out = run(["crew", "--programs"], dir);
+      assert.ok(out.includes("Training programs — curriculum tech tree"));
+      assert.ok(out.includes("no curriculum.json export present") || out.includes("no curriculum export found"));
+      assert.ok(out.includes("ROLEOS_CURRICULUM_PATH"));
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it("renders roots, prerequisites, and the unverified-until-S6.3 honesty footer", () => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-programs-"));
+    try {
+      mkdirSync(join(dir, ".role-os"), { recursive: true });
+      writeFileSync(join(dir, ".role-os", "curriculum.json"), JSON.stringify({
+        schema: "roleos-curriculum/v1",
+        techniques: [
+          { id: 1, slug: "qlora", name: "QLoRA", lane: "llm", evidence_strength: "measured-on-rig" },
+          { id: 2, slug: "dpo", name: "DPO", lane: "llm", evidence_strength: "reproduced-from-source" },
+        ],
+        edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true, stage_chain: true } }],
+      }));
+      const out = run(["crew", "--programs"], dir);
+      assert.ok(out.includes("status: provisional"));
+      assert.ok(out.includes("QLoRA"), "root technique shown");
+      assert.ok(out.includes("QLoRA → DPO"), "prerequisite edge shown");
+      assert.ok(out.includes("unverified"), "edge evidence tag shown");
+      assert.ok(out.includes("UNVERIFIED until S6.3"), "honesty footer shown");
+    } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
 

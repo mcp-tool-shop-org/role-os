@@ -7,6 +7,7 @@
  *
  *   roleos crew              roster: mark, grade·basis, band, form, reps, profile
  *   roleos crew <role>       full sheet for one crew member
+ *   roleos crew --programs   the curriculum tech tree (training-knowledge KB; S6 training programs)
  *
  * Marks are deterministic per crew pack — typographic placeholders until the GlyphStudio
  * glyphs land (design open item). The quiet ceremony (mark + one-line record on
@@ -18,6 +19,7 @@ import { fileURLToPath } from "node:url";
 import { readFileSafe } from "./fs-utils.mjs";
 import { deriveProfile, renderDossierBlock } from "./dossier-block.mjs";
 import { buildRecord } from "./specialist/record.mjs";
+import { loadCurriculum } from "./specialist/training-programs.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -173,7 +175,56 @@ function renderSheet(name, dossier, record) {
   return lines.join("\n");
 }
 
+/**
+ * Render the curriculum tech tree (S6 training programs) — a studio-global instrument readout, not
+ * a per-role view. Honest by construction: status, an evidence tag per edge, and an explicit
+ * "unverified until S6.3" footer whenever no receipt-backed transfer deltas exist yet.
+ */
+export function renderCurriculum(graph) {
+  const lines = ["Training programs — curriculum tech tree (training-knowledge KB)", ""];
+  if (!graph || graph.status === "unavailable") {
+    lines.push(`  ${(graph && graph.note) || "no curriculum export found"}.`);
+    lines.push("  The KB publishes curriculum.json (its gen_curriculum.py export); point");
+    lines.push("  ROLEOS_CURRICULUM_PATH at it, or place it at .role-os/curriculum.json.");
+    return lines.join("\n");
+  }
+  const byId = new Map(graph.techniques.map((t) => [t.id, t]));
+  const name = (id) => byId.get(id)?.name || `#${id}`;
+  const c = graph.counts;
+  lines.push(`  status: ${graph.status} — ${graph.note}`);
+  lines.push(`  ${graph.n_techniques} techniques · ${graph.edges.length} edges ` +
+    `(${c.confirmed} confirmed, ${c.unverified} unverified, ${c.closure_implied} closure-implied) · ` +
+    `dropped ${c.dropped_spurious + c.dropped_cyclic} (${c.dropped_spurious} spurious, ${c.dropped_cyclic} cyclic)`);
+  lines.push("", "  ROOTS (entry-point techniques — no prerequisite)");
+  if (graph.roots.length) {
+    for (const id of graph.roots) {
+      const t = byId.get(id);
+      lines.push(`    ◆ ${name(id)}${t?.lane ? ` (${t.lane})` : ""}${t?.evidence_strength ? ` [${t.evidence_strength}]` : ""}`);
+    }
+  } else {
+    lines.push("    — every technique has a prerequisite (check for a cycle)");
+  }
+  lines.push("", "  PREREQUISITES (foundation → advanced)");
+  if (graph.edges.length) {
+    for (const e of graph.edges.slice().sort((a, b) => b.witness - a.witness)) {
+      const tags = [e.evidence];
+      if (e.closure_implied) tags.push("closure-implied");
+      lines.push(`    ${name(e.from)} → ${name(e.to)}   witness ${e.witness.toFixed(2)}  ${tags.join(", ")}`);
+    }
+  } else {
+    lines.push("    — none");
+  }
+  if (c.confirmed === 0 && c.unverified > 0) {
+    lines.push("", "  Edges are UNVERIFIED until S6.3 measures the cheaper-after-foundation delta on the rig.");
+  }
+  return lines.join("\n");
+}
+
 export async function crewCommand(args, cwd = process.cwd()) {
+  if (args.includes("--programs")) {
+    console.log(renderCurriculum(loadCurriculum({ cwd })));
+    return;
+  }
   const dossiers = loadDossiers();
   const query = args.filter((a) => !a.startsWith("--")).join(" ").trim();
 

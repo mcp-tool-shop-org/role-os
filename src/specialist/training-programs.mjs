@@ -205,7 +205,7 @@ const DEFAULT_CURRICULUM_PATH = ".role-os/curriculum.json";
  * @param {object} [opts] { cwd, path }
  */
 export function loadCurriculum({ cwd = process.cwd(), path } = {}) {
-  const p = path || `${cwd.replace(/[\\/]$/, "")}/${DEFAULT_CURRICULUM_PATH}`;
+  const p = path || process.env.ROLEOS_CURRICULUM_PATH || `${cwd.replace(/[\\/]$/, "")}/${DEFAULT_CURRICULUM_PATH}`;
   if (!existsSync(p)) return { status: "unavailable", note: "no curriculum.json export present", techniques: [], edges: [] };
   let doc;
   try { doc = JSON.parse(readFileSync(p, "utf8")); }
