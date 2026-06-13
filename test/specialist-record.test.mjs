@@ -202,6 +202,39 @@ describe("lineage (S4 cross-training)", () => {
     assert.ok(t, "cross-trained earned");
     assert.ok(t.receipts.includes("parent:budgeter-14b600-soup-20260605"));
     assert.ok(t.receipts.includes("exam:deadbeef1234"));
+    assert.ok(t.receipts.some((x) => x === "version:x-1 (active)"));
+  });
+
+  it("earns cross-trained for a registered-but-not-promoted soup, not only the active version (s4c2)", () => {
+    const d2 = mkdtempSync(join(tmpdir(), "roleos-record-lineage-reg-"));
+    try {
+      mkdirSync(join(d2, ".role-os"), { recursive: true });
+      writeFileSync(join(d2, ".role-os", "specialists.json"), JSON.stringify({
+        schema: "roleos-specialist-registry/v1",
+        specialists: [{
+          role: ROLE, backend_url: "http://localhost:8000", fallback: "claude", workload_quota: 0.5,
+          active_version: "solo-1", // the active version is single-parent (no lineage)
+          versions: [
+            { id: "solo-1", adapter_id: "budgeter-solo", base_model: "Qwen/Qwen3-14B", gate_threshold: 0.6,
+              certified_level: "L5", exam_hash: "aaaa11112222", field_audit_window: 200, created_at: "2026-06-10T00:00:00Z" },
+            { id: "soup-1", adapter_id: "budgeter-x-conformance-soup", base_model: "Qwen/Qwen3-14B", gate_threshold: 0.6,
+              certified_level: "L5", exam_hash: "soup99887766aa", field_audit_window: 200, created_at: "2026-06-12T00:00:00Z",
+              lineage: { parents: ["budgeter-14b600-soup-20260605", "conformance-14b-soup-20260606"], method: "warm-start-joint-sft" } },
+          ],
+        }],
+      }));
+      const r = buildRecord(ROLE, { cwd: d2 });
+      // the active version is the single-parent solo-1 — certification.current carries no lineage...
+      assert.equal(r.certification.current.version_id, "solo-1");
+      assert.equal(r.certification.current.lineage, null);
+      // ...yet the registered soup's earned cross-trained distinction still surfaces (the S4c-2 fix).
+      const t = r.techniques.find((x) => x.id === "cross-trained");
+      assert.ok(t, "cross-trained earned for the registered-but-not-promoted soup");
+      assert.ok(t.receipts.includes("parent:budgeter-14b600-soup-20260605"));
+      assert.ok(t.receipts.includes("exam:soup99887766"));
+      assert.ok(t.receipts.some((x) => x === "version:soup-1 (registered)"));
+      assert.match(t.desc, /registered, not the active version/);
+    } finally { rmSync(d2, { recursive: true, force: true }); }
   });
 
   it("validateRegistry accepts well-formed lineage and rejects malformed lineage", async () => {

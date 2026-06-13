@@ -165,7 +165,7 @@ function verifiedEvents(events, runSteps) {
  * names the receipts that earned it, and there is no rule a repeatable low-value action can
  * advance (finding 5: non-farmable by construction).
  */
-export function deriveTechniques({ certification, events }) {
+export function deriveTechniques({ certification, events, versions = [], activeVersionId = null }) {
   const techniques = [];
 
   // Clean promotion: certified + promoted with zero rollback/halt receipts on the ledger.
@@ -193,18 +193,28 @@ export function deriveTechniques({ certification, events }) {
     });
   }
 
-  // Cross-trained: the certified version was born by merging certified parents and passed
-  // BOTH parents' exams (lineage only enters the registry through the exam gate — S4).
-  const cur = certification?.current;
-  if (cur?.lineage?.parents?.length >= 2) {
+  // Cross-trained: a CERTIFIED version was born by merging certified parents and passed BOTH
+  // parents' exams — lineage only enters the registry through the exam gate (S4). The distinction
+  // is earned at that gate, NOT at promotion: a cross-trained version that was registered but never
+  // promoted to active still earned it (clean-promotion above is the promotion-scoped technique).
+  // So derive from the full version list — preferring the active version for the served receipts —
+  // not only certification.current, which would hide a registered-but-not-promoted soup (S4c-2).
+  const xQualifies = (v) =>
+    v?.lineage?.parents?.length >= 2 && v.certified_level && v.certified_level !== "L0";
+  const xVersions = versions.filter(xQualifies);
+  if (xVersions.length) {
+    const v = xVersions.find((x) => x.id === activeVersionId)
+      || [...xVersions].sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0];
+    const isActive = v.id === activeVersionId;
     techniques.push({
       id: "cross-trained",
       name: "Cross-trained",
-      desc: `Born from ${cur.lineage.parents.join(" × ")} via ${cur.lineage.method}; certified on every parent's exam.`,
-      earned: cur.certified_at,
+      desc: `Born from ${v.lineage.parents.join(" × ")} via ${v.lineage.method}; certified on every parent's exam${isActive ? "" : " — registered, not the active version"}.`,
+      earned: v.created_at || null,
       receipts: [
-        ...cur.lineage.parents.map((p) => `parent:${p}`),
-        `exam:${cur.exam_hash ? cur.exam_hash.slice(0, 12) : "?"}`,
+        ...v.lineage.parents.map((p) => `parent:${p}`),
+        `exam:${v.exam_hash ? v.exam_hash.slice(0, 12) : "?"}`,
+        `version:${v.id} (${isActive ? "active" : "registered"})`,
       ],
     });
   }
@@ -294,6 +304,11 @@ export function buildRecord(role, { cwd = process.cwd() } = {}) {
     repsEvents: verifiedEvents(events, runSteps),
     events,
   };
-  record.techniques = deriveTechniques({ certification, events });
+  record.techniques = deriveTechniques({
+    certification,
+    events,
+    versions: reg?.entry?.versions || [],
+    activeVersionId: reg?.entry?.active_version || null,
+  });
   return record;
 }
