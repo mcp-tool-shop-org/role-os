@@ -199,7 +199,7 @@ export function renderCurriculum(graph) {
   const c = graph.counts;
   lines.push(`  status: ${graph.status} — ${graph.note}`);
   lines.push(`  ${graph.n_techniques} techniques · ${graph.edges.length} edges ` +
-    `(${c.confirmed} confirmed, ${c.unverified} unverified, ${c.closure_implied} closure-implied) · ` +
+    `(${c.confirmed} confirmed${c.confirmed_negative ? `, ${c.confirmed_negative} confirmed-negative` : ""}, ${c.unverified} unverified, ${c.closure_implied} closure-implied) · ` +
     `dropped ${c.dropped_spurious + c.dropped_cyclic} (${c.dropped_spurious} spurious, ${c.dropped_cyclic} cyclic)`);
   lines.push("", "  ROOTS (entry-point techniques — no prerequisite)");
   if (graph.roots.length) {
@@ -215,12 +215,13 @@ export function renderCurriculum(graph) {
     for (const e of graph.edges.slice().sort((a, b) => b.witness - a.witness)) {
       const tags = [e.evidence];
       if (e.closure_implied) tags.push("closure-implied");
+      if (e.evidence === "confirmed-negative") tags.push("⚠ warm-start measured NOT to help");
       lines.push(`    ${name(e.from)} → ${name(e.to)}   witness ${e.witness.toFixed(2)}  ${tags.join(", ")}`);
     }
   } else {
     lines.push("    — none");
   }
-  if (c.confirmed === 0 && c.unverified > 0) {
+  if (c.confirmed === 0 && c.confirmed_negative === 0 && c.unverified > 0) {
     lines.push("", "  Edges are UNVERIFIED until S6.3 measures the cheaper-after-foundation delta on the rig.");
   }
   return lines.join("\n");

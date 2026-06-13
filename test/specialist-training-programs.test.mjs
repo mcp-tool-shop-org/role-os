@@ -54,14 +54,43 @@ describe("buildCurriculum — evidence classification", () => {
     assert.ok(edgeWitness({ shared_datasets: 5 }) < THIN_WITNESS);
   });
 
-  it("receipt-backed outcome delta → confirmed, status graph", () => {
+  it("a POSITIVE delta over >= MIN_OUTCOME_RECEIPTS with consistent sign → confirmed, status graph", () => {
     const g = buildCurriculum({
       techniques: [T(1), T(2)],
-      edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.3, n_receipts: 2 } }],
+      edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.3, n_receipts: 3, consistent_sign: true } }],
     });
     assert.equal(g.edges[0].evidence, "confirmed");
     assert.equal(g.status, "graph");
     assert.equal(g.counts.confirmed, 1);
+  });
+
+  it("too few receipts (n < MIN_OUTCOME_RECEIPTS) → does NOT confirm, stays unverified", () => {
+    const g = buildCurriculum({
+      techniques: [T(1), T(2)],
+      edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.3, n_receipts: 2, consistent_sign: true } }],
+    });
+    assert.equal(g.edges[0].evidence, "unverified");
+    assert.equal(g.counts.confirmed, 0);
+  });
+
+  it("a mixed-sign measurement (consistent_sign:false) never confirms — transfer-neutral → unverified", () => {
+    const g = buildCurriculum({
+      techniques: [T(1), T(2)],
+      edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.3, n_receipts: 3, consistent_sign: false } }],
+    });
+    assert.equal(g.edges[0].evidence, "unverified");
+  });
+
+  it("a measured <= 0 delta → confirmed-negative (drawn, never a shortcut), status graph", () => {
+    const g = buildCurriculum({
+      techniques: [T(1), T(2)],
+      edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: -0.15, n_receipts: 3, consistent_sign: true } }],
+    });
+    assert.equal(g.edges[0].evidence, "confirmed-negative");
+    assert.equal(g.counts.confirmed, 0);
+    assert.equal(g.counts.confirmed_negative, 1);
+    assert.equal(g.status, "graph");
+    assert.match(g.note, /confirmed-negative/);
   });
 });
 
@@ -116,14 +145,29 @@ describe("cheapestChain", () => {
     const g = buildCurriculum({
       techniques: [T(1), T(2), T(3)],
       edges: [
-        { from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.2, n_receipts: 1 } },
-        { from: 2, to: 3, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.3, n_receipts: 1 } },
+        { from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.2, n_receipts: 3, consistent_sign: true } },
+        { from: 2, to: 3, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.3, n_receipts: 3, consistent_sign: true } },
       ],
     });
     const c = cheapestChain(g, 3);
     assert.deepEqual(c.chain, [1, 2]);
     assert.equal(c.verified, true);
     assert.equal(c.steps_saved_frac, 0.5);
+  });
+
+  it("a confirmed-negative edge on the chain is never summed into the saving (and warns)", () => {
+    const g = buildCurriculum({
+      techniques: [T(1), T(2), T(3)],
+      edges: [
+        { from: 1, to: 2, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: 0.2, n_receipts: 3, consistent_sign: true } },
+        { from: 2, to: 3, signals: { explicit_predecessor: true }, outcome_delta: { steps_saved_frac: -0.1, n_receipts: 3, consistent_sign: true } },
+      ],
+    });
+    const c = cheapestChain(g, 3);
+    assert.deepEqual(c.chain, [1, 2]);
+    assert.equal(c.verified, false); // a negative-transfer edge on the path → no phantom saving
+    assert.equal(c.steps_saved_frac, null);
+    assert.ok(c.warnings.some((w) => /negative transfer/.test(w)));
   });
 
   it("no prerequisites → null", () => {

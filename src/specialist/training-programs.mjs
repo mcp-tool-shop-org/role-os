@@ -35,8 +35,13 @@ export const WITNESS_WEIGHTS = {
   shared_sources: 0.05,      // shared citation backing — weak corroboration
 };
 
-/** An edge is `confirmed` only with a receipt-backed outcome delta over >= this many receipts. */
-export const MIN_OUTCOME_RECEIPTS = 1;
+/**
+ * An edge is `confirmed` only with a receipt-backed outcome delta over >= this many receipts.
+ * 3, not 1: a consistent-sign directional claim needs n>=3 (at n=2 the null sign-agreement rate is
+ * 50% — a coin flip). Raised after the cross-family adversarial verify; see
+ * gpu-container/specialist-training/RUN-PLAN-s6.3-edge-6-7-MEASURE.md (2026-06-13).
+ */
+export const MIN_OUTCOME_RECEIPTS = 3;
 /** Below this directional witness an edge is too thin to draw. */
 export const THIN_WITNESS = 0.6;
 
@@ -52,14 +57,23 @@ export function edgeWitness(signals = {}) {
 
 /**
  * Classify an edge's evidence state (the honesty ladder):
- *  - "spurious"   : witness < THIN_WITNESS and no explicit predecessor → not drawn (correlation only)
- *  - "unverified" : a real directional witness but NO receipt-backed outcome delta (S6.1 default)
- *  - "confirmed"  : witness AND an outcome delta over >= MIN_OUTCOME_RECEIPTS receipts (S6.3)
+ *  - "spurious"          : witness < THIN_WITNESS and no explicit predecessor → not drawn (correlation only)
+ *  - "unverified"        : a real directional witness but NO trusted outcome delta (S6.1 default)
+ *  - "confirmed"         : witness AND a POSITIVE delta over >= MIN_OUTCOME_RECEIPTS receipts with consistent
+ *                          per-seed sign (S6.3) → a real measured shortcut
+ *  - "confirmed-negative": same evidence quality but a measured <= 0 delta → warm-starting MEASURABLY does
+ *                          not help (an anti-prerequisite). Honest and drawn (with a warning), never a shortcut.
+ * A mixed-sign measurement (`consistent_sign === false`) is transfer-neutral → it stays `unverified`, never
+ * confirmed. This enforcement is what the honesty contract (findings 1,16) PROMISES: the producer
+ * (record_measurement.py) should only emit a delta that already passed sign/N/floor, but the consumer
+ * re-checks so a permissive write can never surface a false `confirmed`.
  */
 function classifyEdge(witness, outcomeDelta) {
-  const hasDelta = outcomeDelta && typeof outcomeDelta.steps_saved_frac === "number"
-    && (outcomeDelta.n_receipts || 0) >= MIN_OUTCOME_RECEIPTS;
-  if (hasDelta) return "confirmed";
+  const d = outcomeDelta;
+  const measured = d && typeof d.steps_saved_frac === "number"
+    && (d.n_receipts || 0) >= MIN_OUTCOME_RECEIPTS
+    && d.consistent_sign !== false;
+  if (measured) return d.steps_saved_frac > 0 ? "confirmed" : "confirmed-negative";
   if (witness < THIN_WITNESS) return "spurious";
   return "unverified";
 }
@@ -151,22 +165,24 @@ export function buildCurriculum(curriculum, config = {}) {
 
   const counts = {
     confirmed: scored.filter((e) => e.evidence === "confirmed").length,
+    confirmed_negative: scored.filter((e) => e.evidence === "confirmed-negative").length,
     unverified: scored.filter((e) => e.evidence === "unverified").length,
     closure_implied: scored.filter((e) => e.closure_implied).length,
     dropped_spurious: dropped.length,
     dropped_cyclic: backEdges.size,
   };
+  const measured = counts.confirmed + counts.confirmed_negative; // any receipt-backed delta = the machinery produced a result
 
   return {
-    status: counts.confirmed > 0 ? "graph" : "provisional", // "provisional" = machinery valid, edges await S6.3 deltas
+    status: measured > 0 ? "graph" : "provisional", // "provisional" = machinery valid, edges await S6.3 deltas
     n_techniques: curriculum.techniques.length,
     techniques: curriculum.techniques,
     edges: scored,
     roots,
     counts,
-    note: counts.confirmed === 0
+    note: measured === 0
       ? `${counts.unverified} prerequisite edges, all unverified (no receipt-backed transfer deltas yet — S6.3)`
-      : `${counts.confirmed} confirmed + ${counts.unverified} unverified prerequisite edges`,
+      : `${counts.confirmed} confirmed${counts.confirmed_negative ? ` + ${counts.confirmed_negative} confirmed-negative (warm-start measured NOT to help)` : ""} + ${counts.unverified} unverified prerequisite edges`,
   };
 }
 
@@ -187,17 +203,27 @@ export function cheapestChain(graph, targetId) {
   // Walk prerequisites back from the target (structural; the graph is a DAG).
   const chain = [];
   let verified = true, saved = 0, cur = targetId;
+  const warnings = [];
   const guard = new Set();
   while (incoming.has(cur) && !guard.has(cur)) {
     guard.add(cur);
     // pick the highest-witness incoming prerequisite
     const best = incoming.get(cur).slice().sort((a, b) => b.witness - a.witness)[0];
     chain.unshift(best.from);
-    if (best.evidence === "confirmed" && best.outcome_delta) saved += best.outcome_delta.steps_saved_frac;
-    else verified = false;
+    if (best.evidence === "confirmed" && best.outcome_delta && best.outcome_delta.steps_saved_frac > 0) {
+      saved += best.outcome_delta.steps_saved_frac; // only POSITIVE measured transfer is a saving
+    } else if (best.evidence === "confirmed-negative") {
+      // a measured anti-prerequisite: never folded into the saving (that would advertise a negative as a shortcut)
+      warnings.push(`${best.from}->${cur}: measured negative transfer — warm-starting does not help here`);
+      verified = false;
+    } else {
+      verified = false;
+    }
     cur = best.from;
   }
-  return chain.length ? { chain, steps_saved_frac: verified ? Math.round(saved * 1e4) / 1e4 : null, verified } : null;
+  return chain.length
+    ? { chain, steps_saved_frac: verified ? Math.round(saved * 1e4) / 1e4 : null, verified, warnings }
+    : null;
 }
 
 /**
