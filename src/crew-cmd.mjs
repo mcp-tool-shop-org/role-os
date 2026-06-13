@@ -142,6 +142,11 @@ function renderSheet(name, dossier, record) {
   } else {
     lines.push("  certification: none on the registry (basis: assessed)");
   }
+  if (record.compatibility && record.compatibility.mean_cosine != null) {
+    const cp = record.compatibility;
+    const sa = cp.sign_agreement != null ? `, sign-agree ${cp.sign_agreement}` : "";
+    lines.push(`  compatibility: parent cos ${cp.mean_cosine}${sa} — ${cp.reading}`);
+  }
   if (record.field.perTask.length) {
     for (const t of record.field.perTask) {
       lines.push(`  field: ${t.produces} — ${t.complete} complete / ${t.failed} failed / ${t.blocked} blocked`);

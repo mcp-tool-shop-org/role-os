@@ -213,6 +213,33 @@ export function deriveTechniques({ certification, events }) {
 }
 
 /**
+ * Cross-training compatibility — the parent task-vector cosine cross_train.py already wrote to the
+ * ledger, surfaced as a pre-run interference FLAG (S6 finding 21, Ilharco 2023). Near-orthogonal task
+ * vectors compose with low interference; a negative cosine predicts interference. Honest caveat: S4d
+ * showed cosine alone is NOT decisive (untraining collapsed despite cos 0.074) — a flag, not a proof.
+ * Pure reuse of the compatibility block on certification-attempt events; null when none exist.
+ */
+function readCompatibility(events) {
+  const withCompat = events.filter((e) => e.kind === "certification-attempt" && e?.data?.compatibility);
+  if (!withCompat.length) return null;
+  const a = withCompat[withCompat.length - 1]; // most recent readout for this role
+  const c = a.data.compatibility;
+  const cos = typeof c.mean_cosine === "number" ? c.mean_cosine : null;
+  const reading = cos === null ? "unmeasured"
+    : cos < 0 ? "negative — predicted interference"
+    : cos < 0.2 ? "near-orthogonal — composes with low interference (a flag, not a proof — see S4d)"
+    : "related — reinforcing direction";
+  return {
+    parents: a.data.lineage?.parents || null,
+    method: a.data.lineage?.method || null,
+    mean_cosine: cos,
+    sign_agreement: typeof c.sign_agreement_on_overlap === "number" ? c.sign_agreement_on_overlap : null,
+    overlap_jaccard: typeof c.mean_overlap_jaccard === "number" ? c.mean_overlap_jaccard : null,
+    reading,
+  };
+}
+
+/**
  * Assemble the Record for a role. Read-only; every field traces to a ledger or is an
  * explicit empty state.
  *
@@ -263,6 +290,7 @@ export function buildRecord(role, { cwd = process.cwd() } = {}) {
     },
     calibration: null, // ECE lands with forecast-receipt instrumentation (finding 18)
     divergence: readDivergence(role, cwd),
+    compatibility: readCompatibility(events), // S6.2 pre-run interference flag (reused cross-train cosine)
     repsEvents: verifiedEvents(events, runSteps),
     events,
   };

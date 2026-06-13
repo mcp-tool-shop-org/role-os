@@ -220,6 +220,44 @@ describe("lineage (S4 cross-training)", () => {
   });
 });
 
+describe("compatibility — S6.2 pre-run interference flag (reused cross-train cosine)", () => {
+  let dir;
+  before(() => {
+    dir = mkdtempSync(join(tmpdir(), "roleos-record-compat-"));
+    appendEvents(dir, [
+      { kind: "certification-attempt", role: ROLE, ts: "2026-06-12T04:00:00Z", data: {
+        candidate: "x-add",
+        lineage: { parents: ["budgeter-14b600-soup", "conformance-14b-soup"], method: "add-r32" },
+        compatibility: { sign_agreement_on_overlap: 0.5084, mean_cosine: 0.0048, mean_overlap_jaccard: 0.1153 },
+      } },
+    ]);
+  });
+  after(() => { rmSync(dir, { recursive: true, force: true }); });
+
+  it("surfaces the parent cosine + a near-orthogonal reading from the ledger", () => {
+    const r = buildRecord(ROLE, { cwd: dir });
+    assert.equal(r.compatibility.mean_cosine, 0.0048);
+    assert.equal(r.compatibility.sign_agreement, 0.5084);
+    assert.match(r.compatibility.reading, /near-orthogonal/);
+    assert.deepEqual(r.compatibility.parents, ["budgeter-14b600-soup", "conformance-14b-soup"]);
+  });
+
+  it("reads as negative-interference when the cosine is below zero", () => {
+    const d2 = mkdtempSync(join(tmpdir(), "roleos-record-compatneg-"));
+    try {
+      appendEvents(d2, [{ kind: "certification-attempt", role: ROLE, ts: "2026-06-12T05:00:00Z",
+        data: { compatibility: { mean_cosine: -0.3 } } }]);
+      assert.match(buildRecord(ROLE, { cwd: d2 }).compatibility.reading, /negative/);
+    } finally { rmSync(d2, { recursive: true, force: true }); }
+  });
+
+  it("null when no compatibility readout exists on the ledger", () => {
+    const bare = mkdtempSync(join(tmpdir(), "roleos-record-nocompat-"));
+    try { assert.equal(buildRecord(ROLE, { cwd: bare }).compatibility, null); }
+    finally { rmSync(bare, { recursive: true, force: true }); }
+  });
+});
+
 describe("buildRecord — against this repo's committed registry (smoke)", () => {
   // Only asserts COMMITTED truth: .role-os/specialists.json ships in git, but the events
   // ledger (.role-os/specialist-events.jsonl) is gitignored runtime state, so ledger and
