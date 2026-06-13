@@ -49,15 +49,19 @@ drift-alone (multi-criteria MLOps retraining, arXiv:2512.11541). → **two-arm A
 Both arms compute from dispatch receipts; both reduce through the specialist's own output. No
 external embedder, no GPU at check-time.
 
-### Drift arm — BBSDh
-- Reduce each field dispatch to its hard verdict label (already produced). Reduce each sealed-exam
-  item the same way (the exam reference, below).
-- Test the verdict-label **marginal** field-vs-exam with a **G-test** (likelihood-ratio chi-square)
-  over the K verdict classes; report the per-class contribution (the free "why"). Bonferroni-equivalent
-  conservatism is intrinsic to the single K-class test; when soft outputs become available (below),
-  switch to per-dimension KS + Bonferroni over the softmax (BBSDs).
-- **Fires** when p < α (α = 0.05). **Override** fires when the total-variation distance between the
-  marginals ≥ `TV_OVERRIDE` (catastrophic shift) regardless of the calibration arm.
+### Drift arm — reducer chosen by the verdict type the role was certified on
+The reducer is the specialist's own output; its FORM depends on whether the role is a classifier
+or a regressor (`reference.reducer`):
+- **`categorical`** (classifier, e.g. Tool-Call Conformance — verdict is a class): reduce each
+  dispatch to its hard verdict label; test the label **marginal** field-vs-exam with a **G-test**
+  (likelihood-ratio chi-square) over the K classes; report per-class contribution (the free "why").
+  **Override** when the marginal total-variation distance ≥ `TV_OVERRIDE`. When soft outputs become
+  available, switch to per-dimension KS + Bonferroni over the softmax (BBSDs).
+- **`numeric`** (regressor, e.g. the budgeter — verdict is `{spend_weighted: <number>}`): the
+  categorical test is degenerate (every value its own class), so reduce to the scalar output and run
+  a **two-sample KS test** (BBSD's continuous analogue, Rabanser's per-dim KS at K=1) field-vs the
+  exam output sample. **Override** when the KS statistic D ≥ `KS_OVERRIDE`.
+- Both **fire** when p < α (α = 0.05).
 
 ### Performance/calibration arm — ATC + ECE
 - **ATC**: at cert time, find the confidence threshold `t` on the sealed exam s.t. `frac(score ≥ t) =
@@ -101,6 +105,30 @@ captured by a one-time eval that records, per exam item: `{id, verdict, score, c
 Going forward this capture should be a step of certification (the eval already runs; it just needs to
 dump per-item outputs). For existing specialists it is a single attended eval per role. Until a
 reference exists for a role, the detector returns `accumulating` (honest: cannot test yet).
+
+## Serving prerequisites & per-specialist shapes (2026-06-13 findings)
+
+Reading the live serving shims (`gpu-container/specialist-training/{verify_shim,conformance_shim}.py`)
+surfaced two facts that bound what the detector can do today:
+
+1. **The served `score` is a hardcoded constant** (`0.9`, or a low value on failure) — "informational
+   only" per the gate contract; the shim calls the real model but discards logprobs. The performance
+   arm (ATC + ECE) needs a REAL per-dispatch confidence, so it is **inert until serving returns one**
+   (for a classifier: the verdict-token probability from the llama.cpp logprobs). Until then the gate
+   produces `watch` / `monitored` / override-`stale`, but not both-arms-`stale`. The exam reference's
+   `atc_threshold`/`exam_ece` are likewise meaningless until a real confidence exists, so capturing
+   them must wait on this fix.
+2. **The two existing specialists have different verdict shapes.** Conformance is a **classifier**
+   (categorical verdict → `categorical` reducer, G-test). The budgeter is a **regressor** (verdict =
+   a numeric spend estimate → `numeric` reducer, KS test). The drift arm now handles both; the
+   **performance arm is classifier-shaped** (ATC = predicted classification accuracy), so a label-free
+   performance proxy for the budgeter regressor is an OPEN design question (error-based, no field
+   labels) — until resolved the budgeter runs drift-arm-only (`watch` / override-`stale`).
+
+**Net:** the drift arm is live-ready for both roles once their exam references are captured; the
+performance arm needs (a) real serving confidence and (b) a regressor performance proxy before it
+contributes for the budgeter. None of this auto-fires anything — worst case the detector under-claims
+(`watch` instead of `stale`), never over-acts.
 
 ## Phasing
 - **v1 (this slice):** field-output logging + `drift.mjs` (BBSDh G-test, ATC, ECE, two-arm gate,

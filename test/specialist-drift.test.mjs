@@ -7,6 +7,8 @@ import {
   eceEqualMass,
   eceBootstrapLowerCI,
   assessDrift,
+  ksTwoSample,
+  parseNumber,
   DRIFT_DEFAULTS,
 } from "../src/specialist/drift.mjs";
 
@@ -182,6 +184,62 @@ describe("assessDrift — the gate", () => {
     assert.equal(r.drift.fires, true);
     assert.equal(r.performance.fires, true);
     assert.equal(r.status, "stale");
+  });
+});
+
+// ── numeric reducer (regressor specialist, e.g. the budgeter) ────────────────────────────────────
+
+describe("ksTwoSample + parseNumber", () => {
+  it("identical samples → D≈0, p≈1", () => {
+    const a = Array.from({ length: 100 }, (_, i) => i);
+    const r = ksTwoSample(a, [...a]);
+    assert.ok(r.D < 1e-9);
+    assert.ok(r.p > 0.99);
+  });
+  it("disjoint samples → D=1, tiny p", () => {
+    const r = ksTwoSample([0, 1, 2, 3, 4], [100, 101, 102, 103, 104]);
+    assert.equal(r.D, 1);
+    assert.ok(r.p < 0.05);
+  });
+  it("empty either side → no-op (D 0, p 1)", () => {
+    assert.deepEqual(ksTwoSample([], [1, 2, 3]), { D: 0, p: 1 });
+  });
+  it("parseNumber pulls the last number out of a verdict label", () => {
+    assert.equal(parseNumber('{"spend_weighted":245000}'), 245000);
+    assert.equal(parseNumber("estimate: 1,250,000 tokens"), 1250000);
+    assert.equal(parseNumber(42), 42);
+    assert.equal(parseNumber("abstain"), null);
+  });
+});
+
+describe("assessDrift — numeric reducer (KS on the scalar output)", () => {
+  const NUM_REF = {
+    schema: "roleos-exam-reference/v1", role: "B", reducer: "numeric",
+    exam_outputs: Array.from({ length: 300 }, (_, i) => i), // uniform 0..299
+    n_exam: 300,
+  };
+  const numRows = (n, valueFn) =>
+    Array.from({ length: n }, (_, i) => ({ role: "B", source: "specialist", verdict: String(valueFn(i)) }));
+
+  it("matched output distribution → no drift, monitored-lowpower", () => {
+    const r = assessDrift({ fieldRows: numRows(200, (i) => Math.floor((i * 300) / 200)), reference: NUM_REF });
+    assert.equal(r.drift.test, "ks");
+    assert.equal(r.drift.fires, false);
+    assert.equal(r.status, "monitored-lowpower");
+  });
+
+  it("moderately shifted output → drift fires (no override) → watch (perf unavailable)", () => {
+    const r = assessDrift({ fieldRows: numRows(200, (i) => 100 + (i % 150)), reference: NUM_REF }); // 100..249
+    assert.equal(r.drift.fires, true);
+    assert.equal(r.override, false);
+    assert.equal(r.status, "watch");
+  });
+
+  it("catastrophic output shift → KS override → stale", () => {
+    const r = assessDrift({ fieldRows: numRows(200, (i) => 5000 + i), reference: NUM_REF }); // far above exam range
+    assert.equal(r.override, true);
+    assert.equal(r.status, "stale");
+    assert.match(r.reason, /override/);
   });
 });
 

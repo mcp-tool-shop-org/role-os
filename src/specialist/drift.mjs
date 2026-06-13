@@ -29,6 +29,7 @@ export const DRIFT_DEFAULTS = {
   ECE_MIN_PER_BIN: 5,    // a bin below this is merged outward (small-N stability, Nixon 2019)
   ECE_MARGIN: 0.05,      // field-ECE lower-CI excess over exam baseline that trips the perf arm
   BOOTSTRAP: 500,        // bootstrap resamples for the ECE CI
+  KS_OVERRIDE: 0.5,      // KS statistic (numeric reducer) that fires `stale` regardless of perf arm
 };
 
 // ── numerics: regularized incomplete gamma → chi-square survival ────────────────────────────────
@@ -103,6 +104,56 @@ export function gTest(examCounts, fieldCounts, classes) {
   }
   const df = Math.max(0, classes.length - 1);
   return { G: round4(G), df, p: round4(chiSquareSf(G, df)), tv_distance: round4(tv / 2), perClass };
+}
+
+// ── drift arm (numeric reducer): KS two-sample on the scalar output ──────────────────────────────
+// For a REGRESSOR specialist (e.g. the budgeter, verdict = a numeric spend estimate) the
+// categorical G-test is degenerate (every value its own class). BBSD's continuous analogue is a
+// two-sample KS test on the scalar output (Rabanser's per-dimension KS, K=1).
+
+/** Extract a scalar from a verdict value/label (last number wins, matching the shim's parse). */
+export function parseNumber(v) {
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  if (typeof v !== "string") return null;
+  const m = v.match(/-?\d[\d,]*\.?\d*/g);
+  if (!m) return null;
+  const x = parseFloat(m[m.length - 1].replace(/,/g, ""));
+  return Number.isFinite(x) ? x : null;
+}
+
+function kolmogorovQ(lambda) {
+  if (lambda <= 0) return 1;
+  let sum = 0;
+  for (let k = 1; k <= 100; k++) {
+    const term = 2 * (k % 2 ? 1 : -1) * Math.exp(-2 * k * k * lambda * lambda);
+    sum += term;
+    if (Math.abs(term) < 1e-10) break;
+  }
+  return Math.max(0, Math.min(1, sum));
+}
+
+/** Two-sample Kolmogorov–Smirnov test. Returns the statistic D and asymptotic p-value. */
+export function ksTwoSample(a, b) {
+  const A = [...a].sort((x, y) => x - y), B = [...b].sort((x, y) => x - y);
+  const n1 = A.length, n2 = B.length;
+  if (!n1 || !n2) return { D: 0, p: 1 };
+  let i = 0, j = 0, d = 0;
+  while (i < n1 && j < n2) {
+    const x = Math.min(A[i], B[j]);
+    while (i < n1 && A[i] <= x) i++;
+    while (j < n2 && B[j] <= x) j++;
+    d = Math.max(d, Math.abs(i / n1 - j / n2));
+  }
+  const ne = (n1 * n2) / (n1 + n2);
+  const lambda = (Math.sqrt(ne) + 0.12 + 0.11 / Math.sqrt(ne)) * d;
+  return { D: round4(d), p: round4(kolmogorovQ(lambda)) };
+}
+
+function median(xs) {
+  if (!xs.length) return null;
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return round4(s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2);
 }
 
 // ── performance arm: ATC (label-free) + ECE (where outcomes exist) ───────────────────────────────
@@ -186,16 +237,29 @@ export function assessDrift({ fieldRows, reference, config = {} }) {
       note: `${n}/${cfg.N_FLOOR} specialist-routed verdicts toward the drift test` };
   }
 
-  const classes = reference.classes || Object.keys(reference.label_marginal || {});
-
-  // ── drift arm (BBSDh) ──
-  const fieldCounts = {};
-  for (const r of rows) fieldCounts[r.verdict] = (fieldCounts[r.verdict] || 0) + 1;
-  const examCounts = {};
-  for (const c of classes) examCounts[c] = Math.round((reference.label_marginal?.[c] || 0) * (reference.n_exam || 0));
-  const gt = gTest(examCounts, fieldCounts, classes);
-  const driftFires = gt.df > 0 && gt.p < cfg.ALPHA;
-  const override = gt.tv_distance >= cfg.TV_OVERRIDE;
+  // ── drift arm — reducer chosen by the verdict type the role was certified on ──
+  // "categorical" (classifier, e.g. conformance) → BBSDh G-test on the label marginal.
+  // "numeric" (regressor, e.g. the budgeter spend estimate) → KS two-sample on the scalar output.
+  const reducer = reference.reducer || "categorical";
+  let driftFires, override, driftDetail;
+  if (reducer === "numeric") {
+    const fieldVals = rows.map((r) => parseNumber(r.verdict)).filter((v) => v !== null);
+    const examVals = (reference.exam_outputs || []).filter((v) => typeof v === "number");
+    const ks = ksTwoSample(fieldVals, examVals);
+    driftFires = fieldVals.length > 0 && examVals.length > 0 && ks.p < cfg.ALPHA;
+    override = ks.D >= cfg.KS_OVERRIDE;
+    driftDetail = { test: "ks", reducer, D: ks.D, p: ks.p, field_n: fieldVals.length, exam_n: examVals.length, field_median: median(fieldVals), exam_median: median(examVals) };
+  } else {
+    const classes = reference.classes || Object.keys(reference.label_marginal || {});
+    const fieldCounts = {};
+    for (const r of rows) fieldCounts[r.verdict] = (fieldCounts[r.verdict] || 0) + 1;
+    const examCounts = {};
+    for (const c of classes) examCounts[c] = Math.round((reference.label_marginal?.[c] || 0) * (reference.n_exam || 0));
+    const gt = gTest(examCounts, fieldCounts, classes);
+    driftFires = gt.df > 0 && gt.p < cfg.ALPHA;
+    override = gt.tv_distance >= cfg.TV_OVERRIDE;
+    driftDetail = { test: "g-test", reducer, p: gt.p, G: gt.G, df: gt.df, tv_distance: gt.tv_distance, per_class: gt.perClass };
+  }
 
   // ── performance arm (ATC + ECE) ──
   const scores = rows.filter((r) => typeof r.score === "number").map((r) => r.score);
@@ -230,7 +294,7 @@ export function assessDrift({ fieldRows, reference, config = {} }) {
     reason,
     n,
     override,
-    drift: { fires: driftFires, p: gt.p, G: gt.G, df: gt.df, tv_distance: gt.tv_distance, per_class: gt.perClass },
+    drift: { fires: driftFires, ...driftDetail },
     performance: {
       fires: perfFires,
       available: perfAvailable,
