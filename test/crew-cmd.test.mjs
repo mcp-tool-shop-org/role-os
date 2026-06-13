@@ -113,6 +113,54 @@ describe("roleos crew --programs — the curriculum tech tree", () => {
   });
 });
 
+describe("roleos crew --preview <technique>", () => {
+  const withCurriculum = (techniques) => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-preview-"));
+    mkdirSync(join(dir, ".role-os"), { recursive: true });
+    writeFileSync(join(dir, ".role-os", "curriculum.json"),
+      JSON.stringify({ schema: "roleos-curriculum/v1", techniques, edges: [] }));
+    return dir;
+  };
+
+  it("awaiting-S6.3 when the technique has no preview data yet", () => {
+    const dir = withCurriculum([{ id: 1, slug: "qlora", name: "QLoRA", preview: {} }]);
+    try {
+      const out = run(["crew", "--preview", "qlora"], dir);
+      assert.ok(out.includes("Recipe preview — QLoRA"));
+      assert.ok(out.includes("S6.3"));
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it("renders predicted outcome + forgetting when the KB has measured data", () => {
+    const dir = withCurriculum([{
+      id: 1, slug: "qlora", name: "QLoRA", engine_recipe_ref: "training-qlora-5090",
+      preview: {
+        difficulty_signal: "exam-flip-consistency",
+        mixing_law: { tier: "law-predicted", predicted_loss: 1.2, predicted_steps_to_cert: 600 },
+        calibration_params: 4000000000, calibration_tokens: 100000000,
+        replay_fraction: 0.01, measured_forgetting: 0.05,
+      },
+    }]);
+    try {
+      const out = run(["crew", "--preview", "qlora"], dir);
+      assert.ok(out.includes("PREDICTED OUTCOME"));
+      assert.ok(out.includes("predicted loss: 1.2"));
+      assert.ok(out.includes("FORGETTING RISK"));
+      assert.ok(out.includes("recommended replay: 1%"));
+      assert.ok(out.includes("engine recipe: training-qlora-5090"));
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+
+  it("errors for an unknown technique", () => {
+    const dir = withCurriculum([{ id: 1, slug: "qlora", name: "QLoRA", preview: {} }]);
+    let failed = false;
+    try { run(["crew", "--preview", "nonexistent"], dir); }
+    catch (e) { failed = true; assert.equal(e.status, 1); assert.ok(String(e.stderr).includes("No technique matches")); }
+    finally { rmSync(dir, { recursive: true, force: true }); }
+    assert.ok(failed, "unknown technique must exit non-zero");
+  });
+});
+
 describe("marks (GlyphStudio placeholders)", () => {
   it("is deterministic by crew pack and defaults for registry-only roles", () => {
     assert.equal(markFor([{ pack: "brainstorm" }]), markFor([{ pack: "brainstorm" }]));

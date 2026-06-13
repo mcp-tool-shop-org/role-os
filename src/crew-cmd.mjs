@@ -8,6 +8,7 @@
  *   roleos crew              roster: mark, grade·basis, band, form, reps, profile
  *   roleos crew <role>       full sheet for one crew member
  *   roleos crew --programs   the curriculum tech tree (training-knowledge KB; S6 training programs)
+ *   roleos crew --preview <technique>   the recipe preview for one technique (predicted outcome + forgetting)
  *
  * Marks are deterministic per crew pack — typographic placeholders until the GlyphStudio
  * glyphs land (design open item). The quiet ceremony (mark + one-line record on
@@ -19,7 +20,7 @@ import { fileURLToPath } from "node:url";
 import { readFileSafe } from "./fs-utils.mjs";
 import { deriveProfile, renderDossierBlock } from "./dossier-block.mjs";
 import { buildRecord } from "./specialist/record.mjs";
-import { loadCurriculum } from "./specialist/training-programs.mjs";
+import { loadCurriculum, recipePreview } from "./specialist/training-programs.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -220,9 +221,53 @@ export function renderCurriculum(graph) {
   return lines.join("\n");
 }
 
+/** Render a single technique's recipe preview (S6.2) — predicted outcome + forgetting + replay. */
+export function renderPreview(preview) {
+  const lines = [`Recipe preview — ${preview.name || preview.technique || "(unknown technique)"}`, ""];
+  if (preview.difficulty_signal) lines.push(`  difficulty signal: ${preview.difficulty_signal}`);
+  if (preview.engine_recipe_ref) lines.push(`  engine recipe: ${preview.engine_recipe_ref}  (measured numbers live in tensor-engine-knowledge)`);
+  if (preview.difficulty_signal || preview.engine_recipe_ref) lines.push("");
+  if (preview.status === "unavailable") {
+    lines.push(`  ${preview.note}`);
+    return lines.join("\n");
+  }
+  if (preview.predicted_outcome) {
+    const o = preview.predicted_outcome;
+    lines.push("  PREDICTED OUTCOME");
+    lines.push(`    tier ${o.tier} · confidence ${o.confidence}`);
+    if (o.predicted_loss != null) lines.push(`    predicted loss: ${o.predicted_loss}`);
+    if (o.predicted_steps_to_cert != null) lines.push(`    predicted steps to certify: ${o.predicted_steps_to_cert}`);
+    if (o.calibration) lines.push(`    calibrated at ${o.calibration.params} params / ${o.calibration.tokens ?? "?"} tokens`);
+    lines.push("");
+  }
+  if (preview.forgetting) {
+    const f = preview.forgetting;
+    lines.push("  FORGETTING RISK");
+    if (f.recommended_replay_fraction != null) lines.push(`    recommended replay: ${Math.round(f.recommended_replay_fraction * 100)}%`);
+    if (f.measured_forgetting != null) lines.push(`    measured forgetting: ${f.measured_forgetting}`);
+    lines.push(`    ${f.note}`);
+  }
+  return lines.join("\n");
+}
+
 export async function crewCommand(args, cwd = process.cwd()) {
   if (args.includes("--programs")) {
     console.log(renderCurriculum(loadCurriculum({ cwd })));
+    return;
+  }
+  if (args.includes("--preview")) {
+    const slug = args.filter((a) => !a.startsWith("--")).join(" ").trim();
+    const graph = loadCurriculum({ cwd });
+    if (graph.status === "unavailable") { console.log(renderCurriculum(graph)); return; }
+    const t = (graph.techniques || []).find(
+      (x) => x.slug === slug || String(x.name).toLowerCase() === slug.toLowerCase());
+    if (!t) {
+      const err = new Error(`No technique matches "${slug || "(none given)"}"`);
+      err.exitCode = 1;
+      err.hint = "Run 'roleos crew --programs' for the tech tree, then pass a technique name or slug.";
+      throw err;
+    }
+    console.log(renderPreview(recipePreview(t)));
     return;
   }
   const dossiers = loadDossiers();

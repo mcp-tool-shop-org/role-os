@@ -201,6 +201,64 @@ export function cheapestChain(graph, targetId) {
 }
 
 /**
+ * Recipe preview for ONE technique (S6.2): predicted outcome + forgetting risk + recommended replay,
+ * from the KB's stored preview fields (mixing-law fit, calibration scale, replay/forgetting). role-os
+ * SURFACES the producer-side fit and applies the confidence tiering; it does not re-fit. Honest by
+ * construction — "awaiting S6.3" when empty; an out-of-calibration candidate downgrades confidence
+ * (finding 11). Predicted-outcome math grounded in findings 6,7,11; forgetting in 9,10.
+ *
+ * @param {object} technique  a curriculum.json technique (carries a `.preview` block)
+ * @param {object} [opts] { candidateParams }  the model being trained (param count), for the OOB check
+ */
+export function recipePreview(technique, { candidateParams } = {}) {
+  const p = (technique && technique.preview) || {};
+  const out = {
+    technique: technique?.slug || null,
+    name: technique?.name || null,
+    engine_recipe_ref: technique?.engine_recipe_ref || null,
+    difficulty_signal: p.difficulty_signal || null,
+    predicted_outcome: null,
+    forgetting: null,
+    status: "unavailable",
+  };
+
+  // predicted outcome from a fitted mixing law (Ye 2024); confidence tiered + out-of-band-downgraded (Gu 2024).
+  if (p.mixing_law && typeof p.mixing_law === "object") {
+    const m = p.mixing_law;
+    let confidence = m.tier === "regression" ? "rank-only" : "calibrated";
+    if (candidateParams && p.calibration_params) {
+      const ratio = candidateParams / p.calibration_params;
+      if (ratio > 2 || ratio < 0.5) confidence = "low (out-of-calibration-band)";
+    }
+    out.predicted_outcome = {
+      tier: m.tier || "law-predicted",
+      predicted_loss: m.predicted_loss ?? null,
+      predicted_steps_to_cert: m.predicted_steps_to_cert ?? null,
+      calibration: p.calibration_params ? { params: p.calibration_params, tokens: p.calibration_tokens ?? null } : null,
+      confidence,
+    };
+    out.status = "preview";
+  }
+
+  // forgetting risk + replay recommendation (Kalajdzievski 2024 / Bethune 2025 / CMR Gu 2024).
+  if (typeof p.replay_fraction === "number" || typeof p.measured_forgetting === "number") {
+    out.forgetting = {
+      recommended_replay_fraction: typeof p.replay_fraction === "number" ? p.replay_fraction : null,
+      measured_forgetting: typeof p.measured_forgetting === "number" ? p.measured_forgetting : null,
+      note: typeof p.replay_fraction === "number"
+        ? `mix ~${Math.round(p.replay_fraction * 100)}% replay/base data to hold forgetting under tolerance`
+        : "forgetting measured; no replay fraction fitted yet",
+    };
+    out.status = "preview";
+  }
+
+  if (out.status === "unavailable") {
+    out.note = "no measured recipe-preview data yet — S6.3 (attended GPU) fits the mixing law and measures the replay/forgetting curve";
+  }
+  return out;
+}
+
+/**
  * Resolve the curriculum.json path (first existing wins), so `roleos crew --programs` works by
  * default on the standard sibling workspace layout (role-os and readouts both under .../AI/):
  *   1. ROLEOS_CURRICULUM_PATH — explicit override, used verbatim (missing → unavailable; lets tests force it)

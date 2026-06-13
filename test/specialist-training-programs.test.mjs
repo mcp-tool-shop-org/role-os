@@ -8,6 +8,7 @@ import {
   buildCurriculum,
   cheapestChain,
   loadCurriculum,
+  recipePreview,
   WITNESS_WEIGHTS,
   THIN_WITNESS,
 } from "../src/specialist/training-programs.mjs";
@@ -128,6 +129,46 @@ describe("cheapestChain", () => {
   it("no prerequisites → null", () => {
     const g = buildCurriculum({ techniques: [T(1)], edges: [] });
     assert.equal(cheapestChain(g, 1), null);
+  });
+});
+
+describe("recipePreview — S6.2 recipe-level preview", () => {
+  it("empty preview block → unavailable, awaiting S6.3", () => {
+    const r = recipePreview({ slug: "qlora", name: "QLoRA", preview: {} });
+    assert.equal(r.status, "unavailable");
+    assert.match(r.note, /S6\.3/);
+  });
+
+  it("a technique with no preview block at all → unavailable (does not throw)", () => {
+    assert.equal(recipePreview({ slug: "x", name: "X" }).status, "unavailable");
+  });
+
+  it("a fitted mixing law → predicted outcome with calibrated confidence", () => {
+    const r = recipePreview({
+      slug: "x", name: "X",
+      preview: {
+        mixing_law: { tier: "law-predicted", predicted_loss: 1.23, predicted_steps_to_cert: 600 },
+        calibration_params: 4_000_000_000, calibration_tokens: 100_000_000,
+      },
+    });
+    assert.equal(r.status, "preview");
+    assert.equal(r.predicted_outcome.predicted_loss, 1.23);
+    assert.equal(r.predicted_outcome.confidence, "calibrated");
+    assert.deepEqual(r.predicted_outcome.calibration, { params: 4_000_000_000, tokens: 100_000_000 });
+  });
+
+  it("an out-of-calibration candidate downgrades confidence (finding 11)", () => {
+    const r = recipePreview(
+      { slug: "x", name: "X", preview: { mixing_law: { predicted_loss: 1 }, calibration_params: 4e9 } },
+      { candidateParams: 14e9 }); // 14B vs 4B-calibrated → ratio 3.5 > 2
+    assert.match(r.predicted_outcome.confidence, /out-of-calibration/);
+  });
+
+  it("a replay fraction → an actionable forgetting recommendation", () => {
+    const r = recipePreview({ slug: "x", name: "X", preview: { replay_fraction: 0.01, measured_forgetting: 0.05 } });
+    assert.equal(r.status, "preview");
+    assert.equal(r.forgetting.recommended_replay_fraction, 0.01);
+    assert.match(r.forgetting.note, /1% replay/);
   });
 });
 
