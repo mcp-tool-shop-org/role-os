@@ -16,6 +16,7 @@ __pycache__/
 # Specialist runtime state (mutates at runtime; the registry specialists.json IS tracked)
 .role-os/specialist-state.json
 .role-os/specialist-events.jsonl
+.role-os/specialist-field-log.jsonl
 
 # Conformance training run logs/peaks (local; the dataset, scripts + certify receipts ARE tracked)
 tools/conformance-dataset/*.log

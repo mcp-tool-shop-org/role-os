@@ -69,9 +69,12 @@ function repsLine(dossier, record) {
 }
 
 function formLine(record) {
-  return record.divergence.status === "unmonitored"
-    ? "unmonitored (drift checks land in S5)"
-    : record.divergence.status;
+  const d = record.divergence;
+  if (d.status === "unmonitored") return "unmonitored (drift checks land in S5)";
+  if (d.status === "accumulating") {
+    return `accumulating (${d.samples}/${d.min_samples} field inputs${d.test_ready ? ", drift test ready" : ""})`;
+  }
+  return d.status;
 }
 
 function indent(text, prefix) {

@@ -14,12 +14,14 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { readEvents } from "./events.mjs";
+import { summarizeFieldInputs } from "./field-log.mjs";
 import { loadState, quotaStateFor, DEFAULT_WINDOW } from "./state.mjs";
 import { readOutcomes } from "../calibration.mjs";
 
 const REGISTRY_PATH = ".role-os/specialists.json";
 const STATE_PATH = ".role-os/specialist-state.json";
 const EVENTS_PATH = ".role-os/specialist-events.jsonl";
+const FIELD_LOG_PATH = ".role-os/specialist-field-log.jsonl";
 const RUNS_DIR = ".claude/runs";
 
 /** Shadow-probe streak required before the shadow-verified technique is earned. */
@@ -42,6 +44,18 @@ function readRoleEvents(role, cwd) {
   const path = join(cwd, EVENTS_PATH);
   if (!existsSync(path)) return [];
   try { return readEvents(path, { role }); } catch { return []; }
+}
+
+/**
+ * Field-vs-exam drift state: accumulation counts from the field-input log (S5). Honest counts
+ * only — the fresh/stale verdict lands once the two-sample test is wired and enough inputs
+ * exist. Absent log → "unmonitored" (matches the pre-S5 placeholder so the crew sheet and the
+ * empty-state contract are unchanged at zero traffic).
+ */
+function readDivergence(role, cwd) {
+  const path = join(cwd, FIELD_LOG_PATH);
+  try { return summarizeFieldInputs(path, { role }); }
+  catch { return { status: "unmonitored", samples: 0, note: "field log unreadable" }; }
 }
 
 function readDispatchWindow(cwd) {
@@ -227,7 +241,7 @@ export function buildRecord(role, { cwd = process.cwd() } = {}) {
       overrides: null, // override-was-right/wrong is not instrumented yet — honest null
     },
     calibration: null, // ECE lands with forecast-receipt instrumentation (finding 18)
-    divergence: { status: "unmonitored", note: "field-vs-exam drift checks land in S5" },
+    divergence: readDivergence(role, cwd),
     repsEvents: verifiedEvents(events, runSteps),
     events,
   };

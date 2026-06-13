@@ -43,6 +43,8 @@ import {
   appendHaltEvent,
   SHADOW_DEFAULTS,
 } from "./shadow.mjs";
+import { logDispatchInput } from "./field-log.mjs";
+import { dirname, join } from "node:path";
 
 const DEFAULT_REGISTRY_PATH = ".role-os/specialists.json";
 const DEFAULT_STATE_PATH = ".role-os/specialist-state.json";
@@ -108,6 +110,10 @@ export async function dispatchSpecialist({
   const registryPath = paths.registry || process.env.ROLEOS_SPECIALISTS_PATH || DEFAULT_REGISTRY_PATH;
   const statePath = paths.state || process.env.ROLEOS_SPECIALIST_STATE_PATH || DEFAULT_STATE_PATH;
   const eventsPath = paths.events || process.env.ROLEOS_SPECIALIST_EVENTS_PATH || DEFAULT_EVENTS_PATH;
+  // The field-input log lives beside the events ledger by default, so any caller that already
+  // points events at a tmp dir gets a co-located field log for free (hermetic tests).
+  const fieldLogPath =
+    paths.fieldLog || process.env.ROLEOS_SPECIALIST_FIELD_LOG_PATH || join(dirname(eventsPath), "specialist-field-log.jsonl");
 
   const K = shadowCfg.K ?? SHADOW_DEFAULTS.K;
   const N = shadowCfg.N ?? SHADOW_DEFAULTS.N;
@@ -160,6 +166,15 @@ export async function dispatchSpecialist({
   // The window only rolls when Claude traffic is recorded too — recording only specialist
   // successes froze the window and locked every role out permanently once the quota tripped.
   recordDispatch(state, source, windowSize, parseIsoMs(nowIso));
+
+  // ── Field-input logging (S5) ─────────────────────────────────────────────────────────────
+  // Accumulate the distribution of inputs each role actually sees so the field-vs-exam drift
+  // check has something to test against. Both routes are logged, tagged with the realized
+  // source. Best-effort: a logging failure must never break a dispatch (same contract as state
+  // persistence below). The embedder is NOT pinned here — embedding is deferred to analysis time.
+  try {
+    logDispatchInput(fieldLogPath, { role, ts: nowIso, traceId, route: decision.route, source, input });
+  } catch { /* best-effort */ }
 
   // ── Shadow probe ─────────────────────────────────────────────────────────────────────────
   // Probes only fire when the dispatch actually went to a specialist (source === "specialist").

@@ -1,12 +1,13 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { dispatchSpecialist } from "../src/specialist/dispatch.mjs";
 import { saveRegistry, REGISTRY_SCHEMA } from "../src/specialist/registry.mjs";
 import { readEvents } from "../src/specialist/events.mjs";
 import { loadState, getHalt } from "../src/specialist/state.mjs";
+import { readFieldInputs } from "../src/specialist/field-log.mjs";
 
 function tmpDir() {
   const dir = mkdtempSync(join(tmpdir(), "roleos-specialist-dispatch-"));
@@ -317,6 +318,74 @@ describe("dispatchSpecialist — receipt shape", () => {
       assert.equal(typeof receipt.route, "string");
       assert.equal(typeof receipt.source, "string");
       assert.equal(typeof receipt.decision, "object");
+    } finally { cleanup(); }
+  });
+});
+
+// ── Field-input logging (S5) ───────────────────────────────────────────────────────────────────
+
+describe("dispatchSpecialist — field-input logging", () => {
+  it("logs one field-input observation per dispatch, co-located with the events ledger", async () => {
+    const { dir, paths, cleanup } = tmpDir();
+    try {
+      writeRegistry(paths.registry);
+      await dispatchSpecialist({
+        role: "Verifier", input: { claim: "alpha" }, claudeFn: async () => "x",
+        traceId: "t1", nowIso: NOW, paths, classifier: PASS, httpFn: specialistOk("supported"),
+      });
+      const rows = readFieldInputs(join(dir, "specialist-field-log.jsonl"), { role: "Verifier" });
+      assert.equal(rows.length, 1);
+      assert.equal(rows[0].route, "specialist");
+      assert.equal(rows[0].source, "specialist");
+      assert.match(rows[0].input_sha256, /^[0-9a-f]{64}$/);
+      assert.ok(rows[0].input.includes("alpha"));
+    } finally { cleanup(); }
+  });
+
+  it("logs both routes — a Claude-routed (gate fail-open) dispatch records source=claude", async () => {
+    const { dir, paths, cleanup } = tmpDir();
+    try {
+      writeRegistry(paths.registry);
+      await dispatchSpecialist({
+        role: "Verifier", input: { claim: "beta" }, claudeFn: async () => "claude-said-so",
+        traceId: "t1", nowIso: NOW, paths,
+        classifier: { scoreFn: () => 0.1, oodFn: () => false }, httpFn: specialistOk(),
+      });
+      const rows = readFieldInputs(join(dir, "specialist-field-log.jsonl"));
+      assert.equal(rows.length, 1);
+      assert.equal(rows[0].route, "claude");
+      assert.equal(rows[0].source, "claude");
+    } finally { cleanup(); }
+  });
+
+  it("a logging failure never breaks a dispatch (best-effort contract)", async () => {
+    const { dir, paths, cleanup } = tmpDir();
+    try {
+      writeRegistry(paths.registry);
+      // Point the field log at a path whose parent is a FILE, so mkdir/append throws internally.
+      const blocker = join(dir, "blocker");
+      writeFileSync(blocker, "x");
+      const { result } = await dispatchSpecialist({
+        role: "Verifier", input: {}, claudeFn: async () => "x",
+        traceId: "t1", nowIso: NOW, paths: { ...paths, fieldLog: join(blocker, "field-log.jsonl") },
+        classifier: PASS, httpFn: specialistOk("supported"),
+      });
+      assert.equal(result, "supported"); // dispatch still succeeded despite the logging error
+    } finally { cleanup(); }
+  });
+
+  it("respects an explicit paths.fieldLog override", async () => {
+    const { dir, paths, cleanup } = tmpDir();
+    try {
+      writeRegistry(paths.registry);
+      const custom = join(dir, "custom-field-log.jsonl");
+      await dispatchSpecialist({
+        role: "Verifier", input: {}, claudeFn: async () => "x",
+        traceId: "t1", nowIso: NOW, paths: { ...paths, fieldLog: custom },
+        classifier: PASS, httpFn: specialistOk(),
+      });
+      assert.equal(readFieldInputs(custom).length, 1);
+      assert.equal(readFieldInputs(join(dir, "specialist-field-log.jsonl")).length, 0);
     } finally { cleanup(); }
   });
 });
