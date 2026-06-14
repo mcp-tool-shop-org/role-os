@@ -137,7 +137,7 @@ export function buildCurriculum(curriculum, config = {}) {
   let scored = rawEdges.map((e) => {
     const witness = edgeWitness(e.signals);
     const klass = classifyEdge(witness, e.outcome_delta);
-    return { from: e.from, to: e.to, witness, evidence: klass, signals: e.signals || {}, outcome_delta: e.outcome_delta || null };
+    return { from: e.from, to: e.to, witness, evidence: klass, signals: e.signals || {}, outcome_delta: e.outcome_delta || null, measured: e.measured || null };
   });
 
   // Drop spurious (correlation-only) edges — not drawn.
@@ -167,11 +167,23 @@ export function buildCurriculum(curriculum, config = {}) {
     confirmed: scored.filter((e) => e.evidence === "confirmed").length,
     confirmed_negative: scored.filter((e) => e.evidence === "confirmed-negative").length,
     unverified: scored.filter((e) => e.evidence === "unverified").length,
+    // a real S6.3 measurement that did NOT yield a verified delta (e.g. a censored steps-to-cert) — still a result,
+    // visibly distinct from a never-measured edge. The verdict stays `unverified`; this only counts the evidence.
+    measured_unverified: scored.filter((e) => e.evidence === "unverified" && e.measured).length,
     closure_implied: scored.filter((e) => e.closure_implied).length,
     dropped_spurious: dropped.length,
     dropped_cyclic: backEdges.size,
   };
   const measured = counts.confirmed + counts.confirmed_negative; // any receipt-backed delta = the machinery produced a result
+
+  let note;
+  if (measured > 0) {
+    note = `${counts.confirmed} confirmed${counts.confirmed_negative ? ` + ${counts.confirmed_negative} confirmed-negative (warm-start measured NOT to help)` : ""} + ${counts.unverified} unverified prerequisite edges`;
+  } else if (counts.measured_unverified > 0) {
+    note = `${counts.unverified} prerequisite edges unverified (${counts.measured_unverified} MEASURED at S6.3 — a real rig result, but no verified transfer delta; see receipts)`;
+  } else {
+    note = `${counts.unverified} prerequisite edges, all unverified (no receipt-backed transfer deltas yet — S6.3)`;
+  }
 
   return {
     status: measured > 0 ? "graph" : "provisional", // "provisional" = machinery valid, edges await S6.3 deltas
@@ -180,9 +192,7 @@ export function buildCurriculum(curriculum, config = {}) {
     edges: scored,
     roots,
     counts,
-    note: measured === 0
-      ? `${counts.unverified} prerequisite edges, all unverified (no receipt-backed transfer deltas yet — S6.3)`
-      : `${counts.confirmed} confirmed${counts.confirmed_negative ? ` + ${counts.confirmed_negative} confirmed-negative (warm-start measured NOT to help)` : ""} + ${counts.unverified} unverified prerequisite edges`,
+    note,
   };
 }
 

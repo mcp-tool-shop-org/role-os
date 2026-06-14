@@ -92,6 +92,27 @@ describe("buildCurriculum — evidence classification", () => {
     assert.equal(g.status, "graph");
     assert.match(g.note, /confirmed-negative/);
   });
+
+  it("a MEASURED-but-unverified edge (note, no trusted delta — e.g. censored steps-to-cert) stays unverified but is visibly distinct (S6.3)", () => {
+    const g = buildCurriculum({
+      techniques: [T(1), T(2)],
+      edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true }, measured: { n_receipts: 0, has_delta: false, note: "NEGATIVE TRANSFER (honest-hypothesis confirmed)..." } }],
+    });
+    assert.equal(g.edges[0].evidence, "unverified");      // verdict unchanged — no trusted outcome delta
+    assert.ok(g.edges[0].measured, "measured evidence threaded through");
+    assert.equal(g.edges[0].measured.n_receipts, 0);
+    assert.equal(g.counts.measured_unverified, 1);        // counted as a real result, distinct from never-measured
+    assert.equal(g.counts.confirmed + g.counts.confirmed_negative, 0);
+    assert.equal(g.status, "provisional");                // no confirmed delta -> still provisional
+    assert.match(g.note, /MEASURED/);                     // the headline note acknowledges the real result
+  });
+
+  it("a never-measured unverified edge carries no `measured` and is not counted measured_unverified", () => {
+    const g = buildCurriculum({ techniques: [T(1), T(2)], edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true } }] });
+    assert.equal(g.edges[0].evidence, "unverified");
+    assert.equal(g.edges[0].measured, null);
+    assert.equal(g.counts.measured_unverified, 0);
+  });
 });
 
 describe("buildCurriculum — DAG gate + transitive reduction", () => {

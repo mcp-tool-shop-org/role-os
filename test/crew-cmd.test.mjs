@@ -111,6 +111,28 @@ describe("roleos crew --programs — the curriculum tech tree", () => {
       assert.ok(out.includes("UNVERIFIED until S6.3"), "honesty footer shown");
     } finally { rmSync(dir, { recursive: true, force: true }); }
   });
+
+  it("a measured-but-unverified edge surfaces the S6.3 MEASURED receipt block + a distinct footer", () => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-programs-"));
+    try {
+      mkdirSync(join(dir, ".role-os"), { recursive: true });
+      writeFileSync(join(dir, ".role-os", "curriculum.json"), JSON.stringify({
+        schema: "roleos-curriculum/v1",
+        techniques: [
+          { id: 1, slug: "unet", name: "UNet-only baseline", lane: "diffusion", evidence_strength: "measured-on-rig" },
+          { id: 2, slug: "tegate", name: "TE trigger gating", lane: "diffusion", evidence_strength: "reproduced-from-source" },
+        ],
+        edges: [{ from: 1, to: 2, signals: { explicit_predecessor: true },
+                  measured: { n_receipts: 0, has_delta: false, note: "NEGATIVE TRANSFER (honest-hypothesis confirmed). Foundation makes gating weaker." } }],
+      }));
+      const out = run(["crew", "--programs"], dir);
+      assert.ok(out.includes("measured (S6.3"), "edge tagged measured");
+      assert.ok(out.includes("S6.3 MEASURED"), "receipt subsection rendered");
+      assert.ok(out.includes("NEGATIVE TRANSFER"), "the finding note is surfaced");
+      assert.ok(out.includes("MEASURED at S6.3"), "footer acknowledges the real result");
+      assert.ok(!out.includes("UNVERIFIED until S6.3"), "stale all-unverified footer suppressed once a measured edge exists");
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
 });
 
 describe("roleos crew --preview <technique>", () => {

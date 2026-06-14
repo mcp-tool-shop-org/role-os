@@ -216,13 +216,28 @@ export function renderCurriculum(graph) {
       const tags = [e.evidence];
       if (e.closure_implied) tags.push("closure-implied");
       if (e.evidence === "confirmed-negative") tags.push("⚠ warm-start measured NOT to help");
+      if (e.measured && e.evidence === "unverified") tags.push("measured (S6.3 — see below)");
       lines.push(`    ${name(e.from)} → ${name(e.to)}   witness ${e.witness.toFixed(2)}  ${tags.join(", ")}`);
     }
   } else {
     lines.push("    — none");
   }
+  // S6.3 MEASURED: surface the receipt + finding for any edge an actual rig measurement touched (incl. unverified),
+  // so a measured negative result is visibly distinct from an edge that was never run.
+  const measuredEdges = graph.edges.filter((e) => e.measured);
+  if (measuredEdges.length) {
+    lines.push("", "  S6.3 MEASURED (receipt-backed — a real rig result):");
+    for (const e of measuredEdges.slice().sort((a, b) => b.witness - a.witness)) {
+      const note = String(e.measured.note || "").replace(/\s+/g, " ").trim();
+      const snippet = note.length > 240 ? note.slice(0, 237) + "..." : note;
+      lines.push(`    ${name(e.from)} → ${name(e.to)}  [${e.evidence}, n=${e.measured.n_receipts}]`);
+      if (snippet) lines.push(`      ${snippet}`);
+    }
+  }
   if (c.confirmed === 0 && c.confirmed_negative === 0 && c.unverified > 0) {
-    lines.push("", "  Edges are UNVERIFIED until S6.3 measures the cheaper-after-foundation delta on the rig.");
+    lines.push("", c.measured_unverified > 0
+      ? `  ${c.measured_unverified} edge(s) MEASURED at S6.3 (a real result; no verified transfer delta) — the rest stay unverified until measured on the rig.`
+      : "  Edges are UNVERIFIED until S6.3 measures the cheaper-after-foundation delta on the rig.");
   }
   return lines.join("\n");
 }
