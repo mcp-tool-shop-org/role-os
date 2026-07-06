@@ -16,6 +16,7 @@ import { auditCommand } from "../src/audit-cmd.mjs";
 import { swarmCommand } from "../src/swarm-cmd.mjs";
 import { startCommand } from "../src/entry-cmd.mjs";
 import { verifyCitationsCommand } from "../src/verify-citations-cmd.mjs";
+import { verifyClaimsCommand } from "../src/verify-claims-cmd.mjs";
 import { specialistCommand } from "../src/specialist-cmd.mjs";
 import { crewCommand } from "../src/crew-cmd.mjs";
 import {
@@ -78,6 +79,7 @@ Usage:
   roleos swarm approve                Approve the current user gate
   roleos swarm verify                 Verify manifest and run state
   roleos verify-citations <dispatch>  Verify a research dispatch's citations via prism (gate)
+  roleos verify-claims <claims.json>  Adjudicate claims via the ollama-intern cross-family cloud panel (gate)
   roleos specialist list              List all specialists in the registry (active version + cert)
   roleos specialist status [--role]   Show registry + halt + quota state per role
   roleos specialist register <r> <f>  Register a new version for a role
@@ -216,6 +218,9 @@ try {
       break;
     case "verify-citations":
       await verifyCitationsCommand(args);
+      break;
+    case "verify-claims":
+      await verifyClaimsCommand(args);
       break;
     case "specialist":
       await specialistCommand(args);
