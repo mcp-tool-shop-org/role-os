@@ -222,15 +222,15 @@ describe("runClaimsGate", () => {
       assert.equal(r.intern.backend, "cloud");
       assert.equal(r.panel.length, 3);
       assert.equal(r.panel[0].served_model, "deepseek-v4-pro");
-      // The chain is recomputable from the receipt's own parts + the envelope we supplied.
-      const expectedClaimsHash = sha256(
-        JSON.stringify([{ id: "c1", statement: "the fix handles the empty-input case" }]),
-      );
-      assert.equal(r.claims_sha256, expectedClaimsHash);
+      // The chain is recomputable from the receipt's own parts + what we supplied: the
+      // normalized claims, the exact wire request, and the envelope.
+      const sentClaims = [{ id: "c1", statement: "the fix handles the empty-input case" }];
+      assert.equal(r.claims_sha256, sha256(JSON.stringify(sentClaims)));
+      assert.equal(r.request_sha256, sha256(JSON.stringify({ claims: sentClaims })));
       assert.equal(r.envelope_sha256, sha256(JSON.stringify(env)));
       assert.equal(
         r.chain_sha256,
-        sha256([r.claims_sha256, r.envelope_sha256, r.verdict].join("|")),
+        sha256([r.claims_sha256, r.request_sha256, r.envelope_sha256, r.verdict].join("|")),
       );
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -256,6 +256,17 @@ describe("runClaimsGate", () => {
     assert.equal(captured.toolArgs.reference.length, 20_000);
     assert.deepEqual(captured.toolArgs.panel, ["deepseek-v4-pro:cloud", "glm-5.2:cloud"]);
     assert.equal(captured.toolArgs.min_refute_votes, 3);
+  });
+
+  it("request_sha256 pins the evidence set: same claims, different reference -> different chain", async () => {
+    const env = envelopeOf(verifyResult());
+    const callTool = callToolReturning(env);
+    const claims = [{ id: "c1", statement: "a stable claim" }];
+    const a = await runClaimsGate(claims, { callTool, reference: "test run A: 10 passed" });
+    const b = await runClaimsGate(claims, { callTool, reference: "test run B: 9 passed, 1 failed" });
+    assert.equal(a.receipt.claims_sha256, b.receipt.claims_sha256); // same claims…
+    assert.notEqual(a.receipt.request_sha256, b.receipt.request_sha256); // …different evidence
+    assert.notEqual(a.receipt.chain_sha256, b.receipt.chain_sha256); // the chain sees it
   });
 
   it("an unreachable verifier ESCALATES — a closed gate, never a default accept", async () => {

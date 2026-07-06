@@ -14,7 +14,7 @@ durable artifact).
 
 | # | Standard | Score | Evidence |
 |---|----------|-------|----------|
-| 1 | PIN_PER_STEP | **2 — PRESENT** | The receipt pins the panel as REQUESTED and as SERVED per seat (`panel[].model` / `served_model` / `exclude_reason`), the intern's `run_id`/`call_id` correlation ids, `claims_sha256`, and a full `envelope_sha256` — a re-run with a drifted panel (retired juror, local fallback, substitution) changes the chain. Remediation (owner: next verify-claims session): `source_paths`/`reference` inputs are threaded but not separately hashed into the receipt; fold them into the chain for full replay pinning. |
+| 1 | PIN_PER_STEP | **3 — EXEMPLARY** | The receipt pins both directions of the wire: `request_sha256` digests the exact tool arguments sent (claims, `source_paths`, `reference`, panel override, `min_refute_votes`) and `envelope_sha256` digests everything the verifier said (seats requested-vs-served, per-juror votes, degradation flags), with `chain_sha256 = sha256(claims\|request\|envelope\|verdict)`. Proven by the chain-recompute and reference-drift tests. Honest boundary, named: `source_paths` pin the path LIST, not file contents — the intern reads files server-side at call time, so an edit to a listed file surfaces only through the envelope side of the chain. |
 | 2 | ANDON_AUTHORITY | **3 — EXEMPLARY** | The gate halts the pipeline through its exit codes: `20` blocking (REFUTED under `--strict-refuted`), `30` escalate, `10` revise — any non-zero stops a mission step or CI job. Enforced in `exitCodeFor` + `gateClaims`, documented in the CLI header, and proven by `test/verify-claims.test.mjs` ("strictRefuted turns a REFUTED into a blocking refuse", "maps the tiers"). |
 | 3 | NAMED_COMPENSATORS | **2 — PRESENT** | The verb performs **no irreversible external calls**: the verifier tool is read-only adjudication (its cloud egress of claims/evidence is deliberate disclosure, documented in the intern's SECURITY.md #13, not a mutation). The only write is the local receipt JSON; it overwrites a prior receipt at the same path (same behavior as verify-citations) — compensator = restore from VCS or pass `--receipt <fresh-path>`; `--no-receipt` skips the write entirely. No skip is being claimed: the compensator table is this cell. |
 | 4 | DECOMPOSE_BY_SECRETS | **3 — EXEMPLARY** | The sibling-verb decision IS this standard: citations/prism and claims/intern wire formats change independently, so they live in separate modules rather than one flag-switched flow. Within the module, the MCP transport (`callInternTool`), the verdict doctrine (`gateClaims`, pure), and the receipt chain (`buildReceipt`) are separately-testable units; the transport is injectable (`options.callTool`) so doctrine tests never touch a process boundary. |
@@ -49,7 +49,11 @@ with the intern's own hint).
 
 ## Receipt (`roleos-claims-receipt/v1`)
 
-`claims_sha256` (the normalized claim set sent) + `envelope_sha256` (the verifier's full reply,
-panel seats and juror votes included) + `chain_sha256 = sha256(claims|envelope|verdict)`.
-Drift-detectable on re-run like the prism chain; the per-seat `raw_sample` (intern v2.9.1) rides
-into the receipt so a thinned panel is diagnosable from the receipt alone.
+`claims_sha256` (the normalized claim set) + `request_sha256` (the exact wire request —
+claims, `source_paths`, `reference`, panel override, `min_refute_votes`) + `envelope_sha256`
+(the verifier's full reply, panel seats and juror votes included) +
+`chain_sha256 = sha256(claims|request|envelope|verdict)`. Drift-detectable on re-run like the
+prism chain — a changed evidence set or jury cannot silently reuse a prior verdict; the
+per-seat `raw_sample` (intern v2.9.1) rides into the receipt so a thinned panel is diagnosable
+from the receipt alone. (The chain gained `request_sha256` before any npm release carried the
+verb, so the schema id stays `/v1`.)

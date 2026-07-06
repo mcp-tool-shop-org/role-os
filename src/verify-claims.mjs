@@ -417,7 +417,7 @@ export async function runClaimsGate(input, options = {}) {
 
   const envelope = res.envelope;
   const gate = gateClaims(envelope?.result, { strictRefuted });
-  const receipt = buildReceipt({ input, claims, envelope, gate, strictRefuted });
+  const receipt = buildReceipt({ input, claims, toolArgs, envelope, gate, strictRefuted });
   return { ...gate, invalid, receipt, duration: Date.now() - start };
 }
 
@@ -438,13 +438,19 @@ function loadClaims(input) {
 
 // ── Receipt (chained, drift-detectable — peer to roleos-citation-receipt/v1) ─────────────────
 
-function buildReceipt({ input, claims, envelope, gate, strictRefuted }) {
+function buildReceipt({ input, claims, toolArgs, envelope, gate, strictRefuted }) {
   const claimsHash = sha256(JSON.stringify(claims));
+  // The REQUEST digest pins everything role-os sent on the wire — claims, source_paths,
+  // reference, panel override, min_refute_votes — so a re-run with a different evidence
+  // set or jury cannot silently reuse a prior verdict. (Honest boundary: source_paths pin
+  // the PATH LIST, not file contents — the intern reads them server-side at call time;
+  // an edit to a listed file shows up only through the envelope side of the chain.)
+  const requestHash = sha256(JSON.stringify(toolArgs ?? null));
   // The FULL envelope digest chains the verdict to everything the verifier said — panel
   // seats, served models, per-juror votes, degradation flags. Re-running with a drifted
   // panel (retired juror, local fallback, substituted model) changes the digest.
   const envelopeHash = sha256(JSON.stringify(envelope ?? null));
-  const chain = sha256([claimsHash, envelopeHash, gate.verdict].join("|"));
+  const chain = sha256([claimsHash, requestHash, envelopeHash, gate.verdict].join("|"));
   const result = envelope?.result ?? {};
   return {
     schema: "roleos-claims-receipt/v1",
@@ -456,6 +462,7 @@ function buildReceipt({ input, claims, envelope, gate, strictRefuted }) {
     advisory: gate.advisory,
     strict_refuted: strictRefuted === true,
     claims_sha256: claimsHash,
+    request_sha256: requestHash,
     envelope_sha256: envelopeHash,
     // Verifier provenance (PIN_PER_STEP): the run/call correlation ids the intern stamps on
     // every envelope, backend + served-model evidence, and the panel-thinning flags.
