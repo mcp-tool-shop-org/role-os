@@ -1,5 +1,51 @@
 # Changelog
 
+## 2.10.0
+
+### Added — the EXTERNAL_VERIFIER claims gate
+
+- **`roleos verify-claims <claims.json>`** — sibling verb to `verify-citations`: adjudicates
+  caller-supplied claims/findings with `ollama_verify_claims` (ollama-intern-mcp ≥ 2.9), a
+  disjoint-family Ollama Cloud flagship jury (deepseek / kimi / glm by default),
+  reasoning-stripped by construction and served-model-checked per seat. Three-tier mapping keyed
+  to failure source: weak panel → escalate (dominates everything, including a kill); REFUTED →
+  advisory revise by default, `--strict-refuted` for a blocking refuse (exit 20); NEEDS_REVIEW →
+  escalate; unreachable verifier / `CLOUD_NOT_CONFIGURED` → escalate (an unreachable gate is a
+  closed gate, never a default accept). Exit codes 0/2/10/20/30 mirror verify-citations.
+  Transport is the intern's public MCP contract over stdio (spawn → initialize → tools/call;
+  resolution `--intern-cmd` / `INTERN_MCP_CMD` → locally-installed package → PATH). Receipt
+  `roleos-claims-receipt/v1` chains the claims, the exact wire request, and the full verifier
+  envelope to the verdict (`sha256(claims|request|envelope|verdict)`) with per-seat
+  requested-vs-served provenance — a drifted, substituted, or thinned jury is detectable from
+  the receipt alone. 25 tests; live-proven end-to-end: 3/3 cloud-served jury, a planted-false
+  claim REFUTED 3–0 with code-citing rationales, gate exit 10. Design + workflow-standards
+  scoring in `design/verify-claims-runner.md`.
+
+### Added — Specialist Tier S1–S6.3 (the training-curriculum arc)
+
+- **S1–S3 foundations:** dossier schema v0.2 (the honest vocabulary layer), the Record
+  pipeline, and the crew report (rich CLI + gallery, quiet ceremony).
+- **S4 lineage machinery:** attempt ledger + cross-trained-technique registration,
+  ledger-referenced conformance-exam receipts committed, `budgeter-conformance-s4c2-soup`
+  registered (L5, lineage).
+- **S5 drift detection:** per-dispatch field-input logging; drift detector v1 — a two-arm
+  staleness gate (BBSDh + ATC/ECE) with a numeric KS reducer for regressor specialists.
+- **S6 training programs:** the study-swarm-grounded, Step-4-verified training-programs
+  contract (signed receipt); the curriculum-graph builder (witness + DAG gate + thin-evidence);
+  `roleos crew --programs` curriculum view and `--preview <technique>` recipe preview; S6.2
+  cross-train cosine surfaced as a pre-run interference flag; S6.3 measured-but-unverified
+  edges rendered honestly (sign-consistency + n≥3 + confirmed-negative enforced in the honesty
+  ladder; cross-trained badge for registered-but-not-promoted versions).
+
+### Fixed
+
+- **Citations gate: supported citations are visible again** (the report no longer reads as
+  "every citation failed" when most were supported), and the offload local panel runs on
+  non-blocking gates too — the second seat challenges exactly the citations prism vouched for,
+  not only clean accepts.
+
+Suite: 1435 → **1569 tests** (1566 pass, 3 skipped).
+
 ## 2.9.1
 
 ### Fixed — health pass (134 verified findings, adversarially confirmed)
