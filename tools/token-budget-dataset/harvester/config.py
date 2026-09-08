@@ -4,12 +4,16 @@ Stdlib-only. No GPU, no network. All source reads are read-only.
 Paths are this-rig (Robot, drives C and E only). Override via env if needed.
 """
 import os
+from pathlib import Path
 
 HARVESTER_VERSION = "0.1.0"
 
 # --- source locations (read-only) ---
+# The default derives from the home dir rather than naming one: it resolved on
+# a single machine, and it put a username in a public repo. The env override
+# already existed.
 TRANSCRIPT_ROOT = os.environ.get(
-    "TBA_TRANSCRIPT_ROOT", "C:/Users/mikey/.claude/projects"
+    "TBA_TRANSCRIPT_ROOT", str(Path.home() / ".claude" / "projects")
 )
 SWARM_DB = os.environ.get(
     "TBA_SWARM_DB", "E:/AI/dogfood-labs/swarms/control-plane.db"

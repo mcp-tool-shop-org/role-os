@@ -86,7 +86,7 @@ def test_canon_truncation():
 def test_path_email_redaction():
     print("test_path_email_redaction")
     c = {}
-    out = scrub.scrub_text(r"see C:\Users\mikey\secret.txt and mail me@example.com", c)
+    out = scrub.scrub_text(r"see C:\Users\Public\secret.txt and mail me@example.com", c)
     check("windows user path redacted", "Users" not in out and "<PATH>" in out)
     check("email redacted", "<EMAIL>" in out and "example.com" not in out)
 
