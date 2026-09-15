@@ -8,7 +8,24 @@ import DataTable from '@mcptoolshop/site-theme/components/DataTable.astro';
 import CodeCardGrid from '@mcptoolshop/site-theme/components/CodeCardGrid.astro';
 import ApiList from '@mcptoolshop/site-theme/components/ApiList.astro';
 import { config } from '../site-config';
+
+// site-theme 1.5.0 BaseLayout has no head slot; Astro hoists these meta tags.
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const origin = Astro.site ?? Astro.url;
+const ogImage = new URL(`${base}og.png`, origin).href;
+const pageUrl = new URL(base, origin).href;
 ---
+
+<meta property="og:title" content={config.title} />
+<meta property="og:description" content={config.description} />
+<meta property="og:url" content={pageUrl} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={config.title} />
+<meta name="twitter:description" content={config.description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="color-scheme" content="dark" />
 
 <BaseLayout
   title={config.title}

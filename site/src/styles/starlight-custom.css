@@ -14,3 +14,25 @@
   --sl-color-gray-6: #18181b;
   --sl-color-black: #09090b;
 }
+
+/* Invert zinc/emerald so the theme toggle and prefers-color-scheme: light
+   keep WCAG AA. Custom :root --sl-color-bg would otherwise stay #09090b. */
+:root[data-theme='light'] {
+  --sl-color-accent-low: #d1fae5;
+  --sl-color-accent: #047857;
+  --sl-color-accent-high: #065f46;
+  --sl-color-bg: #fafafa;
+  --sl-color-bg-sidebar: #ffffff;
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-hairline: #e4e4e7;
+  --sl-color-white: #18181b;
+  --sl-color-gray-1: #27272a;
+  --sl-color-gray-2: #3f3f46;
+  --sl-color-gray-3: #52525b;
+  --sl-color-gray-4: #a1a1aa;
+  --sl-color-gray-5: #d4d4d8;
+  --sl-color-gray-6: #e4e4e7;
+  --sl-color-black: #ffffff;
+  --sl-color-text: #3f3f46;
+  --sl-color-text-accent: #047857;
+}
