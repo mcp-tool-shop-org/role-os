@@ -11,7 +11,10 @@ import os
 import sys
 import tempfile
 
-from harvester import scrub, manifest, join, config, label, freeze, puzzles, parse_outcomes
+from harvester import (
+    scrub, manifest, join, config, label, freeze, puzzles, parse_outcomes,
+    parse_transcripts,
+)
 
 FAILS = []
 
@@ -189,6 +192,37 @@ def test_cost_weighting():
     check("combined", config.cost_weighted_spend(100, 400, 1000, 100) == 100 + 500 + 100 + 500)
 
 
+def test_parse_role_signals_live_brief():
+    print("test_parse_role_signals_live_brief")
+    # Calls parse_role_signals on live brief strings — not a planted role=.
+    parse = parse_transcripts.parse_role_signals
+
+    wrapped = "You are the **tools** domain agent."
+    check("markdown-wrapped lowercase domain", parse(wrapped)["domain"] == "tools")
+
+    bare = "You are the tools domain agent."
+    check("lowercase unwrapped domain", parse(bare)["domain"] == "tools")
+
+    check("uppercase TOOLS still matches",
+          parse("You are the TOOLS domain agent.")["domain"] == "tools")
+
+    live = (
+        "You are the **tools** domain agent. "
+        "health-amend-a. Fix join-key extraction."
+    )
+    sig_live = parse(live)
+    check("live brief domain==tools", sig_live["domain"] == "tools")
+    check("live brief phase==health-amend-a", sig_live["phase"] == "health-amend-a")
+
+    check("feature phase", parse("Ship the feature slice.")["phase"] == "feature")
+    check("treatment phase", parse("Run full treatment on the repo.")["phase"] == "treatment")
+
+    check("frozen-map starter-pack",
+          parse("You are the **starter-pack** domain agent.")["domain"] == "starter-pack")
+    check("frozen-map ci-tooling fallback",
+          parse("Owned globs: ci-tooling/**")["domain"] == "ci-tooling")
+
+
 def test_join_does_not_overclaim():
     print("test_join_does_not_overclaim")
     # two runs of the SAME repo, both with a wave1/tests agent_run. A dispatch whose
@@ -323,7 +357,8 @@ def main():
     for t in (test_scrub_redacts_real_secrets, test_andon_catches_unscrubbed_secret,
               test_contamination_check_raises, test_canon_truncation,
               test_path_email_redaction, test_baseline, test_cost_weighting,
-              test_join_does_not_overclaim, test_freeze_folds_human_verdicts,
+              test_parse_role_signals_live_brief, test_join_does_not_overclaim,
+              test_freeze_folds_human_verdicts,
               test_puzzles_self_check, test_scrub_record_drops_internal_fields,
               test_roleos_receipt_outcomes):
         t()

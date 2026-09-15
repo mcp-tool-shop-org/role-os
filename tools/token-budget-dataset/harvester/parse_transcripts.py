@@ -22,36 +22,70 @@ def _iter_records(path):
                 continue
 
 
+# Frozen-map domains plus legacy join tokens. Longer tokens first so
+# "ci-tooling" wins over "ci" and "ci/docs" wins over "ci"/"docs".
+_KNOWN_DOMAINS = (
+    "ci-tooling",
+    "starter-pack",
+    "core-infra",
+    "ci/docs",
+    "frontend",
+    "backend",
+    "verticals",
+    "specialist",
+    "runtime",
+    "dossier",
+    "tools",
+    "tests",
+    "site",
+    "docs",
+    "ci",
+)
+
+
 def parse_role_signals(task_text: str) -> dict:
     """Heuristic extraction of swarm/mission role structure from the task prompt.
     These are also the fuzzy join keys (DESIGN.md §5)."""
     t = task_text or ""
     sig = {"domain": None, "wave": None, "phase": None, "action": None}
 
-    # domain: "You are the <DOMAIN> domain agent" or a bare known domain token
-    m = re.search(r"You are the\s+([A-Z][A-Z0-9/_\- ]{1,30}?)\s+(?:domain|agent)", t)
+    # domain: "You are the <DOMAIN> domain agent" — lowercase and markdown-wrapped
+    # names (**tools**, `tools`) both match. Fallback: bare known domain token.
+    m = re.search(
+        r"You are the\s+[`*]*([A-Za-z][A-Za-z0-9/_\-]{0,40})[`*]*\s+(?:domain|agent)",
+        t,
+    )
     if m:
-        sig["domain"] = m.group(1).strip().rstrip(" -")
+        sig["domain"] = m.group(1).strip().strip("*`").rstrip(" -").lower()
     else:
-        m = re.search(r"\b(CI/DOCS|TESTS|FRONTEND|BACKEND|CI|DOCS|core-infra|verticals)\b", t)
+        known = "|".join(re.escape(d) for d in _KNOWN_DOMAINS)
+        m = re.search(rf"\b({known})\b", t, re.I)
         if m:
-            sig["domain"] = m.group(1)
+            sig["domain"] = m.group(1).lower()
 
     m = re.search(r"[Ww]ave[\s\-]?([A-Z]?\d+)", t)
     if m:
         sig["wave"] = m.group(1)
 
-    m = re.search(r"health-audit-([abc])", t)
+    m = re.search(r"health-amend-([a-z0-9]+)", t, re.I)
     if m:
-        sig["phase"] = "health-audit-" + m.group(1)
+        sig["phase"] = "health-amend-" + m.group(1).lower()
     else:
-        m = re.search(r"[Ss]tage\s+([A-C])\b", t)
+        m = re.search(r"health-audit-([abc])", t, re.I)
         if m:
-            sig["phase"] = "stage-" + m.group(1).lower()
+            sig["phase"] = "health-audit-" + m.group(1).lower()
         else:
-            m = re.search(r"[Pp]hase[\s\-]?(\d+)", t)
+            m = re.search(r"[Ss]tage\s+([A-C])\b", t)
             if m:
-                sig["phase"] = "phase-" + m.group(1)
+                sig["phase"] = "stage-" + m.group(1).lower()
+            else:
+                m = re.search(r"[Pp]hase[\s\-]?(\d+)", t)
+                if m:
+                    sig["phase"] = "phase-" + m.group(1)
+                else:
+                    m = re.search(r"\b(feature|treatment)\b", t, re.I)
+                    if m:
+                        sig["phase"] = m.group(1).lower()
 
     for act in ("feature-audit", "final-test", "humaniz", "implementation",
                 "audit", "amend", "fix", "feature", "review"):
