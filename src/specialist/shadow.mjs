@@ -11,8 +11,11 @@
  *   - N (rolling window) = 50
  *   - τ (disagreement threshold) = 0.15  →  halt when agreement rate < 0.85
  *
- * These defaults are configurable per-role via the registry entry (future) or globally via
- * env (`ROLEOS_SHADOW_K`, `ROLEOS_SHADOW_N`, `ROLEOS_SHADOW_TAU`).
+ * These defaults are configurable per-call via `resolveShadowConfig({ K, N, tau })` (the
+ * `shadow` argument to dispatchSpecialist) or globally via env (`ROLEOS_SHADOW_K`,
+ * `ROLEOS_SHADOW_N`, `ROLEOS_SHADOW_TAU`). Explicit shadowCfg wins; then env; then these
+ * defaults. Invalid env values throw with an operator-facing fix string — they do not
+ * silently fall back (a typo'd K must not run the default cadence unnoticed).
  */
 
 import { readEvents, appendEvent } from "./events.mjs";
@@ -22,6 +25,52 @@ export const SHADOW_DEFAULTS = {
   N: 50,
   TAU: 0.15,
 };
+
+/**
+ * Resolve K / N / τ. Precedence: explicit `cfg` fields, then ROLEOS_SHADOW_* env, then
+ * SHADOW_DEFAULTS. Boolean ROLEOS_* flags accept only "1"/"true"; these numeric knobs
+ * accept a parseable value in range and refuse anything else so a typo is visible.
+ *
+ * @param {object} [cfg]
+ * @param {number} [cfg.K]
+ * @param {number} [cfg.N]
+ * @param {number} [cfg.tau]
+ * @returns {{ K: number, N: number, tau: number }}
+ */
+export function resolveShadowConfig(cfg = {}) {
+  return {
+    K: cfg.K ?? readPositiveIntEnv("ROLEOS_SHADOW_K", SHADOW_DEFAULTS.K),
+    N: cfg.N ?? readPositiveIntEnv("ROLEOS_SHADOW_N", SHADOW_DEFAULTS.N),
+    tau: cfg.tau ?? readUnitIntervalEnv("ROLEOS_SHADOW_TAU", SHADOW_DEFAULTS.TAU),
+  };
+}
+
+function readPositiveIntEnv(name, fallback) {
+  const raw = process.env[name];
+  if (raw === undefined || raw === "") return fallback;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1) {
+    throw new Error(
+      `${name}=${JSON.stringify(raw)} is invalid — expected a positive integer ≥ 1 ` +
+      `(got ${raw}). Unset ${name} to use the default (${fallback}), or set e.g. ${name}=${fallback}.`,
+    );
+  }
+  return n;
+}
+
+function readUnitIntervalEnv(name, fallback) {
+  const raw = process.env[name];
+  if (raw === undefined || raw === "") return fallback;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 0 || n > 1) {
+    throw new Error(
+      `${name}=${JSON.stringify(raw)} is invalid — expected a number in [0, 1] ` +
+      `(τ; halt when agreement < 1−τ; got ${raw}). Unset ${name} to use the default (${fallback}), ` +
+      `or set e.g. ${name}=${fallback}.`,
+    );
+  }
+  return n;
+}
 
 /**
  * Decide whether the dispatch we're about to make should also fire a shadow probe.
@@ -97,14 +146,16 @@ export function checkHalt(eventsPath, role, N = SHADOW_DEFAULTS.N, tau = SHADOW_
  * arXiv:2410.04253). Names what the specialist did, what Claude did, and why we halted.
  * Caller writes this into the halt event AND into the state file's halt slot.
  */
-export function contrastiveHaltMessage({ role, probes, rate, tau }) {
+export function contrastiveHaltMessage({ role, probes, rate, tau, specialist_summary, claude_summary }) {
   const pct = (rate * 100).toFixed(1);
   const required = ((1 - tau) * 100).toFixed(1);
+  const specSaid = specialist_summary ? String(specialist_summary) : "(none)";
+  const claudeSaid = claude_summary ? String(claude_summary) : "(none)";
   return (
     `specialist for role "${role}" halted: shadow-probe agreement ${pct}% over the last ` +
-    `${probes} probes < required ${required}% (τ=${tau}). The specialist's verdicts have ` +
+    `${probes} probes < required ${required}% (τ=${tau}). The specialist said: ${specSaid}. ` +
     // Role names contain spaces ("Token Budget Analyst") — the copy-pasteable command must quote.
-    `drifted from Claude's on the same inputs. Clear with: roleos specialist clear-halt "${role}"`
+    `Claude said: ${claudeSaid}. Clear with: roleos specialist clear-halt "${role}"`
   );
 }
 
@@ -113,12 +164,20 @@ export function contrastiveHaltMessage({ role, probes, rate, tau }) {
  * function only appends to the events log so the operations remain composable (events.jsonl
  * is shared; state.json is per-call).
  */
-export function appendHaltEvent(eventsPath, { role, ts, reason, probes, agreed, rate, tau }) {
+export function appendHaltEvent(eventsPath, { role, ts, reason, probes, agreed, rate, tau, specialist_summary, claude_summary }) {
   appendEvent(eventsPath, {
     kind: "halt",
     role,
     ts,
-    data: { reason, probes, agreed, rate, tau },
+    data: {
+      reason,
+      probes,
+      agreed,
+      rate,
+      tau,
+      ...(specialist_summary ? { specialist_summary } : {}),
+      ...(claude_summary ? { claude_summary } : {}),
+    },
   });
 }
 

@@ -60,16 +60,44 @@ export const GATED_ACTIONS = [
   { id: "pages:deploy", label: "GitHub Pages / gh-pages deploy", test: _bash(/\bgh-pages\b|\bpages\b[^|;&\n]*\bdeploy\b/) },
 ];
 
-/** Read the director's capability manifest, or {} if absent/malformed (=> nothing granted). */
+/**
+ * Read the director's capability manifest.
+ * Missing file → {} (nothing granted; deny reason is the usual "no grant" text).
+ * Parse/shape failure throws so the deny reason can name the broken file instead of a missing grant.
+ */
 export function loadCapabilities(cwd) {
+  const p = join(cwd, CAPABILITIES_FILE);
+  if (!existsSync(p)) return {};
+  let raw;
   try {
-    const p = join(cwd, CAPABILITIES_FILE);
-    if (!existsSync(p)) return {};
-    const data = JSON.parse(readFileSync(p, "utf-8"));
-    return data && typeof data === "object" ? data : {};
-  } catch {
-    return {};
+    raw = readFileSync(p, "utf-8");
+  } catch (err) {
+    throw _unparseable(err && err.message ? err.message : err);
   }
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch (err) {
+    throw _unparseable(err && err.message ? err.message : err);
+  }
+  // A grant map is a non-array object. null, arrays, and primitives are shape failures —
+  // treating them as {} would report "no grant" for a file the director already wrote.
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw _unparseable(`expected a JSON object, got ${_jsonShape(data)}`);
+  }
+  return data;
+}
+
+function _unparseable(detail) {
+  const err = new Error(`capabilities.json is unparseable: ${detail} — failing closed`);
+  err.code = "CAPABILITIES_UNPARSEABLE";
+  return err;
+}
+
+function _jsonShape(v) {
+  if (v === null) return "null";
+  if (Array.isArray(v)) return "array";
+  return typeof v;
 }
 
 /**
@@ -119,7 +147,26 @@ export function capabilityGate(cwd, toolName, toolInput, opts = {}) {
     const call = toolInput && typeof toolInput === "object" ? toolInput : {};
     action = GATED_ACTIONS.find((a) => a.test(toolName, call));
     if (!action) return { denied: false }; // not an irreversible action -> allow
-    const manifest = opts.capabilities || loadCapabilities(cwd);
+    let manifest;
+    if (opts.capabilities) {
+      manifest = opts.capabilities;
+    } else {
+      try {
+        manifest = loadCapabilities(cwd);
+      } catch (err) {
+        const problem = err && err.code === "CAPABILITIES_UNPARSEABLE"
+          ? err.message
+          : `capabilities.json is unparseable: ${err && err.message ? err.message : err} — failing closed`;
+        return {
+          denied: true,
+          action: action.id,
+          reason:
+            `Capability gate: "${action.label}" is an irreversible action requiring an explicit grant. ` +
+            `${problem}. Repair ${CAPABILITIES_FILE} so it is valid UTF-8 JSON (an object of action-id grants; ` +
+            `no trailing commas). Do not add a grant until the file parses — a malformed file denies every gated action.`,
+        };
+      }
+    }
     const now = typeof opts.now === "number" ? opts.now : Date.now();
     const problem = _grantProblem(manifest, action.id, now);
     if (!problem) return { denied: false };

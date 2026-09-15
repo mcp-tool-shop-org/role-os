@@ -47,7 +47,7 @@ import {
   checkHalt,
   contrastiveHaltMessage,
   appendHaltEvent,
-  SHADOW_DEFAULTS,
+  resolveShadowConfig,
 } from "./shadow.mjs";
 import { logDispatchInput } from "./field-log.mjs";
 import { dirname, join } from "node:path";
@@ -121,9 +121,7 @@ export async function dispatchSpecialist({
   const fieldLogPath =
     paths.fieldLog || process.env.ROLEOS_SPECIALIST_FIELD_LOG_PATH || join(dirname(eventsPath), "specialist-field-log.jsonl");
 
-  const K = shadowCfg.K ?? SHADOW_DEFAULTS.K;
-  const N = shadowCfg.N ?? SHADOW_DEFAULTS.N;
-  const tau = shadowCfg.tau ?? SHADOW_DEFAULTS.TAU;
+  const { K, N, tau } = resolveShadowConfig(shadowCfg);
 
   // ── Load registry + state ────────────────────────────────────────────────────────────────
   const { byRole, errors: regErrors } = loadRegistry(registryPath);
@@ -245,22 +243,29 @@ export async function dispatchSpecialist({
           shadow = { fired: false, skipped: "incomparable", counter: c };
         } else {
           const agreed = comparison.agreed;
+          const specialist_summary = summarize(result);
+          const claude_summary = summarize(claudeVerdict);
           recordProbe(eventsPath, {
             role,
             ts: nowIso,
             trace_id: traceId,
             agreed,
-            specialist_summary: summarize(result),
-            claude_summary: summarize(claudeVerdict),
+            specialist_summary,
+            claude_summary,
           });
           resetProbeCounter(state, role);
           const { probes, rate, agreed: agreedCount, shouldHalt } = checkHalt(eventsPath, role, N, tau);
           shadow = { fired: true, agreed, probes, rate, halt_triggered: shouldHalt };
           if (shouldHalt && !getHalt(state, role).halted) {
-            const reason = contrastiveHaltMessage({ role, probes, rate, tau });
+            const reason = contrastiveHaltMessage({
+              role, probes, rate, tau, specialist_summary, claude_summary,
+            });
             setHalt(state, role, { reason, since: nowIso });
             // `agreed` is checkHalt's exact window count — never recompute it lossily from the rate.
-            appendHaltEvent(eventsPath, { role, ts: nowIso, reason, probes, agreed: agreedCount, rate, tau });
+            appendHaltEvent(eventsPath, {
+              role, ts: nowIso, reason, probes, agreed: agreedCount, rate, tau,
+              specialist_summary, claude_summary,
+            });
             haltPendingPersist = true;
           }
         }
