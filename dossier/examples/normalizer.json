@@ -48,6 +48,7 @@
     "autonomy": 5,
     "candor": 5
   },
+  "idealSource": "panel-tuned",
   "operatingProfile": {
     "active": "Perfectionist",
     "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",

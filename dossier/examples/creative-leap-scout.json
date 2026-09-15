@@ -48,6 +48,7 @@
     "autonomy": 4,
     "candor": 4
   },
+  "idealSource": "panel-tuned",
   "operatingProfile": {
     "active": "Maverick",
     "blurb": "Pushes past the obvious framing for a fresher angle and runs with it before asking permission.",

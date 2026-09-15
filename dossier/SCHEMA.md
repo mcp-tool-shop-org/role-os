@@ -111,6 +111,8 @@ Grades are **earned by measurement**, per the specialists-layer design:
             "note": "verified training/exam/field events only — never calendar units" },
   "aptitudes": { "rigor":5, "pace":1, "range":1, "skepticism":5, "autonomy":3, "candor":4 },
   "ideal":     { "rigor":5, "pace":2, "range":1, "skepticism":4, "autonomy":3, "candor":4 },
+  "idealSource": "hand-authored",         // panel-tuned | archetype-baseline | hand-authored
+                                         // archetype-baseline only behind build-dossiers --allow-baseline
   "operatingProfile": { "active":"Skeptic", "blurb":"…", "delta":{…}, "prompt_delta":"…",
                         "voice":"…" },   // priorities are DERIVED, not stored
   "loadout": { "model": { "pin":"claude-sonnet-4-6", "maxTurns":40, "budgetUsd":6.0 },

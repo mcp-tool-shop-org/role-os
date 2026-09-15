@@ -48,6 +48,7 @@
     "autonomy": 4,
     "candor": 5
   },
+  "idealSource": "panel-tuned",
   "operatingProfile": {
     "active": "Skeptic",
     "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",

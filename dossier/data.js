@@ -756,6 +756,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Diplomat",
       "blurb": "Reconciles competing inputs and explains the trade-offs; gives benefit of the doubt to keep the room aligned.",
@@ -827,6 +828,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -898,6 +900,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -969,6 +972,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -1040,6 +1044,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Diplomat",
       "blurb": "Reconciles competing inputs and explains the trade-offs; gives benefit of the doubt to keep the room aligned.",
@@ -1111,6 +1116,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -1182,6 +1188,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -1253,6 +1260,7 @@ window.DOSSIERS = {
       "autonomy": 3,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Maverick",
       "blurb": "Pushes past the obvious framing for a fresher angle and runs with it before asking permission.",
@@ -1324,6 +1332,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -1395,6 +1404,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -1466,6 +1476,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Contrarian",
       "blurb": "Hunts the strongest counter-case against the prevailing view; narrows hard onto the flaw rather than fanning out.",
@@ -1537,6 +1548,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Contrarian",
       "blurb": "Hunts the strongest counter-case against the prevailing view; narrows hard onto the flaw rather than fanning out.",
@@ -1608,6 +1620,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",
@@ -1679,6 +1692,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Maverick",
       "blurb": "Pushes past the obvious framing for a fresher angle and runs with it before asking permission.",
@@ -1750,6 +1764,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -1821,6 +1836,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",
@@ -1892,6 +1908,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -1963,6 +1980,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -2034,6 +2052,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",
@@ -2105,6 +2124,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -2176,6 +2196,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -2248,6 +2269,7 @@ window.DOSSIERS = {
       "autonomy": 3,
       "candor": 4
     },
+    "idealSource": "hand-authored",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Assumes nothing is settled until the dispute graph is fully resolved.",
@@ -2359,6 +2381,7 @@ window.DOSSIERS = {
       "autonomy": 3,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Maverick",
       "blurb": "Pushes past the obvious framing for a fresher angle and runs with it before asking permission.",
@@ -2430,6 +2453,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Pragmatist",
       "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",
@@ -2501,6 +2525,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -2572,6 +2597,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -2643,6 +2669,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -2714,6 +2741,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -2785,6 +2813,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Pragmatist",
       "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",
@@ -2856,6 +2885,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -2927,6 +2957,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -2998,6 +3029,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Diplomat",
       "blurb": "Reconciles competing inputs and explains the trade-offs; gives benefit of the doubt to keep the room aligned.",
@@ -3069,6 +3101,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -3140,6 +3173,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Pragmatist",
       "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",
@@ -3211,6 +3245,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -3282,6 +3317,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Pragmatist",
       "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",
@@ -3353,6 +3389,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -3424,6 +3461,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",
@@ -3495,6 +3533,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -3566,6 +3605,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -3637,6 +3677,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -3708,6 +3749,7 @@ window.DOSSIERS = {
       "autonomy": 3,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -3779,6 +3821,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Pragmatist",
       "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",
@@ -3850,6 +3893,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -3921,6 +3965,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -3992,6 +4037,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -4063,6 +4109,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Perfectionist",
       "blurb": "Reads to the edges and refuses to let small defects through; spends time to make it exact.",
@@ -4134,6 +4181,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Pragmatist",
       "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",
@@ -4205,6 +4253,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -4276,6 +4325,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -4347,6 +4397,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Diplomat",
       "blurb": "Reconciles competing inputs and explains the trade-offs; gives benefit of the doubt to keep the room aligned.",
@@ -4418,6 +4469,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 3
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -4489,6 +4541,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Pragmatist",
       "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",
@@ -4560,6 +4613,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Diplomat",
       "blurb": "Reconciles competing inputs and explains the trade-offs; gives benefit of the doubt to keep the room aligned.",
@@ -4631,6 +4685,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",
@@ -4702,6 +4757,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Diplomat",
       "blurb": "Reconciles competing inputs and explains the trade-offs; gives benefit of the doubt to keep the room aligned.",
@@ -4773,6 +4829,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",
@@ -4844,6 +4901,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Skeptic",
       "blurb": "Withholds acceptance until the evidence clears the bar; trades a little speed for a harder proof.",
@@ -4915,6 +4973,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -4986,6 +5045,7 @@ window.DOSSIERS = {
       "autonomy": 3,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Builder",
       "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",
@@ -5057,6 +5117,7 @@ window.DOSSIERS = {
       "autonomy": 5,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -5128,6 +5189,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -5199,6 +5261,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 5
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
@@ -5270,6 +5333,7 @@ window.DOSSIERS = {
       "autonomy": 4,
       "candor": 4
     },
+    "idealSource": "panel-tuned",
     "operatingProfile": {
       "active": "Investigator",
       "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
