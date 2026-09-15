@@ -48,6 +48,7 @@
     "autonomy": 5,
     "candor": 4
   },
+  "idealSource": "panel-tuned",
   "operatingProfile": {
     "active": "Pragmatist",
     "blurb": "Optimizes for the decision that moves the work, fast; trims options down to what is actually actionable.",

@@ -53,6 +53,11 @@ button{font-family:inherit;cursor:pointer}
 .tile .tfn{font-size:10.5px;color:var(--ink-faint);margin-top:2px}
 .tile .trow{display:flex;align-items:center;justify-content:space-between;margin-top:7px;gap:6px}
 .tile .tdisp{font-size:10.5px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .tsrc{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;margin-top:5px}
+.tile .tsrc.prior{color:var(--warn)}
+.tile .tsrc.tuned{color:var(--accent)}
+.chip.src-prior{color:var(--warn);border-color:var(--warn);background:var(--warn-dim)}
+.chip.src-tuned{color:var(--accent);border-color:var(--accent);background:var(--accent-dim)}
 .pips{display:flex;gap:2px;flex:0 0 auto}
 .pip{width:7px;height:4px;border-radius:2px;background:var(--bg-1);border:1px solid var(--hair)}
 .pip.on{background:var(--crew,#9fb2c9);border-color:transparent}
@@ -163,6 +168,12 @@ button{font-family:inherit;cursor:pointer}
   const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const color = crew => PALETTE[crew] || '#9fb2c9';
   const pips = (level) => { const i = GRADES.indexOf(level); return GRADES.map((g,k)=>`<span class="pip ${k<=i?'on':''}" title="${g}"></span>`).join(''); };
+  function idealSourceMeta(src){
+    if (src === 'archetype-baseline') return { text: 'archetype prior — not a panel tune', cls: 'prior', short: 'archetype prior' };
+    if (src === 'hand-authored') return { text: 'hand-authored ideal', cls: 'tuned', short: 'hand-authored' };
+    if (src === 'panel-tuned') return { text: 'panel-tuned ideal', cls: 'tuned', short: 'panel-tuned' };
+    return { text: 'ideal source unknown', cls: 'prior', short: 'source unknown' };
+  }
 
   function renderGallery(){
     const byCrew = {};
@@ -176,7 +187,9 @@ button{font-family:inherit;cursor:pointer}
       h += `<section class="crew-sec"><div class="crew-h"><span class="swatch" style="background:${c}"></span>${CREW_LABEL[crew]||crew}<span class="count">· ${list.length}</span></div><div class="grid">`;
       for(const r of list){
         const thumb = r.portrait ? `<img class="thumb" src="${r.portrait}" alt="${esc(r.role)}" loading="lazy">` : `<div class="thumb ph">portrait pending</div>`;
-        h += `<button class="tile" style="--crew:${c}" onclick="showDetail('${r.id}')">${thumb}<div class="tinfo"><div class="tname">${esc(r.role)}</div><div class="tfn">${esc(r.function)}</div><div class="trow"><span class="tdisp">${esc(r.disposition)}</span><span class="pips">${pips(r.grade)}</span></div></div></button>`;
+        const srcMeta = DOSSIERS[r.id] ? idealSourceMeta(DOSSIERS[r.id].idealSource) : null;
+        const srcBadge = srcMeta ? `<div class="tsrc ${srcMeta.cls}">${esc(srcMeta.short)}</div>` : '';
+        h += `<button class="tile" style="--crew:${c}" onclick="showDetail('${r.id}')">${thumb}<div class="tinfo"><div class="tname">${esc(r.role)}</div><div class="tfn">${esc(r.function)}</div><div class="trow"><span class="tdisp">${esc(r.disposition)}</span><span class="pips">${pips(r.grade)}</span></div>${srcBadge}</div></button>`;
       }
       h += `</div></section>`;
     }
@@ -219,8 +232,9 @@ button{font-family:inherit;cursor:pointer}
     const guards = (d.guards||[]).map(g=>`<li><span class="g">▲</span>${esc(g)}</li>`).join('');
     const deltaStr = Object.entries(prof.delta||{}).map(([k,v])=>`${LABEL[k]||k} ${v}`).join(' · ');
     const injected = (window.INJECTED||{})[d.id];
+    const srcMeta = idealSourceMeta(d.idealSource);
     let h = headHTML(d.role, d.specialization, d.function, r.crew, r.portrait, d.grade.level, calGauge, d.grade.basis || 'assessed')
-      + `<div class="section"><div class="section-h">Aptitudes</div><div class="apt-grid">${radarSVG(d.aptitudes,d.ideal)}<div><div class="bars">${bars}</div><div class="legend"><span><span class="lz"></span> current build</span><span><span class="lz id"></span> canonical ideal</span></div></div></div><div class="maps"><div class="mh">What these numbers do</div><dl>${maps}</dl></div></div>`
+      + `<div class="section"><div class="section-h">Aptitudes</div><div class="chiprow" style="margin:0 0 12px"><span class="chip src-${srcMeta.cls}">${esc(srcMeta.text)}</span></div><div class="apt-grid">${radarSVG(d.aptitudes,d.ideal)}<div><div class="bars">${bars}</div><div class="legend"><span><span class="lz"></span> current build</span><span><span class="lz id"></span> canonical ideal (${esc(srcMeta.short)})</span></div></div></div><div class="maps"><div class="mh">What these numbers do</div><dl>${maps}</dl></div></div>`
       + `<div class="section"><div class="section-h">Operating Profile</div><div class="disp-top"><span class="disp-name" style="--crew:${c}">${esc(prof.active)}</span><span class="disp-blurb">${esc(prof.blurb)}</span></div><div class="voice" style="--crew:${c}">“${esc(prof.voice)}”</div><div class="pdelta"><div class="ph">Behavioral delta <span class="d mono">${esc(deltaStr)}</span></div><p>${esc(prof.prompt_delta)}</p></div>${injected?`<div class="pdelta"><div class="ph">As dispatched <span class="d mono">verbatim — what you read is what the model gets</span></div><pre class="mono" style="white-space:pre-wrap;margin:6px 0 0;font-size:12px;opacity:.85">${esc(injected)}</pre></div>`:''}</div>`;
     if (d.loadout?.model) h += `<div class="section"><div class="section-h">Loadout</div><div class="lo-row"><span class="pin">${esc(d.loadout.model.pin)} · ${d.loadout.model.maxTurns} turns · $${Number(d.loadout.model.budgetUsd).toFixed(0)} ceiling</span>${tools}</div></div>`;
     h += `<div class="section"><div class="section-h">Techniques</div>${(d.techniques||[]).length?`<div class="moves">${techniques}</div>`:`<div class="pending">None earned yet — techniques derive automatically from certification and field receipts; they cannot be authored.</div>`}</div>`;

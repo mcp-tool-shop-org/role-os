@@ -48,6 +48,7 @@
     "autonomy": 4,
     "candor": 3
   },
+  "idealSource": "panel-tuned",
   "operatingProfile": {
     "active": "Builder",
     "blurb": "Biases toward shipping a working artifact; moves fast and trusts the contract until it breaks.",

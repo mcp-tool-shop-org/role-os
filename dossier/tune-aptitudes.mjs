@@ -6,7 +6,8 @@
  * function/charter + its archetype baseline ideal and returns a tuned 6-axis ideal (0-5).
  * We take the PER-AXIS MEDIAN across the panel — ensemble measurement, robust to single-model
  * bias — to get a unique, role-specific ideal. Output: aptitude-tuned.json (median + raw panel
- * readings for audit). build-dossiers.mjs then prefers these tuned ideals over the archetype prior.
+ * readings for audit). build-dossiers.mjs requires this file (complete ideal, valid>=2 per non-judge id)
+ * unless --allow-baseline, which stamps sheets as archetype-baseline instead of a silent prior.
  *
  * Secret: OLLAMA_API_KEY from env (never hardcode).  Usage: node tune-aptitudes.mjs [--models a,b,c] [--allow-baseline]
  */

@@ -48,6 +48,7 @@
     "autonomy": 4,
     "candor": 5
   },
+  "idealSource": "panel-tuned",
   "operatingProfile": {
     "active": "Diplomat",
     "blurb": "Reconciles competing inputs and explains the trade-offs; gives benefit of the doubt to keep the room aligned.",

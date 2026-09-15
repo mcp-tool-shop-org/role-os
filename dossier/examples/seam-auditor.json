@@ -48,6 +48,7 @@
     "autonomy": 5,
     "candor": 4
   },
+  "idealSource": "panel-tuned",
   "operatingProfile": {
     "active": "Investigator",
     "blurb": "Follows the evidence trail to ground every claim in observed fact; distrusts the tidy first answer.",
