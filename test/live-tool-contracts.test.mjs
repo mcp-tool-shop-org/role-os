@@ -5,8 +5,8 @@
  * NEVER flag a tool's known-good conformant call. A false "nonconformant" on a valid call would emit a
  * wrong advisory on real work, so it is committed and CI-enforced. The known-good + known-violation
  * example calls live in tools/conformance-dataset/live-tools/corpus.json (the blind-authored +
- * adversarially-refuted fixtures). Coverage of the known violations is reported by build_live_contracts.mjs;
- * this test guards correctness/safety (0 false-positives) and catches catalog drift.
+ * adversarially-refuted fixtures). This test guards both halves: 0 false-positives on conformant_args
+ * AND true-positives on violation_args (emptying constraints or dropping contractFloor must go RED).
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
@@ -69,5 +69,71 @@ describe("live tool-contracts catalog (.claude/role-os/tool-contracts.json)", ()
       if ((e.constraints || []).length && !(exBy[n] && (exBy[n].conformant_args || []).length)) missing.push(n);
     }
     assert.deepEqual(missing, [], `constrained tools without conformant fixtures: ${missing.join(", ")}`);
+  });
+
+  // Documented LLM-ceiling gaps from live-tools/RECEIPT.md (7/78): relative-path is
+  // open-set (not computable); invented params are tolerated by schemaFloor for
+  // forward-compat; ToolSearch max_results has no schema min/integer bound.
+  function isDocumentedCeilingGap(toolName, v) {
+    const a = v.args || {};
+    if (toolName === "Read" && a.file_path === "README.md") return true;
+    if (toolName === "Write" && a.append === true) return true;
+    if (toolName === "Glob" && a.recursive === true) return true;
+    if (toolName === "Skill" && "timeout" in a) return true;
+    if (toolName === "ToolSearch" && typeof a.max_results === "number") return true;
+    return false;
+  }
+
+  it("TRUE POSITIVE: schemaFloor+contractFloor flag each corpus violation_args (except documented ceiling gaps)", () => {
+    const missed = [];
+    let executed = 0;
+    let caught = 0;
+    for (const ex of corpus) {
+      const e = catalog[ex.tool];
+      assert.ok(e, `corpus tool '${ex.tool}' missing from live catalog`);
+      const tool = { name: ex.tool, contract: e.contract, params: e.params || [], constraints: e.constraints || [] };
+      const vs = ex.violation_args || [];
+      assert.ok(vs.length, `${ex.tool}: corpus must carry violation_args so the floor can go RED`);
+      for (const v of vs) {
+        executed++;
+        const viol = floors(tool, v.args, e.state_struct || null);
+        if (viol.length) caught++;
+        else if (!isDocumentedCeilingGap(ex.tool, v)) {
+          missed.push(`${ex.tool}: ${v.violates} :: ${JSON.stringify(v.args)}`);
+        }
+      }
+    }
+    assert.ok(executed > 0, "must actually execute corpus violation_args");
+    assert.ok(caught > 0, "live catalog must catch at least one known violation");
+    assert.deepEqual(missed, [], `live catalog must flag computable violation_args:\n${missed.join("\n")}`);
+  });
+
+  it("TRUE POSITIVE: Read limit:0 is nonconformant under the live catalog", () => {
+    const e = catalog.Read;
+    assert.ok(e, "Read must be in the live catalog");
+    const limit0 = (exBy.Read?.violation_args || []).find((v) => v.args && v.args.limit === 0);
+    assert.ok(limit0, "corpus must include Read limit:0");
+    const tool = { name: "Read", contract: e.contract, params: e.params || [], constraints: e.constraints || [] };
+    const viol = floors(tool, limit0.args, e.state_struct || null);
+    assert.ok(viol.length, `Read limit:0 must be flagged (got ${JSON.stringify(viol)})`);
+  });
+
+  it("META: stripping Read's limit>0 rule lets limit:0 through (true-positive is load-bearing)", () => {
+    const e = catalog.Read;
+    const limit0 = (exBy.Read?.violation_args || []).find((v) => v.args && v.args.limit === 0);
+    assert.ok(e && limit0, "Read catalog + limit:0 fixture required for META");
+    const stripped = (e.constraints || []).filter((c) => !(c.kind === "cmp" && c.left === "limit"));
+    const withRule = floors(
+      { name: "Read", contract: e.contract, params: e.params || [], constraints: e.constraints || [] },
+      limit0.args,
+      e.state_struct || null,
+    );
+    const without = floors(
+      { name: "Read", contract: e.contract, params: e.params || [], constraints: stripped },
+      limit0.args,
+      e.state_struct || null,
+    );
+    assert.ok(withRule.length, "live catalog must catch Read limit:0 before the mutation");
+    assert.equal(without.length, 0, "without the limit>0 rule, limit:0 must slip through — otherwise this META is not proving the constraint");
   });
 });
