@@ -101,29 +101,58 @@ function _jsonShape(v) {
 }
 
 /**
- * Evaluate `actionId`'s grant. Returns null when granted and valid; otherwise a short problem
- * string for the deny reason. An unparseable `expires` is treated as INVALID (deny) — a
- * fail-closed gate must never turn a typo'd date into a permanent grant.
+ * Evaluate `actionId`'s grant. Returns null when granted and valid; otherwise
+ * `{ kind, message }` for the deny reason. kind is "missing" | "expired" | "bad-expires".
+ * An unparseable `expires` is treated as INVALID (deny) — a fail-closed gate must never
+ * turn a typo'd date into a permanent grant.
  */
 function _grantProblem(manifest, actionId, now) {
   const g = manifest && manifest[actionId];
   if (!g || typeof g !== "object" || g.granted !== true) {
-    return `No capability "${actionId}" is granted in ${CAPABILITIES_FILE}`;
+    return {
+      kind: "missing",
+      message: `No capability "${actionId}" is granted in ${CAPABILITIES_FILE}`,
+    };
   }
   if (Object.prototype.hasOwnProperty.call(g, "expires")) {
     // Present expires must be a parseable string/ISO date. A numeric epoch, JSON null, or
     // boolean is the exact footgun the contract forbids: a typo'd date must never become
     // a permanent grant for npm publish / git push / gh release.
     if (typeof g.expires !== "string") {
-      return `The grant for "${actionId}" has an unparseable "expires" value (${JSON.stringify(g.expires)}) — an invalid expiry DENIES (fail-closed), it never extends the grant; fix the date`;
+      return {
+        kind: "bad-expires",
+        message: `The grant for "${actionId}" has an unparseable "expires" value (${JSON.stringify(g.expires)}) — an invalid expiry DENIES (fail-closed), it never extends the grant; fix the date`,
+      };
     }
     const t = Date.parse(g.expires);
     if (Number.isNaN(t)) {
-      return `The grant for "${actionId}" has an unparseable "expires" value ("${g.expires}") — an invalid expiry DENIES (fail-closed), it never extends the grant; fix the date`;
+      return {
+        kind: "bad-expires",
+        message: `The grant for "${actionId}" has an unparseable "expires" value ("${g.expires}") — an invalid expiry DENIES (fail-closed), it never extends the grant; fix the date`,
+      };
     }
-    if (t < now) return `The grant for "${actionId}" expired at ${g.expires}`;
+    if (t < now) {
+      return {
+        kind: "expired",
+        message: `The grant for "${actionId}" expired at ${g.expires}`,
+      };
+    }
   }
   return null;
+}
+
+/**
+ * Actionable hint for a grant problem. Irreversible grants always carry `expires` —
+ * never recommend a snippet that omits it (a missing date is the path to a never-expiring grant).
+ */
+function _grantHint(kind, actionId) {
+  if (kind === "expired") {
+    return `To authorize it, the director renews "expires" on the existing "${actionId}" grant; do not drop "expires".`;
+  }
+  if (kind === "bad-expires") {
+    return `To authorize it, the director fixes the "expires" date on the existing "${actionId}" grant; do not drop "expires".`;
+  }
+  return `To authorize it, the director adds {"${actionId}": {"granted": true, "expires": "YYYY-MM-DD"}}.`;
 }
 
 /**
@@ -175,8 +204,8 @@ export function capabilityGate(cwd, toolName, toolInput, opts = {}) {
       action: action.id,
       reason:
         `Capability gate: "${action.label}" is an irreversible action requiring an explicit grant. ` +
-        `${problem}. To authorize it, the director adds {"${action.id}": {"granted": true}}, ` +
-        `optionally with an "expires" date. (Note: the gate enforces only "granted"/"expires" — ` +
+        `${problem.message}. ${_grantHint(problem.kind, action.id)} ` +
+        `(Note: the gate enforces only "granted"/"expires" — ` +
         `a grant authorizes ALL matching ${action.label} calls; a "scope" field is informational only.)`,
     };
   } catch {
