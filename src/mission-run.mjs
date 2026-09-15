@@ -12,6 +12,7 @@
 import { MISSIONS, getMission, validateMission } from "./mission.mjs";
 import { validateArtifact, resolveArtifactContent, warnArtifactValidation } from "./artifacts.mjs";
 import { enforceBuildGate, formatBuildGateStatus } from "./swarm/build-gate.mjs";
+import { enforceExitCondition } from "./swarm/exit-condition.mjs";
 import { STEP_TRANSITIONS, isValidStepTransition } from "./state-machine.mjs";
 
 let _runCounter = 0;
@@ -327,21 +328,29 @@ export function assertGateApproval(step) {
 /**
  * Hard gates that must pass before a step can complete, plus artifact
  * validation (warn, don't block). Reads file content when `artifact` is a
- * path under cwd.
+ * path under cwd. Gate steps with exitCondition parse same-stage
+ * wave-reports and refuse while open CRITICAL/HIGH remain.
  * @param {object} active
  * @param {string} artifact
  * @param {string} [cwd]
- * @returns {{ validation: object, buildGateResult: object|null }}
+ * @param {object} [run] - required when active.isGate && active.exitCondition
+ * @returns {{ validation: object, buildGateResult: object|null, exitConditionResult: object|null }}
  */
-export function runCompletionGates(active, artifact, cwd) {
+export function runCompletionGates(active, artifact, cwd, run) {
   assertGateApproval(active);
+  let exitConditionResult = null;
+  if (active.isGate && active.exitCondition) {
+    exitConditionResult = enforceExitCondition({
+      step: active, run, cwd, artifact,
+    });
+  }
   let buildGateResult = null;
   if (active.buildGate === true) {
     buildGateResult = enforceBuildGate(cwd);
   }
   const content = resolveArtifactContent(artifact, cwd);
   const validation = validateArtifact(active.role, content);
-  return { validation, buildGateResult };
+  return { validation, buildGateResult, exitConditionResult };
 }
 
 /**
@@ -358,9 +367,12 @@ export function completeStep(run, artifact, note, cwd = process.cwd()) {
     throw new Error("No active step to complete");
   }
 
-  const { validation, buildGateResult } = runCompletionGates(active, artifact, cwd);
+  const { validation, buildGateResult, exitConditionResult } = runCompletionGates(active, artifact, cwd, run);
   active.artifactValidation = validation;
   if (buildGateResult) active.buildGateResult = buildGateResult;
+  if (exitConditionResult && !exitConditionResult.skipped) {
+    active.exitConditionResult = exitConditionResult;
+  }
   warnArtifactValidation(validation);
   if (buildGateResult) console.log(formatBuildGateStatus(buildGateResult));
 

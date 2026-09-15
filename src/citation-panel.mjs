@@ -22,10 +22,10 @@
 
 import { execFileSync } from "node:child_process";
 
-/** The offload command, overridable for non-default rigs (defaults match offload.py's README). */
+/** The offload command, overridable for non-default rigs. */
 export const DEFAULT_OFFLOAD_PYTHON = process.env.OFFLOAD_PYTHON || "python";
-export const DEFAULT_OFFLOAD_SCRIPT =
-  process.env.OFFLOAD_SCRIPT || "E:/AI-Models/studio-local/offload.py";
+/** Offload verify script. Unset env is "panel not configured" — never a studio drive path. */
+export const DEFAULT_OFFLOAD_SCRIPT = process.env.OFFLOAD_SCRIPT || "";
 
 /**
  * Build the evidence string the panel judges the claim against: prism's retrieved source title +
@@ -122,15 +122,31 @@ function tryParseJson(text) {
  * @returns {PanelResult}
  */
 export function runOffloadPanel(supported, options = {}) {
-  const {
-    exec = defaultOffloadExec,
-    python = DEFAULT_OFFLOAD_PYTHON,
-    script = DEFAULT_OFFLOAD_SCRIPT,
-    base = process.env.LLAMASWAP_BASE || "",
-    seats = process.env.OFFLOAD_PANEL_SEATS || "",
-    timeout = 300_000,
-    cwd = process.cwd(),
-  } = options;
+  const exec = options.exec || defaultOffloadExec;
+  const python = options.python || DEFAULT_OFFLOAD_PYTHON;
+  let script = options.script ?? DEFAULT_OFFLOAD_SCRIPT;
+  const base = options.base ?? (process.env.LLAMASWAP_BASE || "");
+  const seats = options.seats ?? (process.env.OFFLOAD_PANEL_SEATS || "");
+  const timeout = options.timeout ?? 300_000;
+  const cwd = options.cwd ?? process.cwd();
+
+  if (!script) {
+    if (exec === defaultOffloadExec) {
+      return {
+        requested: true,
+        reachable: false,
+        unreachable: true,
+        seats: [],
+        checked: 0,
+        perCitation: [],
+        disagreements: [],
+        detail: "panel not configured: set OFFLOAD_SCRIPT to the offload verify script path",
+      };
+    }
+    // Injectable tests omit script; a relative placeholder keeps exec wired
+    // without shipping a studio-local drive path.
+    script = "offload.py";
+  }
 
   const env = {
     ...process.env,

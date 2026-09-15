@@ -359,7 +359,9 @@ export const MISSIONS = {
     // Wave loops — iterative convergence (new primitive, unique to swarm).
     // Enforced at completeCurrentStep / completeStep: buildGate runs
     // runBuildGate(cwd) and blocks on fail/vacuous; userApproval requires
-    // userApprovalStatus === "approved" (`roleos swarm approve`).
+    // userApprovalStatus === "approved" (`roleos swarm approve`);
+    // exitCondition parses same-stage wave-reports (deriveVerdict/sevUpper)
+    // and refuses while open CRITICAL/HIGH remain (treatment needs shipcheck evidence).
     waveLoops: [
       {
         stage: "health-a",

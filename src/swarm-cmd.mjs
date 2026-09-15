@@ -7,7 +7,7 @@
  * roleos swarm status                 Show swarm run progress
  * roleos swarm findings               List findings captured from wave reports
  * roleos swarm approve                Approve the current user gate
- * roleos swarm verify                 Run Phase 9 final verification
+ * roleos swarm verify                 Phase 9: require a run, fail on open CRITICAL/HIGH, run build gate
  *
  * This is a first-class shortcut into the dogfood-swarm mission.
  * Under the hood it creates a mission run with dynamic domain dispatch.
@@ -22,6 +22,11 @@ import {
   generateSwarmManifest, validateSwarmManifest,
 } from "./swarm/domain-detect.mjs";
 import { resolveArtifactContent } from "./artifacts.mjs";
+import { runBuildGate, formatBuildGateStatus } from "./swarm/build-gate.mjs";
+import {
+  evaluateExitCondition,
+  formatExitConditionReport,
+} from "./swarm/exit-condition.mjs";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -402,8 +407,8 @@ function cmdVerify() {
   const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
   const validation = validateSwarmManifest(manifest);
 
-  console.log(`\nSwarm Verification`);
-  console.log(`──────────────────`);
+  console.log(`\nSwarm Verification (Phase 9)`);
+  console.log(`────────────────────────────`);
 
   let healthy = true;
 
@@ -425,22 +430,73 @@ function cmdVerify() {
     console.log(`  [FAIL] ${domainCount} domains (must be 1-10)`);
   }
 
-  // 3. Check for swarm run
+  // 3. A swarm run must exist — a valid manifest with zero runs is not Phase 9.
   const swarmRuns = filterSwarmRuns(listRuns(cwd));
+  let full = null;
 
-  if (swarmRuns.length > 0) {
+  if (swarmRuns.length === 0) {
+    healthy = false;
+    console.log(`  [FAIL] No swarm run — Phase 9 cannot verify an empty tree. Run 'roleos swarm' first.`);
+  } else {
     const latest = swarmRuns[0];
-    const full = loadRun(cwd, latest.id);
-    if (full) {
+    full = loadRun(cwd, latest.id);
+    if (!full) {
+      healthy = false;
+      console.log(`  [FAIL] Could not load swarm run ${latest.id}`);
+    } else {
       const completed = full.steps.filter(s => s.status === "completed").length;
       const total = full.steps.length;
-      console.log(`  [INFO] Active run: ${completed}/${total} steps complete`);
+      console.log(`  [PASS] Swarm run present: ${completed}/${total} steps complete`);
     }
-  } else {
-    console.log(`  [INFO] No swarm runs yet — run 'roleos swarm' to start`);
   }
 
-  console.log(`\n${healthy ? "Swarm infrastructure verified." : "Verification failed — fix the issues above and re-run."}\n`);
+  // 4. Wave-report findings + exitCondition (same helper as gate complete)
+  if (full) {
+    const floor = evaluateExitCondition({
+      exitCondition: "0 CRITICAL + 0 HIGH findings open",
+      steps: full.steps,
+      stage: null,
+      cwd,
+    });
+    if (floor.pass) {
+      console.log(`  [PASS] 0 CRITICAL + 0 HIGH findings open`);
+    } else {
+      healthy = false;
+      console.log(`  [FAIL] ${floor.reason}`);
+      console.log(formatExitConditionReport(floor));
+    }
+
+    const gate = full.steps.find(s => s.isGate && s.status === "active")
+      || [...full.steps].reverse().find(s => s.isGate && s.status === "completed");
+    if (gate?.exitCondition && gate.exitCondition !== "0 CRITICAL + 0 HIGH findings open") {
+      const extra = evaluateExitCondition({
+        exitCondition: gate.exitCondition,
+        steps: full.steps,
+        stage: gate.stage || null,
+        cwd,
+        artifact: gate.artifact,
+      });
+      if (extra.pass) {
+        console.log(`  [PASS] Gate exitCondition (${gate.stage}): ${gate.exitCondition}`);
+      } else {
+        healthy = false;
+        console.log(`  [FAIL] Gate exitCondition (${gate.stage}): ${extra.reason}`);
+        console.log(formatExitConditionReport(extra));
+      }
+    }
+  }
+
+  // 5. Build gate — Phase 9 actually runs it (fail/vacuous = fail)
+  const bg = runBuildGate(cwd);
+  console.log(formatBuildGateStatus(bg));
+  if (!bg.pass || bg.vacuous) {
+    healthy = false;
+    console.log(`  [FAIL] Build gate ${bg.vacuous ? "vacuous — ran nothing" : "failed"}`);
+  } else {
+    console.log(`  [PASS] Build gate`);
+  }
+
+  console.log(`\n${healthy ? "Phase 9 verification passed." : "Phase 9 verification failed — fix the issues above and re-run."}\n`);
   if (!healthy) process.exit(1);
 }
 
@@ -457,7 +513,7 @@ Usage:
   roleos swarm status              Show swarm run progress
   roleos swarm findings            List findings captured from wave reports
   roleos swarm approve             Approve the current user gate
-  roleos swarm verify              Verify manifest and run state
+  roleos swarm verify              Phase 9: require a run, fail on open CRITICAL/HIGH, run build gate
   roleos swarm help                Show this help
 
 The swarm runs 5 stages in sequence:
@@ -469,8 +525,10 @@ The swarm runs 5 stages in sequence:
 
 Each stage dispatches parallel domain agents with exclusive file ownership.
 A build gate (lint + typecheck + test) runs when completing a coordinator
-gate step (buildGate:true) and blocks completion on fail or vacuous skip.
-User-approval gates (health-b, feature, treatment) require
-'roleos swarm approve' before 'roleos complete'.
+gate step (buildGate:true) and on 'roleos swarm verify', and blocks on fail
+or vacuous skip. Coordinator gates evaluate exitCondition against same-stage
+wave-reports and refuse complete while open CRITICAL/HIGH remain (treatment
+needs shipcheck-equivalent evidence). User-approval gates (health-b, feature,
+treatment) require 'roleos swarm approve' before 'roleos complete'.
 `);
 }

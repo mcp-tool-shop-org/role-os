@@ -77,7 +77,7 @@ Usage:
   roleos swarm status                 Show swarm run progress
   roleos swarm findings               List findings captured from wave reports
   roleos swarm approve                Approve the current user gate
-  roleos swarm verify                 Verify manifest and run state
+  roleos swarm verify                 Phase 9: require a run, fail on open CRITICAL/HIGH, run build gate
   roleos verify-citations <dispatch>  Verify a research dispatch's citations via prism (gate)
   roleos verify-claims <claims.json>  Adjudicate claims via the ollama-intern cross-family cloud panel (gate)
   roleos specialist list              List all specialists in the registry (active version + cert)

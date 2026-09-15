@@ -368,9 +368,12 @@ export function completeCurrentStep(run, artifact, note, cwd) {
   const active = run.steps.find(s => s.status === "active");
   if (!active) throw new Error("No active step to complete");
 
-  const { validation, buildGateResult } = runCompletionGates(active, artifact, cwd);
+  const { validation, buildGateResult, exitConditionResult } = runCompletionGates(active, artifact, cwd, run);
   active.artifactValidation = validation;
   if (buildGateResult) active.buildGateResult = buildGateResult;
+  if (exitConditionResult && !exitConditionResult.skipped) {
+    active.exitConditionResult = exitConditionResult;
+  }
 
   active.status = "completed";
   active.artifact = artifact;
