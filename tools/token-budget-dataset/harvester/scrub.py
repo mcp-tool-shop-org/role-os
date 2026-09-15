@@ -2,7 +2,8 @@
 of the corpus (DESIGN.md §9). Training data is forever.
 
 ANDON (workflow-standard #2): after scrub, `andon_rescan` re-checks every output for
-surviving SECRET patterns. Any hit must hard-fail the whole build — no partial corpus.
+surviving SECRET patterns and leftover home-path fragments (C:\\Users\\, /Users/, /home/).
+Any hit must hard-fail the whole build — no partial corpus.
 """
 import re
 
@@ -23,10 +24,18 @@ SECRET_PATTERNS = [
         r"(?i)\b(api[_-]?key|secret|token|password|passwd|pwd|access[_-]?key)\b\s*[:=]\s*['\"]?[A-Za-z0-9_\-/+]{16,}")),
 ]
 
-# --- non-secret PII/paths: redacted but NOT andon-fatal ---
+# Windows Users-home must consume the REST of the path (nested separators included).
+# A one-segment Users branch left C:\Users\<acct>\.claude\... as <PATH>\.claude\...
 PATH_PATTERNS = [
-    re.compile(r"[A-Za-z]:[\\/](?:Users[\\/][^\\/\s\"'<>|]+|[^\s\"'<>|]+)"),  # Windows abs path
-    re.compile(r"/(?:Users|home)/[^\s\"'<>|]+"),                              # *nix home path
+    re.compile(r"[A-Za-z]:[\\/][^\s\"'<>|]+"),            # Windows abs path — eat remainder
+    re.compile(r"/(?:Users|home)/[^\s\"'<>|]+"),          # *nix home path
+]
+
+# Leftover home-path prefixes after scrub are ANDON-fatal (identity leak).
+HOME_PATH_ANDON = [
+    ("WIN_HOME", re.compile(r"[A-Za-z]:[\\/]Users[\\/]", re.IGNORECASE)),
+    ("NIX_USERS", re.compile(r"/Users/")),
+    ("NIX_HOME", re.compile(r"/home/")),
 ]
 EMAIL_PATTERN = re.compile(r"\b[\w.+\-]+@[\w\-]+\.[\w.\-]+\b")
 FENCED_BLOCK = re.compile(r"```[\s\S]*?```")
@@ -109,15 +118,17 @@ def scrub_record(rec: dict, counts: dict) -> dict:
 
 
 def andon_rescan(records: list[dict]) -> list[tuple]:
-    """Re-scan every output record's text fields for surviving SECRET patterns.
+    """Re-scan every output record's text fields for surviving SECRET patterns
+    and leftover home-path fragments (C:\\Users\\, /Users/, /home/).
     Returns a list of (dispatch_id, pattern_name, snippet). EMPTY = clean.
     The build MUST hard-fail if this is non-empty."""
     survivors = []
     text_fields = ("task_text", "source_file")
+    scans = list(SECRET_PATTERNS) + list(HOME_PATH_ANDON)
     for rec in records:
         for fld in text_fields:
             val = rec.get(fld) or ""
-            for name, pat in SECRET_PATTERNS:
+            for name, pat in scans:
                 m = pat.search(val)
                 if m:
                     survivors.append((rec.get("dispatch_id"), name, m.group(0)[:40]))

@@ -24,21 +24,48 @@ def check(name, cond):
 
 def test_scrub_redacts_real_secrets():
     print("test_scrub_redacts_real_secrets")
+    # Synthetic tokens only — not live secrets. Each fixture independently proves
+    # detection: (1) ANDON hits the raw string, (2) the raw needle is gone after
+    # scrub, (3) the named placeholder is present, (4) ANDON is clean. Scrub/andon
+    # consistency is not proof of detection (a no-op pattern would pass both).
     samples = {
-        "GH_TOKEN": "token ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA here",
-        "OPENAI_KEY": "key sk-AAAAAAAAAAAAAAAAAAAAAAAA done",
-        "AWS_KEY": "id AKIAAAAAAAAAAAAAAAAA end",
-        "GOOGLE_KEY": "g AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA z",
-        "BEARER": "Authorization: Bearer abcdefghijklmnopqrstuvwxyz12",
-        "ASSIGNED_SECRET": 'password = "hunter2hunter2hunter2"',
-        "CONN_STRING_CRED": "postgres://user:secretpw@host/db",
+        "GH_TOKEN": (
+            "token ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA here",
+            "ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        ),
+        "OPENAI_KEY": (
+            "key sk-AAAAAAAAAAAAAAAAAAAAAAAA done",
+            "sk-AAAAAAAAAAAAAAAAAAAAAAAA",
+        ),
+        "AWS_KEY": (
+            "id AKIAAAAAAAAAAAAAAAAA end",
+            "AKIAAAAAAAAAAAAAAAAA",
+        ),
+        "GOOGLE_KEY": (
+            "g AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA z",
+            "AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        ),
+        "BEARER": (
+            "Authorization: Bearer abcdefghijklmnopqrstuvwxyz12",
+            "abcdefghijklmnopqrstuvwxyz12",
+        ),
+        "ASSIGNED_SECRET": (
+            'password = "hunter2hunter2hunter2"',
+            "hunter2hunter2hunter2",
+        ),
+        "CONN_STRING_CRED": (
+            "postgres://user:secretpw@host/db",
+            "secretpw",
+        ),
     }
-    counts = {}
-    for label_name, text in samples.items():
-        out = scrub.scrub_text(text, counts)
-        # the raw secret body must be gone
+    for label_name, (text, needle) in samples.items():
+        pre = scrub.andon_rescan([{"dispatch_id": "t", "task_text": text, "source_file": ""}])
+        check(f"{label_name} ANDON hits raw", any(s[1] == label_name for s in pre))
+        out = scrub.scrub_text(text, {})
+        check(f"{label_name} raw needle gone", needle not in out)
+        check(f"{label_name} placeholder present", f"<{label_name}>" in out)
         leftover = scrub.andon_rescan([{"dispatch_id": "t", "task_text": out, "source_file": ""}])
-        check(f"{label_name} redacted (no andon survivor)", not leftover)
+        check(f"{label_name} ANDON clean after scrub", not leftover)
 
 
 def test_andon_catches_unscrubbed_secret():
@@ -83,12 +110,65 @@ def test_canon_truncation():
     check("cwd_repo derived", out["cwd_repo"] == "star-freight")
 
 
+def _remainder_after_path(text):
+    """Text immediately after each <PATH> placeholder, up to whitespace."""
+    token = "<PATH>"
+    rems = []
+    start = 0
+    while True:
+        i = text.find(token, start)
+        if i < 0:
+            break
+        j = i + len(token)
+        k = j
+        while k < len(text) and not text[k].isspace():
+            k += 1
+        rems.append(text[j:k])
+        start = j
+    return rems
+
+
 def test_path_email_redaction():
     print("test_path_email_redaction")
+    # Nested Windows home path — remainder after <PATH> must be empty (no
+    # leftover separators or .claude segments). Synthetic account, not a live home.
+    win = r"see C:\Users\acct\.claude\projects\E--AI-role-os\agent-1.jsonl and mail me@example.com"
+    pre = scrub.andon_rescan([{"dispatch_id": "p", "task_text": win, "source_file": ""}])
+    check("ANDON hits raw Windows home path", any(s[1] == "WIN_HOME" for s in pre))
     c = {}
-    out = scrub.scrub_text(r"see C:\Users\Public\secret.txt and mail me@example.com", c)
+    out = scrub.scrub_text(win, c)
     check("windows user path redacted", "Users" not in out and "<PATH>" in out)
+    check("remainder after <PATH> empty", _remainder_after_path(out) == [""])
+    check("no leftover separators or .claude", "\\" not in out and "/" not in out and ".claude" not in out)
     check("email redacted", "<EMAIL>" in out and "example.com" not in out)
+    post = scrub.andon_rescan([{"dispatch_id": "p", "task_text": out, "source_file": ""}])
+    check("ANDON clean after path scrub", not post)
+
+    # Confirmed short-branch leak: C:\Users\Public\secret.txt used to become <PATH>\secret.txt
+    pub = r"C:\Users\Public\secret.txt"
+    out_pub = scrub.scrub_text(pub, {})
+    check("Public home fully eaten", out_pub == "<PATH>")
+    check("no leaked secret.txt remainder", "secret.txt" not in out_pub)
+
+    nix = "/Users/acct/.claude/projects/foo/agent-1.jsonl"
+    check("ANDON hits raw /Users/", any(
+        s[1] == "NIX_USERS" for s in scrub.andon_rescan(
+            [{"dispatch_id": "n", "task_text": nix, "source_file": ""}])))
+    out_nix = scrub.scrub_text(nix, {})
+    check("unix Users fully eaten", out_nix == "<PATH>" and ".claude" not in out_nix)
+
+    home = "/home/acct/.claude/foo"
+    check("ANDON hits raw /home/", any(
+        s[1] == "NIX_HOME" for s in scrub.andon_rescan(
+            [{"dispatch_id": "h", "task_text": home, "source_file": ""}])))
+    out_home = scrub.scrub_text(home, {})
+    check("unix home fully eaten", out_home == "<PATH>" and ".claude" not in out_home)
+
+    rec = {"task_text": "fix", "cwd": "E:/AI/role-os",
+           "source_file": r"C:\Users\acct\.claude\projects\E--AI-role-os\agent-1.jsonl"}
+    rec_out = scrub.scrub_record(rec, {})
+    check("source_file fully redacted", rec_out["source_file"] == "<PATH>")
+    check("source_file no .claude leftover", ".claude" not in rec_out["source_file"])
 
 
 def test_baseline():
