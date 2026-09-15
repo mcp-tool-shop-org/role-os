@@ -1,0 +1,63 @@
+---
+// Custom 404 so unmatched handbook/landing URLs stay on-brand.
+// Starlight's built-in 404 is disabled (disable404Route: true).
+// GitHub Pages serves this as dist/404.html for unknown paths, so every
+// href is root-absolute from BASE_URL. trailingSlash "never": no extra slash.
+import '../styles/global.css';
+import BaseLayout from '@mcptoolshop/site-theme/components/BaseLayout.astro';
+import { config } from '../site-config';
+
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+const home = base || '/';
+const handbook = `${home}/handbook`;
+---
+
+<BaseLayout
+  title={`Page not found — ${config.title}`}
+  description="That page does not exist on Role OS. Head back to the landing page or the handbook."
+  logoBadge={config.logoBadge}
+  brandName={config.brandName}
+  repoUrl={config.repoUrl}
+  npmUrl={config.npmUrl}
+  footerText={config.footerText}
+  nav={config.sections.map(s => ({ href: `${home}#${s.id}`, label: s.title }))}
+>
+  <section class="mx-auto max-w-2xl py-16">
+    <p class="mb-4 text-sm font-medium uppercase tracking-wider text-muted">
+      Error 404
+    </p>
+    <h1 class="mb-6 text-4xl font-semibold tracking-tight text-heading">
+      Page not found
+    </h1>
+    <p class="mb-8 text-lg text-body">
+      The page you&rsquo;re looking for doesn&rsquo;t exist on Role OS.
+      It may have moved, been renamed, or never existed at this address.
+    </p>
+
+    <div class="mb-10 flex flex-wrap gap-3">
+      <a
+        class="inline-flex items-center rounded-xl bg-action px-4 py-2 text-sm font-medium text-action-text hover:bg-action-hover"
+        href={home}
+      >
+        Go to the home page
+      </a>
+      <a
+        class="inline-flex items-center rounded-xl border border-edge px-4 py-2 text-sm font-medium text-body hover:border-accent hover:text-heading"
+        href={handbook}
+      >
+        Read the handbook
+      </a>
+    </div>
+
+    <p class="text-sm text-muted">
+      If you arrived here from a link inside this site, please
+      <a
+        class="underline underline-offset-2 hover:text-body"
+        href={`${config.repoUrl}/issues/new`}
+      >
+        open an issue
+      </a>
+      so we can fix the broken pointer.
+    </p>
+  </section>
+</BaseLayout>

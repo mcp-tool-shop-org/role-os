@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mcp-tool-shop-org.github.io/role-os/sitemap-index.xml
