@@ -19,6 +19,31 @@ const result = payload.result || payload;
 const authored = result.authored;
 const examples = result.examples;
 if (!Array.isArray(authored) || !Array.isArray(examples)) { console.error("bad payload shape"); process.exit(1); }
+if (authored.length === 0 || examples.length === 0) {
+  console.error("EMPTY GROUND: authored/examples empty — raw.json/corpus.json NOT written");
+  process.exit(1);
+}
+let tools = [];
+try {
+  const tj = JSON.parse(readFileSync(join(HERE, "tools.json"), "utf-8"));
+  tools = Array.isArray(tj.tools) ? tj.tools : [];
+} catch {
+  tools = [];
+}
+if (tools.length > 0) {
+  const authoredNames = new Set(authored.map((a) => a && a.tool));
+  const exampleNames = new Set(examples.map((e) => e && e.tool));
+  const missing = tools
+    .map((t) => t && t.name)
+    .filter((n) => n && (!authoredNames.has(n) || !exampleNames.has(n)));
+  if (missing.length) {
+    console.error(
+      `UNCOVERED TOOLS: ${missing.length} tools.json entries lack authored/examples row — `
+      + `raw.json/corpus.json NOT written (${missing.slice(0, 5).join(", ")})`,
+    );
+    process.exit(1);
+  }
+}
 
 const ADD = {
   "mcp__ollama-intern__ollama_corpus_search": [

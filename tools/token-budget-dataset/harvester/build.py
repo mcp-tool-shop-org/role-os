@@ -25,12 +25,40 @@ def _write_jsonl(path, records):
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
 
 
+def _prior_corpus_exists(out_dir):
+    prior = os.path.join(out_dir, "corpus.jsonl")
+    return os.path.isfile(prior) and os.path.getsize(prior) > 0
+
+
+def refuse_empty_write(final, loc, out_dir, skip_stats=None):
+    """Empty harvest / skipped parse / missing transcripts must not overwrite a prior corpus.
+
+    Vacuous ANDON (secret re-scan + contamination on empty splits) is not a write grant.
+    """
+    skip_stats = skip_stats or {}
+    skipped_lines = skip_stats.get("skipped_lines", 0) or 0
+    skipped_files = skip_stats.get("skipped_files", 0) or 0
+    if skipped_lines or skipped_files:
+        raise manifest.AndonHalt(
+            f"parse skipped_lines={skipped_lines} skipped_files={skipped_files} — "
+            "harvest halted, nothing written")
+    n_agent = loc.get("agent_transcripts", 0) or 0
+    if n_agent == 0 and _prior_corpus_exists(out_dir):
+        raise manifest.AndonHalt(
+            "0 agent transcripts while a prior corpus.jsonl exists — "
+            "harvest halted, nothing written")
+    if len(final) == 0:
+        raise manifest.AndonHalt(
+            "empty harvest (0 records) — refuse write; existing corpus left untouched")
+
+
 def run(sample=None, out_dir=None):
     out_dir = out_dir or os.path.join(config.DATASET_ROOT, "v0.1")
     loc = locate.summary()
     print("locate:", loc)
 
     # --- parse ---
+    skip_stats = {"skipped_lines": 0, "skipped_files": 0}
     agent_files = locate.agent_transcripts()
     sess_files = locate.session_transcripts()
     if sample:
@@ -39,11 +67,11 @@ def run(sample=None, out_dir=None):
 
     records = []
     for fp in agent_files:
-        d = parse_transcripts.parse_agent_transcript(fp)
+        d = parse_transcripts.parse_agent_transcript(fp, skip_stats)
         if d:
             records.append(d)
     for fp in sess_files:
-        d = parse_transcripts.parse_session_transcript(fp)
+        d = parse_transcripts.parse_session_transcript(fp, skip_stats)
         if d:
             records.append(d)
     print(f"parsed: {len(records)} records "
@@ -69,6 +97,9 @@ def run(sample=None, out_dir=None):
             f"first: {survivors[:3]}")
 
     final = [_finalize(r) for r in scrubbed]
+
+    # Empty ground is a hard write halt, not a green ANDON.
+    refuse_empty_write(final, loc, out_dir, skip_stats)
 
     # cheap structural validation on a sample
     problems = []

@@ -7,15 +7,21 @@ from collections import Counter, defaultdict
 
 
 def audit(recs):
+    groups = defaultdict(list)
+    for p in recs:
+        groups[p.get("pair_id")].append(p)
+    groups.pop(None, None)
+    # Empty recs, or recs with no pair_id, must not PASS (0==0 on empty groups).
+    if len(recs) == 0 or (len(groups) == 0 and len(recs) > 0):
+        print(f"records={len(recs)}  groups={len(groups)}")
+        print("AUDIT: FAIL")
+        return False
+
     total = len(recs) or 1
     verd = Counter(p["verdict"] for p in recs)
     lvl_verd = defaultdict(Counter)
     for p in recs:
         lvl_verd[p["level"]][p["verdict"]] += 1
-    groups = defaultdict(list)
-    for p in recs:
-        groups[p.get("pair_id")].append(p)
-    groups.pop(None, None)
 
     flip_ready = sum(1 for g in groups.values() if len({m["verdict"] for m in g}) >= 2)
     torn = sum(1 for g in groups.values() if len({m.get("split") for m in g}) > 1)

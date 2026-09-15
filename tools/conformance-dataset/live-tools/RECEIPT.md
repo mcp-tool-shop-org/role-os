@@ -64,9 +64,10 @@ cd ../../.. && node --test test/live-tool-contracts.test.mjs
   resumable; the deterministic build is pure over committed inputs (`tools.json`/`raw.json`/`corpus.json`).
 - **ANDON_AUTHORITY — 3.** The build's gates `process.exit(1)` run BEFORE any write and halt on a
   conformant false-positive, an empty ground set (`tools.json.tools === []`), an empty catalog, or a
-  coverage collapse (every authored constraint dropped). A failing build leaves the existing catalog
-  untouched. The CI test fails the suite on the 0-FP invariant. A defect cannot propagate to a
-  shipped catalog.
+  coverage collapse (every authored constraint dropped). `prep_inputs.mjs` also refuses to write
+  `raw.json`/`corpus.json` when `authored` or `examples` is empty (or a `tools.json` tool has no
+  matching row). A failing build leaves the existing catalog and authored set untouched. The CI
+  test fails the suite on the 0-FP invariant. A defect cannot propagate to a shipped catalog.
 - **NAMED_COMPENSATORS — 2 (skip: no irreversible tool call performed here).** This run writes only
   working-tree files; nothing published, pushed, or tagged. Compensator for the live catalog: `git checkout
   -- .claude/role-os/tool-contracts.json` (or delete the file → loadToolContracts returns {} → dormant). The

@@ -10,8 +10,15 @@ import re
 from . import config
 
 
-def _iter_records(path):
-    with open(path, encoding="utf-8") as f:
+def _iter_records(path, skip_stats=None):
+    try:
+        f = open(path, encoding="utf-8")
+    except OSError:
+        if skip_stats is None:
+            raise
+        skip_stats["skipped_files"] = skip_stats.get("skipped_files", 0) + 1
+        return
+    with f:
         for line in f:
             line = line.strip()
             if not line:
@@ -19,7 +26,8 @@ def _iter_records(path):
             try:
                 yield json.loads(line)
             except Exception:
-                continue
+                if skip_stats is not None:
+                    skip_stats["skipped_lines"] = skip_stats.get("skipped_lines", 0) + 1
 
 
 # Frozen-map domains plus legacy join tokens. Longer tokens first so
@@ -104,7 +112,7 @@ def _has_large_artifact(task_text: str) -> bool:
     return any(len(line) > config.LARGE_ARTIFACT_CHARS for line in task_text.splitlines())
 
 
-def parse_agent_transcript(path: str) -> dict | None:
+def parse_agent_transcript(path: str, skip_stats=None) -> dict | None:
     """One subagent dispatch -> raw feature dict (no scrub, no outcome, no join)."""
     first_ts = None
     cwd = git_branch = None
@@ -121,7 +129,7 @@ def parse_agent_transcript(path: str) -> dict | None:
     compaction = {"observed": False, "trigger": None, "pre": None}
 
     saw_any = False
-    for rec in _iter_records(path):
+    for rec in _iter_records(path, skip_stats):
         saw_any = True
         t = rec.get("type")
         if first_ts is None and rec.get("timestamp"):
@@ -215,7 +223,7 @@ def parse_agent_transcript(path: str) -> dict | None:
     }
 
 
-def parse_session_transcript(path: str) -> dict | None:
+def parse_session_transcript(path: str, skip_stats=None) -> dict | None:
     """Top-level session -> session-grain feature dict. The only place auto
     compaction is reliably observable (DESIGN.md §3)."""
     first_ts = None
@@ -229,7 +237,7 @@ def parse_session_transcript(path: str) -> dict | None:
     tier_counts = {}
     compaction = {"observed": False, "trigger": None, "pre": None}
 
-    for rec in _iter_records(path):
+    for rec in _iter_records(path, skip_stats):
         t = rec.get("type")
         if first_ts is None and rec.get("timestamp"):
             first_ts = rec.get("timestamp")
