@@ -20,6 +20,22 @@ import {
 
 const MANIFEST_FILE = "audit-manifest.json";
 
+/** Terminal synthesizer/critic outputs. Missing or empty = verify FAIL. */
+export const TERMINAL_AUDIT_OUTPUTS = [
+  "AUDIT-SUMMARY.md",
+  "AUDIT-ACTION-PLAN.md",
+  "AUDIT-CRITIC-VERDICT.md",
+];
+
+const TERMINAL_CONTENT_RE = {
+  "AUDIT-SUMMARY.md": /verdict/i,
+  "AUDIT-ACTION-PLAN.md": /\bP[0-3]\b|priority|action plan/i,
+  "AUDIT-CRITIC-VERDICT.md": /verdict/i,
+};
+
+const CITED_PATH_RE = /(?:src|test|bin|tools|starter-pack|site|dossier)\/[A-Za-z0-9_./+\-*?]+?\.(?:mjs|js|cjs|ts|tsx|md|json|py)/gi;
+const FINDING_ID_RE = /^[A-Z][A-Za-z0-9]*-[A-Za-z0-9-]+$/;
+
 // ── Main dispatch ────────────────────────────────────────────────────────────
 
 /**
@@ -273,30 +289,156 @@ function cmdStatus() {
 
 // ── roleos audit verify ──────────────────────────────────────────────────────
 
-function cmdVerify() {
-  const cwd = process.cwd();
+function readOptionalFile(cwd, name) {
+  const p = join(cwd, name);
+  if (!existsSync(p)) return { missing: true, text: "" };
+  let text = "";
+  try {
+    text = readFileSync(p, "utf-8");
+  } catch {
+    return { unreadable: true, text: "" };
+  }
+  if (!String(text).trim()) return { empty: true, text: "" };
+  return { text: String(text) };
+}
+
+function extractCitedPaths(text) {
+  const paths = [];
+  const seen = new Set();
+  CITED_PATH_RE.lastIndex = 0;
+  for (const m of String(text).matchAll(CITED_PATH_RE)) {
+    const p = m[0].replace(/\\/g, "/");
+    if (!seen.has(p)) {
+      seen.add(p);
+      paths.push(p);
+    }
+  }
+  return paths;
+}
+
+function extractSymbols(text) {
+  const symbols = [];
+  for (const m of String(text).matchAll(/`([^`]+)`/g)) {
+    const ident = m[1].trim().replace(/\(.*$/, "").replace(/\[.*$/, "");
+    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(ident) && ident.length >= 2) {
+      symbols.push(ident);
+    }
+  }
+  const afterDash = String(text).split(/—|--/).slice(1).join(" ");
+  for (const m of afterDash.matchAll(/\b([A-Z][A-Z0-9_]{2,})\b/g)) {
+    if (m[1] !== "FILE" && m[1] !== "TODO") symbols.push(m[1]);
+  }
+  return [...new Set(symbols)];
+}
+
+function extractLineNumber(text) {
+  const m = String(text).match(/line\s*~?\s*(\d+)/i)
+    || String(text).match(/:(\d+)(?:-\d+)?\b/);
+  return m ? Number(m[1]) : null;
+}
+
+function expandCitedPath(cwd, cited) {
+  const rel = cited.replace(/\\/g, "/");
+  if (!/[*?]/.test(rel)) return [rel];
+  const slash = rel.lastIndexOf("/");
+  const dir = slash >= 0 ? rel.slice(0, slash) : ".";
+  const pat = slash >= 0 ? rel.slice(slash + 1) : rel;
+  const absDir = join(cwd, dir);
+  if (!existsSync(absDir)) return [];
+  let names = [];
+  try { names = readdirSync(absDir); } catch { return []; }
+  const re = new RegExp(
+    "^" + pat.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".") + "$",
+  );
+  return names.filter(n => re.test(n)).map(n => (dir === "." ? n : `${dir}/${n}`));
+}
+
+function sourceHasSymbol(src, symbol) {
+  const escaped = symbol.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?:^|[^A-Za-z0-9_])${escaped}(?:[^A-Za-z0-9_]|$)`).test(src);
+}
+
+function parcelDeclaresNoFindings(text) {
+  if (/\bno findings\b|\b0 findings\b|findings:\s*none/i.test(text)) return true;
+  const section = text.match(/##\s*findings\b([\s\S]*?)(?=\n##\s|\s*$)/i);
+  if (!section) return false;
+  if (/^###\s+/m.test(section[1])) return false;
+  return /none|n\/a|empty|clean/i.test(section[1]);
+}
+
+/**
+ * Parse finding blocks from an AUDIT-PARCEL / SEAM / TESTS markdown report.
+ * @param {string} text
+ * @returns {{ id: string, title: string, files: string[], symbols: string[], line: number|null, noIssues: boolean }[]}
+ */
+export function parseAuditParcelFindings(text) {
+  const findings = [];
+  if (typeof text !== "string" || !text.trim()) return findings;
+  const normalized = text.replace(/\r\n/g, "\n");
+  const re = /^###\s+(\S+):\s*(.+)$/gm;
+  const matches = [...normalized.matchAll(re)];
+  for (let i = 0; i < matches.length; i++) {
+    const m = matches[i];
+    const id = m[1];
+    if (!FINDING_ID_RE.test(id)) continue;
+    const start = m.index;
+    const end = i + 1 < matches.length ? matches[i + 1].index : normalized.length;
+    const block = normalized.slice(start, end);
+    const title = m[2].trim();
+    const fileLine = block.match(/^\s*-\s*\*\*Files?:\*\*\s*(.+)$/m);
+    const fileText = fileLine ? fileLine[1] : "";
+    findings.push({
+      id,
+      title,
+      files: fileText ? extractCitedPaths(fileText) : [],
+      symbols: fileText ? extractSymbols(fileText) : extractSymbols(title),
+      line: extractLineNumber(fileText || title),
+      noIssues: /no issues|clean boundary/i.test(title),
+    });
+  }
+  return findings;
+}
+
+function listCwdNames(cwd) {
+  try { return readdirSync(cwd); } catch { return []; }
+}
+
+function pushCheck(checks, ok, message) {
+  checks.push({ ok, level: ok ? "PASS" : "FAIL", message });
+}
+
+/**
+ * Evaluate `roleos audit verify` against cwd.
+ * Fail-closed: missing/empty terminal outputs, missing/empty parcels, or
+ * findings that cannot be re-checked against current source.
+ * @param {string} cwd
+ */
+export function evaluateAuditVerify(cwd) {
+  const checks = [];
+  const stale = [];
+
   const manifestPath = join(cwd, MANIFEST_FILE);
-
   if (!existsSync(manifestPath)) {
-    console.log("\nNo audit-manifest.json found. Nothing to verify.\n");
-    process.exit(1);
+    pushCheck(checks, false, "No audit-manifest.json found. Nothing to verify.");
+    return { pass: false, checks, findings: [], stale };
   }
 
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  } catch (err) {
+    pushCheck(checks, false, `audit-manifest.json is not valid JSON: ${err.message}`);
+    return { pass: false, checks, findings: [], stale };
+  }
+
   const issues = validateManifest(manifest);
-
-  console.log(`\nAudit Verification`);
-  console.log(`──────────────────`);
-
-  // 1. Manifest valid
   if (issues.length === 0) {
-    console.log(`  [PASS] Manifest is valid`);
+    pushCheck(checks, true, "Manifest is valid");
   } else {
-    console.log(`  [FAIL] Manifest has ${issues.length} issue(s)`);
-    for (const i of issues) console.log(`         - ${i}`);
+    pushCheck(checks, false, `Manifest has ${issues.length} issue(s)`);
+    for (const i of issues) pushCheck(checks, false, `- ${i}`);
   }
 
-  // 2. Owned paths exist
   let pathsOk = 0;
   let pathsMissing = 0;
   for (const c of manifest.components || []) {
@@ -305,42 +447,172 @@ function cmdVerify() {
         pathsOk++;
       } else {
         pathsMissing++;
-        if (pathsMissing <= 5) {
-          console.log(`  [WARN] Missing path: ${p} (${c.id})`);
-        }
+        if (pathsMissing <= 5) pushCheck(checks, false, `Missing path: ${p} (${c.id})`);
       }
     }
   }
   if (pathsMissing === 0) {
-    console.log(`  [PASS] All ${pathsOk} owned paths exist`);
+    pushCheck(checks, true, `All ${pathsOk} owned paths exist`);
   } else {
-    console.log(`  [WARN] ${pathsMissing} owned path(s) missing (${pathsOk} ok)`);
+    pushCheck(checks, false, `${pathsMissing} owned path(s) missing (${pathsOk} ok)`);
   }
 
-  // 3. Check for audit output files
-  const auditFiles = ["AUDIT-SUMMARY.md", "AUDIT-ACTION-PLAN.md", "AUDIT-CRITIC-VERDICT.md"];
-  const existing = auditFiles.filter(f => existsSync(join(cwd, f)));
-  if (existing.length === auditFiles.length) {
-    console.log(`  [PASS] All audit output files present (${existing.length}/${auditFiles.length})`);
-  } else if (existing.length > 0) {
-    console.log(`  [WARN] Partial audit outputs (${existing.length}/${auditFiles.length})`);
-    const missing = auditFiles.filter(f => !existsSync(join(cwd, f)));
-    for (const f of missing) console.log(`         missing: ${f}`);
-  } else {
-    console.log(`  [INFO] No audit outputs yet — run 'roleos audit' first`);
+  // Terminal outputs: FAIL (not INFO/WARN) when missing or empty.
+  for (const name of TERMINAL_AUDIT_OUTPUTS) {
+    const got = readOptionalFile(cwd, name);
+    if (got.missing) {
+      pushCheck(checks, false, `Missing required audit output: ${name}`);
+    } else if (got.empty || got.unreadable) {
+      pushCheck(checks, false, `Required audit output is empty: ${name}`);
+    } else if (TERMINAL_CONTENT_RE[name] && !TERMINAL_CONTENT_RE[name].test(got.text)) {
+      pushCheck(checks, false, `Required audit output lacks expected content (${name})`);
+    } else {
+      pushCheck(checks, true, `${name} present and non-empty`);
+    }
   }
 
-  // 4. Check parcel reports
-  const parcelFiles = readdirSync(cwd).filter(f => f.startsWith("AUDIT-PARCEL-"));
-  if (parcelFiles.length > 0) {
-    console.log(`  [PASS] ${parcelFiles.length} parcel report(s) found`);
-  } else {
-    console.log(`  [INFO] No parcel reports yet`);
+  const components = manifest.components || [];
+  const names = listCwdNames(cwd);
+  const parcelFiles = names.filter(f => f.startsWith("AUDIT-PARCEL-") && f.endsWith(".md"));
+  const extraReports = names.filter(f => /^(AUDIT-SEAM-|AUDIT-TESTS-).+\.md$/i.test(f));
+
+  if (components.length > 0 && parcelFiles.length === 0) {
+    pushCheck(checks, false, "No AUDIT-PARCEL-* reports — run 'roleos audit' first");
+  } else if (parcelFiles.length > 0) {
+    pushCheck(checks, true, `${parcelFiles.length} parcel report(s) found`);
   }
 
-  const healthy = issues.length === 0 && pathsMissing === 0;
-  console.log(`\n${healthy ? "Audit infrastructure verified." : "Some issues found — fix before re-auditing."}\n`);
-  if (!healthy) process.exit(1);
+  for (const c of components) {
+    const expected = `AUDIT-PARCEL-${c.id}.md`;
+    const got = readOptionalFile(cwd, expected);
+    if (got.missing) {
+      pushCheck(checks, false, `Missing parcel for component '${c.id}': ${expected}`);
+    } else if (got.empty || got.unreadable) {
+      pushCheck(checks, false, `Empty parcel for component '${c.id}': ${expected}`);
+    }
+  }
+
+  for (const name of extraReports) {
+    const got = readOptionalFile(cwd, name);
+    if (got.empty || got.unreadable) {
+      pushCheck(checks, false, `Empty audit output: ${name}`);
+    }
+  }
+
+  const reportFiles = [...new Set([
+    ...parcelFiles,
+    ...extraReports,
+    ...components.map(c => `AUDIT-PARCEL-${c.id}.md`),
+  ])];
+
+  const findings = [];
+  let hollowParcels = 0;
+  let declaredEmpty = 0;
+  for (const name of reportFiles) {
+    const got = readOptionalFile(cwd, name);
+    if (got.missing || got.empty) continue;
+    const parsed = parseAuditParcelFindings(got.text);
+    if (parsed.length === 0) {
+      if (parcelDeclaresNoFindings(got.text)) declaredEmpty++;
+      else if (name.startsWith("AUDIT-PARCEL-")) hollowParcels++;
+    }
+    for (const f of parsed) findings.push({ ...f, source: name });
+  }
+
+  if (hollowParcels > 0) {
+    pushCheck(checks, false, `${hollowParcels} parcel report(s) have no parseable findings (not re-verified)`);
+  }
+
+  const checkable = findings.filter(f => !f.noIssues);
+  const withFiles = checkable.filter(f => f.files.length > 0);
+
+  if (parcelFiles.length > 0 && findings.length === 0 && declaredEmpty === 0 && hollowParcels === 0) {
+    pushCheck(checks, false, "No findings parsed from parcel reports — cannot re-verify against current code");
+  }
+
+  if (checkable.length > 0 && withFiles.length === 0) {
+    pushCheck(checks, false, `${checkable.length} finding(s) have no file citations — cannot re-verify against current code`);
+  }
+
+  let verifiedCount = 0;
+  for (const f of withFiles) {
+    const reasons = [];
+    const bodies = [];
+    for (const cited of f.files) {
+      const resolved = expandCitedPath(cwd, cited);
+      if (resolved.length === 0) {
+        reasons.push(`cited path missing: ${cited}`);
+        continue;
+      }
+      for (const rel of resolved) {
+        const abs = join(cwd, rel);
+        if (!existsSync(abs)) {
+          reasons.push(`cited path missing: ${rel}`);
+          continue;
+        }
+        let src = "";
+        try {
+          src = readFileSync(abs, "utf-8");
+        } catch {
+          reasons.push(`cited path unreadable: ${rel}`);
+          continue;
+        }
+        bodies.push({ rel, src });
+      }
+    }
+    if (bodies.length === 0 && reasons.length === 0) {
+      reasons.push("cited paths missing");
+    } else if (bodies.length > 0) {
+      if (f.line && !bodies.some(b => b.src.split(/\r?\n/).length >= f.line)) {
+        reasons.push(`cited line ${f.line} past end of ${bodies.map(b => b.rel).join(", ")}`);
+      }
+      for (const sym of f.symbols) {
+        if (!bodies.some(b => sourceHasSymbol(b.src, sym))) {
+          reasons.push(`stale: \`${sym}\` not found in ${bodies.map(b => b.rel).join(", ")}`);
+        }
+      }
+    }
+    const findingOk = reasons.length === 0;
+    if (findingOk) {
+      verifiedCount++;
+    } else {
+      const reason = reasons[0] || "stale against current source";
+      stale.push({ id: f.id, reason });
+      if (stale.length <= 8) {
+        pushCheck(checks, false, `Finding ${f.id} not re-verified: ${reason}`);
+      }
+    }
+  }
+
+  if (stale.length > 8) {
+    pushCheck(checks, false, `${stale.length - 8} more stale finding(s)`);
+  }
+
+  if (withFiles.length > 0 && verifiedCount === withFiles.length && stale.length === 0) {
+    pushCheck(checks, true, `${verifiedCount} finding(s) re-verified against current code`);
+  } else if (withFiles.length > 0 && verifiedCount === 0) {
+    pushCheck(checks, false, `0 of ${withFiles.length} finding(s) re-verified against current code`);
+  }
+
+  const pass = checks.every(c => c.ok);
+  return { pass, checks, findings, stale };
+}
+
+function cmdVerify() {
+  const result = evaluateAuditVerify(process.cwd());
+
+  console.log(`\nAudit Verification`);
+  console.log(`──────────────────`);
+  for (const c of result.checks) {
+    console.log(`  [${c.level}] ${c.message}`);
+  }
+
+  if (result.pass) {
+    console.log(`\nAudit findings re-verified against current code.\n`);
+  } else {
+    console.log(`\nAudit verification failed — missing/empty outputs or findings not re-verified against current code.\n`);
+    process.exit(1);
+  }
 }
 
 // ── Help ─────────────────────────────────────────────────────────────────────
@@ -354,7 +626,7 @@ Usage:
   roleos audit manifest               Show the audit manifest
   roleos audit manifest --generate    Generate a skeleton manifest from src/
   roleos audit status                 Show audit run progress
-  roleos audit verify                 Verify manifest and audit outputs
+  roleos audit verify                 Re-verify findings against current code (fails if outputs missing/empty or findings stale)
   roleos audit help                   Show this help
 
 The deep audit decomposes a repo into bounded components, dispatches one
@@ -367,7 +639,7 @@ Workflow:
   3. roleos audit                        Start the audit run
   4. roleos next                         Step through each auditor
   5. roleos audit status                 Check progress
-  6. roleos audit verify                 Verify everything landed
+  6. roleos audit verify                 Re-verify findings against current code
 `);
 }
 

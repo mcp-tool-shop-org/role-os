@@ -70,7 +70,7 @@ Usage:
   roleos audit manifest               Show the audit manifest
   roleos audit manifest --generate    Generate a skeleton manifest from src/
   roleos audit status                 Show audit run progress
-  roleos audit verify                 Verify manifest and audit outputs
+  roleos audit verify                 Re-verify findings against current code; fail if outputs missing/empty
   roleos swarm                        Start a dogfood swarm on the current repo
   roleos swarm manifest               Show the swarm manifest
   roleos swarm manifest --generate    Auto-detect domains and generate manifest
