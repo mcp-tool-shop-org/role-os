@@ -53,8 +53,14 @@ describe("roleos run CLI", () => {
   });
 
   it("prints usage when no args", () => {
-    const out = run("run");
-    assert.ok(out.includes("Usage:"));
+    try {
+      run("run");
+      assert.fail("expected roleos run with no args to exit non-zero");
+    } catch (err) {
+      assert.equal(err.status, 1);
+      const text = `${err.stdout || ""}${err.stderr || ""}`;
+      assert.ok(text.includes("Usage:"));
+    }
   });
 });
 

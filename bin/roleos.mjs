@@ -157,38 +157,27 @@ async function printVerbHelp(verb, write = console.log) {
  * Structured error output. Matches shipcheck error shape:
  * code, message, hint, cause?, retryable?
  *
- * Usage errors print the human usage block on stderr. `--json` keeps the
- * machine blob; `--debug` dumps a stack.
+ * Post-verb `--help`/`-h` is intercepted before dispatch (printVerbHelp).
+ * `roleos run` with no args prints usage from run-cmd and exits 1.
+ * Thrown USER_ERROR stays a JSON blob so `--json` and existing parsers
+ * keep a machine-readable stderr.
  */
 function handleError(err) {
   const isUserError = err.exitCode === 1;
   const code = isUserError ? "USER_ERROR" : "RUNTIME_ERROR";
   const exitCode = isUserError ? 1 : 2;
-  const jsonMode = process.argv.includes("--json");
 
   if (process.argv.includes("--debug")) {
     console.error(err.stack || err);
     process.exit(exitCode);
   }
 
-  if (jsonMode || !isUserError) {
-    console.error(JSON.stringify({
-      code,
-      message: err.message,
-      hint: err.hint || null,
-      retryable: false,
-    }));
-    process.exit(exitCode);
-  }
-
-  const lines = usageLinesFor(command);
-  if (lines) {
-    console.error(`\nUsage:\n${lines}\n`);
-  } else {
-    printHelp(console.error);
-  }
-  console.error(`${code}: ${err.message}`);
-  if (err.hint) console.error(err.hint);
+  console.error(JSON.stringify({
+    code,
+    message: err.message,
+    hint: err.hint || null,
+    retryable: false,
+  }));
   process.exit(exitCode);
 }
 
