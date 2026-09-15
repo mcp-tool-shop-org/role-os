@@ -1,6 +1,6 @@
 ---
 title: Handbook
-description: Everything you need to know about Role OS — the multi-Claude operating system.
+description: Everything you need to know about Role OS — a repo-native operating layer for coding-agent work.
 sidebar:
   order: 0
 ---
@@ -19,7 +19,7 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 
 ## What is Role OS?
 
-Role OS is a multi-Claude operating system. It staffs work through 61 specialized role contracts, assembles task-specific chains, validates teams before execution, auto-routes recovery when work is blocked, and requires structured evidence in every verdict.
+Role OS is a repo-native operating layer for coding-agent work. It staffs work through 61 specialized role contracts, assembles task-specific chains, validates teams before execution, auto-routes recovery when work is blocked, and requires structured evidence in every verdict. Claude Code adapter ships; the contracts are markdown any harness can consume.
 
 The system provides three entry levels and ten operating layers:
 
@@ -43,7 +43,7 @@ The system provides three entry levels and ten operating layers:
 | **Conflict detection** | 4-pass validation catches hard conflicts, sequence errors, redundancy, and coverage gaps |
 | **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason and required artifact |
 | **Evidence** | Role-aware structured evidence in verdicts with sufficiency checks |
-| **Dispatch** | Generates execution manifests for multi-claude with per-role tool profiles and budgets |
+| **Dispatch** | Generates execution manifests for the coding-agent harness with per-role tool profiles and budgets |
 | **Artifacts** | 44 per-role contracts, 10 pack handoff contracts, structural validation |
 
 ## Core properties

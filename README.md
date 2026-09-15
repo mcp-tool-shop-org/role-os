@@ -13,11 +13,13 @@
   <a href="https://mcp-tool-shop-org.github.io/role-os/"><img src="https://img.shields.io/badge/Landing_Page-live-brightgreen" alt="Landing Page"></a>
 </p>
 
-A multi-Claude operating system that staffs, routes, validates, and runs work through 61 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict. Includes dynamic dispatch for manifest-scaled missions — a 10-component repo automatically becomes 28 auditor steps, not 6.
+A repo-native operating layer that staffs, routes, validates, and runs coding-agent work through 61 specialized role contracts. Creates task packets, assembles the right team from scored role matching, detects broken chains before execution, auto-routes recovery when work is blocked or rejected, and requires structured evidence in every verdict. Includes dynamic dispatch for manifest-scaled missions — a 10-component repo automatically becomes 28 auditor steps, not 6.
+
+Claude Code adapter ships (`roleos init` scaffolds `.claude/`). The contracts are markdown any coding harness can consume — this repo does not claim a second adapter already runs.
 
 ## What it does
 
-Role OS is the professional way to use multi-Claude. It prevents the specific failures that generic AI workflows produce:
+Role OS is the professional way to staff coding-agent work. It prevents the specific failures that generic AI workflows produce:
 
 - **Drift** — roles stay in lane. Product doesn't redesign. Frontend doesn't redefine scope. Backend doesn't invent product direction.
 - **False completion** — the done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.
@@ -108,13 +110,13 @@ Org-wide rollout state (queue, decisions, audit records, per-repo lock packets) 
 
 ## Memory and continuity
 
-Role OS does not own or duplicate the memory layer. Where Claude project memory exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.
+Role OS does not own or duplicate the memory layer. Where a harness project-memory store exists, it is the canonical continuity system — repo facts, decisions, open loops, and treatment history live there.
 
-Role OS integrates with Claude project memory. It does not replace it.
+Role OS integrates with that store when present. It does not replace it.
 
 ## Full treatment and shipcheck
 
-Full treatment is a canonical 7-phase protocol defined in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.
+Full treatment is a canonical 7-phase protocol defined in studio project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments using role contracts, handoffs, and critic gates — it does not redefine the protocol.
 
 **Shipcheck** is the 31-item quality gate that runs before full treatment. Hard gates A-D must pass before any treatment begins. Canonical reference: `memory/shipcheck.md`.
 
@@ -258,7 +260,7 @@ role-os/
     conflicts.mjs              ← 4-pass conflict detection
     escalation.mjs             ← Auto-routing for blocked/rejected/split
     evidence.mjs               ← Structured evidence + role-aware requirements
-    dispatch.mjs               ← Runtime dispatch manifests for multi-claude
+    dispatch.mjs               ← Runtime dispatch manifests for the coding-agent harness
     tool-profiles.mjs          ← Per-role tool sandboxing (shared by dispatch + trial)
     state-machine.mjs          ← Canonical step/run transition maps
     artifacts.mjs              ← Per-role artifact contracts + pack handoffs
@@ -296,7 +298,7 @@ All three are off by default and fail open to local deterministic behavior. See 
 | **Conflict detection** | 4-pass validation: hard conflicts, sequence, redundancy, coverage gaps. Repair suggestions. | ✓ Shipped |
 | **Escalation** | Auto-routes blocked/rejected/split work to the right resolver with reason + required artifact | ✓ Shipped |
 | **Evidence** | Role-aware structured evidence in verdicts. Sufficiency checks. 12 evidence kinds. | ✓ Shipped |
-| **Dispatch** | Generates execution manifests for multi-claude. Per-role tool profiles, system prompts, budgets. | ✓ Shipped |
+| **Dispatch** | Generates execution manifests for the coding-agent harness. Per-role tool profiles, system prompts, budgets. | ✓ Shipped |
 | **Trials** | Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete. | ✓ Complete |
 | **Team Packs** | 10 calibrated packs with auto-selection, mismatch guards, and free-routing fallback. | ✓ Shipped |
 | **Outcome calibration** | Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds. | ✓ Shipped |

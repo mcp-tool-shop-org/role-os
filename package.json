@@ -1,7 +1,7 @@
 {
   "name": "role-os",
   "version": "2.10.0",
-  "description": "Role OS — a multi-Claude operating system where 61 specialized roles execute work through contracts, conflict detection, escalation, and structured evidence. 10 team packs, 9 missions including dogfood swarm (multi-pass convergence), deep audit with manifest-scaled dynamic dispatch, and brainstorm with traceable disagreement.",
+  "description": "Role OS — a repo-native operating layer that staffs coding-agent work through 61 role contracts, packs, missions, conflict detection, escalation, and structured evidence. Claude Code adapter ships; the contracts are markdown any harness can consume.",
   "homepage": "https://mcp-tool-shop-org.github.io/role-os/",
   "bugs": {
     "url": "https://github.com/mcp-tool-shop-org/role-os/issues"
@@ -42,8 +42,8 @@
     "ai-workflow",
     "developer-tools",
     "role-contracts",
-    "claude",
-    "multi-claude"
+    "coding-agents",
+    "claude"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

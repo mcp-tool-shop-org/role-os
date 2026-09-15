@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Public copy is harness-agnostic: GitHub/npm/README/handbook lead with a repo-native operating layer. Claude Code adapter ships; the contracts are markdown any harness can consume. 61-role catalog kept; unroutable starter extras deferred.
+
 ## 2.10.0
 
 ### Added — the EXTERNAL_VERIFIER claims gate

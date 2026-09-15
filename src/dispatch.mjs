@@ -2,8 +2,8 @@
  * Runtime dispatch engine.
  *
  * Turns a staffed, validated chain into an executable dispatch manifest
- * that multi-claude can consume. Role-OS owns staffing/routing/evidence;
- * multi-claude owns execution.
+ * that a coding-agent harness can consume. Role-OS owns staffing/routing/evidence;
+ * the harness owns execution.
  *
  * This module:
  * 1. Maps roles → role configs (tool profiles, system prompts, budgets)
@@ -79,7 +79,7 @@ When you finish, produce a structured handoff:
 
 /**
  * Build a dispatch manifest from a routed chain.
- * This is the contract between Role-OS (planning) and multi-claude (execution).
+ * This is the contract between Role-OS (planning) and the coding-agent harness (execution).
  *
  * @param {Object} options
  * @param {string} options.packetFile - Path to the packet markdown
