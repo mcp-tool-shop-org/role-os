@@ -58,7 +58,7 @@ Shows: task, entry level, status, all steps with status icons, current step guid
 roleos complete <artifact> [note]       # Complete the active step
 ```
 
-Marks the active step completed with the given artifact reference. Advances to the next step.
+Marks the active step completed with the given artifact reference. Prints the next pending step; the operator must run `roleos next` to start it.
 
 ### fail
 
