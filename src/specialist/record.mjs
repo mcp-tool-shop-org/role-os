@@ -141,6 +141,15 @@ function probeSummary(events) {
 }
 
 /**
+ * Canonical run-step success status is "completed" (src/run.mjs completeCurrentStep,
+ * src/mission-run.mjs, src/composite.mjs). "complete" is accepted as a legacy alias
+ * so older fixtures still count as accepted field work.
+ */
+function isAcceptedFieldWork(status) {
+  return status === "completed" || status === "complete";
+}
+
+/**
  * Verified events feeding reps (design: reps = training/exam/field receipts, never
  * calendar units). Sources: certification-ledger events + accepted run steps.
  */
@@ -155,7 +164,7 @@ function verifiedEvents(events, runSteps) {
     }
   }
   for (const s of runSteps) {
-    if (s.status === "complete") out.push({ t: s.completedAt, kind: "field", ref: `${s.run}:${s.produces || "step"}` });
+    if (isAcceptedFieldWork(s.status)) out.push({ t: s.completedAt, kind: "field", ref: `${s.run}:${s.produces || "step"}` });
   }
   return out.sort((a, b) => String(a.t).localeCompare(String(b.t)));
 }
@@ -281,7 +290,7 @@ export function buildRecord(role, { cwd = process.cwd() } = {}) {
   for (const s of runSteps) {
     const key = s.produces || "(unspecified)";
     const row = perTaskMap.get(key) || { produces: key, complete: 0, failed: 0, blocked: 0, other: 0 };
-    if (s.status === "complete") row.complete++;
+    if (isAcceptedFieldWork(s.status)) row.complete++;
     else if (s.status === "failed") row.failed++;
     else if (s.status === "blocked") row.blocked++;
     else row.other++;
