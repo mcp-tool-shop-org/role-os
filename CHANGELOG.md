@@ -2,7 +2,25 @@
 
 ## Unreleased
 
-- Public copy is harness-agnostic: GitHub/npm/README/handbook lead with a repo-native operating layer. Claude Code adapter ships; the contracts are markdown any harness can consume. 61-role catalog kept; unroutable starter extras deferred.
+## 2.11.0
+
+Dogfood swarm `swarm-1789443181-cf62` health pass (Stages A–D) plus harness-agnostic public copy. Feature-audit is collected and parked (Law 8); leftover MED/LOW and deferred HIGH are in the swarm handoff, not this release.
+
+### Changed
+
+- Public copy is harness-agnostic: GitHub/npm/README/handbook lead with a repo-native operating layer. Claude Code adapter ships; the contracts are markdown any harness can consume. 61-role catalog kept; four unroutable starter extras deferred.
+- `roleos <verb> --help` / `-h` prints that verb's usage and exits 0 — it no longer treats `--help` as a positional (so `init`/`complete`/`swarm`/`audit`/`next` cannot mutate from a help flag).
+- Capability-gate deny hints branch: missing grant vs expired vs bad date. Unparseable `capabilities.json` names the parse failure and still denies.
+- Handbook light mode is readable. Landing ships OG tags, favicon, robots.txt, and an on-brand 404. Dossier gallery no longer claims a "fully statted" empty crew; light-theme stamps meet WCAG AA.
+
+### Fixed
+
+- Fail-closed empty-set writes: live catalog, exam jsonl, harvest corpus, `prep_inputs`, certification scoring, and `dossier/build-runtime.mjs` / `build-dossiers.mjs` refuse to overwrite a good artifact with `{}` and still exit 0.
+- Corrupt run/manifest JSON is a named path + repair hint, not a leaked `SyntaxError`. `clear-halt` on unreadable specialist state exits 1 instead of "was not halted". Session-state parse failure warns once; save is tmp+rename.
+- Certify receipts that miss the ship bar stamp `ship: false`. OOD floor eval exits 1 on conformant false-positives. Inspect-sample previews are scrubbed before stdout.
+- Starter-pack / `.claude` handbook points at in-pack `workflows/full-treatment.md` and `npx @mcptoolshop/shipcheck audit` (no bare `memory/` path consumers cannot resolve).
+
+Suite: 1569 → **1595 tests** (1592 pass, 3 skipped).
 
 ## 2.10.0
 

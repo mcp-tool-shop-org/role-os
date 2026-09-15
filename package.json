@@ -1,6 +1,6 @@
 {
   "name": "role-os",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "description": "Role OS — a repo-native operating layer that staffs coding-agent work through 61 role contracts, packs, missions, conflict detection, escalation, and structured evidence. Claude Code adapter ships; the contracts are markdown any harness can consume.",
   "homepage": "https://mcp-tool-shop-org.github.io/role-os/",
   "bugs": {
