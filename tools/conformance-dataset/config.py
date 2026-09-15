@@ -17,6 +17,10 @@ VERDICTS = ("conformant", "nonconformant", "abstain")
 # than a false "nonconformant" (a good call needlessly blocked). Eval weights false-conformants this ×.
 COST_FP_OVER_FN = 5
 
+# Certification ship bar (v0.2 honest bar): a scored run with more false-conformants than this
+# is not a ship. certify_conformance.py / dogfood_conformance.py exit 1 and skip --out when exceeded.
+MAX_FALSE_CONFORMANT = 0
+
 SYSTEM_PROMPT = (
     "You are a Tool-Call Conformance Verifier. Given a TOOL (its name, contract, and parameter schema) "
     "and a proposed CALL (the arguments), decide whether the call conforms to BOTH the schema and the "

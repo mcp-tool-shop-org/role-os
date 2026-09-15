@@ -47,6 +47,15 @@ def query(endpoint, evidence, claim, timeout=120):
         return json.loads(r.read())["choices"][0]["message"]["content"]
 
 
+def fail_unscored(label, n, errors, reason):
+    # Transport-dead / empty cases is not a 0-FC receipt — stderr only, no --out.
+    print(json.dumps({
+        "label": label, "n": n, "query_errors": errors,
+        "scored": False, "status": "unscored", "reason": reason,
+    }, indent=2), file=sys.stderr)
+    sys.exit(1)
+
+
 def parse_verdict(text):
     if "</think>" in text:
         text = text.split("</think>")[-1]
@@ -74,6 +83,8 @@ def main():
     a = ap.parse_args()
 
     cases = [json.loads(l) for l in open(a.cases, encoding="utf-8") if l.strip()]
+    if not cases:
+        fail_unscored(a.label, 0, 0, "empty cases — dogfood UNSCORED, not a 0-FC receipt")
     by_class = collections.defaultdict(lambda: {"hits": 0, "n": 0, "fc": 0, "atrisk": 0})
     group_ok = []          # one bool per tool case (flip-consistency unit)
     fc_total = atrisk_total = errors = 0
@@ -107,6 +118,14 @@ def main():
         if (gi + 1) % 10 == 0:
             print(f"  [{a.label}] {gi+1}/{len(cases)} groups scored", flush=True)
 
+    if n_items == 0:
+        fail_unscored(a.label, len(cases), errors, "no items scored — dogfood UNSCORED, not a 0-FC receipt")
+    if errors > 0:
+        fail_unscored(
+            a.label, len(cases), errors,
+            "query_errors>0 (transport-dead or partial) — dogfood UNSCORED, not a 0-FC receipt",
+        )
+
     res = {
         "label": a.label, "cases": len(cases), "items": n_items, "query_errors": errors,
         "accuracy": round(n_hits / n_items, 3) if n_items else 0.0,
@@ -123,6 +142,12 @@ def main():
         print("\nFALSE CONFORMANTS (bad calls waved through):")
         for d in details:
             print(f"  [{d['class']}] {d['tool']}: said conformant for {json.dumps(d['args'])}")
+    if fc_total > config.MAX_FALSE_CONFORMANT:
+        print(
+            f"ANDON: false_conformant={fc_total} exceeds ship bar {config.MAX_FALSE_CONFORMANT} — --out not written",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     if a.out:
         json.dump(res, open(a.out, "w"), indent=2)
 

@@ -16,7 +16,14 @@ import { dirname, join } from "node:path";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const P = (f) => join(HERE, f);
-const corpus = JSON.parse(readFileSync(P("effective_corpus.json"), "utf-8"));
+const corpusLoaded = JSON.parse(readFileSync(P("effective_corpus.json"), "utf-8"));
+const corpus = Array.isArray(corpusLoaded) ? corpusLoaded : [];
+// Empty corpus yields catalog={} and fp=0 — refuse before any write so a good
+// catalog is not overwritten with {}.
+if (corpus.length === 0) {
+  console.error("EMPTY GROUND: effective_corpus.json is empty — tool-constraints.json NOT written");
+  process.exit(1);
+}
 const raw = JSON.parse(readFileSync(P("tool_constraints_raw.json"), "utf-8"));
 const l4Of = (t) => t.l4_violations || (t.l4_violation ? [t.l4_violation] : []);
 
@@ -52,10 +59,22 @@ for (const t of corpus) {
   if (r.verdict === "nonconformant") { fp++; console.log(`  !! FP ${t.name}: ${r.violations.join("; ")}`); }
 }
 
-// ANDON: a catalog that false-flags a known-good call must never ship — hard-fail BEFORE the
+// ANDON: a catalog that false-flags a known-good call, or that is empty because
+// the ground set / coverage collapsed, must never ship — hard-fail BEFORE the
 // write, mirroring live-tools/build_live_contracts.mjs.
+const rawConstraintCount = Object.values(raw || {}).reduce(
+  (n, a) => n + ((a && a.constraints) || []).length, 0,
+);
 if (fp > 0) {
   console.error(`FP GATE FAILED: ${fp} conformant call(s) false-flagged by the final catalog — tool-constraints.json NOT written.`);
+  process.exit(1);
+}
+if (Object.keys(catalog).length === 0) {
+  console.error("EMPTY CATALOG: no tool kept a valid constraint — tool-constraints.json NOT written.");
+  process.exit(1);
+}
+if (kept === 0 && rawConstraintCount > 0) {
+  console.error("COVERAGE COLLAPSE: all authored constraints dropped — tool-constraints.json NOT written.");
   process.exit(1);
 }
 

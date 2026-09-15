@@ -13,6 +13,10 @@
  *   3. COVERAGE: report which known violation calls the surviving floor (schema + contract) catches.
  *   4. FINAL FP GATE: the assembled catalog must flag ZERO conformant calls (schema + contract).
  *      Exit 1 BEFORE any write — a failing build must not touch the existing catalog.
+ *   5. EMPTY-GROUND / EMPTY-CATALOG / COVERAGE-COLLAPSE: refuse to write when tools.json.tools
+ *      is empty, the catalog has no keys, or every authored constraint was dropped (kept===0
+ *      while raw constraints existed). An empty ground set yields fp=0 and must not overwrite
+ *      a good catalog with {}.
  *
  * Unlike the corpus reference catalog (contract-only, tools with >=1 constraint), the LIVE catalog
  * includes EVERY tool with its params so the deterministic SCHEMA floor (required/type/enum/max) also
@@ -28,7 +32,14 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const P = (f) => join(HERE, f);
 const J = (f) => JSON.parse(readFileSync(P(f), "utf-8"));
 
-const ground = J("tools.json").tools;
+const loadedGround = J("tools.json").tools;
+const ground = Array.isArray(loadedGround) ? loadedGround : [];
+// Empty ground yields catalog={} and fp=0 — refuse before any write so a good
+// catalog is not overwritten with {}.
+if (ground.length === 0) {
+  console.error("EMPTY GROUND: tools.json.tools is empty — catalog NOT written");
+  process.exit(1);
+}
 const rawArr = J("raw.json"); // [{tool, constraints, state_struct, notes}]
 const exArr = J("corpus.json"); // [{tool, conformant_args[], violation_args:[{args,violates}]}]
 const byTool = Object.fromEntries(ground.map((t) => [t.name, t]));
@@ -107,11 +118,23 @@ if (coverageGaps.length) { console.log("  coverage gaps (left to the LLM ceiling
 console.log(`FINAL conformant false-positives: ${fp}  (MUST be 0)`);
 if (fpLog.length) fpLog.forEach((f) => console.log("   !! FP " + f));
 
-// ANDON: a catalog that false-flags a known-good call must never ship — hard-fail BEFORE
-// the write, matching build_tool_constraints.mjs. A failing build must not touch the
-// existing catalog that conformanceAdvisory reads at runtime.
+// ANDON: a catalog that false-flags a known-good call, or that is empty because
+// the ground set / coverage collapsed, must never ship — hard-fail BEFORE the
+// write. A failing build must not touch the existing catalog that
+// conformanceAdvisory reads at runtime.
+const rawConstraintCount = (Array.isArray(rawArr) ? rawArr : []).reduce(
+  (n, r) => n + ((r && r.constraints) || []).length, 0,
+);
 if (fp > 0) {
   console.error("FP GATE FAILED — catalog NOT written");
+  process.exit(1);
+}
+if (Object.keys(catalog).length === 0) {
+  console.error("EMPTY CATALOG — catalog NOT written");
+  process.exit(1);
+}
+if (kept === 0 && rawConstraintCount > 0) {
+  console.error("COVERAGE COLLAPSE: all authored constraints dropped — catalog NOT written");
   process.exit(1);
 }
 

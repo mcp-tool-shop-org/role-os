@@ -25,6 +25,15 @@ def query(endpoint, evidence, claim, timeout=120):
         return json.loads(r.read())["choices"][0]["message"]["content"]
 
 
+def fail_unscored(label, n, errors, reason):
+    # Transport-dead / empty exam is not a 0-FC receipt — stderr only, no --out.
+    print(json.dumps({
+        "label": label, "n": n, "query_errors": errors,
+        "scored": False, "status": "unscored", "reason": reason,
+    }, indent=2), file=sys.stderr)
+    sys.exit(1)
+
+
 def parse_verdict(text):
     if "</think>" in text:
         text = text.split("</think>")[-1]
@@ -64,6 +73,8 @@ def main():
     a = ap.parse_args()
 
     recs = [json.loads(l) for l in open(a.exam, encoding="utf-8") if l.strip()]
+    if not recs:
+        fail_unscored(a.label, 0, 0, "empty exam — certification UNSCORED, not a 0-FC receipt")
     by_level = collections.defaultdict(list)
     groups = collections.defaultdict(list)
     group_level = {}
@@ -89,6 +100,12 @@ def main():
         if (i + 1) % 25 == 0:
             print(f"  [{a.label}] {i+1}/{len(recs)} scored", flush=True)
 
+    if errors > 0:
+        fail_unscored(
+            a.label, len(recs), errors,
+            "query_errors>0 (transport-dead or partial) — certification UNSCORED, not a 0-FC receipt",
+        )
+
     res = {"label": a.label, "n": len(recs), "query_errors": errors, "cost_fp_over_fn": COST_FP, "rungs": {}}
     for lvl in sorted(by_level):
         hits = by_level[lvl]
@@ -112,6 +129,13 @@ def main():
     res["false_conformant_total"] = n_fp
     res["false_conformant_rate_overall"] = round(n_fp / sum(danger_n.values()), 3) if sum(danger_n.values()) else 0.0
     res["cost_weighted_error"] = round(weighted_err, 4)
+    if n_fp > config.MAX_FALSE_CONFORMANT:
+        print(json.dumps(res, indent=2))
+        print(
+            f"ANDON: false_conformant_total={n_fp} exceeds ship bar {config.MAX_FALSE_CONFORMANT} — --out not written",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     print(json.dumps(res, indent=2))
     if a.out:
         json.dump(res, open(a.out, "w"), indent=2)

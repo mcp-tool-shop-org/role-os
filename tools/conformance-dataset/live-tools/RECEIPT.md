@@ -62,9 +62,11 @@ cd ../../.. && node --test test/live-tool-contracts.test.mjs
 - **PIN_PER_STEP — 3.** Each agent step pins model (inherited session model) + a fixed prompt + a
   StructuredOutput schema; workflow scripts are persisted (`wf_721b6bef-1b9`, `wf_85b15fb0-93e`) and
   resumable; the deterministic build is pure over committed inputs (`tools.json`/`raw.json`/`corpus.json`).
-- **ANDON_AUTHORITY — 3.** The build's FP gate `process.exit(1)` runs BEFORE any write and halts on
-  any conformant false-positive; a failing build leaves the existing catalog untouched. The CI test
-  fails the suite on the same invariant. A defect cannot propagate to a shipped catalog.
+- **ANDON_AUTHORITY — 3.** The build's gates `process.exit(1)` run BEFORE any write and halt on a
+  conformant false-positive, an empty ground set (`tools.json.tools === []`), an empty catalog, or a
+  coverage collapse (every authored constraint dropped). A failing build leaves the existing catalog
+  untouched. The CI test fails the suite on the 0-FP invariant. A defect cannot propagate to a
+  shipped catalog.
 - **NAMED_COMPENSATORS — 2 (skip: no irreversible tool call performed here).** This run writes only
   working-tree files; nothing published, pushed, or tagged. Compensator for the live catalog: `git checkout
   -- .claude/role-os/tool-contracts.json` (or delete the file → loadToolContracts returns {} → dormant). The
