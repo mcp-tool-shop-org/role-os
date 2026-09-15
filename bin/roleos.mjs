@@ -29,8 +29,12 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8")).version;
 
-function printHelp() {
-  console.log(`
+function isHelpFlag(arg) {
+  return arg === "--help" || arg === "-h";
+}
+
+function helpCatalog() {
+  return `
 roleos v${VERSION} — Role OS bootstrap CLI
 
 Usage:
@@ -88,37 +92,103 @@ Usage:
   roleos specialist clear-halt <r>    Clear a shadow-probe halt on a role
   roleos crew                         Crew report — grades (by basis), reps, techniques per role
   roleos crew <role>                  Full sheet: grade band, verbatim dispatch profile, the Record
+  roleos crew --programs              Curriculum tech tree (S6 training programs)
+  roleos crew --preview <technique>   Recipe preview for one technique
   roleos mission list                List all missions
   roleos mission show <key>          Show full mission detail
   roleos mission suggest <text>      Suggest a mission for a task
   roleos mission validate [key]      Validate mission wiring
   roleos doctor                      Verify repo is wired for Role OS sessions
   roleos help                        Show this help
+  roleos --version, -v               Print version
+  roleos --debug                     Dump stack traces on errors
 
 Verdicts: accept | accept-with-notes | reject | blocked
-`);
+`;
+}
+
+function printHelp(write = console.log) {
+  write(helpCatalog());
+}
+
+/** Catalog lines for one verb (`roleos run`, `roleos run list`, …). */
+function usageLinesFor(verb) {
+  if (!verb) return "";
+  const prefix = `roleos ${verb}`;
+  return helpCatalog()
+    .split("\n")
+    .filter((line) => {
+      const trimmed = line.trimStart();
+      return trimmed === prefix || trimmed.startsWith(`${prefix} `);
+    })
+    .join("\n");
+}
+
+/**
+ * Per-verb help. Swarm/audit already ship cmdHelp behind a `help` subcommand —
+ * `--help`/`-h` must reach that, never cmdRun.
+ */
+async function printVerbHelp(verb, write = console.log) {
+  if (verb === "swarm") {
+    await swarmCommand(["help"]);
+    return;
+  }
+  if (verb === "audit") {
+    await auditCommand(["help"]);
+    return;
+  }
+  if (verb === "specialist") {
+    await specialistCommand(["help"]);
+    return;
+  }
+  if (!verb || verb === "help" || isHelpFlag(verb)) {
+    printHelp(write);
+    return;
+  }
+  const lines = usageLinesFor(verb);
+  if (lines) {
+    write(`\nroleos ${verb}\n\nUsage:\n${lines}\n`);
+  } else {
+    printHelp(write);
+  }
 }
 
 /**
  * Structured error output. Matches shipcheck error shape:
  * code, message, hint, cause?, retryable?
+ *
+ * Usage errors print the human usage block on stderr. `--json` keeps the
+ * machine blob; `--debug` dumps a stack.
  */
 function handleError(err) {
   const isUserError = err.exitCode === 1;
   const code = isUserError ? "USER_ERROR" : "RUNTIME_ERROR";
   const exitCode = isUserError ? 1 : 2;
+  const jsonMode = process.argv.includes("--json");
 
   if (process.argv.includes("--debug")) {
     console.error(err.stack || err);
-  } else {
+    process.exit(exitCode);
+  }
+
+  if (jsonMode || !isUserError) {
     console.error(JSON.stringify({
       code,
       message: err.message,
       hint: err.hint || null,
       retryable: false,
     }));
+    process.exit(exitCode);
   }
 
+  const lines = usageLinesFor(command);
+  if (lines) {
+    console.error(`\nUsage:\n${lines}\n`);
+  } else {
+    printHelp(console.error);
+  }
+  console.error(`${code}: ${err.message}`);
+  if (err.hint) console.error(err.hint);
   process.exit(exitCode);
 }
 
@@ -126,6 +196,12 @@ const command = process.argv[2] || "help";
 const args = process.argv.slice(3);
 
 try {
+  // Post-verb --help/-h: print that verb's usage and exit 0. Never dispatch.
+  if (args.some(isHelpFlag)) {
+    await printVerbHelp(command);
+    process.exit(0);
+  }
+
   switch (command) {
     case "start":
       await startCommand(args);

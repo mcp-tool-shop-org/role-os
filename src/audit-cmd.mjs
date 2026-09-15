@@ -55,10 +55,12 @@ export async function auditCommand(args) {
     case "verify":
       return cmdVerify();
     case "help":
+    case "--help":
+    case "-h":
       return cmdHelp();
     default:
       // If the first arg isn't a subcommand, treat everything as a task description
-      if (!["run", "start", "manifest", "status", "verify", "help"].includes(sub)) {
+      if (!["run", "start", "manifest", "status", "verify", "help", "--help", "-h"].includes(sub)) {
         return cmdRun(args);
       }
       cmdHelp();

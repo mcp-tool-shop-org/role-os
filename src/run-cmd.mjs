@@ -49,10 +49,10 @@ export async function runCommand(args) {
   const cwd = getCwd();
 
   if (!args || args.length === 0) {
-    console.log("Usage: roleos run \"<task description>\"");
-    console.log("       roleos run list");
-    console.log("       roleos run show <id>");
-    return;
+    console.error("Usage: roleos run \"<task description>\"");
+    console.error("       roleos run list");
+    console.error("       roleos run show <id>");
+    process.exit(1);
   }
 
   const sub = args[0];
