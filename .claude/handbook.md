@@ -17,8 +17,8 @@ Each role has a contract: what it owns, what it must produce, when to escalate. 
 ## What Role OS does not own
 
 - **Claude project memory** — where it exists, Claude project memory is the canonical continuity layer. Role OS integrates with it, does not duplicate it.
-- **Full treatment protocol** — the canonical 7-phase protocol lives in Claude project memory (`memory/full-treatment.md`). Role OS routes and reviews treatments, it does not redefine them.
-- **Shipcheck** — the 31-item quality gate that runs before full treatment. Canonical reference: `memory/shipcheck.md`.
+- **Full treatment protocol** — the complete 7-phase protocol is `workflows/full-treatment.md` in this pack. Role OS routes and reviews treatments, it does not redefine them.
+- **Shipcheck** — the 31-item quality gate that runs before full treatment. Canonical command: `npx @mcptoolshop/shipcheck audit`.
 
 ## Use it for
 
@@ -48,7 +48,7 @@ Each role has a contract: what it owns, what it must produce, when to escalate. 
 
 Shipcheck runs first (`npx @mcptoolshop/shipcheck audit` must exit 0). Then the canonical 7-phase treatment protocol executes. Role OS adds role contracts, handoffs, and review gates to each phase — it does not replace the protocol.
 
-See `workflows/full-treatment.md` for the integration reference.
+See `workflows/full-treatment.md` for the complete 7-phase protocol.
 
 ## Review and escalation
 
