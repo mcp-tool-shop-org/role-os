@@ -10,6 +10,9 @@
  * 4. Composite artifact ledger integration
  */
 
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { resolve, relative, isAbsolute } from "node:path";
+
 // ── Per-role artifact contracts ───────────────────────────────────────────────
 
 /**
@@ -463,6 +466,47 @@ export function validateArtifact(roleName, artifactContent) {
     warnings,
     contract,
   };
+}
+
+/**
+ * If `artifact` is an existing file path under `cwd`, return that file's
+ * contents; otherwise return the string as inline content.
+ * Same resolve+exists pattern as swarm-cmd cmdFindings, with a containment
+ * check so a path outside cwd is never read.
+ *
+ * @param {string} artifact
+ * @param {string} [cwd]
+ * @returns {string}
+ */
+export function resolveArtifactContent(artifact, cwd) {
+  if (typeof artifact !== "string" || !artifact || !cwd) return artifact;
+  try {
+    const artifactPath = resolve(cwd, artifact);
+    const root = resolve(cwd);
+    const rel = relative(root, artifactPath);
+    if (rel.startsWith("..") || isAbsolute(rel)) return artifact;
+    if (!existsSync(artifactPath)) return artifact;
+    if (!statSync(artifactPath).isFile()) return artifact;
+    return readFileSync(artifactPath, "utf8");
+  } catch {
+    return artifact;
+  }
+}
+
+/**
+ * Print missing[] and warnings[] from artifact validation (warn, don't block).
+ * @param {{ valid?: boolean, missing?: string[], warnings?: string[] }|null|undefined} validation
+ */
+export function warnArtifactValidation(validation) {
+  if (!validation) return;
+  if (Array.isArray(validation.missing) && validation.missing.length > 0) {
+    console.log(`Artifact validation warning: missing sections: ${validation.missing.join(", ")}`);
+  }
+  if (Array.isArray(validation.warnings)) {
+    for (const w of validation.warnings) {
+      console.log(`  ! ${w}`);
+    }
+  }
 }
 
 // ── Pack-level handoff contracts ──────────────────────────────────────────────

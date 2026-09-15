@@ -24,6 +24,8 @@ import {
   getPosition, explainRun, formatNext, generateReport, formatReport,
   loadRun, listRuns, findActiveRun, measureFriction, saveRun,
 } from "./run.mjs";
+import { warnArtifactValidation } from "./artifacts.mjs";
+import { formatBuildGateStatus } from "./swarm/build-gate.mjs";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -236,6 +238,8 @@ export async function completeCommand(args) {
 
   const step = completeCurrentStep(run, artifact, note, cwd);
   console.log(`Completed step ${step.index}: ${step.role} → ${step.produces}`);
+  warnArtifactValidation(step.artifactValidation);
+  if (step.buildGateResult) console.log(formatBuildGateStatus(step.buildGateResult));
 
   const pos = getPosition(run);
   if (pos.nextStep) {
