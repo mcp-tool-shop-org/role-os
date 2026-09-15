@@ -118,7 +118,7 @@ When a step cannot proceed, use interventions:
 roleos fail partial "cannot reproduce the bug"  # Mark step as partial
 roleos retry 0                                   # Retry a failed step
 roleos reroute 1 "Frontend Developer" "UI issue" # Swap a role
-roleos escalate "Test" "Backend" "regression" "re-fix"  # Escalate between roles
+roleos escalate "Test Engineer" "Backend Engineer" "regression" "re-fix"  # Escalate between roles
 roleos block 2 "waiting for API spec"            # Block a step
 roleos reopen 0 "found new evidence"             # Reopen a completed step
 ```
