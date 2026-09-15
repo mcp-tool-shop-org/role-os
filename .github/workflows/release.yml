@@ -31,5 +31,20 @@ jobs:
         run: npm install -g npm@11.5.1
       - run: npm ci
       - run: npm test
+      - name: Pack (dry-run)
+        if: github.event_name != 'release'
+        run: npm pack --dry-run
+      - name: Assert package.json version matches release tag
+        if: github.event_name == 'release'
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG="${RELEASE_TAG#v}"
+          if [ "$PKG_VERSION" != "$TAG" ]; then
+            echo "package.json version ($PKG_VERSION) does not match release tag ($RELEASE_TAG)"
+            exit 1
+          fi
       - name: Publish to npm via Trusted Publishing (OIDC)
+        if: github.event_name == 'release'
         run: npm publish --provenance --access public

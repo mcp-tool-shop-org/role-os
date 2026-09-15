@@ -4,18 +4,24 @@ on:
   push:
     paths:
       - "package.json"
+      - "package-lock.json"
       - "bin/**"
       - "src/**"
       - "test/**"
       - "starter-pack/**"
+      - "tools/**"
+      - ".claude/role-os/**"
       - ".github/workflows/**"
   pull_request:
     paths:
       - "package.json"
+      - "package-lock.json"
       - "bin/**"
       - "src/**"
       - "test/**"
       - "starter-pack/**"
+      - "tools/**"
+      - ".claude/role-os/**"
       - ".github/workflows/**"
   workflow_dispatch:
 
