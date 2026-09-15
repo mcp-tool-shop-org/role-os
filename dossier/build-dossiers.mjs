@@ -72,3 +72,4 @@ for (const [id, r] of Object.entries(roster)) {
   ok++;
 }
 console.log(`dossiers: ${ok} written, ${warn} skipped → ${exDir} (judge kept as hand-authored)`);
+if (warn > 0) process.exit(1);

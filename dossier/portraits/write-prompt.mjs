@@ -12,6 +12,7 @@
  * Usage:
  *   $env:OLLAMA_API_KEY='...'; node write-prompt.mjs --id judge
  *   $env:OLLAMA_API_KEY='...'; node write-prompt.mjs --all [--model minimax-m3]
+ *   --force-seed  overwrite a frozen re-roll with the det-hash seed (default: carry it)
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -23,6 +24,7 @@ const args = process.argv.slice(2);
 const argOf = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 
 const MODEL = argOf('--model', 'minimax-m3');
+const FORCE_SEED = args.includes('--force-seed');
 const ENDPOINT = 'https://ollama.com/v1/chat/completions';
 const KEY = process.env.OLLAMA_API_KEY;
 if (!KEY) {
@@ -107,7 +109,7 @@ async function authorBlocks(r) {
 async function run() {
   mkdirSync(OUTDIR, { recursive: true });
   const idsArg = argOf('--ids');
-  const ids = args.includes('--missing')
+  let ids = args.includes('--missing')
     ? Object.keys(roster).filter((k) => !k.startsWith('_') && !existsSync(join(OUTDIR, `${k}.portrait.json`)))
     : args.includes('--all')
     ? Object.keys(roster).filter((k) => !k.startsWith('_'))
@@ -115,6 +117,22 @@ async function run() {
     ? idsArg.split(',').map((s) => s.trim()).filter(Boolean)
     : [argOf('--id')].filter(Boolean);
   if (!ids.length) { console.error('error: pass --id <role> or --all'); process.exit(1); }
+
+  // --all skips frozen re-rolls (manual seeds) unless --force-seed; they stay off the worklist.
+  if (args.includes('--all') && !FORCE_SEED) {
+    ids = ids.filter((id) => {
+      const p = join(OUTDIR, `${id}.portrait.json`);
+      if (!existsSync(p)) return true;
+      try {
+        const prev = JSON.parse(readFileSync(p, 'utf8'));
+        if (prev.params?.seed != null && prev.params.seed !== seedFor(id)) {
+          console.warn(`preserve: ${id} frozen re-roll seed ${prev.params.seed} (det-hash ${seedFor(id)}) — not re-authored`);
+          return false;
+        }
+      } catch { /* unreadable — re-author */ }
+      return true;
+    });
+  }
 
   const currentHouseSha = houseSha(house);
   if (house.sha && house.sha !== currentHouseSha) {
@@ -124,29 +142,37 @@ async function run() {
   let ok = 0, fail = 0;
   for (const id of ids) {
     const r = roster[id];
-    if (!r) { console.error(`skip: no roster entry "${id}"`); continue; }
+    if (!r) { console.error(`skip: no roster entry "${id}"`); fail++; continue; }
     const outPath = join(OUTDIR, `${id}.portrait.json`);
     // Seed-mismatch guard: never silently change a frozen portrait identity.
+    let seed = seedFor(id);
+    let prev = null;
     if (existsSync(outPath)) {
-      try {
-        const prev = JSON.parse(readFileSync(outPath, 'utf8'));
-        if (prev.params?.seed != null && prev.params.seed !== seedFor(id)) {
-          console.warn(`warn: ${id} existing brief carries a re-rolled seed ${prev.params.seed} (det-hash would be ${seedFor(id)}). Re-authoring writes the det-hash seed and CHANGES the portrait identity — carry the old seed forward manually if that render must be preserved.`);
-        }
-      } catch { /* unreadable previous brief — proceed */ }
+      try { prev = JSON.parse(readFileSync(outPath, 'utf8')); } catch { /* unreadable previous brief — proceed */ }
+    }
+    const frozenReroll = prev?.params?.seed != null && prev.params.seed !== seedFor(id);
+    if (frozenReroll && !FORCE_SEED) {
+      seed = prev.params.seed;
+      console.warn(`warn: ${id} carrying frozen re-roll seed ${seed} (det-hash would be ${seedFor(id)}); pass --force-seed to overwrite`);
+    } else if (frozenReroll && FORCE_SEED) {
+      console.warn(`warn: ${id} --force-seed replacing frozen re-roll ${prev.params.seed} with det-hash ${seed}`);
     }
     process.stdout.write(`authoring ${id} via ${MODEL} ... `);
     try {
       const blocks = await authorBlocks(r);
+      const provenance = { authored_by: MODEL, engine: 'ollama-cloud', house_style: house.direction, house_sha: currentHouseSha, frozen: true };
+      if (frozenReroll && !FORCE_SEED && prev.provenance?.seed_rerolled) {
+        provenance.seed_rerolled = prev.provenance.seed_rerolled;
+      }
       const brief = {
         schema: 'roleos-portrait/v0.1',
         id, role: r.role,
         dossier_ref: `../../examples/${id}.json`,
         blocks: { style: '$house', framing: '$house', ...blocks },
         negative: '$house',
-        params: { ...house.params, seed: seedFor(id) },
+        params: { ...house.params, seed },
         assembled: assemble(blocks),
-        provenance: { authored_by: MODEL, engine: 'ollama-cloud', house_style: house.direction, house_sha: currentHouseSha, frozen: true },
+        provenance,
         gate: { ai_eyes: ['single subject', 'chest-up framing', 'no legible text', `clearly reads as the role's function: ${r.function}`] },
       };
       writeFileSync(outPath, JSON.stringify(brief, null, 2) + '\n');
@@ -154,6 +180,10 @@ async function run() {
     } catch (e) {
       console.log('FAIL'); console.error('  ' + String(e.message || e).slice(0, 240)); fail++;
     }
+  }
+  if (fail > 0 || ok !== ids.length) {
+    console.error(`error: ${ok} ok, ${fail} failed of ${ids.length} requested → ${OUTDIR}`);
+    process.exit(1);
   }
   console.log(`\ndone: ${ok} ok, ${fail} failed → ${OUTDIR}`);
 }
