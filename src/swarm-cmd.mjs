@@ -95,9 +95,11 @@ export async function swarmCommand(args) {
     case "verify":
       return cmdVerify();
     case "help":
+    case "--help":
+    case "-h":
       return cmdHelp();
     default:
-      if (!["run", "start", "manifest", "status", "findings", "approve", "verify", "help"].includes(sub)) {
+      if (!["run", "start", "manifest", "status", "findings", "approve", "verify", "help", "--help", "-h"].includes(sub)) {
         return cmdRun(args);
       }
       cmdHelp();
