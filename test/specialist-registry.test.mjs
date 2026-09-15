@@ -101,6 +101,27 @@ describe("validateRegistry — R1 (cross-family base)", () => {
     assert.ok(errors.some((e) => /R1/.test(e)));
   });
 
+  // Production ids named by F-e760d961. Prefix-only startswith("claude-"|"anthropic/"|"anthropic.")
+  // misses the first three; a test file that only pins claude-* / anthropic/ stays green on revert.
+  const PRODUCTION_CLAUDE_IDS = [
+    "us.anthropic.claude-3-5-sonnet",
+    "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0",
+    "projects/demo/locations/us-central1/publishers/anthropic/models/claude-3-5-sonnet",
+    "anthropic.claude-3-5-sonnet-20240620-v1:0",
+  ];
+
+  it("rejects Bedrock geo, ARN, Vertex publisher, and anthropic. dotted ids", () => {
+    for (const base_model of PRODUCTION_CLAUDE_IDS) {
+      const reg = freshRegistry([freshEntry({ versions: [freshVersion({ base_model })] })]);
+      const { ok, errors } = validateRegistry(reg);
+      assert.equal(ok, false, `expected R1 reject for ${base_model}`);
+      assert.ok(
+        errors.some((e) => /R1.*Claude-family/.test(e)),
+        `expected R1 Claude-family error for ${base_model}, got: ${errors.join(" | ")}`,
+      );
+    }
+  });
+
   it("accepts Qwen3 / Gemma / Mistral", () => {
     for (const model of ["Qwen/Qwen3-7B", "google/gemma-3-9b", "mistralai/Mistral-7B"]) {
       const reg = freshRegistry([freshEntry({ versions: [freshVersion({ base_model: model })] })]);
@@ -114,6 +135,26 @@ describe("validateRegistry — R1 (cross-family base)", () => {
     assert.equal(isClaudeFamily("Claude-Opus-4-7"), true); // case-insensitive
     assert.equal(isClaudeFamily("Qwen/Qwen3-7B"), false);
     assert.equal(isClaudeFamily(undefined), false);
+    for (const id of PRODUCTION_CLAUDE_IDS) {
+      assert.equal(isClaudeFamily(id), true, `expected ${id} to be Claude-family`);
+    }
+  });
+
+  it("META: startswith(claude-|anthropic/|anthropic.) misses geo/ARN/Vertex — reverting isClaudeFamily goes RED", () => {
+    function prefixOnly(baseModel) {
+      if (typeof baseModel !== "string") return false;
+      const m = baseModel.toLowerCase();
+      return m.startsWith("claude-") || m.startsWith("anthropic/") || m.startsWith("anthropic.");
+    }
+    const bypass = PRODUCTION_CLAUDE_IDS.filter((id) => !prefixOnly(id));
+    assert.deepEqual(bypass, [
+      "us.anthropic.claude-3-5-sonnet",
+      "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0",
+      "projects/demo/locations/us-central1/publishers/anthropic/models/claude-3-5-sonnet",
+    ]);
+    for (const id of bypass) {
+      assert.equal(isClaudeFamily(id), true, `infix matcher must catch ${id}; reverting to startswith would go RED here`);
+    }
   });
 });
 
