@@ -27,11 +27,14 @@ for (const [id, arr] of Object.entries(fixes)) {
 }
 
 // deterministic final tie-break — pre-seed with judge's fixed hand-authored ideal
-const seen = new Map([['5-2-1-4-3-4', 'judge']]);
+const JUDGE_KEY = '5-2-1-4-3-4';
+const seen = new Map([[JUDGE_KEY, 'judge']]);
 let broke = 0;
+const unfixed = [];
 for (const id of Object.keys(t)) {
   let k = key(t[id].ideal);
   if (seen.has(k)) {
+    const prior = seen.get(k);
     let fixed = false;
     for (const ax of ['autonomy', 'candor', 'range', 'pace', 'rigor', 'skepticism']) {
       for (const d of [1, -1, 2, -2]) {
@@ -39,18 +42,36 @@ for (const id of Object.keys(t)) {
         if (v < 0 || v > 5) continue;
         const test = { ...t[id].ideal, [ax]: v };
         const k2 = key(test);
-        if (!seen.has(k2)) { t[id].ideal = test; k = k2; fixed = true; break; }
+        if (!seen.has(k2)) {
+          t[id].ideal = test;
+          t[id].verified = false;
+          t[id].tiebroken = { axis: ax, delta: d, collided_with: prior };
+          k = k2;
+          fixed = true;
+          break;
+        }
       }
       if (fixed) break;
     }
     if (fixed) broke++;
+    else unfixed.push({ id, prior, key: k });
   }
   seen.set(k, id);
 }
 
-writeFileSync(TUNED, JSON.stringify(t, null, 2) + '\n');
+const judgeInFile = Object.prototype.hasOwnProperty.call(t, 'judge');
 const groups = {};
+if (!judgeInFile) groups[JUDGE_KEY] = ['judge'];
 for (const id of Object.keys(t)) { const kk = key(t[id].ideal); (groups[kk] = groups[kk] || []).push(id); }
 const col = Object.values(groups).filter((v) => v.length > 1);
-console.log(`applied ${applied} verifier corrections; deterministic tie-breaks ${broke}; distinct ${Object.keys(groups).length}/${Object.keys(t).length} (excl. judge); residual collisions ${col.length}`);
-for (const v of col) console.log('  residual:', v.join(', '));
+const expected = Object.keys(t).length + (judgeInFile ? 0 : 1);
+const distinct = Object.keys(groups).length;
+if (unfixed.length || col.length || distinct !== expected) {
+  console.error(`error: residual collisions; not writing aptitude-tuned.json (distinct ${distinct}/${expected}, unfixed ${unfixed.length})`);
+  for (const v of col) console.error('  residual:', v.join(', '));
+  for (const u of unfixed) console.error(`  unfixed: ${u.id} collides with ${u.prior} at ${u.key}`);
+  process.exit(1);
+}
+
+writeFileSync(TUNED, JSON.stringify(t, null, 2) + '\n');
+console.log(`applied ${applied} verifier corrections; deterministic tie-breaks ${broke}; distinct ${distinct}/${expected} (63 tuned + judge); residual collisions 0`);

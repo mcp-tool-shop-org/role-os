@@ -4,10 +4,11 @@
 Reads portraits/renders/<id>.png (full-res masters, gitignored) and writes
 portraits/web/<id>.jpg (downscaled + recompressed, ~6 MB total, committed). Run with a
 Python that has Pillow, e.g. the ComfyUI portable interpreter:
-  & "E:\\AI-Models\\ComfyUI_windows_portable\\python_embeded\\python.exe" optimize-portraits.py
+  <the ComfyUI portable python> optimize-portraits.py
 """
 import glob
 import os
+import sys
 
 from PIL import Image
 
@@ -29,4 +30,7 @@ for f in sorted(glob.glob(os.path.join(SRC, "*.png"))):
     im.save(out, "JPEG", quality=QUALITY, optimize=True, progressive=True)
     total += os.path.getsize(out)
     count += 1
+if count == 0:
+    print("error: no portraits in portraits/renders/ — expected PNG masters to optimize", file=sys.stderr)
+    sys.exit(1)
 print(f"{count} portraits -> portraits/web/  ({total / 1024 / 1024:.1f} MB, width {WIDTH}, q{QUALITY})")

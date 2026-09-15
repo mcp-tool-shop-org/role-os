@@ -7,7 +7,7 @@
  * to /prompt, polls /history, and copies the finished PNG into renders/<id>.png.
  *
  *   COMFY_URL  (default http://127.0.0.1:8188)
- *   COMFY_OUT  (default E:\AI-Models\ComfyUI_windows_portable\ComfyUI\output)
+ *   COMFY_OUT  (required — the ComfyUI output dir; no baked-in default)
  *
  * Usage:  node render.mjs --id judge   |   node render.mjs --all
  */
@@ -21,7 +21,11 @@ const args = process.argv.slice(2);
 const argOf = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 
 const COMFY = (process.env.COMFY_URL || 'http://127.0.0.1:8188').replace(/\/$/, '');
-const COMFY_OUT = process.env.COMFY_OUT || 'E:\\AI-Models\\ComfyUI_windows_portable\\ComfyUI\\output';
+const COMFY_OUT = process.env.COMFY_OUT;
+if (!COMFY_OUT) {
+  console.error('error: set COMFY_OUT to the ComfyUI output dir');
+  process.exit(1);
+}
 const LORA = argOf('--lora');
 const LORA_STR = Number(argOf('--lora-strength', '0.8'));
 const SUFFIX = argOf('--suffix', '');
@@ -134,7 +138,7 @@ async function run() {
   let ok = 0, fail = 0;
   for (const id of ids) {
     const briefPath = join(BRIEFS, `${id}.portrait.json`);
-    if (!existsSync(briefPath)) { console.error(`skip: no brief ${id}`); continue; }
+    if (!existsSync(briefPath)) { console.error(`skip: no brief ${id}`); fail++; continue; }
     const b = JSON.parse(readFileSync(briefPath, 'utf8'));
     if (b.provenance?.house_sha && b.provenance.house_sha !== HOUSE_SHA) {
       console.warn(`warn: ${id} brief was frozen against house sha ${b.provenance.house_sha.slice(0, 12)}… (current ${HOUSE_SHA.slice(0, 12)}…) — rendering it reproduces the OLD house style.`);
@@ -147,6 +151,10 @@ async function run() {
       if (existsSync(src)) { copyFileSync(src, dst); console.log(`ok -> renders/${id}${SUFFIX}.png`); ok++; }
       else { console.log(`FAIL — rendered (ComfyUI: ${img.subfolder}/${img.filename}) but copy source not found at ${src}`); fail++; }
     } catch (e) { console.log('FAIL'); console.error('  ' + String(e.message || e).slice(0, 280)); fail++; }
+  }
+  if (fail > 0 || ok !== ids.length) {
+    console.error(`error: ${ok} ok, ${fail} failed of ${ids.length} requested → ${RENDERS}`);
+    process.exit(1);
   }
   console.log(`\ndone: ${ok} ok, ${fail} failed → ${RENDERS}`);
 }

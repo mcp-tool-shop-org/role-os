@@ -8,7 +8,7 @@
  * bias — to get a unique, role-specific ideal. Output: aptitude-tuned.json (median + raw panel
  * readings for audit). build-dossiers.mjs then prefers these tuned ideals over the archetype prior.
  *
- * Secret: OLLAMA_API_KEY from env (never hardcode).  Usage: node tune-aptitudes.mjs [--models a,b,c]
+ * Secret: OLLAMA_API_KEY from env (never hardcode).  Usage: node tune-aptitudes.mjs [--models a,b,c] [--allow-baseline]
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -24,6 +24,7 @@ const ENDPOINT = 'https://ollama.com/v1/chat/completions';
 const PANEL = argOf('--models', 'minimax-m3,deepseek-v4-pro,glm-5.1').split(',').map((s) => s.trim());
 const AXES = ['rigor', 'pace', 'range', 'skepticism', 'autonomy', 'candor'];
 const BATCH = Number(argOf('--batch', '4'));
+const ALLOW_BASELINE = args.includes('--allow-baseline');
 
 const roster = JSON.parse(readFileSync(join(HERE, 'portraits', 'roster.json'), 'utf8'));
 delete roster._note;
@@ -69,6 +70,10 @@ async function ask(modelName, id, r) {
 
 function median(nums) { const s = nums.slice().sort((a, b) => a - b); const n = s.length; return n % 2 ? s[(n - 1) / 2] : Math.round((s[n / 2 - 1] + s[n / 2]) / 2); }
 
+function completeIdeal(ideal) {
+  return !!ideal && AXES.every((k) => Number.isFinite(ideal[k]));
+}
+
 async function tuneRole(id, r) {
   const arch = model.roleArchetype[id];
   const baseline = model.archetypes[arch];
@@ -77,21 +82,29 @@ async function tuneRole(id, r) {
   PANEL.forEach((m, i) => { panel[m] = readings[i]; if (readings[i]) valid.push(readings[i]); });
   let ideal;
   if (valid.length >= 2) { ideal = {}; for (const ax of AXES) ideal[ax] = median(valid.map((v) => v[ax])); }
-  else { ideal = { ...baseline }; } // fall back to archetype prior if the panel didn't return enough
+  else if (ALLOW_BASELINE && baseline) { ideal = { ...baseline }; }
+  else { throw new Error(`panel returned ${valid.length}/${PANEL.length} valid readings (need >=2); pass --allow-baseline to use the archetype prior`); }
+  if (!completeIdeal(ideal)) throw new Error('incomplete ideal');
   return { archetype: arch, baseline, panel, valid: valid.length, ideal };
 }
 
 async function run() {
   const ids = Object.keys(roster).filter((id) => id !== 'judge');
   const out = {};
+  let failed = 0;
   for (let i = 0; i < ids.length; i += BATCH) {
     const slice = ids.slice(i, i + BATCH);
     const results = await Promise.all(slice.map((id) => tuneRole(id, roster[id]).then((res) => [id, res]).catch((e) => { console.error(`! ${id}: ${e.message}`); return [id, null]; })));
     for (const [id, res] of results) {
-      if (!res) continue;
+      if (!res) { failed++; continue; }
       out[id] = res;
       console.log(`${id} [${res.archetype}] panel=${res.valid}/${PANEL.length} -> ${AXES.map((a) => res.ideal[a]).join('')}`);
     }
+  }
+  const weak = ids.filter((id) => !out[id] || !completeIdeal(out[id].ideal) || (out[id].valid < 2 && !ALLOW_BASELINE));
+  if (failed > 0 || weak.length || Object.keys(out).length !== ids.length) {
+    console.error(`error: tuned ${Object.keys(out).length}/${ids.length} roles (need valid>=2 and a complete ideal for every non-judge id); not writing aptitude-tuned.json`);
+    process.exit(1);
   }
   writeFileSync(join(HERE, 'aptitude-tuned.json'), JSON.stringify(out, null, 2) + '\n');
   console.log(`\ntuned: ${Object.keys(out).length} roles via panel [${PANEL.join(', ')}] -> aptitude-tuned.json`);
