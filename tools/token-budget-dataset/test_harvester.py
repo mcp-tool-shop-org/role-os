@@ -13,7 +13,7 @@ import tempfile
 
 from harvester import (
     scrub, manifest, join, config, label, freeze, puzzles, parse_outcomes,
-    parse_transcripts, build, locate,
+    parse_transcripts, build, locate, inspect_sample,
 )
 
 FAILS = []
@@ -480,6 +480,25 @@ def test_freeze_empty_frozen_refuses_write():
         check("prior exam intact", f.read() == marker)
 
 
+def test_inspect_sample_preview_scrubs_stdout():
+    """Receipt: GH-token / Users-path fixtures must be absent from captured stdout."""
+    print("test_inspect_sample_preview_scrubs_stdout")
+    import io
+    from contextlib import redirect_stdout
+    gh = "ghp_" + ("A" * 36)
+    users_path = "C:" + "\\" + "Users" + "\\" + "acct\\.claude\\agent.jsonl"
+    rec = {"task_text": "fix " + gh + " at " + users_path}
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        inspect_sample.print_task_preview(rec)
+    stdout = buf.getvalue()
+    check("GH token absent from stdout", gh not in stdout)
+    check("ghp_ prefix absent from stdout", "ghp_" not in stdout)
+    check("Users path absent from stdout", "Users" not in stdout)
+    check("acct fragment absent from stdout", "acct" not in stdout)
+    check("placeholder present after scrub", "<GH_TOKEN>" in stdout and "<PATH>" in stdout)
+
+
 def test_puzzles_empty_refuses_write():
     print("test_puzzles_empty_refuses_write")
     d = tempfile.mkdtemp()
@@ -511,6 +530,7 @@ def main():
               test_roleos_receipt_outcomes,
               test_empty_harvest_refuses_overwrite, test_refuse_empty_write_gates,
               test_skipped_parse_counts, test_freeze_empty_frozen_refuses_write,
+              test_inspect_sample_preview_scrubs_stdout,
               test_puzzles_empty_refuses_write):
         t()
     print()

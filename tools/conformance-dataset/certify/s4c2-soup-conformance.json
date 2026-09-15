@@ -1,5 +1,5 @@
 {
-  "label": "s4c2-soup-conformance",
+  "label": "ANDON:s4c2-soup-conformance",
   "n": 144,
   "query_errors": 0,
   "cost_fp_over_fn": 5,
@@ -69,5 +69,9 @@
   "flip_consistency_overall": 0.944,
   "false_conformant_total": 1,
   "false_conformant_rate_overall": 0.014,
-  "cost_weighted_error": 0.0541
+  "cost_weighted_error": 0.0541,
+  "ship_bar": 0,
+  "ship": false,
+  "status": "andon",
+  "scored": true
 }

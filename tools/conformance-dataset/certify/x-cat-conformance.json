@@ -1,5 +1,5 @@
 {
-  "label": "x-cat-conformance",
+  "label": "ANDON:x-cat-conformance",
   "n": 144,
   "query_errors": 0,
   "cost_fp_over_fn": 5,
@@ -69,5 +69,9 @@
   "flip_consistency_overall": 0.903,
   "false_conformant_total": 4,
   "false_conformant_rate_overall": 0.056,
-  "cost_weighted_error": 0.1437
+  "cost_weighted_error": 0.1437,
+  "ship_bar": 0,
+  "ship": false,
+  "status": "andon",
+  "scored": true
 }
