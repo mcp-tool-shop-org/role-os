@@ -6,7 +6,21 @@ Run:  python -m harvester.inspect_sample [N]   (from tools/token-budget-dataset/
 import collections
 import sys
 
-from . import locate, parse_transcripts, parse_outcomes, join
+from . import locate, parse_transcripts, parse_outcomes, join, scrub
+
+PREVIEW_CHARS = 80
+
+
+def preview_task(text, n=PREVIEW_CHARS):
+    """Scrub then truncate. Truncation is not redaction — scrub first."""
+    cleaned = scrub.scrub_text(text or "", {})
+    if len(cleaned) > n:
+        return cleaned[:n] + "…"
+    return cleaned
+
+
+def print_task_preview(rec, n=PREVIEW_CHARS):
+    print(f"     task: {preview_task(rec.get('task_text'), n)!r}")
 
 
 def main(n=150):
@@ -47,7 +61,7 @@ def main(n=150):
     print("  JOIN CONFIDENCE distribution:", dict(conf_dist))
     print("  joined OUTCOME distribution:", dict(outcome_dist))
 
-    print("\n=== example confident joins (task preview redacted to 80 chars) ===")
+    print("\n=== example confident joins (task preview scrubbed then truncated to 80 chars) ===")
     for d, jr in examples:
         print(f"  dispatch={d['dispatch_id'][:18]} repo={_repo_base(d.get('cwd'))} "
               f"role={d.get('role')} sig={d['complexity_signals']}")
@@ -55,7 +69,7 @@ def main(n=150):
               f"cc={d['cache_creation_total']} cr={d['cache_read_total']}) ctx={d['context_tokens']} "
               f"tier={d['tier_used']} stop={d['final_stop_reason']}")
         print(f"     -> outcome={jr['outcome']} conf={jr['join_confidence']} matched={jr['matched']}")
-        print(f"     task: {d['task_text'][:80]!r}")
+        print_task_preview(d)
 
     # repo overlap: how many dispatch repos exist in the swarm DB at all
     swarm_repos = {r['repo_base'] for r in swarm}

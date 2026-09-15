@@ -1,5 +1,5 @@
 {
-  "label": "conformance-soup",
+  "label": "ANDON:conformance-soup",
   "n": 100,
   "query_errors": 0,
   "cost_fp_over_fn": 5,
@@ -69,5 +69,9 @@
   "flip_consistency_overall": 0.96,
   "false_conformant_total": 2,
   "false_conformant_rate_overall": 0.04,
-  "cost_weighted_error": 0.0926
+  "cost_weighted_error": 0.0926,
+  "ship_bar": 0,
+  "ship": false,
+  "status": "andon",
+  "scored": true
 }

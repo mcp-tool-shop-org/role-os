@@ -34,6 +34,7 @@ SYSTEM_PROMPT = (
 SCHEMA_FIELDS = [
     "id", "level", "type", "evidence", "claim", "verdict", "reasoning", "principle",
     "hard_negative", "corruption", "multi_hop", "source", "real_question", "split",
+    "pair_id", "contrast", "tool_key",
 ]
 # NOTE: to reuse the verifier's build/audit/certify verbatim, the TOOL+SCHEMA is serialized into
 # `evidence` and the proposed CALL into `claim` (same {evidence, claim} -> verdict contract). The

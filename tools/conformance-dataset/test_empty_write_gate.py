@@ -15,6 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import audit as A
 import build_conformance_dataset as B
+import config
 
 FAILS = []
 
@@ -35,6 +36,9 @@ def test_audit_empty_and_no_pair_id_fail():
         {"verdict": "nonconformant", "level": 1, "evidence": "e2", "split": "train", "pair_id": "p1"},
     ]
     check("flip-ready group PASS", A.audit(ready) is True)
+    check("pair_id on SCHEMA_FIELDS", "pair_id" in config.SCHEMA_FIELDS)
+    check("contrast on SCHEMA_FIELDS", "contrast" in config.SCHEMA_FIELDS)
+    check("tool_key on SCHEMA_FIELDS", "tool_key" in config.SCHEMA_FIELDS)
 
 
 def test_refuse_empty_replace():

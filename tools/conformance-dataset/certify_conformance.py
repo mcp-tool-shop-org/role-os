@@ -29,9 +29,43 @@ def fail_unscored(label, n, errors, reason):
     # Transport-dead / empty exam is not a 0-FC receipt — stderr only, no --out.
     print(json.dumps({
         "label": label, "n": n, "query_errors": errors,
-        "scored": False, "status": "unscored", "reason": reason,
+        "scored": False, "status": "unscored", "ship": False,
+        "ship_bar": config.MAX_FALSE_CONFORMANT, "reason": reason,
     }, indent=2), file=sys.stderr)
     sys.exit(1)
+
+
+def stamp_receipt(res, n_fp):
+    """Stamp a scored receipt against the ship bar. FC>bar is ANDON, never a pin."""
+    bar = config.MAX_FALSE_CONFORMANT
+    res["ship_bar"] = bar
+    res["scored"] = True
+    if n_fp > bar:
+        res["ship"] = False
+        res["status"] = "andon"
+    else:
+        res["ship"] = True
+        res["status"] = "ship"
+    return res
+
+
+def is_ship_pin(obj):
+    """A pin requires ship:true at or under ship_bar. Missing ship is not a pin."""
+    if not isinstance(obj, dict):
+        return False
+    if obj.get("scored") is False:
+        return False
+    if obj.get("ship") is not True:
+        return False
+    if obj.get("status") == "andon":
+        return False
+    bar = obj.get("ship_bar")
+    if not isinstance(bar, int):
+        return False
+    fc = obj.get("false_conformant_total")
+    if not isinstance(fc, int) or fc > bar:
+        return False
+    return True
 
 
 def parse_verdict(text):
@@ -129,14 +163,14 @@ def main():
     res["false_conformant_total"] = n_fp
     res["false_conformant_rate_overall"] = round(n_fp / sum(danger_n.values()), 3) if sum(danger_n.values()) else 0.0
     res["cost_weighted_error"] = round(weighted_err, 4)
-    if n_fp > config.MAX_FALSE_CONFORMANT:
-        print(json.dumps(res, indent=2))
+    stamp_receipt(res, n_fp)
+    print(json.dumps(res, indent=2))
+    if not res["ship"]:
         print(
-            f"ANDON: false_conformant_total={n_fp} exceeds ship bar {config.MAX_FALSE_CONFORMANT} — --out not written",
+            f"ANDON: false_conformant_total={n_fp} exceeds ship bar {res['ship_bar']} — --out not written",
             file=sys.stderr,
         )
         sys.exit(1)
-    print(json.dumps(res, indent=2))
     if a.out:
         json.dump(res, open(a.out, "w"), indent=2)
 
