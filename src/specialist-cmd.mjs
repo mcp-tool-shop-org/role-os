@@ -342,8 +342,18 @@ function clearHaltSpecialist(args) {
   const statePath = flags.state ? resolve(flags.state) : statePathFromEnv();
   const eventsPath = flags.events ? resolve(flags.events) : eventsPathFromEnv();
   let state;
-  try { state = loadState(statePath); }
-  catch { state = emptyState(); }
+  try {
+    state = loadState(statePath);
+  } catch (err) {
+    // Do not fall back to emptyState: a corrupt halt file is not "not halted".
+    const wrapped = new Error(
+      `State load error: ${statePath} — file unreadable. Repair or delete it, then retry. Refusing to clear-halt.`,
+    );
+    wrapped.exitCode = 1;
+    wrapped.code = err.code || "STATE_UNREADABLE";
+    wrapped.hint = "The specialist-state.json file could not be read, so the halt was not cleared.";
+    throw wrapped;
+  }
   const halt = getHalt(state, role);
   if (!halt.halted) {
     console.log(`role "${role}" was not halted; no action taken.`);

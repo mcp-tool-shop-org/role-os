@@ -259,7 +259,16 @@ export function saveManifest(manifest, outputDir) {
  * @returns {DispatchManifest}
  */
 export function loadManifest(path) {
-  return JSON.parse(readFileSync(path, "utf-8"));
+  const raw = readFileSync(path, "utf-8");
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const err = new Error(`Dispatch manifest unreadable: ${path} — delete or restore it`);
+    err.exitCode = 1;
+    err.code = "MANIFEST_UNREADABLE";
+    err.hint = "Delete or restore the file, then retry.";
+    throw err;
+  }
 }
 
 // ── Exports for integration ───────────────────────────────────────────────────

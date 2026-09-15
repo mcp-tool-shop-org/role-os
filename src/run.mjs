@@ -968,7 +968,16 @@ export function saveRun(cwd, run) {
 export function loadRun(cwd, id) {
   const p = runPath(cwd, id);
   if (!existsSync(p)) return null;
-  return JSON.parse(readFileSync(p, "utf-8"));
+  try {
+    return JSON.parse(readFileSync(p, "utf-8"));
+  } catch {
+    const rel = `${RUNS_DIR}/${id}.json`;
+    const err = new Error(`Run file unreadable: ${rel} — delete or restore it`);
+    err.exitCode = 1;
+    err.code = "RUN_UNREADABLE";
+    err.hint = "Delete or restore the file, then retry.";
+    throw err;
+  }
 }
 
 /**
