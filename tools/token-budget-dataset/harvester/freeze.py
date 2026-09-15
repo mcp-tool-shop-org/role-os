@@ -21,6 +21,7 @@ from .manifest import AndonHalt, _hash_records
 
 def _load_jsonl(path):
     out = []
+    skipped = 0
     if not os.path.exists(path):
         return out
     with open(path, encoding="utf-8") as f:
@@ -30,7 +31,10 @@ def _load_jsonl(path):
                 try:
                     out.append(json.loads(line))
                 except Exception:
-                    pass
+                    skipped += 1
+    if skipped:
+        raise AndonHalt(
+            f"{skipped} skipped jsonl line(s) in {path} — freeze halted, nothing written")
     return out
 
 
@@ -75,6 +79,9 @@ def freeze(resolved_path, v_dir=None):
         raise AndonHalt(f"{len(contaminating)} resolved ids are in TRAIN — exam contamination: {contaminating[:5]}")
     if {r["dispatch_id"] for r in frozen} & train_ids:
         raise AndonHalt("frozen exam overlaps train")
+    if not frozen:
+        raise AndonHalt(
+            "empty frozen exam — exam.jsonl NOT written (existing exam left untouched)")
 
     out_path = os.path.join(v_dir, "exam.jsonl")
     with open(out_path, "w", encoding="utf-8") as f:

@@ -13,7 +13,7 @@ import tempfile
 
 from harvester import (
     scrub, manifest, join, config, label, freeze, puzzles, parse_outcomes,
-    parse_transcripts,
+    parse_transcripts, build, locate,
 )
 
 FAILS = []
@@ -353,6 +353,154 @@ def test_roleos_receipt_outcomes():
         check("non-blocking escalate -> unknown", got.get("escalate") == "unknown")
 
 
+def test_empty_harvest_refuses_overwrite():
+    """Reverted-red: empty harvest used to write empty jsonl + green ANDON over a prior corpus."""
+    print("test_empty_harvest_refuses_overwrite")
+    d = tempfile.mkdtemp()
+    prior = os.path.join(d, "corpus.jsonl")
+    marker = '{"dispatch_id":"keep-me","grain":"subagent"}\n'
+    with open(prior, "w", encoding="utf-8") as f:
+        f.write(marker)
+    orig = (
+        locate.agent_transcripts, locate.session_transcripts, locate.summary,
+        parse_outcomes.load_swarm_outcomes,
+    )
+    locate.agent_transcripts = lambda: []
+    locate.session_transcripts = lambda: []
+    locate.summary = lambda: {
+        "agent_transcripts": 0, "session_transcripts": 0, "swarm_db_exists": False,
+        "readouts_verdict_files": 0, "roleos_verdict_files": 0, "roleos_citation_receipts": 0,
+    }
+    parse_outcomes.load_swarm_outcomes = lambda: []
+    raised = False
+    try:
+        try:
+            build.run(out_dir=d)
+        except manifest.AndonHalt:
+            raised = True
+    finally:
+        (locate.agent_transcripts, locate.session_transcripts, locate.summary,
+         parse_outcomes.load_swarm_outcomes) = orig
+    check("empty harvest AndonHalt", raised)
+    with open(prior, encoding="utf-8") as f:
+        check("prior corpus intact", f.read() == marker)
+    for name in ("train.jsonl", "audit.jsonl", "exam_pool.jsonl", "manifest.json"):
+        check(f"{name} not written", not os.path.exists(os.path.join(d, name)))
+
+
+def test_refuse_empty_write_gates():
+    print("test_refuse_empty_write_gates")
+    d = tempfile.mkdtemp()
+    loc_ok = {"agent_transcripts": 3}
+    raised = False
+    try:
+        build.refuse_empty_write([], loc_ok, d)
+    except manifest.AndonHalt:
+        raised = True
+    check("len(final)==0 AndonHalt", raised)
+
+    prior = os.path.join(d, "corpus.jsonl")
+    with open(prior, "w", encoding="utf-8") as f:
+        f.write('{"dispatch_id":"keep"}\n')
+    raised = False
+    try:
+        build.refuse_empty_write([{"dispatch_id": "x"}], {"agent_transcripts": 0}, d)
+    except manifest.AndonHalt:
+        raised = True
+    check("0 agent transcripts + prior corpus AndonHalt", raised)
+    with open(prior, encoding="utf-8") as f:
+        check("prior still intact after 0-transcript halt", "keep" in f.read())
+
+    raised = False
+    try:
+        build.refuse_empty_write(
+            [{"dispatch_id": "x"}], loc_ok, d,
+            {"skipped_lines": 2, "skipped_files": 0})
+    except manifest.AndonHalt:
+        raised = True
+    check("skipped_lines AndonHalt", raised)
+
+    raised = False
+    try:
+        build.refuse_empty_write(
+            [{"dispatch_id": "x"}], loc_ok, d,
+            {"skipped_lines": 0, "skipped_files": 1})
+    except manifest.AndonHalt:
+        raised = True
+    check("skipped_files AndonHalt", raised)
+
+    no_raise = True
+    try:
+        build.refuse_empty_write(
+            [{"dispatch_id": "x"}], loc_ok, d,
+            {"skipped_lines": 0, "skipped_files": 0})
+    except manifest.AndonHalt:
+        no_raise = False
+    check("non-empty clean harvest allowed", no_raise)
+
+
+def test_skipped_parse_counts():
+    print("test_skipped_parse_counts")
+    d = tempfile.mkdtemp()
+    bad = os.path.join(d, "agent-bad.jsonl")
+    with open(bad, "w", encoding="utf-8") as f:
+        f.write("{not-json\n")
+        f.write('{"type":"system","agentId":"a1","sessionId":"s1"}\n')
+    stats = {"skipped_lines": 0, "skipped_files": 0}
+    parse_transcripts.parse_agent_transcript(bad, stats)
+    check("skipped_lines counted", stats["skipped_lines"] >= 1)
+
+    missing = os.path.join(d, "no-such.jsonl")
+    stats2 = {"skipped_lines": 0, "skipped_files": 0}
+    parse_transcripts.parse_agent_transcript(missing, stats2)
+    check("skipped_files counted on missing path", stats2["skipped_files"] >= 1)
+
+
+def test_freeze_empty_frozen_refuses_write():
+    print("test_freeze_empty_frozen_refuses_write")
+    d = tempfile.mkdtemp()
+    exam_path = os.path.join(d, "exam.jsonl")
+    marker = '{"dispatch_id":"keep-exam"}\n'
+    with open(exam_path, "w", encoding="utf-8") as f:
+        f.write(marker)
+    _write_jsonl(os.path.join(d, "corpus.jsonl"), [{"dispatch_id": "agent-A"}])
+    _write_jsonl(os.path.join(d, "train.jsonl"), [])
+    _write_jsonl(os.path.join(d, "exam_pool.jsonl"), [])
+    rp = os.path.join(d, "exam_resolved.jsonl")
+    _write_jsonl(rp, [{"dispatch_id": "stray-Z", "harvester_outcome": "success",
+                       "human_outcome": "success", "confirmed": True, "note": "",
+                       "reviewed_at": "2026-06-04T00:00:00Z", "reviewer": "anon"}])
+    raised = False
+    try:
+        freeze.freeze(rp, v_dir=d)
+    except manifest.AndonHalt:
+        raised = True
+    check("empty frozen AndonHalt", raised)
+    with open(exam_path, encoding="utf-8") as f:
+        check("prior exam intact", f.read() == marker)
+
+
+def test_puzzles_empty_refuses_write():
+    print("test_puzzles_empty_refuses_write")
+    d = tempfile.mkdtemp()
+    pz = os.path.join(d, "puzzles")
+    os.makedirs(pz)
+    exam_path = os.path.join(pz, "puzzles_exam.jsonl")
+    marker = '{"id":"keep-pz"}\n'
+    with open(exam_path, "w", encoding="utf-8") as f:
+        f.write(marker)
+    open(os.path.join(d, "corpus.jsonl"), "w", encoding="utf-8").close()
+    open(os.path.join(d, "exam_pool.jsonl"), "w", encoding="utf-8").close()
+    raised = False
+    try:
+        puzzles.write_dataset(v_dir=d)
+    except manifest.AndonHalt:
+        raised = True
+    check("empty puzzles AndonHalt", raised)
+    with open(exam_path, encoding="utf-8") as f:
+        check("prior puzzle exam intact", f.read() == marker)
+
+
 def main():
     for t in (test_scrub_redacts_real_secrets, test_andon_catches_unscrubbed_secret,
               test_contamination_check_raises, test_canon_truncation,
@@ -360,7 +508,10 @@ def main():
               test_parse_role_signals_live_brief, test_join_does_not_overclaim,
               test_freeze_folds_human_verdicts,
               test_puzzles_self_check, test_scrub_record_drops_internal_fields,
-              test_roleos_receipt_outcomes):
+              test_roleos_receipt_outcomes,
+              test_empty_harvest_refuses_overwrite, test_refuse_empty_write_gates,
+              test_skipped_parse_counts, test_freeze_empty_frozen_refuses_write,
+              test_puzzles_empty_refuses_write):
         t()
     print()
     if FAILS:

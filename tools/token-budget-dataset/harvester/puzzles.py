@@ -21,6 +21,7 @@ import re
 import statistics
 
 from . import config
+from .manifest import AndonHalt
 
 W = config.PRICE_WEIGHTS
 CAPS = {1: 120, 2: 80, 3: 120, 4: 9999, 5: 100}   # L4 = all real ran-out cases
@@ -174,6 +175,8 @@ def generate_all(v_dir=None):
         if os.path.exists(os.path.join(v_dir, "exam_pool.jsonl")) else set()
     subs = [r for r in recs if r.get("grain") == "subagent" and (r.get("cost_weighted_spend") or 0) > 0]
     subs.sort(key=lambda r: r["cost_weighted_spend"])
+    if not recs or not subs:
+        return []
     puzzles = []
 
     # L1
@@ -229,6 +232,10 @@ def write_dataset(v_dir=None):
 
     train = [p for p in puzzles if p["split"] == "train"]
     exam = [p for p in puzzles if p["split"] == "exam"]
+    if not puzzles or not train or not exam:
+        raise AndonHalt(
+            f"empty puzzles (total={len(puzzles)} train={len(train)} exam={len(exam)}) — "
+            "refuse write; existing puzzle jsonl left untouched")
     dump(os.path.join(out_dir, "puzzles.jsonl"), puzzles)
     dump(os.path.join(out_dir, "puzzles_train.jsonl"), train)
     dump(os.path.join(out_dir, "puzzles_exam.jsonl"), exam)

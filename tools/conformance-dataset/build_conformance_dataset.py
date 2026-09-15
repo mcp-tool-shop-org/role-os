@@ -71,6 +71,19 @@ def _write_jsonl(path, rows):
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
 
 
+def refuse_empty_replace(recs, train, exam):
+    """After audit PASS, an empty recs/train/exam must not replace a previously-good jsonl."""
+    if not recs or not train or not exam:
+        print(
+            "EMPTY SET — jsonl files NOT written "
+            f"(recs={len(recs)} train={len(train)} exam={len(exam)}; "
+            "existing exam/train left untouched)",
+            file=sys.stderr,
+        )
+        return False
+    return True
+
+
 def main():
     recs, n_tools = build()
     for i, p in enumerate(recs):
@@ -90,6 +103,8 @@ def main():
     if not ok:
         # Failing build must not replace a previously-good exam/train.
         print("AUDIT FAIL — jsonl files NOT written (existing exam/train left untouched)", file=sys.stderr)
+        sys.exit(1)
+    if not refuse_empty_replace(recs, train, exam):
         sys.exit(1)
 
     names = (
