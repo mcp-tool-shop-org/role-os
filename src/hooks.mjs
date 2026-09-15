@@ -19,7 +19,7 @@
  * - Stop: prevent false completion
  */
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { schemaFloor, contractFloor } from "./specialist/conformance-consult.mjs";
 import { capabilityGate } from "./specialist/capability-gate.mjs";
@@ -89,6 +89,24 @@ export function generateHooksConfig() {
 const SESSION_STATE_FILE = ".claude/hooks/session-state.json";
 
 /**
+ * One-time stderr warning (marker-file throttled, same contract as the generated PreToolUse hook).
+ * Degraded hook behavior must be visible, but must not spam every call.
+ */
+function warnOnce(cwd, key, message) {
+  let line = "[role-os hook] " + message;
+  try {
+    const dir = join(cwd, ".claude", "hooks");
+    mkdirSync(dir, { recursive: true });
+    const marker = join(dir, "." + key + ".warned");
+    if (existsSync(marker)) return;
+    writeFileSync(marker, new Date().toISOString() + " " + message + "\n");
+  } catch (err) {
+    line += " (warn-marker write failed: " + err.message + ")";
+  }
+  process.stderr.write(line + "\n");
+}
+
+/**
  * Read or create session state.
  * @param {string} cwd
  * @returns {object}
@@ -115,20 +133,34 @@ export function getSessionState(cwd) {
       if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
         return { ...defaults, ...parsed };
       }
-    } catch { /* fall through */ }
+    } catch {
+      warnOnce(
+        cwd,
+        "session-state-unreadable",
+        "session-state.json was unreadable — continuing with defaults. Delete or restore .claude/hooks/session-state.json so route-card reminders reflect real session state.",
+      );
+    }
   }
   return defaults;
 }
 
 /**
- * Save session state.
+ * Save session state (tmp + rename). On rename failure the previous file is kept.
  * @param {string} cwd
  * @param {object} state
  */
 export function saveSessionState(cwd, state) {
   const dir = join(cwd, ".claude", "hooks");
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(cwd, SESSION_STATE_FILE), JSON.stringify(state, null, 2));
+  const target = join(cwd, SESSION_STATE_FILE);
+  const tmp = target + ".tmp";
+  writeFileSync(tmp, JSON.stringify(state, null, 2));
+  try {
+    renameSync(tmp, target);
+  } catch (err) {
+    try { unlinkSync(tmp); } catch { /* leftover tmp is harmless; previous file kept */ }
+    throw err;
+  }
 }
 
 // ── Hook logic ────────────────────────────────────────────────────────────────
@@ -385,10 +417,34 @@ function generateSessionStartScript() {
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+let input = {};
+let stdinUnreadable = false;
+try {
+  input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+  if (!input || typeof input !== "object" || Array.isArray(input)) input = {};
+} catch {
+  stdinUnreadable = true;
+  input = {};
+}
 const cwd = input.cwd || process.cwd();
 const stateDir = join(cwd, ".claude", "hooks");
 mkdirSync(stateDir, { recursive: true });
+
+function warnOnce(key, message) {
+  let line = "[role-os hook] " + message;
+  try {
+    const marker = join(cwd, ".claude", "hooks", "." + key + ".warned");
+    if (existsSync(marker)) return;
+    writeFileSync(marker, new Date().toISOString() + " " + message + "\\n");
+  } catch (err) {
+    line += " (warn-marker write failed: " + err.message + ")";
+  }
+  process.stderr.write(line + "\\n");
+}
+
+if (stdinUnreadable) {
+  warnOnce("hook-stdin-unreadable", "SessionStart stdin was unreadable — continuing with empty input. Check the Claude Code hook payload.");
+}
 
 const state = {
   sessionId: input.session_id || \`session-\${Date.now()}\`,
@@ -424,13 +480,41 @@ function generatePromptSubmitScript() {
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+let input = {};
+let stdinUnreadable = false;
+try {
+  input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+  if (!input || typeof input !== "object" || Array.isArray(input)) input = {};
+} catch {
+  stdinUnreadable = true;
+  input = {};
+}
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 
+function warnOnce(key, message) {
+  let line = "[role-os hook] " + message;
+  try {
+    const marker = join(cwd, ".claude", "hooks", "." + key + ".warned");
+    if (existsSync(marker)) return;
+    writeFileSync(marker, new Date().toISOString() + " " + message + "\\n");
+  } catch (err) {
+    line += " (warn-marker write failed: " + err.message + ")";
+  }
+  process.stderr.write(line + "\\n");
+}
+
+if (stdinUnreadable) {
+  warnOnce("hook-stdin-unreadable", "UserPromptSubmit stdin was unreadable — continuing with empty input. Check the Claude Code hook payload.");
+}
+
 let state = {};
 if (existsSync(statePath)) {
-  try { state = JSON.parse(readFileSync(statePath, "utf-8")); } catch {}
+  try { state = JSON.parse(readFileSync(statePath, "utf-8")); }
+  catch {
+    warnOnce("session-state-unreadable", "session-state.json was unreadable — continuing with fresh session state. Delete or restore .claude/hooks/session-state.json.");
+    state = {};
+  }
 }
 
 const prompt = input.prompt || "";
@@ -467,7 +551,15 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+let input = {};
+let stdinUnreadable = false;
+try {
+  input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+  if (!input || typeof input !== "object" || Array.isArray(input)) input = {};
+} catch {
+  stdinUnreadable = true;
+  input = {};
+}
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 const toolName = input.tool_name || "";
@@ -483,6 +575,10 @@ function warnOnce(key, message) {
     line += " (warn-marker write failed: " + err.message + ")";
   }
   process.stderr.write(line + "\\n");
+}
+
+if (stdinUnreadable) {
+  warnOnce("hook-stdin-unreadable", "PreToolUse stdin was unreadable — continuing with empty input. Check the Claude Code hook payload.");
 }
 
 // ── Capability gate (opt-in via ROLEOS_CAPABILITY_GATE, FAIL-CLOSED) ─────────────────────────────
@@ -539,8 +635,8 @@ if (gateEnabled && toolName === "Bash") {
 let state = {};
 if (existsSync(statePath)) {
   try { state = JSON.parse(readFileSync(statePath, "utf-8")); }
-  catch (err) {
-    warnOnce("session-state-unreadable", "session-state.json was unreadable (" + err.message + ") — continuing with fresh session state.");
+  catch {
+    warnOnce("session-state-unreadable", "session-state.json was unreadable — continuing with fresh session state. Delete or restore .claude/hooks/session-state.json.");
     state = {};
   }
 }
@@ -598,16 +694,44 @@ process.exit(0);
 function generateSubagentStartScript() {
   return `#!/usr/bin/env node
 // Role OS SubagentStart hook — inject role contract
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+let input = {};
+let stdinUnreadable = false;
+try {
+  input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+  if (!input || typeof input !== "object" || Array.isArray(input)) input = {};
+} catch {
+  stdinUnreadable = true;
+  input = {};
+}
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 
+function warnOnce(key, message) {
+  let line = "[role-os hook] " + message;
+  try {
+    const marker = join(cwd, ".claude", "hooks", "." + key + ".warned");
+    if (existsSync(marker)) return;
+    writeFileSync(marker, new Date().toISOString() + " " + message + "\\n");
+  } catch (err) {
+    line += " (warn-marker write failed: " + err.message + ")";
+  }
+  process.stderr.write(line + "\\n");
+}
+
+if (stdinUnreadable) {
+  warnOnce("hook-stdin-unreadable", "SubagentStart stdin was unreadable — continuing with empty input. Check the Claude Code hook payload.");
+}
+
 let state = {};
 if (existsSync(statePath)) {
-  try { state = JSON.parse(readFileSync(statePath, "utf-8")); } catch {}
+  try { state = JSON.parse(readFileSync(statePath, "utf-8")); }
+  catch {
+    warnOnce("session-state-unreadable", "session-state.json was unreadable — continuing with fresh session state. Delete or restore .claude/hooks/session-state.json.");
+    state = {};
+  }
 }
 
 if (state.activeRole) {
@@ -626,16 +750,44 @@ process.exit(0);
 function generateStopScript() {
   return `#!/usr/bin/env node
 // Role OS Stop hook — prevent false completion
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+let input = {};
+let stdinUnreadable = false;
+try {
+  input = JSON.parse(readFileSync(0, "utf-8").toString() || "{}");
+  if (!input || typeof input !== "object" || Array.isArray(input)) input = {};
+} catch {
+  stdinUnreadable = true;
+  input = {};
+}
 const cwd = input.cwd || process.cwd();
 const statePath = join(cwd, ".claude", "hooks", "session-state.json");
 
+function warnOnce(key, message) {
+  let line = "[role-os hook] " + message;
+  try {
+    const marker = join(cwd, ".claude", "hooks", "." + key + ".warned");
+    if (existsSync(marker)) return;
+    writeFileSync(marker, new Date().toISOString() + " " + message + "\\n");
+  } catch (err) {
+    line += " (warn-marker write failed: " + err.message + ")";
+  }
+  process.stderr.write(line + "\\n");
+}
+
+if (stdinUnreadable) {
+  warnOnce("hook-stdin-unreadable", "Stop stdin was unreadable — continuing with empty input. Check the Claude Code hook payload.");
+}
+
 let state = {};
 if (existsSync(statePath)) {
-  try { state = JSON.parse(readFileSync(statePath, "utf-8")); } catch {}
+  try { state = JSON.parse(readFileSync(statePath, "utf-8")); }
+  catch {
+    warnOnce("session-state-unreadable", "session-state.json was unreadable — continuing with fresh session state. Delete or restore .claude/hooks/session-state.json.");
+    state = {};
+  }
 }
 
 // Only enforce on sessions with substantial work

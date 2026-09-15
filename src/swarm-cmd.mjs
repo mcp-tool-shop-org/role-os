@@ -34,6 +34,33 @@ const MANIFEST_FILE = "swarm-manifest.json";
 const DEFAULT_STAGES = ["health-a", "health-b", "health-c", "feature", "treatment"];
 
 /**
+ * Read swarm-manifest.json. Missing files still throw ENOENT (callers existsSync first).
+ * Truncated/corrupt JSON becomes a named USER_ERROR with the path — never a raw SyntaxError.
+ */
+function readSwarmManifest(manifestPath) {
+  let raw;
+  try {
+    raw = readFileSync(manifestPath, "utf-8");
+  } catch (err) {
+    if (err.code === "ENOENT") throw err;
+    const wrapped = new Error(`Swarm manifest unreadable: ${manifestPath} — delete or restore it`);
+    wrapped.exitCode = 1;
+    wrapped.code = "MANIFEST_UNREADABLE";
+    wrapped.hint = "Delete or restore swarm-manifest.json, then retry.";
+    throw wrapped;
+  }
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const err = new Error(`Swarm manifest unreadable: ${manifestPath} — delete or restore it`);
+    err.exitCode = 1;
+    err.code = "MANIFEST_UNREADABLE";
+    err.hint = "Delete or restore swarm-manifest.json, then retry.";
+    throw err;
+  }
+}
+
+/**
  * Filter listRuns output down to swarm runs.
  * missionKey is authoritative; task keywords cover legacy runs.
  */
@@ -102,7 +129,7 @@ async function cmdRun(extraArgs) {
     console.log(`Generated ${MANIFEST_FILE} (${manifest.domains.length} domains, type: ${manifest.repoType})`);
   }
 
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  const manifest = readSwarmManifest(manifestPath);
   const validation = validateSwarmManifest(manifest);
 
   if (!validation.valid) {
@@ -170,7 +197,7 @@ function cmdManifest(args) {
     return;
   }
 
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  const manifest = readSwarmManifest(manifestPath);
   const validation = validateSwarmManifest(manifest);
 
   console.log(`\nSwarm Manifest: ${manifest.repo || "unknown"}`);
@@ -404,7 +431,7 @@ function cmdVerify() {
     process.exit(1);
   }
 
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  const manifest = readSwarmManifest(manifestPath);
   const validation = validateSwarmManifest(manifest);
 
   console.log(`\nSwarm Verification (Phase 9)`);
