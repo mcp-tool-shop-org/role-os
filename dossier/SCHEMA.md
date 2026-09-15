@@ -16,7 +16,7 @@ and made honest); `signatureMoves` → `techniques` (now strictly EARNED: auto-d
 certification/field receipts, never authored — the v0.1 static prose moves were cut);
 `grade` gained `basis` (`assessed` | `certified`) and `band` (null until measured);
 `reps` is a ledger of **verified events** (training/exam/field — never calendar units).
-Readers (`src/dossier-block.mjs`, `build-runtime.mjs`) accept v0.1 records tolerantly.
+The runtime reader (`src/dossier-block.mjs`) still accepts v0.1 records tolerantly. The compiler (`build-runtime.mjs`) requires `schema: roleos-dossier/v0.2` and a complete 6-axis aptitudes/ideal for every roster id, and refuses to write a partial dump.
 
 ## Design contract (the thing that makes it more than a poster)
 
