@@ -130,7 +130,7 @@ describe("audit verify", () => {
     }
   });
 
-  it("passes for valid manifest with existing paths", () => {
+  it("fails for a skeleton manifest with no audit outputs", () => {
     mkdirSync(join(TEST_DIR, "src"), { recursive: true });
     writeFileSync(join(TEST_DIR, "src", "core.mjs"), "export const x = 1;");
     const manifest = {
@@ -139,8 +139,33 @@ describe("audit verify", () => {
     };
     writeFileSync(join(TEST_DIR, "audit-manifest.json"), JSON.stringify(manifest));
 
+    try {
+      run("audit verify");
+      assert.fail("skeleton verify must exit non-zero");
+    } catch (err) {
+      const text = `${err.stdout || ""}${err.stderr || ""}`;
+      assert.ok(text.includes("Audit verification failed") || text.includes("Missing required audit output"));
+    }
+  });
+
+  it("passes when required outputs exist and findings re-verify against source", () => {
+    mkdirSync(join(TEST_DIR, "src"), { recursive: true });
+    writeFileSync(join(TEST_DIR, "src", "core.mjs"), "export const x = 1;");
+    const manifest = {
+      components: [{ id: "core", owned_paths: ["src/core.mjs"] }],
+      boundaries: [],
+    };
+    writeFileSync(join(TEST_DIR, "audit-manifest.json"), JSON.stringify(manifest));
+    writeFileSync(join(TEST_DIR, "AUDIT-SUMMARY.md"), "# Summary\n\nVerdict: pass\n");
+    writeFileSync(join(TEST_DIR, "AUDIT-ACTION-PLAN.md"), "# Action plan\n\nP0: none\n");
+    writeFileSync(join(TEST_DIR, "AUDIT-CRITIC-VERDICT.md"), "# Critic\n\nVerdict: accept\n");
+    writeFileSync(
+      join(TEST_DIR, "AUDIT-PARCEL-core.md"),
+      "### CORE-001: export x\n\n- **Files:** `src/core.mjs` (`x`)\n",
+    );
+
     const output = run("audit verify");
     assert.ok(output.includes("[PASS]"));
-    assert.ok(output.includes("Audit infrastructure verified"));
+    assert.ok(output.includes("Audit findings re-verified against current code"));
   });
 });
