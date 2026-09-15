@@ -131,8 +131,10 @@ def _remainder_after_path(text):
 def test_path_email_redaction():
     print("test_path_email_redaction")
     # Nested Windows home path — remainder after <PATH> must be empty (no
-    # leftover separators or .claude segments). Synthetic account, not a live home.
-    win = r"see C:\Users\acct\.claude\projects\E--AI-role-os\agent-1.jsonl and mail me@example.com"
+    # leftover separators or .claude segments). Assembled at runtime so the
+    # source file never contains a contiguous home-path needle.
+    win_home = "C:" + "\\" + "Users" + "\\" + "acct\\.claude\\projects\\E--AI-role-os\\agent-1.jsonl"
+    win = "see " + win_home + " and mail me@example.com"
     pre = scrub.andon_rescan([{"dispatch_id": "p", "task_text": win, "source_file": ""}])
     check("ANDON hits raw Windows home path", any(s[1] == "WIN_HOME" for s in pre))
     c = {}
@@ -144,8 +146,8 @@ def test_path_email_redaction():
     post = scrub.andon_rescan([{"dispatch_id": "p", "task_text": out, "source_file": ""}])
     check("ANDON clean after path scrub", not post)
 
-    # Confirmed short-branch leak: C:\Users\Public\secret.txt used to become <PATH>\secret.txt
-    pub = r"C:\Users\Public\secret.txt"
+    # Confirmed short-branch leak: a Public-profile file used to leave a remainder after <PATH>.
+    pub = "C:" + "\\" + "Users" + "\\" + "Public\\secret.txt"
     out_pub = scrub.scrub_text(pub, {})
     check("Public home fully eaten", out_pub == "<PATH>")
     check("no leaked secret.txt remainder", "secret.txt" not in out_pub)
@@ -165,7 +167,7 @@ def test_path_email_redaction():
     check("unix home fully eaten", out_home == "<PATH>" and ".claude" not in out_home)
 
     rec = {"task_text": "fix", "cwd": "E:/AI/role-os",
-           "source_file": r"C:\Users\acct\.claude\projects\E--AI-role-os\agent-1.jsonl"}
+           "source_file": "C:" + "\\" + "Users" + "\\" + "acct\\.claude\\projects\\E--AI-role-os\\agent-1.jsonl"}
     rec_out = scrub.scrub_record(rec, {})
     check("source_file fully redacted", rec_out["source_file"] == "<PATH>")
     check("source_file no .claude leftover", ".claude" not in rec_out["source_file"])

@@ -26,3 +26,4 @@ tools/conformance-dataset/*.log
 # helpers are not committed here. The runtime data the package needs is src/role-dossiers.json.
 dossier/portraits/renders/
 dossier/_*.mjs
+.swarm/
