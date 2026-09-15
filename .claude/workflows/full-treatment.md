@@ -2,9 +2,10 @@
 
 Every tool repo gets the full treatment before it's "whole." This is the complete 7-phase protocol — not a pointer to an external file.
 
-> **In-repo copy (MCP Tool Shop internal):** steps marked **[org-internal]** are live here —
-> the concrete commands below are filled in for this org and the Robot rig (workspace
-> `E:/AI`). The shipped starter-pack copy keeps them parameterized.
+> **In-repo copy (MCP Tool Shop internal):** steps marked **[org-internal]** are live here
+> (brand repo, repo-knowledge database, translation tooling). Translation commands stay
+> parameterized (`<path-to-translation-tooling>`, `<path-to-repo>`) so this committed copy
+> does not embed a machine workspace. The shipped starter-pack copy is the portable form.
 
 ## Gate: Shipcheck runs first
 
@@ -30,7 +31,7 @@ Ollama (zero API cost, ~2-4 min/README — the local GPU model does the generati
 Claude tokens are spent in any path). Advisor sessions may invoke the script directly;
 Sonnet kickoff sessions defer to the user/advisor:
 ```
-node E:/AI/polyglot-mcp/scripts/translate-all.mjs E:/AI/<repo>/README.md
+node <path-to-translation-tooling>/translate-all.mjs <path-to-repo>/README.md
 ```
 Monorepos: chain with semicolons. Large monorepos: batch into groups of 5-7.
 
@@ -183,4 +184,5 @@ Push to main. Verify landing page + handbook render.
 - Skip the repo-knowledge DB entry (org-internal) — it's part of the treatment
 - Tag a release or publish before translations land — release tags are immutable
 - Reference "memory/" paths without absolute paths — protocols must be self-contained
-- Copy this rig-specific version into starter-pack/ — the shipped copy stays parameterized (no machine paths)
+- Hardcode machine-specific paths in this workflow — it ships in the public GitHub tree
+- Copy a machine-path version of this workflow into starter-pack/ — the shipped copy stays parameterized
