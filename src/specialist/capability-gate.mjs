@@ -82,7 +82,13 @@ function _grantProblem(manifest, actionId, now) {
   if (!g || typeof g !== "object" || g.granted !== true) {
     return `No capability "${actionId}" is granted in ${CAPABILITIES_FILE}`;
   }
-  if (typeof g.expires === "string") {
+  if (Object.prototype.hasOwnProperty.call(g, "expires")) {
+    // Present expires must be a parseable string/ISO date. A numeric epoch, JSON null, or
+    // boolean is the exact footgun the contract forbids: a typo'd date must never become
+    // a permanent grant for npm publish / git push / gh release.
+    if (typeof g.expires !== "string") {
+      return `The grant for "${actionId}" has an unparseable "expires" value (${JSON.stringify(g.expires)}) — an invalid expiry DENIES (fail-closed), it never extends the grant; fix the date`;
+    }
     const t = Date.parse(g.expires);
     if (Number.isNaN(t)) {
       return `The grant for "${actionId}" has an unparseable "expires" value ("${g.expires}") — an invalid expiry DENIES (fail-closed), it never extends the grant; fix the date`;

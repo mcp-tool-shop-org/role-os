@@ -10,22 +10,32 @@
  * misedited file cannot route to L0.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync } from "node:fs";
 import { dirname } from "node:path";
 
 export const REGISTRY_SCHEMA = "roleos-specialist-registry/v1";
 
-/** Known Claude-family base-model prefixes — refused by R1 at load. Conservative; widen as needed. */
-const CLAUDE_FAMILY_PREFIXES = [
-  "claude-",
-  "anthropic/",
-  "anthropic.",
+/**
+ * Claude-family tokens — matched ANYWHERE in the id. Prefix-only checks miss Bedrock
+ * geo ids (`us.anthropic.claude-...`), Bedrock ARNs (`arn:aws:bedrock:...anthropic.claude-...`),
+ * and Vertex publisher paths (`.../publishers/anthropic/models/claude-...`).
+ */
+const CLAUDE_FAMILY_TOKENS = [
+  "claude-",           // claude-opus, claude-3, claude-sonnet, /claude-3-...
+  "claude-opus",
+  "claude-sonnet",
+  "claude-haiku",
+  "claude-instant",
+  "anthropic.claude",  // Bedrock dotted ids + ARNs
+  "anthropic/claude",  // OpenRouter / Vertex-style
+  "anthropic/",        // publishers/anthropic/models/...
+  "anthropic.",        // us.anthropic.claude-... geo prefix
 ];
 
 export function isClaudeFamily(baseModel) {
   if (typeof baseModel !== "string") return false;
   const m = baseModel.toLowerCase();
-  return CLAUDE_FAMILY_PREFIXES.some((p) => m.startsWith(p));
+  return CLAUDE_FAMILY_TOKENS.some((t) => m.includes(t));
 }
 
 /**
@@ -88,7 +98,7 @@ export function loadRegistry(path) {
   return { registry: raw, byRole, errors: [] };
 }
 
-/** Persist a registry to disk. Creates the parent directory if needed. Atomic-ish write. */
+/** Persist a registry to disk. Creates the parent directory if needed. Atomic write (tmp+rename). */
 export function saveRegistry(path, raw) {
   const { ok, errors } = validateRegistry(raw);
   if (!ok) {
@@ -98,7 +108,20 @@ export function saveRegistry(path, raw) {
     throw err;
   }
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, JSON.stringify(raw, null, 2) + "\n", "utf8");
+  const payload = JSON.stringify(raw, null, 2) + "\n";
+  const tmp = `${path}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`;
+  writeFileSync(tmp, payload, "utf8");
+  try {
+    renameSync(tmp, path);
+  } catch (err) {
+    try {
+      if (existsSync(path)) unlinkSync(path);
+      renameSync(tmp, path);
+    } catch (err2) {
+      try { unlinkSync(tmp); } catch { /* leftover tmp is harmless */ }
+      throw err2;
+    }
+  }
 }
 
 export function emptyRegistry() {

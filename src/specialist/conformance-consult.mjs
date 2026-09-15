@@ -233,11 +233,24 @@ export function withToolConstraints(tool, catalog) {
   };
 }
 
-/** Verdict comparator for shadow probes — normalizes string|{verdict} and compares the label. */
+/**
+ * Verdict comparator for shadow probes — normalizes string|{verdict} and compares the label.
+ * `abstain` is incomparable (not a disagreement): the fail-open fallback is "I cannot
+ * verify", not a Claude second opinion, so recording agreed=false would self-halt the role.
+ */
 export function conformanceAgree(s, c) {
   const norm = (v) => (v && typeof v === "object" ? v.verdict : v);
-  return norm(s) === norm(c);
+  const a = norm(s);
+  const b = norm(c);
+  if (a === "abstain" || b === "abstain") return null;
+  return a === b;
 }
+
+/** Synthetic fail-open used when no real Claude path is wired. Marked so dispatch skips probes. */
+async function abstainClaudeFn() {
+  return { verdict: "abstain", source: "floor-pass-llm-unavailable" };
+}
+abstainClaudeFn.syntheticFailOpen = true;
 
 /**
  * Check one tool-call's conformance. Deterministic floor first, then the LLM specialist via the
@@ -298,7 +311,8 @@ export async function consultConformance({ tool, call, intent, state } = {}, opt
       role: CONFORMANCE_ROLE,
       input: { tool, call, intent, state: st, evidence: evidenceFor(tool, intent, st), claim: claimFor(tool, call) },
       // SAFE fail-open: never "conformant" — an unverifiable semantic check escalates, not waves through.
-      claudeFn: async () => ({ verdict: "abstain", source: "floor-pass-llm-unavailable" }),
+      // syntheticFailOpen: dispatch must not shadow-probe this against a real specialist verdict.
+      claudeFn: abstainClaudeFn,
       agreeFn: conformanceAgree,
       traceId: traceId || `conformance-${ts}`,
       nowIso: ts,
@@ -310,6 +324,12 @@ export async function consultConformance({ tool, call, intent, state } = {}, opt
     const verdict = result && typeof result === "object" && "verdict" in result ? result.verdict : result;
     return { verdict: verdict ?? "abstain", source: receipt.source, receipt, floor };
   } catch (err) {
+    // Halt persist failed after the specialist already served — keep the verdict, surface the error.
+    if (err && err.code === "STATE_PERSIST_ERROR" && err.result !== undefined) {
+      const served = err.result;
+      const verdict = served && typeof served === "object" && "verdict" in served ? served.verdict : served;
+      return { verdict: verdict ?? "abstain", source: err.receipt?.source ?? "specialist", receipt: err.receipt, floor };
+    }
     // A conformance consult must never break the caller — escalate (abstain), never wave through.
     return {
       verdict: "abstain", source: "consult-error", floor,

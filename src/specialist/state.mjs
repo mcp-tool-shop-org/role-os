@@ -20,7 +20,7 @@
  * anti-collapse argument is meant to prevent).
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync } from "node:fs";
 import { dirname } from "node:path";
 
 export const STATE_SCHEMA = "roleos-specialist-state/v2";
@@ -108,9 +108,31 @@ function normalizeDispatchRecord(r) {
   return { t: r.t, route: r.route === "claude" ? "claude" : "specialist" };
 }
 
-export function saveState(path, state) {
+/**
+ * Atomic JSON write (tmp + rename). A crash mid-write must not leave a truncated
+ * target — that is the file loadState would then refuse as STATE_PARSE_ERROR.
+ * Unique tmp name so concurrent savers do not clobber each other's staging file.
+ */
+function atomicWriteFile(path, contents) {
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, JSON.stringify(state, null, 2) + "\n", "utf8");
+  const tmp = `${path}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`;
+  writeFileSync(tmp, contents, "utf8");
+  try {
+    renameSync(tmp, path);
+  } catch (err) {
+    // Windows cannot always rename over an existing file.
+    try {
+      if (existsSync(path)) unlinkSync(path);
+      renameSync(tmp, path);
+    } catch (err2) {
+      try { unlinkSync(tmp); } catch { /* leftover tmp is harmless */ }
+      throw err2;
+    }
+  }
+}
+
+export function saveState(path, state) {
+  atomicWriteFile(path, JSON.stringify(state, null, 2) + "\n");
 }
 
 /** Get or create a role's slot in the state object. Mutates and returns the slot. */

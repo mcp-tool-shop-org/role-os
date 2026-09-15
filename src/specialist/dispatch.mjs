@@ -16,9 +16,16 @@
  *      retry against Claude. The dispatcher itself doesn't see consumer guards — it just
  *      surfaces the specialist's verdict and lets the caller apply them.
  *
+ * Halt persistence is the exception: it is fail-CLOSED. A sticky halt that cannot be
+ * written must surface STATE_PERSIST_ERROR rather than vanish across process boundaries.
+ * A STATE_PARSE_ERROR / STATE_SCHEMA_MISMATCH on load likewise refuses specialist
+ * routing until the operator repairs the file — it must never reset to emptyState()
+ * (that wipe is how a halt silently unsticks).
+ *
  * Shadow probes happen on the Kth specialist dispatch (the gate routed to a specialist).
- * They never fire when the gate routed to Claude — there is nothing to compare. After a
- * probe, the halt check runs and may flip the role into a halted state.
+ * They never fire when the gate routed to Claude — there is nothing to compare. They
+ * also never fire against a synthetic fail-open claudeFn (no second opinion exists).
+ * After a probe, the halt check runs and may flip the role into a halted state.
  */
 
 import { loadRegistry } from "./registry.mjs";
@@ -27,7 +34,6 @@ import { callSpecialist } from "./client.mjs";
 import {
   loadState,
   saveState,
-  emptyState,
   quotaStateFor,
   recordDispatch,
   incrementProbeCounter,
@@ -122,9 +128,46 @@ export async function dispatchSpecialist({
   // ── Load registry + state ────────────────────────────────────────────────────────────────
   const { byRole, errors: regErrors } = loadRegistry(registryPath);
   let state;
-  try { state = loadState(statePath); }
-  catch { state = emptyState(); } // a corrupt state file resets; we re-record on the next dispatch
+  let stateLoadError = null;
+  try {
+    state = loadState(statePath);
+  } catch (err) {
+    // Corrupt / mismatched state must NOT reset to emptyState() — that wipe drops a
+    // sticky halt and re-opens specialist routing. Refuse the specialist until repaired.
+    stateLoadError = err;
+  }
   const entry = byRole.get(role) || null;
+
+  if (stateLoadError) {
+    const result = await claudeFn(input);
+    try {
+      logDispatchInput(fieldLogPath, {
+        role, ts: nowIso, traceId, route: "claude", source: "claude", input,
+        verdict: result,
+      });
+    } catch { /* best-effort */ }
+    const code = stateLoadError.code || "STATE_LOAD_ERROR";
+    return {
+      result,
+      receipt: {
+        schema: "roleos-specialist-receipt/v1",
+        role,
+        ts: nowIso,
+        trace_id: traceId,
+        route: "claude",
+        source: "claude",
+        decision: {
+          route: "claude",
+          reason: "state_unreadable",
+          score: 0,
+          ood: false,
+          quotaOk: true,
+          detail: `${code}: repair ${statePath} before specialist routing resumes (${stateLoadError.message})`,
+        },
+      },
+    };
+  }
+
   const haltState = entry ? getHalt(state, role) : { halted: false };
 
   // ── Gate decision ────────────────────────────────────────────────────────────────────────
@@ -170,8 +213,9 @@ export async function dispatchSpecialist({
   // ── Field-input logging (S5) ─────────────────────────────────────────────────────────────
   // Accumulate the distribution of inputs each role actually sees so the field-vs-exam drift
   // check has something to test against. Both routes are logged, tagged with the realized
-  // source. Best-effort: a logging failure must never break a dispatch (same contract as state
-  // persistence below). The embedder is NOT pinned here — embedding is deferred to analysis time.
+  // source. Best-effort: a logging failure must never break a dispatch. Halt persistence
+  // below is fail-closed (not best-effort). The embedder is NOT pinned here — embedding
+  // is deferred to analysis time.
   try {
     logDispatchInput(fieldLogPath, {
       role, ts: nowIso, traceId, route: decision.route, source, input,
@@ -183,36 +227,48 @@ export async function dispatchSpecialist({
   // ── Shadow probe ─────────────────────────────────────────────────────────────────────────
   // Probes only fire when the dispatch actually went to a specialist (source === "specialist").
   // A failed-open dispatch already ran Claude; there is nothing left to probe.
+  // A synthetic fail-open claudeFn (e.g. conformance's abstain fallback) is not a second
+  // opinion — probing it would record agreed=false on every Kth serve and sticky-halt.
   let shadow = null;
+  let haltPendingPersist = false;
   if (source === "specialist") {
-    const c = incrementProbeCounter(state, role);
-    if (shouldShadowProbe(c, K)) {
-      const claudeVerdict = await claudeFn(input);
-      const agreed = !!safeAgree(agreeFn, result, claudeVerdict);
-      recordProbe(eventsPath, {
-        role,
-        ts: nowIso,
-        trace_id: traceId,
-        agreed,
-        specialist_summary: summarize(result),
-        claude_summary: summarize(claudeVerdict),
-      });
-      resetProbeCounter(state, role);
-      const { probes, rate, agreed: agreedCount, shouldHalt } = checkHalt(eventsPath, role, N, tau);
-      shadow = { fired: true, agreed, probes, rate, halt_triggered: shouldHalt };
-      if (shouldHalt && !getHalt(state, role).halted) {
-        const reason = contrastiveHaltMessage({ role, probes, rate, tau });
-        setHalt(state, role, { reason, since: nowIso });
-        // `agreed` is checkHalt's exact window count — never recompute it lossily from the rate.
-        appendHaltEvent(eventsPath, { role, ts: nowIso, reason, probes, agreed: agreedCount, rate, tau });
-      }
+    if (isSyntheticFailOpen(claudeFn)) {
+      shadow = { fired: false, skipped: "synthetic_fail_open" };
     } else {
-      shadow = { fired: false, counter: c };
+      const c = incrementProbeCounter(state, role);
+      if (shouldShadowProbe(c, K)) {
+        const claudeVerdict = await claudeFn(input);
+        const comparison = compareVerdicts(agreeFn, result, claudeVerdict);
+        if (!comparison.comparable) {
+          // abstain / incomparable — do not record a disagreement
+          resetProbeCounter(state, role);
+          shadow = { fired: false, skipped: "incomparable", counter: c };
+        } else {
+          const agreed = comparison.agreed;
+          recordProbe(eventsPath, {
+            role,
+            ts: nowIso,
+            trace_id: traceId,
+            agreed,
+            specialist_summary: summarize(result),
+            claude_summary: summarize(claudeVerdict),
+          });
+          resetProbeCounter(state, role);
+          const { probes, rate, agreed: agreedCount, shouldHalt } = checkHalt(eventsPath, role, N, tau);
+          shadow = { fired: true, agreed, probes, rate, halt_triggered: shouldHalt };
+          if (shouldHalt && !getHalt(state, role).halted) {
+            const reason = contrastiveHaltMessage({ role, probes, rate, tau });
+            setHalt(state, role, { reason, since: nowIso });
+            // `agreed` is checkHalt's exact window count — never recompute it lossily from the rate.
+            appendHaltEvent(eventsPath, { role, ts: nowIso, reason, probes, agreed: agreedCount, rate, tau });
+            haltPendingPersist = true;
+          }
+        }
+      } else {
+        shadow = { fired: false, counter: c };
+      }
     }
   }
-
-  // ── Persist state ────────────────────────────────────────────────────────────────────────
-  try { saveState(statePath, state); } catch { /* best-effort */ }
 
   // ── Receipt ──────────────────────────────────────────────────────────────────────────────
   const receipt = {
@@ -227,6 +283,27 @@ export async function dispatchSpecialist({
     ...(shadow ? { shadow } : {}),
   };
 
+  // ── Persist state ────────────────────────────────────────────────────────────────────────
+  // Halt is a durable andon gate: atomic write, and a persist failure is surfaced rather
+  // than swallowed. Quota/probe counters stay best-effort. The specialist result is attached
+  // to STATE_PERSIST_ERROR so fail-open callers (conformance consult) can still return it.
+  const haltMustPersist = haltPendingPersist || getHalt(state, role).halted;
+  if (haltMustPersist) {
+    try {
+      saveState(statePath, state);
+    } catch (err) {
+      receipt.persist_error = String(err && err.message ? err.message : err);
+      const wrapped = new Error(`failed to persist specialist halt to ${statePath}: ${err.message}`);
+      wrapped.code = "STATE_PERSIST_ERROR";
+      wrapped.cause = err;
+      wrapped.result = result;
+      wrapped.receipt = receipt;
+      throw wrapped;
+    }
+  } else {
+    try { saveState(statePath, state); } catch { /* best-effort for quota/probe counters */ }
+  }
+
   return { result, receipt };
 }
 
@@ -236,9 +313,24 @@ function strictEqualVerdicts(a, b) {
   catch { return false; }
 }
 
-function safeAgree(fn, a, b) {
-  try { return fn(a, b); }
-  catch { return false; }
+/**
+ * Domain comparator wrapper. `null`/`undefined` means the pair is incomparable
+ * (e.g. an abstain fallback) — the caller must not record a disagreement.
+ * A throwing comparator is still a disagreement (existing contract).
+ */
+function compareVerdicts(fn, a, b) {
+  try {
+    const r = fn(a, b);
+    if (r === null || r === undefined) return { comparable: false };
+    return { comparable: true, agreed: !!r };
+  } catch {
+    return { comparable: true, agreed: false };
+  }
+}
+
+/** Marker on a claudeFn that is a synthetic fail-open, not a real second opinion. */
+function isSyntheticFailOpen(fn) {
+  return typeof fn === "function" && fn.syntheticFailOpen === true;
 }
 
 function parseIsoMs(iso) {
