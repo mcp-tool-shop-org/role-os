@@ -11,7 +11,8 @@
  *      Both drops are logged with the offending call so a human can tell which (constraint wrong vs
  *      example mislabeled). Dropping is the SAFE direction: worst case is lost coverage, never a false flag.
  *   3. COVERAGE: report which known violation calls the surviving floor (schema + contract) catches.
- *   4. FINAL FP GATE: the assembled catalog must flag ZERO conformant calls (schema + contract). Exit 1 otherwise.
+ *   4. FINAL FP GATE: the assembled catalog must flag ZERO conformant calls (schema + contract).
+ *      Exit 1 BEFORE any write — a failing build must not touch the existing catalog.
  *
  * Unlike the corpus reference catalog (contract-only, tools with >=1 constraint), the LIVE catalog
  * includes EVERY tool with its params so the deterministic SCHEMA floor (required/type/enum/max) also
@@ -94,10 +95,6 @@ for (const t of ground) {
   }
 }
 
-const outDir = join(HERE, "..", "..", "..", ".claude", "role-os");
-mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, "tool-contracts.json"), JSON.stringify(catalog, null, 2) + "\n");
-
 console.log("=== .claude/role-os/tool-contracts.json (live catalog) ===");
 console.log(`tools catalogued: ${Object.keys(catalog).length}/${ground.length} (all tools; schema floor runs on every one)`);
 const withC = Object.values(catalog).filter((c) => c.constraints.length).length;
@@ -109,5 +106,16 @@ console.log(`known violations caught by the floor (schema+contract): ${vCaught}/
 if (coverageGaps.length) { console.log("  coverage gaps (left to the LLM ceiling / not computable):"); coverageGaps.forEach((g) => console.log("   - " + g)); }
 console.log(`FINAL conformant false-positives: ${fp}  (MUST be 0)`);
 if (fpLog.length) fpLog.forEach((f) => console.log("   !! FP " + f));
-if (fp > 0) { console.error("FP GATE FAILED"); process.exit(1); }
+
+// ANDON: a catalog that false-flags a known-good call must never ship — hard-fail BEFORE
+// the write, matching build_tool_constraints.mjs. A failing build must not touch the
+// existing catalog that conformanceAdvisory reads at runtime.
+if (fp > 0) {
+  console.error("FP GATE FAILED — catalog NOT written");
+  process.exit(1);
+}
+
+const outDir = join(HERE, "..", "..", "..", ".claude", "role-os");
+mkdirSync(outDir, { recursive: true });
+writeFileSync(join(outDir, "tool-contracts.json"), JSON.stringify(catalog, null, 2) + "\n");
 console.log("OK — catalog written, 0 false-positives.");
