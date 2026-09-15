@@ -18,8 +18,8 @@ import { decideEntry } from "./entry.mjs";
 import { getMission } from "./mission.mjs";
 import { TEAM_PACKS, getPack, getPackRoles } from "./packs.mjs";
 import { ROLE_CATALOG } from "./route.mjs";
-import { ROLE_ARTIFACT_CONTRACTS, validateArtifact, getHandoffContract } from "./artifacts.mjs";
-import { buildSwarmSteps, buildDynamicSteps } from "./mission-run.mjs";
+import { ROLE_ARTIFACT_CONTRACTS, getHandoffContract } from "./artifacts.mjs";
+import { buildSwarmSteps, buildDynamicSteps, runCompletionGates } from "./mission-run.mjs";
 import { isValidStepTransition } from "./state-machine.mjs";
 import { retrieveForDispatch, isKnowledgeConfigured } from "./knowledge/index.mjs";
 
@@ -368,9 +368,9 @@ export function completeCurrentStep(run, artifact, note, cwd) {
   const active = run.steps.find(s => s.status === "active");
   if (!active) throw new Error("No active step to complete");
 
-  // Validate artifact against role contract (warn, don't block)
-  const validation = validateArtifact(active.role, artifact);
+  const { validation, buildGateResult } = runCompletionGates(active, artifact, cwd);
   active.artifactValidation = validation;
+  if (buildGateResult) active.buildGateResult = buildGateResult;
 
   active.status = "completed";
   active.artifact = artifact;

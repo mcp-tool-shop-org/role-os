@@ -111,6 +111,50 @@ export function runBuildGate(cwd, options = {}) {
 }
 
 /**
+ * Format lint/typecheck/test status for the operator.
+ * @param {ReturnType<typeof runBuildGate>} result
+ * @returns {string}
+ */
+export function formatBuildGateStatus(result) {
+  const line = (name, step) => `  ${name}: ${step.status}`;
+  const headline = result.vacuous ? "vacuous" : result.pass ? "pass" : "fail";
+  const lines = [
+    `Build gate: ${headline}`,
+    line("lint", result.lint),
+    line("typecheck", result.typecheck),
+    line("test", result.test),
+  ];
+  if (result.reason) lines.push(`  ${result.reason}`);
+  return lines.join("\n");
+}
+
+/**
+ * Run the build gate and refuse to proceed on fail or vacuous skip.
+ * A gate that cannot fail is worse than no gate.
+ * @param {string} cwd
+ * @param {object} [options] - forwarded to runBuildGate
+ * @returns {ReturnType<typeof runBuildGate>}
+ */
+export function enforceBuildGate(cwd, options = {}) {
+  if (!cwd) {
+    const err = new Error("Build gate blocked step completion: no cwd provided.");
+    err.exitCode = 1;
+    throw err;
+  }
+  const result = runBuildGate(cwd, options);
+  const status = formatBuildGateStatus(result);
+  if (!result.pass || result.vacuous) {
+    console.log(status);
+    const err = new Error(
+      `Build gate blocked step completion (${result.vacuous ? "vacuous — ran nothing" : "fail"}).\n${status}`
+    );
+    err.exitCode = 1;
+    throw err;
+  }
+  return result;
+}
+
+/**
  * Run a single build step.
  * @param {string|null} cmd
  * @param {string} cwd

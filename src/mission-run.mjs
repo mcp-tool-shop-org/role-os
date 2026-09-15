@@ -10,7 +10,8 @@
  */
 
 import { MISSIONS, getMission, validateMission } from "./mission.mjs";
-import { validateArtifact } from "./artifacts.mjs";
+import { validateArtifact, resolveArtifactContent, warnArtifactValidation } from "./artifacts.mjs";
+import { enforceBuildGate, formatBuildGateStatus } from "./swarm/build-gate.mjs";
 import { STEP_TRANSITIONS, isValidStepTransition } from "./state-machine.mjs";
 
 let _runCounter = 0;
@@ -307,21 +308,61 @@ export function startNextStep(run) {
 }
 
 /**
+ * User-approval swarm gates are a control: complete is refused until
+ * `roleos swarm approve` has persisted userApprovalStatus === "approved".
+ * @param {{ isGate?: boolean, userApproval?: boolean, userApprovalStatus?: string, stage?: string }} step
+ */
+export function assertGateApproval(step) {
+  if (step.isGate && step.userApproval && step.userApprovalStatus !== "approved") {
+    const stage = step.stage || "user";
+    const err = new Error(
+      `Cannot complete ${stage} gate without user approval. Run 'roleos swarm approve' first.`
+    );
+    err.exitCode = 1;
+    err.hint = "roleos swarm approve";
+    throw err;
+  }
+}
+
+/**
+ * Hard gates that must pass before a step can complete, plus artifact
+ * validation (warn, don't block). Reads file content when `artifact` is a
+ * path under cwd.
+ * @param {object} active
+ * @param {string} artifact
+ * @param {string} [cwd]
+ * @returns {{ validation: object, buildGateResult: object|null }}
+ */
+export function runCompletionGates(active, artifact, cwd) {
+  assertGateApproval(active);
+  let buildGateResult = null;
+  if (active.buildGate === true) {
+    buildGateResult = enforceBuildGate(cwd);
+  }
+  const content = resolveArtifactContent(artifact, cwd);
+  const validation = validateArtifact(active.role, content);
+  return { validation, buildGateResult };
+}
+
+/**
  * Complete the current active step with an artifact.
  * @param {MissionRun} run
  * @param {string} artifact - The produced artifact (content or reference)
  * @param {string} [note] - Optional operator note
+ * @param {string} [cwd] - Working directory to resolve artifact paths and run the build gate
  * @returns {MissionStep}
  */
-export function completeStep(run, artifact, note) {
+export function completeStep(run, artifact, note, cwd = process.cwd()) {
   const active = run.steps.find((s) => s.status === "active");
   if (!active) {
     throw new Error("No active step to complete");
   }
 
-  // Validate artifact against role contract (warn, don't block)
-  const validation = validateArtifact(active.role, artifact);
+  const { validation, buildGateResult } = runCompletionGates(active, artifact, cwd);
   active.artifactValidation = validation;
+  if (buildGateResult) active.buildGateResult = buildGateResult;
+  warnArtifactValidation(validation);
+  if (buildGateResult) console.log(formatBuildGateStatus(buildGateResult));
 
   active.status = "completed";
   active.artifact = artifact;

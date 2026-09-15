@@ -30,6 +30,27 @@ export function surfaceFromDomain(domainId) {
 
 // ── Verdict derivation ──────────────────────────────────────────────────────
 
+// Canonical in-flight severity is UPPERCASE (CRITICAL|HIGH|MEDIUM|LOW),
+// matching testing-os persist-results.js sevUpper() and the agent-output
+// schema. Normalize at every comparison so a stray case never silently
+// zeroes the release gate.
+export function sevUpper(f) {
+  return String((f && f.severity) || "").toUpperCase();
+}
+
+function isClosed(f) {
+  return f.status === "fixed" || f.status === "accepted_risk";
+}
+
+function countBySeverity(findings) {
+  return {
+    critical: findings.filter(f => sevUpper(f) === "CRITICAL").length,
+    high: findings.filter(f => sevUpper(f) === "HIGH").length,
+    medium: findings.filter(f => sevUpper(f) === "MEDIUM").length,
+    low: findings.filter(f => sevUpper(f) === "LOW").length,
+  };
+}
+
 /**
  * Derive a verdict from findings.
  * @param {{ severity: string, status?: string }[]} findings
@@ -38,9 +59,9 @@ export function surfaceFromDomain(domainId) {
 export function deriveVerdict(findings) {
   if (!findings || findings.length === 0) return "pass";
 
-  const open = findings.filter(f => f.status !== "fixed" && f.status !== "accepted_risk");
-  const hasCritical = open.some(f => f.severity === "critical");
-  const hasHigh = open.some(f => f.severity === "high");
+  const open = findings.filter(f => !isClosed(f));
+  const hasCritical = open.some(f => sevUpper(f) === "CRITICAL");
+  const hasHigh = open.some(f => sevUpper(f) === "HIGH");
 
   if (hasCritical) return "fail";
   if (hasHigh) return "partial";
@@ -78,12 +99,7 @@ export function buildScenarioResults(waveReports) {
         total_findings: allFindings.length,
         open_findings: allFindings.filter(f => f.status !== "fixed").length,
         fixed: allFindings.filter(f => f.status === "fixed").length,
-        severities: {
-          critical: allFindings.filter(f => f.severity === "critical").length,
-          high: allFindings.filter(f => f.severity === "high").length,
-          medium: allFindings.filter(f => f.severity === "medium").length,
-          low: allFindings.filter(f => f.severity === "low").length,
-        },
+        severities: countBySeverity(allFindings),
       },
     };
   });
@@ -145,12 +161,7 @@ export function buildAuditPayload(manifest, waveReports, meta = {}) {
   const allFindings = waveReports.flatMap(r => r.findings || []);
   const fixed = allFindings.filter(f => f.status === "fixed").length;
 
-  const severities = {
-    critical: allFindings.filter(f => f.severity === "critical").length,
-    high: allFindings.filter(f => f.severity === "high").length,
-    medium: allFindings.filter(f => f.severity === "medium").length,
-    low: allFindings.filter(f => f.severity === "low").length,
-  };
+  const severities = countBySeverity(allFindings);
 
   const scenarios = buildScenarioResults(waveReports);
   const overall = computeOverallVerdict(scenarios);

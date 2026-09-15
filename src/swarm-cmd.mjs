@@ -14,13 +14,14 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import {
   createPersistentRun, listRuns, loadRun, getPosition, saveRun,
 } from "./run.mjs";
 import {
   generateSwarmManifest, validateSwarmManifest,
 } from "./swarm/domain-detect.mjs";
+import { resolveArtifactContent } from "./artifacts.mjs";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -266,6 +267,18 @@ function cmdStatus() {
                    stats.active > 0 ? "[>]" : "[ ]";
       console.log(`  ${icon} ${stage}: ${stats.completed}/${stats.total} complete`);
     }
+
+    const active = full.steps.find(s => s.status === "active");
+    if (active?.isGate) {
+      if (active.buildGate) {
+        console.log(`\nBuild gate: lint + typecheck + test will run on complete (blocks on fail or vacuous skip).`);
+      }
+      if (active.userApproval && active.userApprovalStatus !== "approved") {
+        console.log(`User approval required: run 'roleos swarm approve' before complete.`);
+      } else if (active.userApproval && active.userApprovalStatus === "approved") {
+        console.log(`User approval: recorded. Complete the gate step to advance.`);
+      }
+    }
   }
 
   console.log(`\nRun 'roleos explain ${latest.id}' for full detail.\n`);
@@ -290,17 +303,11 @@ function cmdFindings() {
 
   // Extract findings from wave-report artifacts.
   // step.artifact is usually a short reference (often a file path) — when it
-  // points at a readable file, scan the file content instead of the reference.
+  // points at a readable file under cwd, scan the file content instead of the reference.
   const findings = [];
   for (const step of full.steps) {
     if (step.produces === "wave-report" && step.artifact) {
-      let body = step.artifact;
-      try {
-        const artifactPath = resolve(cwd, step.artifact);
-        if (existsSync(artifactPath)) {
-          body = readFileSync(artifactPath, "utf-8");
-        }
-      } catch { /* not a readable file — treat the reference as inline content */ }
+      const body = resolveArtifactContent(step.artifact, cwd);
 
       // Normalize line endings so CRLF artifacts parse on Windows checkouts
       const match = body.replace(/\r\n/g, "\n").match(/## findings\n([\s\S]*?)(?=\n## |$)/i);
@@ -461,6 +468,9 @@ The swarm runs 5 stages in sequence:
   5. Treatment  Full Treatment        (shipcheck, docs, handbook — user gate)
 
 Each stage dispatches parallel domain agents with exclusive file ownership.
-A build gate (lint + typecheck + test) runs after every wave.
+A build gate (lint + typecheck + test) runs when completing a coordinator
+gate step (buildGate:true) and blocks completion on fail or vacuous skip.
+User-approval gates (health-b, feature, treatment) require
+'roleos swarm approve' before 'roleos complete'.
 `);
 }
