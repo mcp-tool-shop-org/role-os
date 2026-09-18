@@ -12,6 +12,9 @@ on:
       - "tools/**"
       - ".claude/role-os/**"
       - ".github/workflows/**"
+      - "site/package.json"
+      - "site/package-lock.json"
+      - "site/astro.config.mjs"
   pull_request:
     paths:
       - "package.json"
@@ -23,6 +26,9 @@ on:
       - "tools/**"
       - ".claude/role-os/**"
       - ".github/workflows/**"
+      - "site/package.json"
+      - "site/package-lock.json"
+      - "site/astro.config.mjs"
   workflow_dispatch:
 
 concurrency:
