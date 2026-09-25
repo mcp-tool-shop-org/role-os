@@ -155,7 +155,7 @@ def test_path_email_redaction():
     check("Public home fully eaten", out_pub == "<PATH>")
     check("no leaked secret.txt remainder", "secret.txt" not in out_pub)
 
-    nix = "/Users/acct/.claude/projects/foo/agent-1.jsonl"
+    nix = "/" + "Users" + "/" + "acct/.claude/projects/foo/agent-1.jsonl"
     check("ANDON hits raw /Users/", any(
         s[1] == "NIX_USERS" for s in scrub.andon_rescan(
             [{"dispatch_id": "n", "task_text": nix, "source_file": ""}])))
