@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "ef68bcdf91536fc974fcab56e445096de1adceda1e7e0f1e1f4345a7557e735c",
+          "hash": "b57fad4ecf82bc3fa3a25fa3fc59ac0914dabe1f17b92f7665a6fb9660dc42e6",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -7231,7 +7231,7 @@
             "test_scrub_redacts_real_secrets",
             "test_skipped_parse_counts"
           ],
-          "hash": "5d805aa05006964449d71e9cedf6bcc8bc0ad244f82c6bd1bc27da16dcc27639",
+          "hash": "0123e29ef64a77704c6e35c435ef01239b508d846d9136524fe6c169d719db7c",
           "importOrder": [
             "tools/token-budget-dataset/harvester/__init__.py",
             "tools/token-budget-dataset/harvester/scrub.py",
@@ -7875,23 +7875,7 @@
       ],
       "triggers": [
         {
-          "event": "pull_request",
-          "paths": [
-            ".claude/role-os/**",
-            ".github/workflows/**",
-            "atlas/**",
-            "bin/**",
-            "codecov.yml",
-            "package-lock.json",
-            "package.json",
-            "site/astro.config.mjs",
-            "site/package-lock.json",
-            "site/package.json",
-            "src/**",
-            "starter-pack/**",
-            "test/**",
-            "tools/**"
-          ]
+          "event": "pull_request"
         },
         {
           "event": "push",
@@ -8332,7 +8316,7 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "07450c9f33f21d86fad86d8415268ed3228a6a78",
+    "commit": "91e12b75f3c679b6be952ae0ffeb65dabe54a25e",
     "tracked": 626
   },
   "landings": [

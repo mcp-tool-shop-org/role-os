@@ -1,19 +1,19 @@
 # role-os: how it works
 
-Mapped at 2026-10-01 from commit 07450c9 by Atlas 1.24.0.
+Mapped at 2026-10-01 from commit 91e12b7 by Atlas 1.24.0.
 
 ## What this is
 
 15 parts, mostly JavaScript (162 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-09-30 (64fe05b)
+## What changed since 2026-10-01 (07450c9)
 
-- CI now also runs tools/token-budget-dataset/test_harvester.py.
-- 1 file changed content, across 1 part.
+- CI's pull request trigger no longer names `.claude/role-os/**`, `.github/workflows/**`, `atlas/**`, `bin/**`, `codecov.yml`, `package-lock.json`, `package.json`, `site/astro.config.mjs`, `site/package-lock.json`, `site/package.json`, `src/**`, `starter-pack/**`, `test/**` and `tools/**`.
+- 2 files changed content, across 2 parts.
 
 ## What comes in
 
-1. **CI.** On a pull request touching 14 paths; on a push touching 14 paths; or by hand. Runs bin/roleos.mjs, tools/token-budget-dataset/test_harvester.py and test/.
+1. **CI.** On a pull request; on a push touching 14 paths; or by hand. Runs bin/roleos.mjs, tools/token-budget-dataset/test_harvester.py and test/.
 2. **Release.** When a release is published; or by hand. Runs test/.
 3. **Deploy site to GitHub Pages.** On a push to main touching 2 paths; or by hand. Runs site/astro.config.mjs and site/src/.
 4. **roleos** (a command people run). Runs bin/roleos.mjs.
