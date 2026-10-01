@@ -1,31 +1,26 @@
 # role-os: how it works
 
-Mapped at 2026-09-30 from commit 64fe05b by Atlas 1.24.0.
+Mapped at 2026-10-01 from commit 07450c9 by Atlas 1.24.0.
 
 ## What this is
 
-15 parts, mostly JavaScript (162 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
+15 parts, mostly JavaScript (162 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-09-25 (3877c03)
+## What changed since 2026-09-30 (64fe05b)
 
-- CI's pull request trigger now also names `codecov.yml`.
-- CI's push trigger now also names `codecov.yml`.
-- dossier/data.js is now read by dossier/dossier.html.
-- tools/conformance-dataset/audit.py is now read by tools/conformance-dataset/build_conformance_dataset.py.
-- tools/conformance-dataset/config.py is now read by tools/conformance-dataset/build_conformance_dataset.py, tools/conformance-dataset/certify_conformance.py, tools/conformance-dataset/conformance_puzzles.py and tools/conformance-dataset/dogfood_conformance.py.
-- And 1 more new writer or reader of a place.
-- 1 file added and 1 changed content, across 2 parts.
+- CI now also runs tools/token-budget-dataset/test_harvester.py.
+- 1 file changed content, across 1 part.
 
 ## What comes in
 
-1. **CI.** On a pull request touching 14 paths; on a push touching 14 paths; or by hand. Runs bin/roleos.mjs and test/.
+1. **CI.** On a pull request touching 14 paths; on a push touching 14 paths; or by hand. Runs bin/roleos.mjs, tools/token-budget-dataset/test_harvester.py and test/.
 2. **Release.** When a release is published; or by hand. Runs test/.
 3. **Deploy site to GitHub Pages.** On a push to main touching 2 paths; or by hand. Runs site/astro.config.mjs and site/src/.
 4. **roleos** (a command people run). Runs bin/roleos.mjs.
 
 ## What happens through CI
 
-1. The workflow runs bin/roleos.mjs in bin and test/ in test.
+1. The workflow runs bin/roleos.mjs in bin, test/ in test and tools/token-budget-dataset/test_harvester.py in tools.
 2. That reaches src (70 files).
 3. It uploads coverage to Codecov.
 
@@ -64,7 +59,7 @@ Window: 180 days; a pair counts from 3 shared commits, since 1 source file reach
 
 bin is touched by tests only through a spawn: a test runs its files as a child process.
 
-3 test files run in no workflow: tools/conformance-dataset/test_certify_ship_stamp.py, tools/conformance-dataset/test_empty_write_gate.py and tools/token-budget-dataset/test_harvester.py.
+2 test files run in no workflow: tools/conformance-dataset/test_certify_ship_stamp.py and tools/conformance-dataset/test_empty_write_gate.py.
 
 ## Written but never read
 
