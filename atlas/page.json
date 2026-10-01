@@ -65,68 +65,30 @@
   ],
   "changes": {
     "fileCounts": {
-      "added": 1,
+      "added": 0,
       "changed": 1,
       "moved": 0,
-      "parts": 2,
+      "parts": 1,
       "removed": 0
     },
     "items": [
       {
         "kind": "door",
-        "sentence": "CI's pull request trigger now also names `codecov.yml`.",
+        "sentence": "CI now also runs tools/token-budget-dataset/test_harvester.py.",
         "subjects": [
-          ".github/workflows/ci.yml"
+          ".github/workflows/ci.yml",
+          "tools/token-budget-dataset/test_harvester.py"
         ]
-      },
-      {
-        "kind": "door",
-        "sentence": "CI's push trigger now also names `codecov.yml`.",
-        "subjects": [
-          ".github/workflows/ci.yml"
-        ]
-      },
-      {
-        "kind": "landing",
-        "sentence": "dossier/data.js is now read by dossier/dossier.html.",
-        "subjects": [
-          "dossier/data.js",
-          "dossier/dossier.html"
-        ]
-      },
-      {
-        "kind": "landing",
-        "sentence": "tools/conformance-dataset/audit.py is now read by tools/conformance-dataset/build_conformance_dataset.py.",
-        "subjects": [
-          "tools/conformance-dataset/audit.py",
-          "tools/conformance-dataset/build_conformance_dataset.py"
-        ]
-      },
-      {
-        "kind": "landing",
-        "sentence": "tools/conformance-dataset/config.py is now read by tools/conformance-dataset/build_conformance_dataset.py, tools/conformance-dataset/certify_conformance.py, tools/conformance-dataset/conformance_puzzles.py and tools/conformance-dataset/dogfood_conformance.py.",
-        "subjects": [
-          "tools/conformance-dataset/config.py",
-          "tools/conformance-dataset/build_conformance_dataset.py",
-          "tools/conformance-dataset/certify_conformance.py",
-          "tools/conformance-dataset/conformance_puzzles.py",
-          "tools/conformance-dataset/dogfood_conformance.py"
-        ]
-      },
-      {
-        "kind": "landing",
-        "sentence": "And 1 more new writer or reader of a place.",
-        "subjects": []
       },
       {
         "kind": "counts",
-        "sentence": "1 file added and 1 changed content, across 2 parts.",
+        "sentence": "1 file changed content, across 1 part.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "3877c03762c78f4ec9517b0b6d434c5238bcc62d",
-      "generatedAt": "2026-09-25T02:08:55.964Z"
+      "commit": "64fe05b375eedcfde4fbb7c344f837b5527f5fa8",
+      "generatedAt": "2026-09-30T20:12:33.667Z"
     },
     "unchanged": false
   },
@@ -167,9 +129,9 @@
     "Window: 180 days; a pair counts from 3 shared commits, since 1 source file reaches 10 revisions; the floor rises to 10 when 25 do."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "64fe05b375eedcfde4fbb7c344f837b5527f5fa8",
+  "commit": "07450c9f33f21d86fad86d8415268ed3228a6a78",
   "defaultBranch": "main",
-  "derived": "15 parts, mostly JavaScript (162 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
+  "derived": "15 parts, mostly JavaScript (162 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
   "doors": [
     {
       "checks": [],
@@ -192,6 +154,11 @@
           "files": 72
         },
         {
+          "boundary": "tools",
+          "depth": 0,
+          "files": 16
+        },
+        {
           "boundary": "src",
           "depth": 1,
           "files": 70
@@ -199,9 +166,10 @@
       ],
       "runs": [
         "bin/roleos.mjs",
+        "tools/token-budget-dataset/test_harvester.py",
         "test/"
       ],
-      "runsCount": 2,
+      "runsCount": 3,
       "runsMore": 0,
       "sends": [
         "uploads coverage to Codecov"
@@ -392,7 +360,7 @@
       ]
     }
   ],
-  "generatedAt": "2026-09-30T20:12:33.667Z",
+  "generatedAt": "2026-10-01T00:15:28.908Z",
   "limits": [
     "3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.",
     "16 writes and 14 reads use paths built at run time and are not named here.",
@@ -462,7 +430,7 @@
   ],
   "untestedNote": [
     "bin is touched by tests only through a spawn: a test runs its files as a child process.",
-    "3 test files run in no workflow: tools/conformance-dataset/test_certify_ship_stamp.py, tools/conformance-dataset/test_empty_write_gate.py and tools/token-budget-dataset/test_harvester.py."
+    "2 test files run in no workflow: tools/conformance-dataset/test_certify_ship_stamp.py and tools/conformance-dataset/test_empty_write_gate.py."
   ],
   "written": 10
 }

@@ -104,6 +104,18 @@ jobs:
           retention-days: 3
           overwrite: true
       - run: npm run verify
+      # The token-budget harvester is Python and has its own self-tests, which
+      # npm test never reaches. Standard library only, so there is nothing to
+      # install. Once, on the 22 cell: the result does not depend on Node.
+      - name: Set up Python for the harvester tests
+        if: matrix.node-version == 22
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Token-budget harvester tests
+        if: matrix.node-version == 22
+        working-directory: tools/token-budget-dataset
+        run: python test_harvester.py
 
   codecov:
     # Uploads what the test job saved, from a job of its own, so the OIDC
