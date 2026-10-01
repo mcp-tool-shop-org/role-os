@@ -66,29 +66,28 @@
   "changes": {
     "fileCounts": {
       "added": 0,
-      "changed": 1,
+      "changed": 2,
       "moved": 0,
-      "parts": 1,
+      "parts": 2,
       "removed": 0
     },
     "items": [
       {
         "kind": "door",
-        "sentence": "CI now also runs tools/token-budget-dataset/test_harvester.py.",
+        "sentence": "CI's pull request trigger no longer names `.claude/role-os/**`, `.github/workflows/**`, `atlas/**`, `bin/**`, `codecov.yml`, `package-lock.json`, `package.json`, `site/astro.config.mjs`, `site/package-lock.json`, `site/package.json`, `src/**`, `starter-pack/**`, `test/**` and `tools/**`.",
         "subjects": [
-          ".github/workflows/ci.yml",
-          "tools/token-budget-dataset/test_harvester.py"
+          ".github/workflows/ci.yml"
         ]
       },
       {
         "kind": "counts",
-        "sentence": "1 file changed content, across 1 part.",
+        "sentence": "2 files changed content, across 2 parts.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "64fe05b375eedcfde4fbb7c344f837b5527f5fa8",
-      "generatedAt": "2026-09-30T20:12:33.667Z"
+      "commit": "07450c9f33f21d86fad86d8415268ed3228a6a78",
+      "generatedAt": "2026-10-01T00:15:28.908Z"
     },
     "unchanged": false
   },
@@ -129,7 +128,7 @@
     "Window: 180 days; a pair counts from 3 shared commits, since 1 source file reaches 10 revisions; the floor rises to 10 when 25 do."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "07450c9f33f21d86fad86d8415268ed3228a6a78",
+  "commit": "91e12b75f3c679b6be952ae0ffeb65dabe54a25e",
   "defaultBranch": "main",
   "derived": "15 parts, mostly JavaScript (162 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
   "doors": [
@@ -176,7 +175,7 @@
       ],
       "stages": [],
       "triggers": [
-        "on a pull request touching 14 paths",
+        "on a pull request",
         "on a push touching 14 paths",
         "or by hand"
       ]
@@ -360,7 +359,7 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-01T00:15:28.908Z",
+  "generatedAt": "2026-10-01T02:12:47.775Z",
   "limits": [
     "3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.",
     "16 writes and 14 reads use paths built at run time and are not named here.",
