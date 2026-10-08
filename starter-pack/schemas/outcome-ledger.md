@@ -40,7 +40,7 @@ after a later reopen.
 | `rolesUsed` | Sorted unique roles of steps that are not pending and not skipped. |
 | `escalations` | How many escalation records the run stored. |
 | `corrections` | Interventions of type `reroute`, `retry`, or `reopen`. |
-| `rejectedVerdicts` | Interventions of type `reject`, plus step notes that start with "reject". |
+| `rejectedVerdicts` | Interventions of type `reject`, plus step notes that start with the word "reject". |
 | `completionStatus` | `completed`, `partial`, `failed`, `blocked`, or `abandoned`. |
 | `recordedAt` | When this line was appended. |
 

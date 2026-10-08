@@ -78,6 +78,14 @@ roleos block <step-index> <reason>      # Block a step
 roleos reopen <step-index> <reason>     # Reopen a completed step
 ```
 
+### abandon
+
+```bash
+roleos abandon [id]
+```
+
+Gives up on a run that has not already ended. With no id, it uses the active run. The ledger keeps that end state. A second end for the same run id is not written.
+
 ### report
 
 ```bash
@@ -175,7 +183,7 @@ Reads the packet, detects the problem shape, and recommends the smallest valid r
 
 Options:
 - `--pack=<name>` — use a specific pack instead of auto-selection
-- `--verbose` — show all scoring details including non-triggered roles
+- `--verbose` — show all scoring details, including non-triggered roles. Also prints the pack boost, the run count, and the clean rate. An empty ledger prints "Calibration: no recorded runs yet". The boost does not change the keyword score that confidence is taken from.
 - `--no-split` — force single-packet routing even if composite task is detected
 
 ### review
@@ -224,6 +232,44 @@ roleos help
 ```
 
 Prints usage information and available commands.
+
+### recipe
+
+```bash
+roleos recipe init <role> [--out <file>] [--id <id>]
+roleos recipe check <card.json> [--json]
+roleos recipe hash <card.json>
+roleos recipe controls
+roleos specialist register <role> <version.json> --recipe <card.json>
+```
+
+Checks a dataset recipe card (`roleos-recipe-card/v1`). `check` separates errors from evidence gaps and prints the card's canonical SHA-256. A passed control with no measure is a gap. An inconsistent measure is an error. `shuffled-labels` prints its permutation floor, 1/(nulls+1). `same-generator-no-error`: when both edit methods are recorded and their intervals don't overlap, the status must be `unresolved`, or the check fails. `reversed-correction` passes only when the accuracy interval lies entirely above 0.5. `controls` lists the nine standard controls. `--recipe` pins `{ id, sha256, path }` on a specialist version.
+
+### jury
+
+```bash
+roleos jury check <validation.json> [--json] [--allow-unproven] [--require-recipe]
+roleos jury select <validation.json> [--max-size 5] [--bags 50] [--folds 5] [--seed 0] [--allow-unproven] [--require-recipe] [--out panel.json] [--json]
+roleos jury score <panel.json> <items.json> [--json]
+```
+
+Measures critics on a validation file (`roleos-jury-validation/v1`) and keeps a panel only when it beats the best single critic. Below 30 items or 10 groups the verdict is `insufficient-data`. `--out` writes `roleos-jury-panel/v1` only when the verdict is `panel`.
+
+A critic whose card has a failed or unresolved standard control is left out unless `--allow-unproven`. A critic with no card is seated, and printed as `unproven: no recipe card`, unless `--require-recipe`. `--allow-unproven` does not forgive a hash mismatch, a missing file, an invalid card, or an unreadable path. A gap on the card does not by itself exclude the critic.
+
+`score` applies the saved means, standard deviations, thresholds, and counts. It does not refit them. An absent score is `unmeasured`. A score exactly equal to a critic's threshold is an abstention, and so is a panel score of exactly 0. The text prints that as `abstain`. The same seed repeats the same numbers.
+
+### calibration
+
+```bash
+roleos calibration [--json]
+```
+
+Prints the calibration report and the per-combination table. An empty ledger prints `no recorded runs yet`, not zeros. Below 5 runs a combination says `insufficient data` and has no rate. At 5 or more, the clean rate (completed, no corrections, no rejected verdicts) is a Wilson 95% interval.
+
+The pack boost applies only after that pack has 5 recorded outcomes: +0.5 for each completed run with corrections 0, capped at +2. It never names a pack the keywords did not already match. Confidence is still taken from the keyword score (3 is high, 2 is medium). Role weights and confidence thresholds do not change. The report may suggest looking at the keyword cutoff. Role OS does not apply that suggestion.
+
+`ROLEOS_NO_CALIBRATION=1` turns the boost off. Recording continues.
 
 ## Schemas
 

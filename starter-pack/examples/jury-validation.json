@@ -1,0 +1,269 @@
+{
+  "schema": "roleos-jury-validation/v1",
+  "items": [
+    {
+      "id": "g0-i0",
+      "group": "group-0",
+      "truth": 0
+    },
+    {
+      "id": "g0-i1",
+      "group": "group-0",
+      "truth": 1
+    },
+    {
+      "id": "g0-i2",
+      "group": "group-0",
+      "truth": 0
+    },
+    {
+      "id": "g1-i0",
+      "group": "group-1",
+      "truth": 1
+    },
+    {
+      "id": "g1-i1",
+      "group": "group-1",
+      "truth": 0
+    },
+    {
+      "id": "g1-i2",
+      "group": "group-1",
+      "truth": 1
+    },
+    {
+      "id": "g2-i0",
+      "group": "group-2",
+      "truth": 0
+    },
+    {
+      "id": "g2-i1",
+      "group": "group-2",
+      "truth": 1
+    },
+    {
+      "id": "g2-i2",
+      "group": "group-2",
+      "truth": 0
+    },
+    {
+      "id": "g3-i0",
+      "group": "group-3",
+      "truth": 1
+    },
+    {
+      "id": "g3-i1",
+      "group": "group-3",
+      "truth": 0
+    },
+    {
+      "id": "g3-i2",
+      "group": "group-3",
+      "truth": 1
+    },
+    {
+      "id": "g4-i0",
+      "group": "group-4",
+      "truth": 0
+    },
+    {
+      "id": "g4-i1",
+      "group": "group-4",
+      "truth": 1
+    },
+    {
+      "id": "g4-i2",
+      "group": "group-4",
+      "truth": 0
+    },
+    {
+      "id": "g5-i0",
+      "group": "group-5",
+      "truth": 1
+    },
+    {
+      "id": "g5-i1",
+      "group": "group-5",
+      "truth": 0
+    },
+    {
+      "id": "g5-i2",
+      "group": "group-5",
+      "truth": 1
+    },
+    {
+      "id": "g6-i0",
+      "group": "group-6",
+      "truth": 0
+    },
+    {
+      "id": "g6-i1",
+      "group": "group-6",
+      "truth": 1
+    },
+    {
+      "id": "g6-i2",
+      "group": "group-6",
+      "truth": 0
+    },
+    {
+      "id": "g7-i0",
+      "group": "group-7",
+      "truth": 1
+    },
+    {
+      "id": "g7-i1",
+      "group": "group-7",
+      "truth": 0
+    },
+    {
+      "id": "g7-i2",
+      "group": "group-7",
+      "truth": 1
+    },
+    {
+      "id": "g8-i0",
+      "group": "group-8",
+      "truth": 0
+    },
+    {
+      "id": "g8-i1",
+      "group": "group-8",
+      "truth": 1
+    },
+    {
+      "id": "g8-i2",
+      "group": "group-8",
+      "truth": 0
+    },
+    {
+      "id": "g9-i0",
+      "group": "group-9",
+      "truth": 1
+    },
+    {
+      "id": "g9-i1",
+      "group": "group-9",
+      "truth": 0
+    },
+    {
+      "id": "g9-i2",
+      "group": "group-9",
+      "truth": 1
+    }
+  ],
+  "critics": {
+    "sharp": {
+      "kind": "pointwise",
+      "threshold": 0,
+      "scores": {
+        "g0-i0": 1,
+        "g0-i1": 1,
+        "g0-i2": -1,
+        "g1-i0": -1,
+        "g1-i1": -1,
+        "g1-i2": 1,
+        "g2-i0": -1,
+        "g2-i1": 1,
+        "g2-i2": -1,
+        "g3-i0": 1,
+        "g3-i1": -1,
+        "g3-i2": 1,
+        "g4-i0": -1,
+        "g4-i1": 1,
+        "g4-i2": -1,
+        "g5-i0": 1,
+        "g5-i1": -1,
+        "g5-i2": 1,
+        "g6-i0": -1,
+        "g6-i1": 1,
+        "g6-i2": -1,
+        "g7-i0": 1,
+        "g7-i1": -1,
+        "g7-i2": 1,
+        "g8-i0": -1,
+        "g8-i1": 1,
+        "g8-i2": -1,
+        "g9-i0": 1,
+        "g9-i1": -1,
+        "g9-i2": 1
+      },
+      "recipe": {
+        "path": "auditor-recipe-card.json",
+        "sha256": "5763c4dd57fc9f7bea41186493e56b72ce73a5e30f4c5c813248655a360b1588"
+      }
+    },
+    "echo": {
+      "kind": "pointwise",
+      "threshold": 0,
+      "scores": {
+        "g0-i0": 1,
+        "g0-i1": 1,
+        "g0-i2": -1,
+        "g1-i0": -1,
+        "g1-i1": -1,
+        "g1-i2": 1,
+        "g2-i0": -1,
+        "g2-i1": 1,
+        "g2-i2": -1,
+        "g3-i0": 1,
+        "g3-i1": -1,
+        "g3-i2": 1,
+        "g4-i0": -1,
+        "g4-i1": 1,
+        "g4-i2": -1,
+        "g5-i0": 1,
+        "g5-i1": -1,
+        "g5-i2": 1,
+        "g6-i0": -1,
+        "g6-i1": 1,
+        "g6-i2": -1,
+        "g7-i0": 1,
+        "g7-i1": -1,
+        "g7-i2": 1,
+        "g8-i0": -1,
+        "g8-i1": 1,
+        "g8-i2": -1,
+        "g9-i0": 1,
+        "g9-i1": -1,
+        "g9-i2": 1
+      }
+    },
+    "blur": {
+      "kind": "pointwise",
+      "threshold": 0,
+      "scores": {
+        "g0-i0": -1,
+        "g0-i1": -1,
+        "g0-i2": -1,
+        "g1-i0": 1,
+        "g1-i1": 1,
+        "g1-i2": 1,
+        "g2-i0": -1,
+        "g2-i1": -1,
+        "g2-i2": -1,
+        "g3-i0": 1,
+        "g3-i1": 1,
+        "g3-i2": 1,
+        "g4-i0": -1,
+        "g4-i1": 1,
+        "g4-i2": -1,
+        "g5-i0": 1,
+        "g5-i1": -1,
+        "g5-i2": 1,
+        "g6-i0": -1,
+        "g6-i1": 1,
+        "g6-i2": -1,
+        "g7-i0": 1,
+        "g7-i1": -1,
+        "g7-i2": 1,
+        "g8-i0": -1,
+        "g8-i1": 1,
+        "g8-i2": -1,
+        "g9-i0": 1,
+        "g9-i1": -1,
+        "g9-i2": 1
+      }
+    }
+  }
+}

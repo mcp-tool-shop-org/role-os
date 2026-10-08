@@ -81,7 +81,7 @@
       "confidence": "low",
       "highWater": null,
       "name": "bin",
-      "qualifyingSourceCommits": 11,
+      "qualifyingSourceCommits": 12,
       "rebaseline": null
     },
     {
@@ -200,7 +200,7 @@
       "confidence": "full",
       "highWater": null,
       "name": "src",
-      "qualifyingSourceCommits": 46,
+      "qualifyingSourceCommits": 47,
       "rebaseline": null
     },
     {
@@ -234,7 +234,7 @@
       "confidence": "full",
       "highWater": null,
       "name": "test",
-      "qualifyingSourceCommits": 43,
+      "qualifyingSourceCommits": 44,
       "rebaseline": null
     },
     {
@@ -328,8 +328,8 @@
         "path": ".claude/workflows/protect-bootstrap-truth.md"
       },
       {
-        "commits": 18,
-        "lines": 442,
+        "commits": 19,
+        "lines": 444,
         "path": ".github/workflows/ci.yml"
       },
       {
@@ -358,8 +358,8 @@
         "path": ".role-os/specialists.json"
       },
       {
-        "commits": 17,
-        "lines": 324,
+        "commits": 18,
+        "lines": 364,
         "path": "CHANGELOG.md"
       },
       {
@@ -418,8 +418,8 @@
         "path": "SHIP_GATE.md"
       },
       {
-        "commits": 11,
-        "lines": 411,
+        "commits": 12,
+        "lines": 420,
         "path": "atlas/README.md"
       },
       {
@@ -428,23 +428,23 @@
         "path": "atlas/boundaries.yaml"
       },
       {
-        "commits": 11,
-        "lines": 1364,
+        "commits": 12,
+        "lines": 1387,
         "path": "atlas/page.json"
       },
       {
-        "commits": 11,
-        "lines": 13061,
+        "commits": 12,
+        "lines": 13093,
         "path": "atlas/statistics.json"
       },
       {
-        "commits": 11,
-        "lines": 19168,
+        "commits": 12,
+        "lines": 19374,
         "path": "atlas/structure.json"
       },
       {
-        "commits": 15,
-        "lines": 287,
+        "commits": 16,
+        "lines": 293,
         "path": "bin/roleos.mjs"
       },
       {
@@ -1713,8 +1713,8 @@
         "path": "src/hooks.mjs"
       },
       {
-        "commits": 1,
-        "lines": 363,
+        "commits": 2,
+        "lines": 486,
         "path": "src/jury-cmd.mjs"
       },
       {
@@ -1758,8 +1758,8 @@
         "path": "src/packs.mjs"
       },
       {
-        "commits": 1,
-        "lines": 119,
+        "commits": 2,
+        "lines": 144,
         "path": "src/recipe-cmd.mjs"
       },
       {
@@ -1843,13 +1843,13 @@
         "path": "src/specialist/gate.mjs"
       },
       {
-        "commits": 2,
-        "lines": 1155,
+        "commits": 3,
+        "lines": 1312,
         "path": "src/specialist/jury.mjs"
       },
       {
-        "commits": 1,
-        "lines": 179,
+        "commits": 2,
+        "lines": 416,
         "path": "src/specialist/recipe-card.mjs"
       },
       {
@@ -1968,8 +1968,8 @@
         "path": "starter-pack/policy/tool-permissions.md"
       },
       {
-        "commits": 1,
-        "lines": 172,
+        "commits": 2,
+        "lines": 215,
         "path": "starter-pack/schemas/jury.md"
       },
       {
@@ -1978,8 +1978,8 @@
         "path": "starter-pack/schemas/outcome-ledger.md"
       },
       {
-        "commits": 1,
-        "lines": 76,
+        "commits": 2,
+        "lines": 156,
         "path": "starter-pack/schemas/recipe-card.md"
       },
       {
@@ -2058,8 +2058,8 @@
         "path": "test/hooks.test.mjs"
       },
       {
-        "commits": 2,
-        "lines": 936,
+        "commits": 3,
+        "lines": 1323,
         "path": "test/jury.test.mjs"
       },
       {
@@ -2093,8 +2093,8 @@
         "path": "test/packs-cmd.test.mjs"
       },
       {
-        "commits": 1,
-        "lines": 225,
+        "commits": 2,
+        "lines": 619,
         "path": "test/recipe-card.test.mjs"
       },
       {
@@ -2598,45 +2598,45 @@
     "level": "low",
     "reason": "fewer than 25 source files reach 10 revisions in the window"
   },
-  "generatedAt": "2026-10-08T18:06:31.077Z",
+  "generatedAt": "2026-10-08T19:46:57.991Z",
   "generatedFrom": {
-    "commit": "d218de70a2c77995f8002eaf76c9a0e621c38ea0"
+    "commit": "ced8f13c8d14fc7cd8c46c7a036b8fea575cc41d"
   },
   "pairs": [
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/README.md",
-      "either": 12,
-      "shared": 7,
-      "strength": 0.583333
+      "either": 13,
+      "shared": 8,
+      "strength": 0.615385
     },
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/page.json",
-      "either": 12,
-      "shared": 7,
-      "strength": 0.583333
+      "either": 13,
+      "shared": 8,
+      "strength": 0.615385
     },
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/statistics.json",
-      "either": 12,
-      "shared": 7,
-      "strength": 0.583333
+      "either": 13,
+      "shared": 8,
+      "strength": 0.615385
     },
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/structure.json",
-      "either": 12,
-      "shared": 7,
-      "strength": 0.583333
+      "either": 13,
+      "shared": 8,
+      "strength": 0.615385
     },
     {
       "a": "CHANGELOG.md",
       "b": "package.json",
-      "either": 15,
+      "either": 16,
       "shared": 11,
-      "strength": 0.733333
+      "strength": 0.6875
     },
     {
       "a": "README.es.md",
@@ -2844,43 +2844,43 @@
     {
       "a": "atlas/README.md",
       "b": "atlas/page.json",
-      "either": 7,
-      "shared": 7,
+      "either": 8,
+      "shared": 8,
       "strength": 1
     },
     {
       "a": "atlas/README.md",
       "b": "atlas/statistics.json",
-      "either": 7,
-      "shared": 7,
+      "either": 8,
+      "shared": 8,
       "strength": 1
     },
     {
       "a": "atlas/README.md",
       "b": "atlas/structure.json",
-      "either": 7,
-      "shared": 7,
+      "either": 8,
+      "shared": 8,
       "strength": 1
     },
     {
       "a": "atlas/page.json",
       "b": "atlas/statistics.json",
-      "either": 7,
-      "shared": 7,
+      "either": 8,
+      "shared": 8,
       "strength": 1
     },
     {
       "a": "atlas/page.json",
       "b": "atlas/structure.json",
-      "either": 7,
-      "shared": 7,
+      "either": 8,
+      "shared": 8,
       "strength": 1
     },
     {
       "a": "atlas/statistics.json",
       "b": "atlas/structure.json",
-      "either": 7,
-      "shared": 7,
+      "either": 8,
+      "shared": 8,
       "strength": 1
     },
     {
@@ -2908,16 +2908,16 @@
     "floor": "fallen",
     "floorHeld": false,
     "floorTrigger": "revision-depth",
-    "headDate": "2026-10-08T10:42:23-07:00",
+    "headDate": "2026-10-08T12:25:36-07:00",
     "inScopeFiles": 642,
     "pinnedStart": null,
     "priorFloor": "fallen",
-    "qualifyingCommits": 104,
+    "qualifyingCommits": 105,
     "qualifyingMinimum": 30,
     "revisions": 5,
     "shared": 10,
     "sharedFloorUsed": 3,
-    "since": "2026-04-11T17:42:23.000Z",
+    "since": "2026-04-11T19:25:36.000Z",
     "sourceExtensions": [
       ".js",
       ".mjs",
