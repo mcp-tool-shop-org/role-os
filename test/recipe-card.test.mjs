@@ -316,6 +316,41 @@ describe("recipe measure and method rules", () => {
     assert.equal(empty.errors.some((e) => /low|outside its CI|p must be in|nulls must be/.test(e)), false);
   });
 
+  it("rejects a methods value that is not an array, and an entry that is not an object", () => {
+    const notArray = validateRecipeCard(one({
+      name: "positive-marker", status: "not-run",
+      measure: { methods: { method: "word-swap" } },
+    }));
+    assert.equal(notArray.ok, false);
+    assert.ok(notArray.errors.some((e) => e.includes("measure.methods must be an array")));
+
+    const badEntries = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "failed",
+      measure: {
+        method: "word-swap", paraphrase_median: 3, error_median: 4, ci: [0.4, 0.6], point: 0.5,
+        methods: [null, "x", []],
+      },
+    }));
+    assert.equal(badEntries.ok, false);
+    for (let i = 0; i < 3; i++) {
+      assert.ok(
+        badEntries.errors.some((e) => e.includes(`measure.methods[${i}] must be an object`)),
+        `missing methods[${i}] error: ${badEntries.errors.join("; ")}`,
+      );
+    }
+  });
+
+  it("rejects a point that is not a finite number", () => {
+    for (const point of ["high", Number.NaN, Number.POSITIVE_INFINITY]) {
+      const bad = validateRecipeCard(one({
+        name: "positive-marker", status: "not-run",
+        measure: { point, ci: [0.2, 0.4] },
+      }));
+      assert.equal(bad.ok, false);
+      assert.ok(bad.errors.some((e) => e.includes("point must be a finite number")), `point ${point}`);
+    }
+  });
+
   it("accepts balanced-permutation, and gaps a missing or wrong shuffle method", () => {
     const present = validateRecipeCard(one({
       name: "shuffled-labels", status: "passed", measure: satisfyingMeasure("shuffled-labels"),
@@ -454,6 +489,60 @@ describe("recipe measure and method rules", () => {
       },
     }));
     assert.ok(secondRatio.warnings.some((w) => w.includes("methods[0]") && w.includes("exceeds 2×")));
+  });
+
+  it("gaps a non-finite paraphrase median and a non-finite error median separately", () => {
+    const badParaphrase = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "failed",
+      measure: {
+        method: "word-swap", ci: [0.4, 0.6], point: 0.5,
+        paraphrase_median: "wide", error_median: 4,
+        methods: [{ method: "sentence-rewrite", paraphrase_median: 3, error_median: Number.NaN }],
+      },
+    }));
+    assert.equal(badParaphrase.ok, true, badParaphrase.errors.join("; "));
+    assert.ok(badParaphrase.warnings.some((w) => w.includes("measure paraphrase_median and error_median must be finite numbers")));
+    assert.ok(badParaphrase.warnings.some((w) => w.includes("methods[0] paraphrase_median and error_median must be finite numbers")));
+  });
+
+  it("gaps a same-generator method outside word-swap and sentence-rewrite", () => {
+    const wrong = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "failed",
+      measure: {
+        method: "free-rewrite", paraphrase_median: 3, error_median: 4, ci: [0.4, 0.6], point: 0.5,
+      },
+    }));
+    assert.equal(wrong.ok, true, wrong.errors.join("; "));
+    assert.ok(wrong.warnings.some((w) => w.includes('method must be "word-swap" or "sentence-rewrite"')));
+
+    const kept = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "failed",
+      measure: satisfyingMeasure("same-generator-no-error"),
+    }));
+    assert.equal(kept.warnings.some((w) => w.includes('method must be "word-swap" or "sentence-rewrite"')), false);
+  });
+
+  it("gaps when both edit methods are recorded and either CI is missing", () => {
+    const missingSwap = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "failed",
+      measure: {
+        method: "word-swap", paraphrase_median: 3, error_median: 4,
+        methods: [{ method: "sentence-rewrite", ci: [0.4, 0.6], paraphrase_median: 3, error_median: 4 }],
+      },
+    }));
+    assert.equal(missingSwap.ok, true, missingSwap.errors.join("; "));
+    assert.ok(missingSwap.warnings.some((w) => w.includes("a CI is missing") && w.includes("overlap is unmeasured")));
+
+    const missingRewrite = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "unresolved",
+      measure: {
+        method: "word-swap", ci: [0.4, 0.6], paraphrase_median: 3, error_median: 4,
+        methods: [{ method: "sentence-rewrite", paraphrase_median: 3, error_median: 4 }],
+      },
+    }));
+    assert.equal(missingRewrite.ok, true, missingRewrite.errors.join("; "));
+    assert.ok(missingRewrite.warnings.some((w) => w.includes("a CI is missing") && w.includes("overlap is unmeasured")));
+    assert.equal(missingRewrite.controls.unresolved.includes("same-generator-no-error"), true);
   });
 
   it("puts reversed-correction in the template and the summary, and requires the CI above 0.5", () => {

@@ -38,7 +38,7 @@
 - The entry ladder is unchanged. A critic that does not name a recipe is
   still seated unless `--require-recipe` is set.
 - README.md is unchanged in this change. Translations stay with the release.
-- Measured line coverage is 90.57% (22755/25123). Rounded down, the CI floor
+- Measured line coverage is 90.66% (22778/25123). Rounded down, the CI floor
   stays 90% (`c8 --check-coverage --lines 90`). Codecov project and patch
   targets stay 90%, and the project status allows a 1% drop.
 

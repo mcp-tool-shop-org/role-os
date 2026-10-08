@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync, readFileSync, rmSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync, spawnSync } from "node:child_process";
@@ -1070,6 +1070,18 @@ describe("recipe evidence gates the jury", () => {
     assert.equal(badFlag.ok, false);
     assert.ok(badFlag.errors.some((e) => e.includes("allow_unproven")));
     assert.ok(badFlag.errors.some((e) => e.includes("recipe_sha256")));
+
+    const member = { critic: "a", count: 1, mean: 0, sd: 1, threshold: 0 };
+    for (const recipeId of [12, ""]) {
+      const dropped = parsePanel({
+        schema: PANEL_SCHEMA,
+        verdict: "panel",
+        members: [{ ...member, recipe_id: recipeId }],
+      });
+      assert.equal(dropped.ok, false);
+      assert.equal(dropped.members.length, 0);
+      assert.ok(dropped.errors.some((e) => e.includes("recipe_id must be a non-empty string or null")), `recipe_id ${JSON.stringify(recipeId)}`);
+    }
   });
 
   it("parses a recipe pointer and rejects a malformed one", () => {
@@ -1094,6 +1106,52 @@ describe("recipe evidence gates the jury", () => {
     assert.equal(bad.ok, false);
     assert.ok(bad.errors.some((e) => e.includes("recipe.path")));
     assert.ok(bad.errors.some((e) => e.includes("recipe.sha256")));
+
+    const base = {
+      schema: VALIDATION_SCHEMA,
+      items: [{ id: "p", group: "g", truth: 1 }],
+    };
+    for (const recipe of [null, "nope", []]) {
+      const rejected = parseValidation({
+        ...base,
+        critics: { a: { threshold: 0, scores: { p: 1 }, recipe } },
+      });
+      assert.equal(rejected.ok, false);
+      assert.equal(rejected.critics.length, 1);
+      assert.equal(rejected.critics[0].recipe, null);
+      assert.ok(
+        rejected.errors.some((e) => e.includes("recipe must be an object { path, sha256 }")),
+        `recipe ${JSON.stringify(recipe)}: ${rejected.errors.join("; ")}`,
+      );
+    }
+  });
+
+  it("ignores an inherited recipe and a blank recipe map, and still names the missing card", () => {
+    const { items, critics } = noiseCritics({
+      n: 8,
+      seed: 3,
+      specs: [{ id: "known", scale: 0.2 }, { id: "missing", scale: 0.2 }],
+    });
+    const known = cleanAssessment("known-card");
+    const stolen = cleanAssessment("stolen-card");
+    const recipes = Object.assign(Object.create({ missing: stolen }), { known });
+    const partial = juryCheck(critics, items, { seed: 1, B: 20, recipes });
+    const knownRow = partial.critics.find((c) => c.id === "known");
+    const missingRow = partial.critics.find((c) => c.id === "missing");
+    assert.equal(knownRow.recipe.id, "known-card");
+    assert.equal(knownRow.recipe.note, null);
+    assert.equal(missingRow.recipe.note, "unproven: no recipe card");
+    assert.equal(missingRow.recipe.id, null);
+    assert.equal(partial.excluded.some((row) => row.id === "missing"), false);
+
+    const required = juryCheck(critics, items, { seed: 1, B: 20, recipes, requireRecipe: true });
+    assert.equal(required.excluded.some((row) => row.id === "missing" && row.reason === "unproven: no recipe card"), true);
+    assert.equal(required.excluded.some((row) => row.id === "known"), false);
+
+    const blank = juryCheck(critics, items, { seed: 1, B: 20, recipes: "" });
+    assert.equal(blank.critics.length, 2);
+    assert.equal(blank.critics.every((c) => c.recipe && c.recipe.note === "unproven: no recipe card"), true);
+    assert.equal(blank.excluded.length, 0);
   });
 });
 
@@ -1187,6 +1245,18 @@ describe("roleos jury recipe CLI", () => {
       const invalid = run(["jury", "check", file]);
       assert.notEqual(invalid.status, 0);
       assert.match(JSON.parse(invalid.stderr).message, /invalid/);
+
+      const cardDir = join(dir, "card-dir");
+      mkdirSync(cardDir);
+      doc.critics.a.recipe.path = "card-dir";
+      doc.critics.a.recipe.sha256 = built.sha256;
+      writeFileSync(file, JSON.stringify(doc));
+      const unread = run(["jury", "check", file, "--allow-unproven"]);
+      assert.notEqual(unread.status, 0);
+      const unreadErr = JSON.parse(unread.stderr);
+      assert.match(unreadErr.message, /could not read recipe card for a/);
+      assert.match(unreadErr.hint, /relative to the validation file/);
+      assert.doesNotMatch(unread.stderr, /jury-cmd\.mjs/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
