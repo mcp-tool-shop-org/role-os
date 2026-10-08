@@ -1,11 +1,11 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync, readFileSync, rmSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { canonicalJson } from "../src/specialist/recipe-card.mjs";
+import { RECIPE_SCHEMA, canonicalJson, hashRecipeCard, validateRecipeCard } from "../src/specialist/recipe-card.mjs";
 import { createHash } from "node:crypto";
 import {
   DUPLICATE_KAPPA,
@@ -921,6 +921,389 @@ describe("roleos jury CLI", () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+function recipeCard(id, controls) {
+  const card = {
+    schema: RECIPE_SCHEMA,
+    id,
+    role: "Auditor",
+    attribute: "finds the planted error in one answer",
+    format: { kind: "pointwise" },
+    sources: [{ name: "pairs", licence: "studio-internal" }],
+    negatives: {
+      construction: "planted-edit",
+      generators: [
+        { model: "model-a", family: "qwen", revision: "r1" },
+        { model: "model-b", family: "gemma", revision: "r2" },
+      ],
+      error_taxonomy: ["wrong fact"],
+    },
+    splits: {
+      train: { n: 1 }, validation: { n: 1 }, final: { n: 1 },
+      held_out_generator: { family: "granite" }, natural_errors: { n: 1 },
+    },
+    controls,
+    pins: { features: "pinned" },
+  };
+  const checked = validateRecipeCard(card);
+  if (!checked.ok) throw new Error(checked.errors.join("; "));
+  return { card, sha256: hashRecipeCard(card), controls: checked.controls, gaps: checked.warnings };
+}
+
+function cleanAssessment(id) {
+  const built = recipeCard(id, [{
+    name: "positive-marker",
+    status: "passed",
+    measure: { metric: "accuracy", point: 0.8, ci: [0.7, 0.9], n: 40, clusters: "prompt" },
+  }]);
+  return {
+    id: built.card.id,
+    sha256: built.sha256,
+    passed: built.controls.passed,
+    failed: built.controls.failed,
+    unresolved: built.controls.unresolved,
+    gaps: built.gaps,
+    card: built.card,
+  };
+}
+
+describe("recipe evidence gates the jury", () => {
+  it("excludes a failed or unresolved control, and a gap does not", () => {
+    const { items, critics } = noiseCritics({
+      n: 40,
+      seed: 3,
+      specs: [{ id: "strong", scale: 0.2 }, { id: "weak", scale: 2.5 }],
+    });
+    const opts = { seed: 0, B: 30, bags: 6, folds: 5, maxSize: 3 };
+    const failed = cleanAssessment("strong-card");
+    failed.failed = ["shuffled-labels"];
+    failed.passed = [];
+    const clean = cleanAssessment("weak-card");
+    const blocked = jurySelect(critics, items, {
+      ...opts,
+      recipes: { strong: failed, weak: clean },
+    });
+    assert.equal(blocked.excluded.some((row) => row.id === "strong" && row.reason.includes("shuffled-labels failed")), true);
+    assert.notEqual(blocked.verdict.critic, "strong");
+    if (blocked.bagged) assert.ok(blocked.bagged.members.every((m) => m.critic !== "strong"));
+    assert.ok(blocked.verdict.decision === "best-single" || blocked.verdict.decision === "panel");
+    if (blocked.verdict.decision === "best-single") assert.equal(blocked.verdict.critic, "weak");
+
+    const only = noiseCritics({ n: 40, seed: 1, specs: [{ id: "only", scale: 0.1 }] });
+    const onlyFailed = new Map([["only", { id: "only-card", sha256: "a".repeat(64), passed: [], failed: ["shuffled-labels"], unresolved: [], gaps: [] }]]);
+    const denied = jurySelect(only.critics, only.items, { ...opts, recipes: onlyFailed });
+    assert.equal(denied.verdict.decision, "insufficient-data");
+    assert.match(denied.verdict.reason, /excluded by its recipe card/);
+    const admitted = jurySelect(only.critics, only.items, { ...opts, recipes: onlyFailed, allowUnproven: true });
+    assert.notEqual(admitted.verdict.decision, "insufficient-data");
+    assert.equal(admitted.excluded.length, 0);
+    assert.equal(admitted.allowUnproven, true);
+
+    const unresolved = jurySelect(only.critics, only.items, {
+      ...opts,
+      recipes: new Map([["only", { id: "only-card", sha256: "b".repeat(64), passed: [], failed: [], unresolved: ["same-generator-no-error"], gaps: [] }]]),
+    });
+    assert.equal(unresolved.verdict.decision, "insufficient-data");
+    assert.match(unresolved.excluded[0].reason, /same-generator-no-error unresolved/);
+
+    const gappy = jurySelect(only.critics, only.items, {
+      ...opts,
+      recipes: new Map([["only", { id: "only-card", sha256: "c".repeat(64), passed: ["shuffled-labels"], failed: [], unresolved: [], gaps: ["plain random shuffle"] }]]),
+    });
+    assert.equal(gappy.excluded.length, 0);
+    assert.notEqual(gappy.verdict.decision, "insufficient-data");
+
+    const first = JSON.stringify(jurySelect(critics, items, { ...opts, recipes: { strong: failed, weak: clean } }));
+    const second = JSON.stringify(jurySelect(critics, items, { ...opts, recipes: { strong: failed, weak: clean } }));
+    assert.equal(first, second);
+  });
+
+  it("requires a card only when asked, and records recipe ids on the panel", () => {
+    const { items, critics } = noiseCritics({
+      n: 40,
+      seed: 4,
+      specs: [{ id: "carded", scale: 0.2 }, { id: "bare", scale: 0.2 }],
+    });
+    const opts = { seed: 2, B: 20, bags: 4, folds: 5, maxSize: 3 };
+    const carded = cleanAssessment("carded-card");
+    const open = jurySelect(critics, items, { ...opts, recipes: { carded, bare: null } });
+    assert.equal(open.excluded.length, 0);
+    assert.equal(open.critics.find((c) => c.id === "bare").recipe.note, "unproven: no recipe card");
+    const required = jurySelect(critics, items, { ...opts, recipes: { carded, bare: null }, requireRecipe: true });
+    assert.equal(required.excluded.some((row) => row.id === "bare" && row.reason === "unproven: no recipe card"), true);
+    assert.ok(!required.bagged || required.bagged.members.every((m) => m.critic !== "bare"));
+
+    const panel = buildPanelFile({
+      members: [{
+        critic: "carded", count: 1, mean: 0, sd: 1, threshold: 0,
+        recipeId: carded.id, recipeSha256: carded.sha256,
+      }],
+      validationSha256: "d".repeat(64),
+      seed: 0, maxSize: 3, bags: 4, folds: 5, bootstrap: 20,
+      nested: { panelAccuracy: 0.8, bestSingleAccuracy: 0.7, difference: 0.1, differenceCi: { low: 0.02, high: 0.2 }, n: 40 },
+      allowUnproven: true,
+    });
+    assert.equal(panel.allow_unproven, true);
+    assert.equal(panel.members[0].recipe_id, "carded-card");
+    assert.equal(panel.members[0].recipe_sha256, carded.sha256);
+    const parsed = parsePanel(panel);
+    assert.equal(parsed.ok, true);
+    assert.equal(parsed.allowUnproven, true);
+    assert.equal(parsed.members[0].recipe_id, "carded-card");
+    const old = parsePanel({
+      schema: PANEL_SCHEMA,
+      verdict: "panel",
+      members: [{ critic: "a", count: 1, mean: 0, sd: 1, threshold: 0 }],
+    });
+    assert.equal(old.ok, true);
+    assert.equal(old.allowUnproven, false);
+    assert.equal(old.members[0].recipe_id, null);
+    assert.equal(old.members[0].recipe_sha256, null);
+    const badFlag = parsePanel({
+      schema: PANEL_SCHEMA,
+      verdict: "panel",
+      allow_unproven: "yes",
+      members: [{ critic: "a", count: 1, mean: 0, sd: 1, threshold: 0, recipe_sha256: "zz" }],
+    });
+    assert.equal(badFlag.ok, false);
+    assert.ok(badFlag.errors.some((e) => e.includes("allow_unproven")));
+    assert.ok(badFlag.errors.some((e) => e.includes("recipe_sha256")));
+
+    const member = { critic: "a", count: 1, mean: 0, sd: 1, threshold: 0 };
+    for (const recipeId of [12, ""]) {
+      const dropped = parsePanel({
+        schema: PANEL_SCHEMA,
+        verdict: "panel",
+        members: [{ ...member, recipe_id: recipeId }],
+      });
+      assert.equal(dropped.ok, false);
+      assert.equal(dropped.members.length, 0);
+      assert.ok(dropped.errors.some((e) => e.includes("recipe_id must be a non-empty string or null")), `recipe_id ${JSON.stringify(recipeId)}`);
+    }
+  });
+
+  it("parses a recipe pointer and rejects a malformed one", () => {
+    const ok = parseValidation({
+      schema: VALIDATION_SCHEMA,
+      items: [{ id: "p", group: "g", truth: 1 }],
+      critics: { a: { threshold: 0, scores: { p: 1 }, recipe: { path: "card.json", sha256: "ab".repeat(32) } } },
+    });
+    assert.equal(ok.ok, true);
+    assert.equal(ok.critics[0].recipe.path, "card.json");
+    const absent = parseValidation({
+      schema: VALIDATION_SCHEMA,
+      items: [{ id: "p", group: "g", truth: 1 }],
+      critics: { a: { threshold: 0, scores: { p: 1 } } },
+    });
+    assert.equal(absent.critics[0].recipe, null);
+    const bad = parseValidation({
+      schema: VALIDATION_SCHEMA,
+      items: [{ id: "p", group: "g", truth: 1 }],
+      critics: { a: { threshold: 0, scores: { p: 1 }, recipe: { path: "", sha256: "ZZ" } } },
+    });
+    assert.equal(bad.ok, false);
+    assert.ok(bad.errors.some((e) => e.includes("recipe.path")));
+    assert.ok(bad.errors.some((e) => e.includes("recipe.sha256")));
+
+    const base = {
+      schema: VALIDATION_SCHEMA,
+      items: [{ id: "p", group: "g", truth: 1 }],
+    };
+    for (const recipe of [null, "nope", []]) {
+      const rejected = parseValidation({
+        ...base,
+        critics: { a: { threshold: 0, scores: { p: 1 }, recipe } },
+      });
+      assert.equal(rejected.ok, false);
+      assert.equal(rejected.critics.length, 1);
+      assert.equal(rejected.critics[0].recipe, null);
+      assert.ok(
+        rejected.errors.some((e) => e.includes("recipe must be an object { path, sha256 }")),
+        `recipe ${JSON.stringify(recipe)}: ${rejected.errors.join("; ")}`,
+      );
+    }
+  });
+
+  it("ignores an inherited recipe and a blank recipe map, and still names the missing card", () => {
+    const { items, critics } = noiseCritics({
+      n: 8,
+      seed: 3,
+      specs: [{ id: "known", scale: 0.2 }, { id: "missing", scale: 0.2 }],
+    });
+    const known = cleanAssessment("known-card");
+    const stolen = cleanAssessment("stolen-card");
+    const recipes = Object.assign(Object.create({ missing: stolen }), { known });
+    const partial = juryCheck(critics, items, { seed: 1, B: 20, recipes });
+    const knownRow = partial.critics.find((c) => c.id === "known");
+    const missingRow = partial.critics.find((c) => c.id === "missing");
+    assert.equal(knownRow.recipe.id, "known-card");
+    assert.equal(knownRow.recipe.note, null);
+    assert.equal(missingRow.recipe.note, "unproven: no recipe card");
+    assert.equal(missingRow.recipe.id, null);
+    assert.equal(partial.excluded.some((row) => row.id === "missing"), false);
+
+    const required = juryCheck(critics, items, { seed: 1, B: 20, recipes, requireRecipe: true });
+    assert.equal(required.excluded.some((row) => row.id === "missing" && row.reason === "unproven: no recipe card"), true);
+    assert.equal(required.excluded.some((row) => row.id === "known"), false);
+
+    const blank = juryCheck(critics, items, { seed: 1, B: 20, recipes: "" });
+    assert.equal(blank.critics.length, 2);
+    assert.equal(blank.critics.every((c) => c.recipe && c.recipe.note === "unproven: no recipe card"), true);
+    assert.equal(blank.excluded.length, 0);
+  });
+});
+
+describe("roleos jury recipe CLI", () => {
+  function writeValidation(dir, critics, items, recipes) {
+    const doc = validationDoc(items, critics);
+    for (let i = 0; i < critics.length; i++) {
+      const critic = critics[i];
+      const recipe = recipes[critic.id];
+      if (!recipe) continue;
+      const fileName = `${critic.id}.json`;
+      writeFileSync(join(dir, fileName), JSON.stringify(recipe.card));
+      doc.critics[critic.id].recipe = { path: fileName, sha256: recipe.sha256 };
+    }
+    const file = join(dir, "validation.json");
+    writeFileSync(file, JSON.stringify(doc));
+    return file;
+  }
+
+  it("excludes a failed card, admits it with --allow-unproven, and requires a card only when asked", () => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-jury-recipe-"));
+    try {
+      const { items, critics } = noiseCritics({
+        n: 40,
+        seed: 8,
+        specs: [{ id: "bad", scale: 0.2 }, { id: "good", scale: 0.4 }],
+      });
+      const bad = recipeCard("bad-card", [{ name: "shuffled-labels", status: "failed", result: "still predictable" }]);
+      const good = cleanAssessment("good-card");
+      const file = writeValidation(dir, critics, items, { bad, good });
+      const args = ["jury", "select", file, "--json", "--seed", "0", "--bags", "4", "--folds", "5", "--max-size", "3"];
+      const blocked = run(args);
+      assert.equal(blocked.status, 0, blocked.stderr);
+      const again = run(args);
+      assert.equal(again.stdout, blocked.stdout);
+      const body = JSON.parse(blocked.stdout);
+      assert.equal(body.excluded.some((row) => row.id === "bad" && /shuffled-labels failed/.test(row.reason)), true);
+      assert.notEqual(body.verdict.critic, "bad");
+      if (body.bagged) assert.ok(body.bagged.members.every((m) => m.critic !== "bad"));
+      const text = run(["jury", "check", file]);
+      assert.equal(text.status, 0, text.stderr);
+      assert.match(text.stdout, /bad  passed: none  failed: shuffled-labels  unresolved: none/);
+      assert.match(text.stdout, /good  passed: positive-marker/);
+      assert.match(text.stdout, /excluded by recipe/);
+
+      const admitted = run([...args, "--allow-unproven"]);
+      assert.equal(admitted.status, 0, admitted.stderr);
+      const open = JSON.parse(admitted.stdout);
+      assert.equal(open.excluded.some((row) => row.id === "bad"), false);
+      assert.equal(open.allow_unproven, true);
+
+      const bare = noiseCritics({ n: 40, seed: 9, specs: [{ id: "solo", scale: 0.2 }] });
+      const bareFile = writeValidation(dir, bare.critics, bare.items, {});
+      const noted = run(["jury", "check", bareFile]);
+      assert.match(noted.stdout, /solo  unproven: no recipe card/);
+      const required = run(["jury", "select", bareFile, "--json", "--require-recipe", "--bags", "4", "--folds", "5", "--seed", "1"]);
+      assert.equal(required.status, 0, required.stderr);
+      const reqBody = JSON.parse(required.stdout);
+      assert.equal(reqBody.excluded[0].reason, "unproven: no recipe card");
+      assert.equal(reqBody.verdict.decision, "insufficient-data");
+      assert.match(reqBody.verdict.reason, /excluded by its recipe card/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("errors on a hash mismatch, a missing card, and an invalid card, and --allow-unproven does not skip the mismatch", () => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-jury-recipe-"));
+    try {
+      const { items, critics } = noiseCritics({ n: 40, seed: 2, specs: [{ id: "a", scale: 0.2 }] });
+      const built = cleanAssessment("a-card");
+      const file = writeValidation(dir, critics, items, { a: built });
+      const doc = JSON.parse(readFileSync(file, "utf8"));
+      doc.critics.a.recipe.sha256 = "f".repeat(64);
+      writeFileSync(file, JSON.stringify(doc));
+      const mismatch = run(["jury", "check", file, "--allow-unproven"]);
+      assert.notEqual(mismatch.status, 0);
+      const err = JSON.parse(mismatch.stderr);
+      assert.match(err.message, /hash mismatch/);
+      assert.match(err.message, new RegExp(built.sha256));
+      assert.doesNotMatch(mismatch.stderr, /jury-cmd\.mjs/);
+
+      doc.critics.a.recipe.path = "missing-card.json";
+      doc.critics.a.recipe.sha256 = built.sha256;
+      writeFileSync(file, JSON.stringify(doc));
+      const missing = run(["jury", "select", file, "--require-recipe"]);
+      assert.notEqual(missing.status, 0);
+      assert.match(JSON.parse(missing.stderr).message, /not found/);
+
+      writeFileSync(join(dir, "missing-card.json"), JSON.stringify({ schema: RECIPE_SCHEMA }));
+      const invalid = run(["jury", "check", file]);
+      assert.notEqual(invalid.status, 0);
+      assert.match(JSON.parse(invalid.stderr).message, /invalid/);
+
+      const cardDir = join(dir, "card-dir");
+      mkdirSync(cardDir);
+      doc.critics.a.recipe.path = "card-dir";
+      doc.critics.a.recipe.sha256 = built.sha256;
+      writeFileSync(file, JSON.stringify(doc));
+      const unread = run(["jury", "check", file, "--allow-unproven"]);
+      assert.notEqual(unread.status, 0);
+      const unreadErr = JSON.parse(unread.stderr);
+      assert.match(unreadErr.message, /could not read recipe card for a/);
+      assert.match(unreadErr.hint, /relative to the validation file/);
+      assert.doesNotMatch(unread.stderr, /jury-cmd\.mjs/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("writes recipe ids into a panel file", () => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-jury-recipe-"));
+    try {
+      const { items, critics } = noiseCritics({
+        n: 400,
+        seed: 11,
+        specs: [{ id: "c0", scale: 2.5 }, { id: "c1", scale: 2.5 }, { id: "c2", scale: 2.5 }],
+      });
+      const recipes = {
+        c0: cleanAssessment("c0-card"),
+        c1: cleanAssessment("c1-card"),
+        c2: cleanAssessment("c2-card"),
+      };
+      const file = writeValidation(dir, critics, items, recipes);
+      const out = join(dir, "panel.json");
+      const selected = run(["jury", "select", file, "--json", "--seed", "0", "--bags", "30", "--folds", "5", "--max-size", "5", "--out", out, "--allow-unproven"]);
+      assert.equal(selected.status, 0, selected.stderr);
+      const body = JSON.parse(selected.stdout);
+      assert.equal(body.verdict.decision, "panel");
+      const panel = JSON.parse(readFileSync(out, "utf8"));
+      assert.equal(panel.allow_unproven, true);
+      assert.ok(panel.members.length > 0);
+      for (let i = 0; i < panel.members.length; i++) {
+        const member = panel.members[i];
+        assert.equal(member.recipe_id, `${member.critic}-card`);
+        assert.equal(member.recipe_sha256, recipes[member.critic].sha256);
+      }
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("mentions the recipe flags in the catalog and the verb help", () => {
+    const catalog = execFileSync(process.execPath, [CLI, "help"], { encoding: "utf8" });
+    assert.match(catalog, /--allow-unproven/);
+    assert.match(catalog, /--require-recipe/);
+    const verb = execFileSync(process.execPath, [CLI, "jury", "help"], { encoding: "utf8" });
+    assert.match(verb, /--allow-unproven/);
+    assert.match(verb, /--require-recipe/);
+    assert.match(verb, /unproven: no/);
+    assert.match(verb, /recipe card/);
+    assert.match(verb, /reversed-correction|unresolved|recipe/);
   });
 });
 

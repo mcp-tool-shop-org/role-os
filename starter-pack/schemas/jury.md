@@ -22,7 +22,12 @@ The tool does not print a panel it cannot support.
   "schema": "roleos-jury-validation/v1",
   "items": [{ "id": "p1", "group": "prompt-17", "truth": 1 }],
   "critics": {
-    "auditor-attn-s42": { "kind": "pointwise", "threshold": 0, "scores": { "p1": 1.3 } },
+    "auditor-attn-s42": {
+      "kind": "pointwise",
+      "threshold": 0,
+      "scores": { "p1": 1.3 },
+      "recipe": { "path": "recipes/auditor.json", "sha256": "<64 lowercase hex chars>" }
+    },
     "kev-4b-ft-s0": { "kind": "pairwise", "threshold": 0.5, "scores": { "p1": 0.97 } }
   }
 }
@@ -37,6 +42,7 @@ The tool does not print a panel it cannot support.
 | `critics.<id>.threshold` | yes | Finite number. A score above it is a yes, a score below it is a no, and a score exactly equal to it is an abstention. |
 | `critics.<id>.scores` | yes | Map of item id to a finite score. **Higher means "truth = 1".** |
 | `critics.<id>.kind` | — | Label only (`pointwise`, `pairwise`, …). It does not change the maths. |
+| `critics.<id>.recipe` | — | `{ path, sha256 }`. `path` is relative to this validation file. `sha256` is the recipe card's canonical hash. A missing card is allowed. A hash that does not match the file is an error. |
 
 A score that is absent is left out of that critic's accuracy and out of coverage
 (`scored / items`). It is not treated as a zero, and it is not treated as a wrong
@@ -82,15 +88,22 @@ second vote changes the outcome.
    10 groups. No panel file is written. The per-critic table is still printed,
    because those are measurements, not a recommendation.
 2. Drop inverted critics.
-3. **Greedy selection** (Caruana, Niculescu-Mizil, Crew, and Ksikes, ICML 2004).
+3. Drop a critic whose recipe card has any failed or unresolved standard control.
+   The reason is listed, the same way an inverted critic is listed. `--allow-unproven`
+   admits that critic, and the panel file records `"allow_unproven": true`. A critic
+   with no card is admitted with the note `unproven: no recipe card`. `--require-recipe`
+   leaves that critic out. A gap on the card, including a wrong shuffle method, does
+   not by itself exclude the critic. `--allow-unproven` does not forgive a hash
+   mismatch, a missing file, or a card that fails `recipe check`.
+4. **Greedy selection** (Caruana, Niculescu-Mizil, Crew, and Ksikes, ICML 2004).
    Start from the best single critic. Repeatedly add the critic, allowing the
    same critic again, that most raises panel accuracy. Stop when no addition
    raises it, or at `--max-size` slots (default 5). Ties break toward the
    lexicographically smaller id.
-4. **Bagging.** Run that greedy selection on `--bags` group-bootstrap resamples
+5. **Bagging.** Run that greedy selection on `--bags` group-bootstrap resamples
    (default 50). Keep critics chosen in at least half the bags. A kept critic's
    count is the lower median of its counts on the bags that chose it.
-5. **Nested estimate.** Split groups into `--folds` (default 5). On each training
+6. **Nested estimate.** Split groups into `--folds` (default 5). On each training
    side, run the same bagged selection and score that panel on the held-out
    groups. Do the same for the best single critic chosen on the training side.
    Report both out-of-fold accuracies and a paired group-clustered bootstrap
@@ -118,7 +131,7 @@ If every member abstains, the item is unmeasured.
 |---|---|---|
 | `panel` | The nested interval lies entirely above 0, and bagging kept at least one critic | Writes `roleos-jury-panel/v1` |
 | `best-single` | Otherwise, and at least one critic is eligible | Writes nothing. Names the critic. |
-| `insufficient-data` | Too few items or groups, no measured critic, or every measured critic is inverted | Writes nothing. Names no winner. |
+| `insufficient-data` | Too few items or groups, no measured critic, every measured critic is inverted, or every measured critic is excluded by its recipe card | Writes nothing. Names no winner. |
 
 "Entirely above 0" means the lower end of the interval is greater than 0. An
 interval that touches 0 is not a panel.
@@ -130,8 +143,17 @@ Written only for verdict `panel`.
 ```json
 {
   "schema": "roleos-jury-panel/v1",
+  "allow_unproven": false,
   "members": [
-    { "critic": "auditor-attn-s42", "count": 1, "mean": 0.12, "sd": 0.84, "threshold": 0 }
+    {
+      "critic": "auditor-attn-s42",
+      "count": 1,
+      "mean": 0.12,
+      "sd": 0.84,
+      "threshold": 0,
+      "recipe_id": "auditor-v1",
+      "recipe_sha256": "<sha256 of that critic's recipe card, or null>"
+    }
   ],
   "selected_on": {
     "validation_sha256": "<sha256 of the validation file's canonical JSON>",
@@ -152,9 +174,18 @@ Written only for verdict `panel`.
 }
 ```
 
+`allow_unproven` is true only when selection was run with `--allow-unproven`.
+Older panel files omit it. `recipe_id` and `recipe_sha256` are null when that
+member had no card. A card is not required unless selection used `--require-recipe`.
+
 `validation_sha256` is the SHA-256 of canonical JSON (keys sorted at every level),
 the same canonical form as a recipe card. Reformatting the validation file does
 not change the hash. Changing a score does.
+
+`jury check` prints each critic's recipe status: the passed, failed, and unresolved
+standard controls, and the gap count. A critic with no card is printed as
+`unproven: no recipe card`. The hash is checked before any of that is printed. A
+mismatch names both hashes and stops.
 
 `roleos jury score` applies these stored means, standard deviations, thresholds,
 and counts to new items. It does not refit them on the new items. New items use

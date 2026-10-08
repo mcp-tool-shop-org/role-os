@@ -3,13 +3,15 @@
  *
  *   check <validation.json> [--json]
  *   select <validation.json> [--max-size 5] [--bags 50] [--folds 5] [--seed 0]
- *           [--out panel.json] [--json]
+ *           [--allow-unproven] [--require-recipe] [--out panel.json] [--json]
  *   score <panel.json> <items.json> [--json]
  *
  * The CLI reads files, calls the pure core, and prints. It does not call a model.
  */
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { parseRecipeCard } from "./specialist/recipe-card.mjs";
 import {
   DEFAULT_BAGS,
   DEFAULT_FOLDS,
@@ -45,14 +47,22 @@ function printHelp() {
   console.log(`
 roleos jury — measure critics, and keep a panel only when it beats the best one
 
-  roleos jury check <validation.json> [--json]
+  roleos jury check <validation.json> [--json] [--allow-unproven] [--require-recipe]
       Per-critic accuracy, group-clustered 95% interval, coverage, and the
       error-consistency matrix. Flags inverted critics and near-duplicates.
+      Prints each critic's recipe card: passed, failed and unresolved standard
+      controls, plus gaps. A hash mismatch is an error.
 
   roleos jury select <validation.json> [--max-size 5] [--bags 50] [--folds 5]
-                       [--seed 0] [--out panel.json] [--json]
+                       [--seed 0] [--allow-unproven] [--require-recipe]
+                       [--out panel.json] [--json]
       Everything check prints, plus bagged selection, the nested estimate,
-      and a verdict. --out writes a panel file only when the verdict is "panel".
+      and a verdict. A critic whose card has a failed or unresolved standard
+      control is left out unless --allow-unproven. The panel file records
+      that flag. A critic with no card is admitted with an "unproven: no
+      recipe card" note, unless --require-recipe. --out writes a panel file
+      only when the verdict is "panel". Each member records its recipe id
+      and sha256, or null.
 
   roleos jury score <panel.json> <items.json> [--json]
       Apply a saved panel to new items. A missing score is unmeasured.
@@ -140,6 +150,8 @@ function selectionOpts(flags) {
     maxSize: requireInt(flags, "max-size", DEFAULT_MAX_SIZE, 1, 100),
     bags: requireInt(flags, "bags", DEFAULT_BAGS, 1, 1000),
     folds: requireInt(flags, "folds", DEFAULT_FOLDS, 2, 50),
+    allowUnproven: flags["allow-unproven"] !== undefined,
+    requireRecipe: flags["require-recipe"] !== undefined,
   };
 }
 
@@ -166,6 +178,7 @@ function reportBody(report) {
       scored: c.scored,
       decided: c.decided,
       total: c.total,
+      recipe: c.recipe || null,
     })),
     pairs: report.pairs.map((p) => ({
       a: p.a,
@@ -181,6 +194,9 @@ function reportBody(report) {
       b: d.b,
       error_consistency: d.errorConsistency,
     })),
+    excluded: report.excluded || [],
+    allow_unproven: report.allowUnproven === true,
+    require_recipe: report.requireRecipe === true,
   };
 }
 
@@ -211,6 +227,8 @@ function baggedBody(bagged) {
       sd: m.sd,
       threshold: m.threshold,
       bags_present: m.bagsPresent,
+      recipe_id: m.recipeId || null,
+      recipe_sha256: m.recipeSha256 || null,
     })),
   };
 }
@@ -240,7 +258,33 @@ function renderCheck(report) {
     const p = report.pairs[i];
     lines.push(`  ${p.a}  ${p.b}  kappa ${fmt(p.errorConsistency)}  double-fault ${fmt(p.doubleFault)}  disagreement ${fmt(p.disagreement)}  n ${p.n}`);
   }
+  lines.push("recipes");
+  let recipeLines = 0;
+  for (let i = 0; i < report.critics.length; i++) {
+    const c = report.critics[i];
+    if (!c.recipe) continue;
+    lines.push(`  ${formatRecipeLine(c)}`);
+    recipeLines += 1;
+  }
+  if (recipeLines === 0) lines.push("  none");
+  lines.push("excluded by recipe (failed or unresolved standard controls are left out unless --allow-unproven)");
+  if (!report.excluded || report.excluded.length === 0) lines.push("  none");
+  else {
+    for (let i = 0; i < report.excluded.length; i++) {
+      const row = report.excluded[i];
+      lines.push(`  ${row.id}  ${row.reason}`);
+    }
+  }
   return lines;
+}
+
+function formatRecipeLine(critic) {
+  const recipe = critic.recipe;
+  if (!recipe || recipe.note === "unproven: no recipe card") return `${critic.id}  unproven: no recipe card`;
+  const passed = recipe.passed.length ? recipe.passed.join(", ") : "none";
+  const failed = recipe.failed.length ? recipe.failed.join(", ") : "none";
+  const unresolved = recipe.unresolved.length ? recipe.unresolved.join(", ") : "none";
+  return `${critic.id}  passed: ${passed}  failed: ${failed}  unresolved: ${unresolved}  gaps: ${recipe.gaps.length}`;
 }
 
 function renderSelect(report) {
@@ -285,7 +329,12 @@ function renderSelect(report) {
 function checkValidation(args) {
   const { flags, positional } = parseArgs(args);
   const loaded = loadValidation(positional[0], true);
-  const report = juryCheck(loaded.critics, loaded.items, { seed: DEFAULT_SEED });
+  const report = juryCheck(loaded.critics, loaded.items, {
+    seed: DEFAULT_SEED,
+    recipes: loadRecipes(positional[0], loaded.critics),
+    allowUnproven: flags["allow-unproven"] !== undefined,
+    requireRecipe: flags["require-recipe"] !== undefined,
+  });
   if (flags.json) console.log(JSON.stringify(reportBody(report), null, 2));
   else console.log(renderCheck(report).join("\n"));
 }
@@ -294,7 +343,10 @@ function selectPanel(args) {
   const { flags, positional } = parseArgs(args);
   const loaded = loadValidation(positional[0], true);
   const opts = selectionOpts(flags);
-  const report = jurySelect(loaded.critics, loaded.items, opts);
+  const report = jurySelect(loaded.critics, loaded.items, {
+    ...opts,
+    recipes: loadRecipes(positional[0], loaded.critics),
+  });
   const body = {
     ...reportBody(report),
     seed: report.seed,
@@ -317,6 +369,7 @@ function selectPanel(args) {
         folds: opts.folds,
         bootstrap: report.bootstrap,
         nested: report.nested,
+        allowUnproven: opts.allowUnproven,
       });
       try {
         writeFileSync(flags.out, `${JSON.stringify(panel, null, 2)}\n`);
@@ -338,6 +391,64 @@ function selectPanel(args) {
     }
     console.log(lines.join("\n"));
   }
+}
+
+function failRecipe(message, hint) {
+  const err = new Error(message);
+  err.exitCode = 1;
+  err.hint = hint;
+  throw err;
+}
+
+/** Load each critic's card. The path is relative to the validation file. The core never reads it. */
+function loadRecipes(validationFile, critics) {
+  const base = dirname(resolve(validationFile));
+  const recipes = new Map();
+  for (let i = 0; i < critics.length; i++) {
+    const critic = critics[i];
+    if (!critic.recipe) {
+      recipes.set(critic.id, null);
+      continue;
+    }
+    const cardPath = resolve(base, critic.recipe.path);
+    if (!existsSync(cardPath)) {
+      failRecipe(
+        `recipe card not found for ${critic.id}: ${critic.recipe.path}`,
+        "The recipe path is relative to the validation file.",
+      );
+    }
+    let text;
+    try {
+      text = readFileSync(cardPath, "utf8");
+    } catch (err) {
+      failRecipe(
+        `could not read recipe card for ${critic.id}: ${err.message}`,
+        "The recipe path is relative to the validation file.",
+      );
+    }
+    const parsed = parseRecipeCard(text);
+    if (!parsed.ok) {
+      failRecipe(
+        `recipe card for ${critic.id} is invalid: ${parsed.errors.join("; ")}`,
+        "Run 'roleos recipe check' on the card.",
+      );
+    }
+    if (parsed.sha256 !== critic.recipe.sha256) {
+      failRecipe(
+        `recipe hash mismatch for ${critic.id}: validation file says ${critic.recipe.sha256}, card hashes to ${parsed.sha256}`,
+        "Point recipe.sha256 at the card's canonical hash.",
+      );
+    }
+    recipes.set(critic.id, {
+      id: parsed.card.id,
+      sha256: parsed.sha256,
+      passed: parsed.controls.passed,
+      failed: parsed.controls.failed,
+      unresolved: parsed.controls.unresolved,
+      gaps: parsed.warnings,
+    });
+  }
+  return recipes;
 }
 
 function scoreNew(args) {
