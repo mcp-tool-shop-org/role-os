@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+### Added: jury step for trained critics
+
+- **`roleos jury check|select|score`**: given critics' scores on a validation set
+  (`roleos-jury-validation/v1`), measure each critic's accuracy with a group-clustered
+  95% interval and its coverage, and measure how alike their mistakes are (error
+  consistency, double fault, disagreement). A critic whose interval lies entirely below
+  0.5 is flagged inverted and left out of selection; its scores are not flipped. A pair
+  with error consistency at or above 0.9 is flagged as duplicates. That cutoff is the
+  studio's own rule, not a literature value.
+- **`select`** builds a panel by greedy forward selection with replacement (equal weight
+  per seat, a critic picked twice casts two votes), bagged over group-bootstrap resamples,
+  and keeps it only when a nested group-clustered interval says the panel beats the best
+  single critic. Otherwise the verdict is that critic, or `insufficient-data` below 30
+  items or 10 groups. `--out` writes `roleos-jury-panel/v1` only for verdict `panel`.
+- **`score`** applies a saved panel to new items with the stored means, standard
+  deviations, and thresholds. It does not refit them. An absent score is an abstention.
+  The same seed repeats the same numbers. Unmeasured values are printed as "unmeasured".
+
 ### Added: recipe cards for trained roles
 
 - **`roleos recipe init|check|hash|controls`**: a dataset recipe card (`roleos-recipe-card/v1`)

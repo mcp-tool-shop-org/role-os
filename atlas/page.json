@@ -66,50 +66,52 @@
   "changes": {
     "fileCounts": {
       "added": 4,
-      "changed": 9,
+      "changed": 2,
       "moved": 0,
-      "parts": 7,
+      "parts": 5,
       "removed": 0
     },
     "items": [
       {
         "kind": "landing",
-        "sentence": "bin/roleos.mjs is now also read by test/recipe-card.test.mjs.",
+        "sentence": "bin/roleos.mjs is now also read by test/jury.test.mjs.",
         "subjects": [
           "bin/roleos.mjs",
-          "test/recipe-card.test.mjs"
+          "test/jury.test.mjs"
+        ]
+      },
+      {
+        "kind": "landing",
+        "sentence": "src/jury-cmd.mjs is now read by test/jury.test.mjs.",
+        "subjects": [
+          "src/jury-cmd.mjs",
+          "test/jury.test.mjs"
+        ]
+      },
+      {
+        "kind": "landing",
+        "sentence": "src/specialist/jury.mjs is now read by test/jury.test.mjs.",
+        "subjects": [
+          "src/specialist/jury.mjs",
+          "test/jury.test.mjs"
         ]
       },
       {
         "kind": "sequence",
-        "sentence": "In bin/roleos.mjs, `printVerbHelp` gained a step, `recipeCommand`, after `specialistCommand`.",
+        "sentence": "In bin/roleos.mjs, `printVerbHelp` gained a step, `juryCommand`, after `recipeCommand`.",
         "subjects": [
           "bin/roleos.mjs"
         ]
       },
       {
-        "kind": "sequence",
-        "sentence": "In src/specialist-cmd.mjs, `specialistCommand` gained a step, `parseRecipeCard`, before `loadRegistry`.",
-        "subjects": [
-          "src/specialist-cmd.mjs"
-        ]
-      },
-      {
-        "kind": "sequence",
-        "sentence": "In src/specialist-cmd.mjs, `specialistCommand` lost a step, `appendEvent`.",
-        "subjects": [
-          "src/specialist-cmd.mjs"
-        ]
-      },
-      {
         "kind": "counts",
-        "sentence": "4 files added and 9 changed content, across 7 parts.",
+        "sentence": "4 files added and 2 changed content, across 5 parts.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "91e12b75f3c679b6be952ae0ffeb65dabe54a25e",
-      "generatedAt": "2026-10-01T02:12:47.775Z"
+      "commit": "5738c9634e7765ad5b7c573f8e1ef0c1cf719c6a",
+      "generatedAt": "2026-10-08T14:24:05.151Z"
     },
     "unchanged": false
   },
@@ -132,7 +134,7 @@
     {
       "a": "src/specialist/record.mjs",
       "b": "test/specialist-record.test.mjs",
-      "either": 9,
+      "either": 10,
       "partLabels": [
         "src",
         "test"
@@ -147,12 +149,12 @@
   ],
   "changesTogetherNote": [
     "Confidence is low: fewer than 25 source files reach 10 revisions in the window.",
-    "Window: 180 days; a pair counts from 3 shared commits, since 1 source file reaches 10 revisions; the floor rises to 10 when 25 do."
+    "Window: 180 days; a pair counts from 3 shared commits, since 2 source files reach 10 revisions; the floor rises to 10 when 25 do."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "5738c9634e7765ad5b7c573f8e1ef0c1cf719c6a",
+  "commit": "96fecfafa38a2293532ebd2356c36fa915a305af",
   "defaultBranch": "main",
-  "derived": "15 parts, mostly JavaScript (165 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
+  "derived": "15 parts, mostly JavaScript (168 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
   "doors": [
     {
       "checks": [],
@@ -172,7 +174,7 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 73
+          "files": 74
         },
         {
           "boundary": "tools",
@@ -182,7 +184,7 @@
         {
           "boundary": "src",
           "depth": 1,
-          "files": 72
+          "files": 74
         }
       ],
       "runs": [
@@ -215,12 +217,12 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 73
+          "files": 74
         },
         {
           "boundary": "src",
           "depth": 1,
-          "files": 59
+          "files": 60
         }
       ],
       "runs": [
@@ -287,7 +289,7 @@
         {
           "boundary": "src",
           "depth": 1,
-          "files": 62
+          "files": 64
         }
       ],
       "runs": [
@@ -381,13 +383,13 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-08T14:24:05.151Z",
+  "generatedAt": "2026-10-08T14:55:13.735Z",
   "limits": [
     "3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.",
     "16 writes and 14 reads use paths built at run time and are not named here.",
     "1 write goes to places this repository does not track, so it is not listed as generated.",
     "28 writes and 88 reads go to the directory the command is run in, not to this repository.",
-    "44 writes and 48 reads go to a path their caller passes, not to this repository.",
+    "45 writes and 50 reads go to a path their caller passes, not to this repository.",
     "23 writes and 23 reads go to the directory the command is run in or a path their caller passes, not to this repository.",
     "8 writes and 1 read go to a temporary directory, not to this repository.",
     "8 commands are built at run time and not followed, 2 of them in tests.",
@@ -431,11 +433,11 @@
   ],
   "summary": null,
   "summaryFrom": null,
-  "testFiles": 76,
+  "testFiles": 77,
   "testedBy": {
-    "bin": 12,
+    "bin": 13,
     "dossier": 0,
-    "src": 73,
+    "src": 74,
     "tools": 3
   },
   "unnamedWrites": 16,

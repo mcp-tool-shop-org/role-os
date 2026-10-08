@@ -20,6 +20,7 @@ import { verifyClaimsCommand } from "../src/verify-claims-cmd.mjs";
 import { specialistCommand } from "../src/specialist-cmd.mjs";
 import { crewCommand } from "../src/crew-cmd.mjs";
 import { recipeCommand } from "../src/recipe-cmd.mjs";
+import { juryCommand } from "../src/jury-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
@@ -95,6 +96,9 @@ Usage:
   roleos recipe check <card.json>     Validate a recipe card; show evidence gaps, controls and hash
   roleos recipe hash <card.json>      Print a recipe card's sha256
   roleos recipe controls              List the standard controls a critic recipe ships with
+  roleos jury check <validation.json> Accuracy, intervals, coverage, diversity, inverted and duplicate flags
+  roleos jury select <validation.json>  Keep a panel only if it beats the best single critic
+  roleos jury score <panel.json> <items>  Score new items with a saved panel
   roleos crew                         Crew report — grades (by basis), reps, techniques per role
   roleos crew <role>                  Full sheet: grade band, verbatim dispatch profile, the Record
   roleos crew --programs              Curriculum tech tree (S6 training programs)
@@ -148,6 +152,10 @@ async function printVerbHelp(verb, write = console.log) {
   }
   if (verb === "recipe") {
     await recipeCommand(["help"]);
+    return;
+  }
+  if (verb === "jury") {
+    await juryCommand(["help"]);
     return;
   }
   if (!verb || verb === "help" || isHelpFlag(verb)) {
@@ -304,6 +312,9 @@ try {
       break;
     case "recipe":
       await recipeCommand(args);
+      break;
+    case "jury":
+      await juryCommand(args);
       break;
     case "mission":
       await missionCommand(args);
