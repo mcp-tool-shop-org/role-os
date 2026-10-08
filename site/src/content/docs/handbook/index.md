@@ -15,6 +15,9 @@ Welcome to the Role OS handbook. This is the complete guide to adopting and runn
 - **[Role Spine](/role-os/handbook/role-spine/)** — 61 specialist roles across 10 packs and their contracts
 - **[Team Packs](/role-os/handbook/team-packs/)** — 10 pre-assembled role chains for common work types
 - **[Reference](/role-os/handbook/reference/)** — CLI commands, schemas, policies, and the operating system layers
+- **[Recipe cards](/role-os/handbook/recipe-cards/)** — the data record for a trained critic, and the nine controls on that record
+- **[Jury](/role-os/handbook/jury/)** — when a panel of critics earns its seat, and when the best single critic is the verdict
+- **[Calibration](/role-os/handbook/calibration/)** — what a finished run records, and the pack boost that follows
 - **[Crew Dossier](/role-os/handbook/crew-dossier/)** — per-role character sheets (aptitudes, disposition, portrait) that configure roles at dispatch time
 
 ## What is Role OS?
@@ -65,6 +68,6 @@ These are non-negotiable. If a change weakens any of them, reject it.
 - **6 mission trials** — the original 6 missions run through the runner, 5 real-friction findings fixed (the catalog now ships 9 missions)
 - **Entry path trials** — unified entry tested against 20+ real task descriptions
 - **6 friction trials** — persistent runs measured for operator touches across all entry levels
-- **1595 tests** (1592 pass, 3 skipped) as of v2.11.0
+- **1692 tests** (1689 pass, 3 skipped) and 90.66% line coverage (22778/25123) as of v2.12.0
 
 [Back to landing page](/role-os/)

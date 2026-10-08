@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 2.12.0 — 2026-10-08
+
+English README, handbook, and landing page cover recipe cards, the jury, and pack calibration. Recorded outcomes boost packs only. Role weights and confidence thresholds do not change. Translations follow the release.
 
 ### Added: recipe evidence gates the jury
 
@@ -37,7 +39,6 @@
   null.
 - The entry ladder is unchanged. A critic that does not name a recipe is
   still seated unless `--require-recipe` is set.
-- README.md is unchanged in this change. Translations stay with the release.
 - Measured line coverage is 90.66% (22778/25123). Rounded down, the CI floor
   stays 90% (`c8 --check-coverage --lines 90`). Codecov project and patch
   targets stay 90%, and the project status allows a 1% drop.
@@ -67,7 +68,6 @@
   yet".
 - `roleos calibration [--json]` prints the calibration report and the
   combination table. An empty ledger says "no recorded runs yet", not zeros.
-- README.md is unchanged in this change. Translations stay with the release.
 - Measured line coverage is 90.48% (22292/24637). Rounded down, the CI floor
   stays 90% (`c8 --check-coverage --lines 90`). Codecov project and patch
   targets stay 90%, and the project status allows a 1% drop.
@@ -108,9 +108,9 @@
 - **`roleos specialist register ... --recipe <card.json>`** pins the card on the version
   (`versions[].recipe_card: { id, sha256, path }`), refuses an invalid card, and lists its gaps.
   The registry validates the pointer, and the Record and `roleos crew <role>` show it.
-- Eight standard controls, from a positive marker to a natural-error check, each guarding a way a
-  critic can look good without learning its attribute. Grounded in the R&D library's
-  dataset-recipe study (mcp-tool-shop-org/rnd).
+- Nine standard controls, from a positive marker through reversed-correction to a natural-error
+  check, each guarding a way a critic can look good without learning its attribute. Grounded in
+  the R&D library's dataset-recipe study (mcp-tool-shop-org/rnd).
 - CI line coverage was raised with this jury step; the floor that ships here is 90%.
 
 ## 2.11.0

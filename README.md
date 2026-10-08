@@ -267,15 +267,22 @@ role-os/
     decompose.mjs              ← Composite task detection + splitting
     composite.mjs              ← Dependency-ordered execution + recovery + cycle detection
     replan.mjs                 ← Mid-run adaptive replanning
-    calibration.mjs            ← Outcome recording + weight tuning
+    calibration.mjs            ← Outcome ledger. Pack boosts only; keyword scores stay the score
+    calibration-cmd.mjs        ← `roleos calibration`
+    recipe-cmd.mjs             ← `roleos recipe` dataset recipe cards
+    specialist/recipe-card.mjs ← Recipe-card checks, nine controls, canonical hash
+    jury-cmd.mjs               ← `roleos jury check`, `select`, and `score`
+    specialist/jury.mjs        ← Critic measurements and panel selection
     hooks.mjs                  ← 5 lifecycle hooks for runtime enforcement
     session.mjs                ← Session scaffolding + doctor
     brainstorm.mjs             ← Evidence modes, request validation, finding/synthesis/judge schemas
     brainstorm-roles.mjs       ← Role-native schemas, input partitioning, blindspot enforcement, cross-exam
     brainstorm-render.mjs      ← Two-layer rendering: lexical bans, render schemas, debate transcript
-  test/                        ← 1595 tests across 72 test files (1592 pass, 3 skipped)
+  test/                        ← 1692 tests across 75 test files (1689 pass, 3 skipped)
   starter-pack/                ← Drop-in role contracts, policies, schemas, workflows
 ```
+
+Line coverage measured for this release is 90.66% (22778/25123). The CI floor stays 90%.
 
 ## Security
 
@@ -289,6 +296,57 @@ Three **opt-in** features touch the network when you explicitly enable them:
 
 All three are off by default and fail open to local deterministic behavior. See [SECURITY.md](SECURITY.md) for the full policy.
 
+## Recipe cards, the jury, and pack calibration
+
+A trained critic is only as good as the data it learned from. Role OS records that data on a recipe card, measures a panel of critics, and lets a finished run boost pack choice. None of this calls a model. The same file and the same seed produce the same numbers.
+
+### Recipe cards
+
+`roleos recipe` checks a card (`roleos-recipe-card/v1`). Nine standard controls each guard a way a critic can look good without having learned its attribute. A passed control with no measure is a gap. An inconsistent measure is an error. `shuffled-labels` has to use the method `balanced-permutation`. `same-generator-no-error` is `unresolved` when the two edit methods disagree. `reversed-correction` passes only when its accuracy interval lies entirely above 0.5.
+
+```bash
+roleos recipe check starter-pack/examples/auditor-recipe-card.json
+```
+
+That file is a filled synthetic card, not a trained critic. The check prints:
+
+```
+✓ starter-pack/examples/auditor-recipe-card.json (auditor-v1, role Auditor)
+  note     controls[2] (shuffled-labels): permutation floor is 1/20; a pass at this floor means the observed result beat every null
+  controls 9/9 standard controls passed
+  sha256   5763c4dd57fc9f7bea41186493e56b72ce73a5e30f4c5c813248655a360b1588
+```
+
+The note is a fact, not a gap. `roleos specialist register` takes `--recipe` and pins the card's id and hash on that version. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/recipe-cards/).
+
+### Jury
+
+`roleos jury select` keeps a panel only when a nested group-clustered interval says the panel beats the best single critic. Otherwise the verdict is that critic, or `insufficient-data` below 30 items or 10 groups. A critic whose card has a failed or unresolved standard control is left out unless `--allow-unproven`. A critic with no card is still seated unless `--require-recipe`. Scores are never flipped. The same seed repeats the same numbers.
+
+```bash
+roleos jury select starter-pack/examples/jury-validation.json --seed 0
+```
+
+On this synthetic file the verdict is `best-single (echo)`. echo and sharp make the same mistakes, so error consistency is 1.0000 and the duplicate flag names them. The flag does not drop either critic. The nested interval is [-0.1000, 0.0000]. It touches 0, so it does not lie entirely above 0, and the command writes no panel file. The [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/jury/) has the full report.
+
+### Pack calibration
+
+When a run ends, Role OS appends one outcome line. The same run id does not write a second line. After a pack has at least 5 recorded outcomes, each completed run with corrections 0 adds +0.5 to that pack, capped at +2. The boost never names a pack the keywords did not already match. Confidence stays high at 3 keyword hits and medium at 2, taken from the keyword score, not from the boosted score. Role weights do not change. Confidence thresholds do not change. The calibration report may suggest looking at the keyword cutoff. Role OS does not apply that suggestion.
+
+`ROLEOS_NO_CALIBRATION=1` turns the boost off. Recording continues.
+
+```bash
+roleos calibration
+```
+
+In a directory with no outcome ledger, that prints:
+
+```
+no recorded runs yet
+```
+
+`roleos route --verbose` and `roleos explain` print the boost, the run count, and the clean rate when a ledger has them. See the [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/calibration/).
+
 ## The operating system
 
 | Layer | What it does | Status |
@@ -301,7 +359,9 @@ All three are off by default and fail open to local deterministic behavior. See 
 | **Dispatch** | Generates execution manifests for the coding-agent harness. Per-role tool profiles, system prompts, budgets. | ✓ Shipped |
 | **Trials** | Full roster proven: 30/30 gold-task + 5/5 negative trials. 7 pack trials complete. | ✓ Complete |
 | **Team Packs** | 10 calibrated packs with auto-selection, mismatch guards, and free-routing fallback. | ✓ Shipped |
-| **Outcome calibration** | Records run outcomes, tunes pack/role weights from results, adjusts confidence thresholds. | ✓ Shipped |
+| **Recipe cards** | A trained role's data recipe. Nine standard controls, a measure on each passed control, and a canonical hash. | ✓ Shipped |
+| **Jury** | Measures trained critics. Keeps a panel only when it beats the best single critic on held-out groups. Failed or unresolved recipe controls leave a critic out. | ✓ Shipped |
+| **Outcome calibration** | Records one outcome when a run ends. After 5 outcomes, a clean completion boosts a pack the keywords already matched (+0.5 each, cap +2). Confidence still comes from the keyword score. Role weights and confidence thresholds do not change. | ✓ Shipped |
 | **Mixed-task decomposition** | Detects composite work, splits into child packets, assigns packs, preserves dependencies. | ✓ Shipped |
 | **Composite execution** | Runs child packets in dependency order with artifact passing, branch recovery, and synthesis. | ✓ Shipped |
 | **Adaptive replanning** | Mid-run scope changes, findings, or new requirements update the plan without restarting. | ✓ Shipped |

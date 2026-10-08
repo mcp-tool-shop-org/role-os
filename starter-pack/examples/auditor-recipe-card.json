@@ -1,0 +1,229 @@
+{
+  "schema": "roleos-recipe-card/v1",
+  "id": "auditor-v1",
+  "role": "Auditor",
+  "attribute": "finds the planted error in one answer",
+  "target_failures": [
+    "misses a planted contradiction",
+    "calls a clean paraphrase an error"
+  ],
+  "out_of_scope": [
+    "writing the corrected answer",
+    "scoring style"
+  ],
+  "format": {
+    "kind": "pointwise",
+    "order_randomised": false,
+    "swap_augmented": false,
+    "reference_answer": "none",
+    "rationale": false
+  },
+  "sources": [
+    {
+      "name": "synthetic-prompts",
+      "licence": "example",
+      "provenance": "written for the handbook; not a trained critic"
+    }
+  ],
+  "negatives": {
+    "construction": "planted-edit",
+    "generators": [
+      {
+        "model": "example-a",
+        "family": "family-a",
+        "revision": "rev-1"
+      },
+      {
+        "model": "example-b",
+        "family": "family-b",
+        "revision": "rev-1"
+      }
+    ],
+    "error_taxonomy": [
+      "omission",
+      "contradiction"
+    ],
+    "edit_stats": {
+      "paraphrase_median": 4,
+      "error_median": 3
+    },
+    "seed": 0,
+    "code_hash": "example"
+  },
+  "filtering": [],
+  "mixture": {
+    "omission": 20,
+    "contradiction": 20
+  },
+  "splits": {
+    "train": "24 synthetic items",
+    "validation": "16 synthetic items",
+    "final": "8 synthetic items, never used to tune",
+    "held_out_generator": "family-c, never seen in train",
+    "natural_errors": "8 unplanted items"
+  },
+  "controls": [
+    {
+      "name": "positive-marker",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.9,
+        "ci": [
+          0.8,
+          0.96
+        ],
+        "n": 40,
+        "clusters": "prompt"
+      }
+    },
+    {
+      "name": "graded-marker",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.9,
+        "ci": [
+          0.8,
+          0.96
+        ],
+        "n": 40,
+        "clusters": "prompt"
+      }
+    },
+    {
+      "name": "shuffled-labels",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.52,
+        "ci": [
+          0.4,
+          0.64
+        ],
+        "n": 40,
+        "clusters": "prompt",
+        "method": "balanced-permutation",
+        "p": 0.05,
+        "nulls": 19
+      }
+    },
+    {
+      "name": "partial-input",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.9,
+        "ci": [
+          0.8,
+          0.96
+        ],
+        "n": 40,
+        "clusters": "prompt"
+      }
+    },
+    {
+      "name": "generator-identity-probe",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.9,
+        "ci": [
+          0.8,
+          0.96
+        ],
+        "n": 40,
+        "clusters": "prompt"
+      }
+    },
+    {
+      "name": "same-generator-no-error",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "edit-rate",
+        "point": 0.5,
+        "ci": [
+          0.4,
+          0.6
+        ],
+        "n": 40,
+        "clusters": "prompt",
+        "method": "word-swap",
+        "paraphrase_median": 4,
+        "error_median": 3,
+        "methods": [
+          {
+            "method": "sentence-rewrite",
+            "point": 0.51,
+            "ci": [
+              0.42,
+              0.62
+            ],
+            "paraphrase_median": 5,
+            "error_median": 3
+          }
+        ]
+      }
+    },
+    {
+      "name": "reversed-correction",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.74,
+        "ci": [
+          0.62,
+          0.84
+        ],
+        "n": 40,
+        "clusters": "prompt"
+      }
+    },
+    {
+      "name": "held-out-generator",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.9,
+        "ci": [
+          0.8,
+          0.96
+        ],
+        "n": 40,
+        "clusters": "prompt"
+      }
+    },
+    {
+      "name": "natural-errors",
+      "status": "passed",
+      "result": "synthetic example",
+      "measure": {
+        "metric": "accuracy",
+        "point": 0.9,
+        "ci": [
+          0.8,
+          0.96
+        ],
+        "n": 40,
+        "clusters": "prompt"
+      }
+    }
+  ],
+  "results": [],
+  "pins": {
+    "model": "example-critic@1",
+    "prompt": "none",
+    "generator": "example-a@rev-1"
+  },
+  "references": [
+    "starter-pack/schemas/recipe-card.md"
+  ]
+}

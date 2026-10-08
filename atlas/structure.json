@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "20b5d0bf31f7291a5692e50fc22b4f28ca8658b1795f6057927fb34d92536dd8",
+          "hash": "c4f60a759d9b0d85e2344a7af5463026161df4b0e1f142fc653454cd732fa322",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -2053,7 +2053,7 @@
           "path": "AUDIT-TESTS-all-components.md"
         },
         {
-          "hash": "1654030e631dd0fdb36310de6dd80f4a769db704d08cd9ba296c90e1833283bb",
+          "hash": "07c4ee08418c864cacd87c6e277fd3c6c63eb0380e03f9f6c8fc8d9893dfdec5",
           "path": "CHANGELOG.md"
         },
         {
@@ -2081,7 +2081,7 @@
           "path": "README.ja.md"
         },
         {
-          "hash": "89d7d6042bae7bfe39409750694124f4de71587189f14e98235c4525a218780e",
+          "hash": "a56adc5b2276d3e6ef8a8671d16aa629f4d5235005cdfb7ea5988155bd737442",
           "path": "README.md"
         },
         {
@@ -2097,7 +2097,7 @@
           "path": "SECURITY.md"
         },
         {
-          "hash": "23261ffca3950f5b1e89adefc694e4afb74593c2610a06595a77cf4dfe94606b",
+          "hash": "36ab2afb86c8a9e17ab6cf34b8149a72ceb0648cda5c7a29a832d921c8c41e20",
           "path": "SHIP_GATE.md"
         },
         {
@@ -2109,11 +2109,11 @@
           "path": "codecov.yml"
         },
         {
-          "hash": "c9e9cdfb78c629ecec16791c765aaf100b50cdbdae50466812258ba9df9b303e",
+          "hash": "0c8deff4fa2dfb094ce5c6899d69138f4246a7654899c21e9fcfd93001e2bbe4",
           "path": "package-lock.json"
         },
         {
-          "hash": "b8b40da31a27fc6835c60e66e3c9e17441ca4ee075c0fe5a484c8ca9621d9cba",
+          "hash": "507b9b8f020b8fd364f91b5629ee7d6178d6c4b23d0d6ee089ec1220ab7a440b",
           "path": "package.json"
         }
       ],
@@ -2178,7 +2178,7 @@
           "path": "site/src/content/docs/handbook/getting-started.md"
         },
         {
-          "hash": "4182f6e14eb550e06f0484a44d126cd2abbcd746c23de468e3af90a9748e69e8",
+          "hash": "896ba876ff7f41f481e082c01fcf1b45d3ade3c2f76d36b1f3edccffc3765317",
           "path": "site/src/content/docs/handbook/index.md"
         },
         {
@@ -2186,7 +2186,7 @@
           "path": "site/src/content/docs/handbook/missions.md"
         },
         {
-          "hash": "fc7bd2495bb1fd67a968704da48e0f46b9e05722341bbf2391a9812c395c8ab6",
+          "hash": "136e3fd6cc9dcb2e1561c285becab316a41040c11d94a604a9d4ff5ae70e359e",
           "path": "site/src/content/docs/handbook/reference.md"
         },
         {
@@ -2230,7 +2230,7 @@
           "path": "site/src/pages/index.astro"
         },
         {
-          "hash": "1de7bc4eb66f9de948a8dcda7f0a40e4ec4611adf90bcb4b62be74fec692a196",
+          "hash": "b86756f173fa5524998aa58b44ef2c90168edbb4977e12202e7b571b00ef0749",
           "path": "site/src/site-config.ts"
         },
         {
@@ -6866,7 +6866,7 @@
           "testFramework": "node --test"
         },
         {
-          "hash": "a0000d91c46184d0810704cff9b40e289a1f263a59efb918efa045ee32b9740c",
+          "hash": "db5c17e705b72f5cf3184218533b8bc9826db88156f86833111cb24d461b8a76",
           "importOrder": [
             "src/specialist/recipe-card.mjs",
             "src/specialist/jury.mjs"
@@ -7021,7 +7021,7 @@
           "testFramework": "node --test"
         },
         {
-          "hash": "e7cd9b4a957e286c8c343757d1bfc1d9c567a45c58e3bc4fa15de5ffa5c4d53f",
+          "hash": "f1b9b6f791a3a52a3c01def8c9db52df70b644c68adddb578dc92ae8c34ef200",
           "importsFiles": [
             "src/specialist/recipe-card.mjs",
             "src/specialist/registry.mjs"
@@ -9266,7 +9266,7 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "d218de70a2c77995f8002eaf76c9a0e621c38ea0",
+    "commit": "ced8f13c8d14fc7cd8c46c7a036b8fea575cc41d",
     "tracked": 637
   },
   "landings": [

@@ -44,7 +44,7 @@
 ## D. Shipping Hygiene
 
 - [x] `[all]` `verify` script exists (test + build + smoke in one command) (2026-03-24)
-- [x] `[all]` Version in manifest matches git tag (2026-09-15) — package.json 2.11.0 == release tag v2.11.0
+- [x] `[all]` Version in manifest is 2.12.0 (2026-10-08). This PR does not cut the tag. The published tag remains v2.11.0 until the Publisher cuts v2.12.0 after review.
 - [x] `[all]` Dependency scanning runs in CI (ecosystem-appropriate) (2026-03-24) — zero runtime deps, npm audit in CI
 - [ ] `[all]` SKIP: no runtime dependencies to update — zero-dependency CLI
 - [x] `[npm]` `npm pack --dry-run` includes: dist/, README.md, CHANGELOG.md, LICENSE (2026-03-24) — includes bin/, src/, starter-pack/

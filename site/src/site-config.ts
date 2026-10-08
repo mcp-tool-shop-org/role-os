@@ -36,6 +36,9 @@ export const config: SiteConfig = {
         { title: 'No drift', desc: 'Roles stay in lane. Product does not redesign. Frontend does not redefine scope. Backend does not invent product direction.' },
         { title: 'No false completion', desc: 'The done definition is concrete. Work that hides gaps, skips verification, or solves a different problem gets rejected.' },
         { title: 'No contamination', desc: 'Forked or inherited projects carry identity residue. Role OS detects and rejects cross-project drift in terminology, visuals, and mental models.' },
+        { title: 'No unmeasured critic', desc: 'A trained critic carries a recipe card. Failed or unresolved controls keep it off the jury. A passed control with no measure stays a gap.' },
+        { title: 'No panel of one opinion', desc: 'A panel is kept only when it beats the best single critic on held-out groups. Otherwise the verdict is that critic.' },
+        { title: 'No rewritten thresholds', desc: 'Finished runs can boost a pack the keywords already matched. They do not change role weights or confidence thresholds.' },
       ],
     },
     {
