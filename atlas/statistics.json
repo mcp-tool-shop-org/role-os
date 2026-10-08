@@ -200,7 +200,7 @@
       "confidence": "full",
       "highWater": null,
       "name": "src",
-      "qualifyingSourceCommits": 45,
+      "qualifyingSourceCommits": 46,
       "rebaseline": null
     },
     {
@@ -234,7 +234,7 @@
       "confidence": "full",
       "highWater": null,
       "name": "test",
-      "qualifyingSourceCommits": 42,
+      "qualifyingSourceCommits": 43,
       "rebaseline": null
     },
     {
@@ -328,8 +328,8 @@
         "path": ".claude/workflows/protect-bootstrap-truth.md"
       },
       {
-        "commits": 16,
-        "lines": 433,
+        "commits": 17,
+        "lines": 440,
         "path": ".github/workflows/ci.yml"
       },
       {
@@ -359,7 +359,7 @@
       },
       {
         "commits": 16,
-        "lines": 284,
+        "lines": 294,
         "path": "CHANGELOG.md"
       },
       {
@@ -419,7 +419,7 @@
       },
       {
         "commits": 10,
-        "lines": 390,
+        "lines": 386,
         "path": "atlas/README.md"
       },
       {
@@ -429,17 +429,17 @@
       },
       {
         "commits": 10,
-        "lines": 1310,
+        "lines": 1321,
         "path": "atlas/page.json"
       },
       {
         "commits": 10,
-        "lines": 12902,
+        "lines": 12894,
         "path": "atlas/statistics.json"
       },
       {
         "commits": 10,
-        "lines": 18750,
+        "lines": 18754,
         "path": "atlas/structure.json"
       },
       {
@@ -448,8 +448,8 @@
         "path": "bin/roleos.mjs"
       },
       {
-        "commits": 3,
-        "lines": 54,
+        "commits": 4,
+        "lines": 71,
         "path": "codecov.yml"
       },
       {
@@ -1704,7 +1704,7 @@
       },
       {
         "commits": 1,
-        "lines": 347,
+        "lines": 363,
         "path": "src/jury-cmd.mjs"
       },
       {
@@ -1828,8 +1828,8 @@
         "path": "src/specialist/gate.mjs"
       },
       {
-        "commits": 1,
-        "lines": 1043,
+        "commits": 2,
+        "lines": 1155,
         "path": "src/specialist/jury.mjs"
       },
       {
@@ -1954,7 +1954,7 @@
       },
       {
         "commits": 1,
-        "lines": 161,
+        "lines": 172,
         "path": "starter-pack/schemas/jury.md"
       },
       {
@@ -2038,8 +2038,8 @@
         "path": "test/hooks.test.mjs"
       },
       {
-        "commits": 1,
-        "lines": 728,
+        "commits": 2,
+        "lines": 936,
         "path": "test/jury.test.mjs"
       },
       {
@@ -2573,11 +2573,39 @@
     "level": "low",
     "reason": "fewer than 25 source files reach 10 revisions in the window"
   },
-  "generatedAt": "2026-10-08T15:28:52.532Z",
+  "generatedAt": "2026-10-08T16:49:44.160Z",
   "generatedFrom": {
-    "commit": "cfa9765be94c479784db6dd83edc244aa5dea4ae"
+    "commit": "f4fce23c1b4d9646b199ff8c90f4a91195af59cf"
   },
   "pairs": [
+    {
+      "a": ".github/workflows/ci.yml",
+      "b": "atlas/README.md",
+      "either": 11,
+      "shared": 6,
+      "strength": 0.545455
+    },
+    {
+      "a": ".github/workflows/ci.yml",
+      "b": "atlas/page.json",
+      "either": 11,
+      "shared": 6,
+      "strength": 0.545455
+    },
+    {
+      "a": ".github/workflows/ci.yml",
+      "b": "atlas/statistics.json",
+      "either": 11,
+      "shared": 6,
+      "strength": 0.545455
+    },
+    {
+      "a": ".github/workflows/ci.yml",
+      "b": "atlas/structure.json",
+      "either": 11,
+      "shared": 6,
+      "strength": 0.545455
+    },
     {
       "a": "CHANGELOG.md",
       "b": "package.json",
@@ -2855,16 +2883,16 @@
     "floor": "fallen",
     "floorHeld": false,
     "floorTrigger": "revision-depth",
-    "headDate": "2026-10-08T10:56:07-04:00",
-    "inScopeFiles": 639,
+    "headDate": "2026-10-08T12:20:28-04:00",
+    "inScopeFiles": 642,
     "pinnedStart": null,
     "priorFloor": "fallen",
-    "qualifyingCommits": 103,
+    "qualifyingCommits": 104,
     "qualifyingMinimum": 30,
     "revisions": 5,
     "shared": 10,
     "sharedFloorUsed": 3,
-    "since": "2026-04-11T14:56:07.000Z",
+    "since": "2026-04-11T16:20:28.000Z",
     "sourceExtensions": [
       ".js",
       ".mjs",

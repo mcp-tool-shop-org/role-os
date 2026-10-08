@@ -21,6 +21,7 @@ import { specialistCommand } from "../src/specialist-cmd.mjs";
 import { crewCommand } from "../src/crew-cmd.mjs";
 import { recipeCommand } from "../src/recipe-cmd.mjs";
 import { juryCommand } from "../src/jury-cmd.mjs";
+import { calibrationCommand } from "../src/calibration-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
@@ -99,6 +100,7 @@ Usage:
   roleos jury check <validation.json> Accuracy, intervals, coverage, diversity, inverted and duplicate flags
   roleos jury select <validation.json>  Keep a panel only if it beats the best single critic
   roleos jury score <panel.json> <items>  Score new items with a saved panel
+  roleos calibration [--json]        Recorded runs: calibration report and combination table
   roleos crew                         Crew report — grades (by basis), reps, techniques per role
   roleos crew <role>                  Full sheet: grade band, verbatim dispatch profile, the Record
   roleos crew --programs              Curriculum tech tree (S6 training programs)
@@ -156,6 +158,10 @@ async function printVerbHelp(verb, write = console.log) {
   }
   if (verb === "jury") {
     await juryCommand(["help"]);
+    return;
+  }
+  if (verb === "calibration") {
+    await calibrationCommand(["help"]);
     return;
   }
   if (!verb || verb === "help" || isHelpFlag(verb)) {
@@ -315,6 +321,9 @@ try {
       break;
     case "jury":
       await juryCommand(args);
+      break;
+    case "calibration":
+      await calibrationCommand(args);
       break;
     case "mission":
       await missionCommand(args);

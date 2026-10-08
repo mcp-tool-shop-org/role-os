@@ -65,24 +65,60 @@
   ],
   "changes": {
     "fileCounts": {
-      "added": 0,
-      "changed": 7,
+      "added": 3,
+      "changed": 13,
       "moved": 0,
-      "parts": 5,
+      "parts": 6,
       "removed": 0
     },
     "items": [
       {
+        "kind": "landing",
+        "sentence": ".claude/calibration is now written by src/calibration.mjs.",
+        "subjects": [
+          ".claude/calibration",
+          "src/calibration.mjs"
+        ]
+      },
+      {
+        "kind": "landing",
+        "sentence": ".claude/calibration/outcome-ledger.jsonl is now written by src/calibration.mjs.",
+        "subjects": [
+          ".claude/calibration/outcome-ledger.jsonl",
+          "src/calibration.mjs"
+        ]
+      },
+      {
+        "kind": "landing",
+        "sentence": ".claude/calibration/outcome-ledger.jsonl is now also read by test/learned-selection.test.mjs.",
+        "subjects": [
+          ".claude/calibration/outcome-ledger.jsonl",
+          "test/learned-selection.test.mjs"
+        ]
+      },
+      {
+        "kind": "landing",
+        "sentence": "And 1 more new writer or reader of a place.",
+        "subjects": []
+      },
+      {
+        "kind": "sequence",
+        "sentence": "In bin/roleos.mjs, `printVerbHelp` gained a step, `calibrationCommand`, after `juryCommand`.",
+        "subjects": [
+          "bin/roleos.mjs"
+        ]
+      },
+      {
         "kind": "counts",
-        "sentence": "Nothing structural changed since 2026-10-08; 7 files changed content.",
+        "sentence": "3 files added and 13 changed content, across 6 parts.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "96fecfafa38a2293532ebd2356c36fa915a305af",
-      "generatedAt": "2026-10-08T14:55:13.735Z"
+      "commit": "cfa9765be94c479784db6dd83edc244aa5dea4ae",
+      "generatedAt": "2026-10-08T15:28:52.532Z"
     },
-    "unchanged": true
+    "unchanged": false
   },
   "changesTogether": [
     {
@@ -121,9 +157,9 @@
     "Window: 180 days; a pair counts from 3 shared commits, since 3 source files reach 10 revisions; the floor rises to 10 when 25 do."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "cfa9765be94c479784db6dd83edc244aa5dea4ae",
+  "commit": "f4fce23c1b4d9646b199ff8c90f4a91195af59cf",
   "defaultBranch": "main",
-  "derived": "15 parts, mostly JavaScript (168 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
+  "derived": "15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
   "doors": [
     {
       "checks": [],
@@ -143,7 +179,7 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 74
+          "files": 75
         },
         {
           "boundary": "tools",
@@ -153,7 +189,7 @@
         {
           "boundary": "src",
           "depth": 1,
-          "files": 74
+          "files": 75
         }
       ],
       "runs": [
@@ -171,7 +207,8 @@
         "on a pull request",
         "on a push touching 14 paths",
         "or by hand"
-      ]
+      ],
+      "untracked": ".claude/calibration, which is not tracked"
     },
     {
       "checks": [],
@@ -186,7 +223,7 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 74
+          "files": 75
         },
         {
           "boundary": "src",
@@ -206,7 +243,8 @@
       "triggers": [
         "when a release is published",
         "or by hand"
-      ]
+      ],
+      "untracked": ".claude/calibration, which is not tracked"
     },
     {
       "checks": [],
@@ -258,7 +296,7 @@
         {
           "boundary": "src",
           "depth": 1,
-          "files": 64
+          "files": 65
         }
       ],
       "runs": [
@@ -268,7 +306,8 @@
       "runsMore": 0,
       "sends": [],
       "stages": [],
-      "triggers": []
+      "triggers": [],
+      "untracked": ".claude/calibration, which is not tracked"
     }
   ],
   "duplicates": [],
@@ -352,14 +391,14 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-08T15:28:52.532Z",
+  "generatedAt": "2026-10-08T16:49:44.160Z",
   "limits": [
     "3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.",
     "16 writes and 14 reads use paths built at run time and are not named here.",
-    "1 write goes to places this repository does not track, so it is not listed as generated.",
+    "3 writes go to places this repository does not track, so they are not listed as generated.",
     "28 writes and 88 reads go to the directory the command is run in, not to this repository.",
-    "45 writes and 50 reads go to a path their caller passes, not to this repository.",
-    "23 writes and 23 reads go to the directory the command is run in or a path their caller passes, not to this repository.",
+    "43 writes and 50 reads go to a path their caller passes, not to this repository.",
+    "25 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.",
     "8 writes and 1 read go to a temporary directory, not to this repository.",
     "8 commands are built at run time and not followed, 2 of them in tests.",
     "Statistics confidence is low: fewer than 25 source files reach 10 revisions in the window."
@@ -402,11 +441,11 @@
   ],
   "summary": null,
   "summaryFrom": null,
-  "testFiles": 77,
+  "testFiles": 78,
   "testedBy": {
-    "bin": 13,
+    "bin": 14,
     "dossier": 0,
-    "src": 74,
+    "src": 75,
     "tools": 3
   },
   "unnamedWrites": 16,

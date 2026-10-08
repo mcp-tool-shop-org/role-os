@@ -15,6 +15,8 @@
  * Usage: `roleos route --pack feature` or auto-detected from packet content.
  */
 
+import { calibrationSnapshot } from "./calibration.mjs";
+
 // ── Mismatch detection ────────────────────────────────────────────────────────
 // Each pack declares what it is NOT for, and which pack IS right.
 
@@ -378,8 +380,14 @@ const PACK_KEYWORDS = {
 
 /**
  * Suggest the best pack for a packet based on content analysis.
+ * Keyword hits stay the score. A recorded pack boost is added only after
+ * that pack has `minRuns` outcomes, and only on packs the keywords already
+ * named. `ROLEOS_NO_CALIBRATION=1` ignores the ledger.
+ *
+ * @param {string} content
+ * @param {{ cwd?: string, outcomes?: object[], env?: NodeJS.ProcessEnv, minRuns?: number }} [options]
  */
-export function suggestPack(content) {
+export function suggestPack(content, options = {}) {
   const lower = content.toLowerCase();
   const scores = {};
 
@@ -391,13 +399,29 @@ export function suggestPack(content) {
     if (score > 0) scores[packName] = score;
   }
 
-  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const snap = calibrationSnapshot(options);
+  const adjusted = {};
+  for (const name of Object.keys(scores)) {
+    const row = snap.evidence.find((item) => item.pack === name);
+    const boost = row && row.status === "measured" ? row.boost : 0;
+    adjusted[name] = scores[name] + boost;
+  }
+
+  const sorted = Object.entries(adjusted).sort((a, b) => b[1] - a[1]);
   if (sorted.length === 0) return null;
 
-  const [topPack, topScore] = sorted[0];
-  const confidence = topScore >= 3 ? "high" : topScore >= 2 ? "medium" : "low";
+  const topPack = sorted[0][0];
+  const keywordScore = scores[topPack];
+  const confidence = keywordScore >= 3 ? "high" : keywordScore >= 2 ? "medium" : "low";
 
-  return { pack: topPack, confidence, scores };
+  return {
+    pack: topPack,
+    confidence,
+    scores,
+    evidence: snap.evidence,
+    calibration: snap.disabled ? "off" : (snap.outcomes.length ? "on" : "empty"),
+    calibrationText: snap.text,
+  };
 }
 
 /**

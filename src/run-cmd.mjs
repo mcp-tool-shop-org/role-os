@@ -24,6 +24,7 @@ import {
   getPosition, explainRun, formatNext, generateReport, formatReport,
   loadRun, listRuns, findActiveRun, measureFriction, saveRun,
 } from "./run.mjs";
+import { calibrationSnapshot } from "./calibration.mjs";
 import { warnArtifactValidation } from "./artifacts.mjs";
 import { formatBuildGateStatus } from "./swarm/build-gate.mjs";
 
@@ -220,6 +221,8 @@ export async function explainCommand(args) {
   }
 
   console.log(explainRun(run));
+  console.log("");
+  console.log(calibrationSnapshot({ cwd }).text);
 }
 
 // ── roleos complete ──────────────────────────────────────────────────────────

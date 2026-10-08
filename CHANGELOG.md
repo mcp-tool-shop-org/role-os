@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+### Added: outcome-learned pack selection
+
+- A run records one outcome when it ends: completed, failed, partial, abandoned,
+  or blocked with nothing left pending or active. The same run id does not write
+  a second line. The first end state stays.
+- `computeCombinationStats` groups runs by mission key (or pack) and sorted roles.
+  It reports a Wilson 95% interval on the clean rate (completed, no corrections,
+  no rejected verdicts). Below 5 runs the row says "insufficient data" and has
+  no rate.
+- `suggestPack` adds the existing pack boost, already capped at 2, only after
+  that pack has 5 recorded outcomes. Keyword hits stay the score. The boost
+  never names a pack the keywords did not already match. When the boosted pack
+  agrees with a medium mission match, the existing entry ladder picks that
+  mission. An empty ledger leaves the ladder where it was.
+- `ROLEOS_NO_CALIBRATION=1` restores keyword routing.
+- `roleos route --verbose` and `roleos explain` print the boost, the run count,
+  and the clean rate with its interval. An empty ledger says "no recorded runs
+  yet".
+- `roleos calibration [--json]` prints the calibration report and the
+  combination table. An empty ledger says "no recorded runs yet", not zeros.
+- README.md is unchanged in this change. Translations stay with the release.
+- Measured line coverage is 90.38% (22230/24594). Rounded down, the CI floor
+  stays 90% (`c8 --check-coverage --lines 90`). Codecov project and patch
+  targets stay 90%, and the project status allows a 1% drop.
+
 ### Added: jury step for trained critics
 
 - **`roleos jury check|select|score`**: given critics' scores on a validation set

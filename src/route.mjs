@@ -4,6 +4,7 @@ import { readFileSafe } from "./fs-utils.mjs";
 import { detectConflicts } from "./conflicts.mjs";
 import { resolveConflict, resolveSplit, formatEscalation } from "./escalation.mjs";
 import { suggestPack, getPack, checkPackMismatch, getPackRoles } from "./packs.mjs";
+import { calibrationSnapshot } from "./calibration.mjs";
 
 // ── Full Role Catalog ────────────────────────────────────────────────────────
 // Every role in the OS is scoreable. Keywords from routing-rules.md + contracts.
@@ -694,7 +695,13 @@ export async function routeCommand(args) {
   if (deliverableType) console.log(`Deliverable type: ${deliverableType}`);
 
   // ── Pack suggestion / selection ──
-  const packSuggestion = suggestPack(content);
+  const packSuggestion = suggestPack(content, { cwd: process.cwd() });
+  if (verbose) {
+    const line = packSuggestion
+      ? packSuggestion.calibrationText
+      : calibrationSnapshot({ cwd: process.cwd() }).text;
+    console.log(`\n${line}`);
+  }
   if (requestedPack) {
     const pack = getPack(requestedPack);
     if (!pack) {
