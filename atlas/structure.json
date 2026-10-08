@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "02217efc6fc4741650b001826d5b46494b6d44dcd79e2d14a8dc02b4a4c3b7c6",
+          "hash": "49a0d4907ffbad0dbf9fa46344205b18d9cf18167995c5c1eef6ddba41462f2d",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -425,20 +425,21 @@
           "failurePaths": [
             {
               "kind": "throw",
-              "line": 324
+              "line": 335
             },
             {
               "kind": "catch",
-              "line": 327
+              "line": 338
             }
           ],
-          "hash": "bbf06ca0b0b8dd0a5ba63006562cee97a8f6b7581e894fd5a5ff731eba9cfcfb",
+          "hash": "ab85ee24ac4b5b98c81a4cd1a6e98bc8c900cea5dfcc9da66397ac9b145ebaf9",
           "importsFiles": [
             "src/artifacts-cmd.mjs",
             "src/audit-cmd.mjs",
             "src/crew-cmd.mjs",
             "src/entry-cmd.mjs",
             "src/init.mjs",
+            "src/jury-cmd.mjs",
             "src/mission-cmd.mjs",
             "src/packet.mjs",
             "src/packs-cmd.mjs",
@@ -560,7 +561,7 @@
                     }
                   ],
                   "innerTruncated": true,
-                  "line": 138,
+                  "line": 142,
                   "name": "swarmCommand",
                   "target": {
                     "file": "src/swarm-cmd.mjs"
@@ -602,7 +603,7 @@
                       "via": "cmdStatus"
                     }
                   ],
-                  "line": 142,
+                  "line": 146,
                   "name": "auditCommand",
                   "target": {
                     "file": "src/audit-cmd.mjs"
@@ -709,7 +710,7 @@
                     }
                   ],
                   "innerTruncated": true,
-                  "line": 146,
+                  "line": 150,
                   "name": "specialistCommand",
                   "target": {
                     "file": "src/specialist-cmd.mjs"
@@ -735,10 +736,112 @@
                       "via": "readCard"
                     }
                   ],
-                  "line": 150,
+                  "line": 154,
                   "name": "recipeCommand",
                   "target": {
                     "file": "src/recipe-cmd.mjs"
+                  }
+                },
+                {
+                  "branch": "verb === \"jury\"",
+                  "inner": [
+                    {
+                      "line": 148,
+                      "name": "parseValidation",
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "loadValidation"
+                    },
+                    {
+                      "line": 288,
+                      "name": "juryCheck",
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "checkValidation"
+                    },
+                    {
+                      "line": 139,
+                      "name": "DEFAULT_SEED",
+                      "passed": true,
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "selectionOpts"
+                    },
+                    {
+                      "line": 140,
+                      "name": "DEFAULT_MAX_SIZE",
+                      "passed": true,
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "selectionOpts"
+                    },
+                    {
+                      "line": 141,
+                      "name": "DEFAULT_BAGS",
+                      "passed": true,
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "selectionOpts"
+                    },
+                    {
+                      "line": 142,
+                      "name": "DEFAULT_FOLDS",
+                      "passed": true,
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "selectionOpts"
+                    },
+                    {
+                      "line": 297,
+                      "name": "jurySelect",
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "selectPanel"
+                    },
+                    {
+                      "line": 313,
+                      "name": "hashValidation",
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "selectPanel"
+                    },
+                    {
+                      "line": 311,
+                      "name": "buildPanelFile",
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "selectPanel"
+                    },
+                    {
+                      "line": 346,
+                      "name": "parsePanel",
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "scoreNew"
+                    },
+                    {
+                      "line": 349,
+                      "name": "scoreItems",
+                      "target": {
+                        "file": "src/specialist/jury.mjs"
+                      },
+                      "via": "scoreNew"
+                    }
+                  ],
+                  "line": 158,
+                  "name": "juryCommand",
+                  "target": {
+                    "file": "src/jury-cmd.mjs"
                   }
                 }
               ],
@@ -760,7 +863,7 @@
       "testRunners": [
         "node --test"
       ],
-      "testedBy": 12,
+      "testedBy": 13,
       "testedThroughSpawn": true,
       "unresolvedSites": 0
     },
@@ -1896,7 +1999,7 @@
           "path": "AUDIT-TESTS-all-components.md"
         },
         {
-          "hash": "87254e6a35fe47ba0308fffe31ad942e03c215d165b88dbca0ebbf4d329c2309",
+          "hash": "8a492857d1e756fcb6de03ecefe6a8cc56367df84a258b547b4be3447ebe6694",
           "path": "CHANGELOG.md"
         },
         {
@@ -1948,7 +2051,7 @@
           "path": "audit-manifest.json"
         },
         {
-          "hash": "59ca3f6a5be96b80fee73bebf2b778211208d17cd3fb82e2134608dff0729c76",
+          "hash": "78156004cb3543382c8e80ee737b05dcc5eec9f0e8a91f570ff6e8b0348d36a3",
           "path": "codecov.yml"
         },
         {
@@ -2722,6 +2825,328 @@
             "src/fs-utils.mjs"
           ],
           "path": "src/init.mjs"
+        },
+        {
+          "entry": "juryCommand",
+          "entryRule": 4,
+          "exports": [
+            "juryCommand"
+          ],
+          "failurePaths": [
+            {
+              "in": "throwUsage",
+              "kind": "throw",
+              "line": 91
+            },
+            {
+              "in": "failParse",
+              "kind": "throw",
+              "line": 98
+            },
+            {
+              "in": "readJson",
+              "kind": "catch",
+              "line": 107
+            },
+            {
+              "in": "readJson",
+              "kind": "catch",
+              "line": 112
+            },
+            {
+              "in": "selectPanel",
+              "kind": "catch",
+              "line": 323
+            }
+          ],
+          "hash": "41e60a166e2ef578b49392928f610fcc22918452b9eb843fe476bfde0eb94f14",
+          "importsFiles": [
+            "src/specialist/jury.mjs"
+          ],
+          "path": "src/jury-cmd.mjs",
+          "sequences": [
+            {
+              "calls": [
+                {
+                  "line": 148,
+                  "name": "parseValidation",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "loadValidation"
+                },
+                {
+                  "line": 288,
+                  "name": "juryCheck",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "checkValidation"
+                },
+                {
+                  "line": 139,
+                  "name": "DEFAULT_SEED",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 140,
+                  "name": "DEFAULT_MAX_SIZE",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 141,
+                  "name": "DEFAULT_BAGS",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 142,
+                  "name": "DEFAULT_FOLDS",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 297,
+                  "name": "jurySelect",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectPanel"
+                },
+                {
+                  "line": 313,
+                  "name": "hashValidation",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectPanel"
+                },
+                {
+                  "line": 311,
+                  "name": "buildPanelFile",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectPanel"
+                },
+                {
+                  "line": 346,
+                  "name": "parsePanel",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "scoreNew"
+                },
+                {
+                  "line": 349,
+                  "name": "scoreItems",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "scoreNew"
+                }
+              ],
+              "exported": true,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "juryCommand"
+            },
+            {
+              "calls": [
+                {
+                  "line": 139,
+                  "name": "DEFAULT_SEED",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                },
+                {
+                  "line": 140,
+                  "name": "DEFAULT_MAX_SIZE",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                },
+                {
+                  "line": 141,
+                  "name": "DEFAULT_BAGS",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                },
+                {
+                  "line": 142,
+                  "name": "DEFAULT_FOLDS",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "selectionOpts"
+            },
+            {
+              "calls": [
+                {
+                  "line": 148,
+                  "name": "parseValidation",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "loadValidation"
+            },
+            {
+              "calls": [
+                {
+                  "line": 148,
+                  "name": "parseValidation",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "loadValidation"
+                },
+                {
+                  "line": 288,
+                  "name": "juryCheck",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "checkValidation"
+            },
+            {
+              "calls": [
+                {
+                  "line": 148,
+                  "name": "parseValidation",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "loadValidation"
+                },
+                {
+                  "line": 139,
+                  "name": "DEFAULT_SEED",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 140,
+                  "name": "DEFAULT_MAX_SIZE",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 141,
+                  "name": "DEFAULT_BAGS",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 142,
+                  "name": "DEFAULT_FOLDS",
+                  "passed": true,
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "selectionOpts"
+                },
+                {
+                  "line": 297,
+                  "name": "jurySelect",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                },
+                {
+                  "line": 313,
+                  "name": "hashValidation",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                },
+                {
+                  "line": 311,
+                  "name": "buildPanelFile",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "selectPanel"
+            },
+            {
+              "calls": [
+                {
+                  "line": 346,
+                  "name": "parsePanel",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                },
+                {
+                  "line": 148,
+                  "name": "parseValidation",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  },
+                  "via": "loadValidation"
+                },
+                {
+                  "line": 349,
+                  "name": "scoreItems",
+                  "target": {
+                    "file": "src/specialist/jury.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "scoreNew"
+            }
+          ]
         },
         {
           "exports": [
@@ -4356,6 +4781,56 @@
         },
         {
           "exports": [
+            "accuracy",
+            "baggedSelect",
+            "bestSingle",
+            "buildPanelFile",
+            "disagreement",
+            "diversityMatrix",
+            "doubleFault",
+            "errorConsistency",
+            "greedySelect",
+            "hashValidation",
+            "juryCheck",
+            "jurySelect",
+            "makeRng",
+            "nestedEstimate",
+            "panelScore",
+            "parsePanel",
+            "parseValidation",
+            "pointAccuracy",
+            "scoreItems"
+          ],
+          "failurePaths": [
+            {
+              "in": "accuracy",
+              "kind": "throw",
+              "line": 256
+            },
+            {
+              "in": "nestedEstimate",
+              "kind": "throw",
+              "line": 737
+            },
+            {
+              "in": "jurySelect",
+              "kind": "throw",
+              "line": 957
+            },
+            {
+              "in": "jurySelect",
+              "kind": "throw",
+              "line": 963
+            }
+          ],
+          "hash": "99dd1aab8a64dd384d4df9ed6fa6fe158303cb7bec6c28610467c5eaeff02303",
+          "importsFiles": [
+            "src/specialist/recipe-card.mjs"
+          ],
+          "path": "src/specialist/jury.mjs"
+        },
+        {
+          "exports": [
             "canonicalJson",
             "hashRecipeCard",
             "parseRecipeCard",
@@ -5420,11 +5895,11 @@
       "origin": "authored",
       "outsidePlaces": [
         {
-          "reads": 30,
+          "reads": 32,
           "where": [
             "caller"
           ],
-          "writes": 11
+          "writes": 12
         },
         {
           "reads": 3,
@@ -5625,13 +6100,13 @@
           "writes": 1
         }
       ],
-      "outsideReads": 141,
-      "outsideWrites": 63,
+      "outsideReads": 143,
+      "outsideWrites": 64,
       "role": "code",
       "testRunners": [
         "node --test"
       ],
-      "testedBy": 73,
+      "testedBy": 74,
       "unresolvedSites": 0
     },
     {
@@ -5857,6 +6332,10 @@
         {
           "hash": "035499e31539c656b063078a84025b8c32d01d29177d0447e98a937350388d1f",
           "path": "starter-pack/schemas/handoff.md"
+        },
+        {
+          "hash": "f2cda9c023418b9ee345ee8182bff2ac32302aa94f0796bf5fcc1abe0eaa5c25",
+          "path": "starter-pack/schemas/jury.md"
         },
         {
           "hash": "2ae14ac03c307345415e247cc91a0fded204cdb45c497628570bb0426bdcf8b2",
@@ -6153,6 +6632,25 @@
             ".claude/hooks/pre-tool-use.mjs"
           ],
           "path": "test/hooks.test.mjs",
+          "testFramework": "node --test"
+        },
+        {
+          "hash": "ca4e4bd4a91b8196fdb271c99fe5c45ff64f6e4fade8a45aa8fc6ac0cb659a81",
+          "importOrder": [
+            "src/specialist/recipe-card.mjs",
+            "src/specialist/jury.mjs"
+          ],
+          "importsFiles": [
+            "src/specialist/jury.mjs",
+            "src/specialist/recipe-card.mjs"
+          ],
+          "names": [
+            "src/jury-cmd.mjs"
+          ],
+          "path": "test/jury.test.mjs",
+          "spawns": [
+            "bin/roleos.mjs"
+          ],
           "testFramework": "node --test"
         },
         {
@@ -7983,7 +8481,7 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 73
+          "files": 74
         },
         {
           "boundary": "tools",
@@ -7997,7 +8495,7 @@
             "file": "src/init.mjs",
             "from": "bin/roleos.mjs"
           },
-          "files": 72
+          "files": 74
         }
       ],
       "readers": [],
@@ -8036,7 +8534,7 @@
       "tests": [
         {
           "coverage": true,
-          "files": 73,
+          "files": 74,
           "job": "test",
           "junit": true,
           "runner": "node --test",
@@ -8046,7 +8544,7 @@
           ]
         },
         {
-          "files": 73,
+          "files": 74,
           "job": "test",
           "runner": "node --test",
           "step": "8",
@@ -8360,7 +8858,7 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 73
+          "files": 74
         },
         {
           "boundary": "src",
@@ -8369,7 +8867,7 @@
             "file": "src/artifacts.mjs",
             "from": "test/artifacts.test.mjs"
           },
-          "files": 59
+          "files": 60
         }
       ],
       "readers": [],
@@ -8397,7 +8895,7 @@
       "stages": [],
       "tests": [
         {
-          "files": 73,
+          "files": 74,
           "job": "publish",
           "runner": "node --test",
           "step": "4",
@@ -8447,7 +8945,7 @@
             "file": "src/init.mjs",
             "from": "bin/roleos.mjs"
           },
-          "files": 62
+          "files": 64
         }
       ],
       "readers": [],
@@ -8505,8 +9003,8 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "5738c9634e7765ad5b7c573f8e1ef0c1cf719c6a",
-    "tracked": 630
+    "commit": "cfa9765be94c479784db6dd83edc244aa5dea4ae",
+    "tracked": 634
   },
   "landings": [
     {
@@ -8765,6 +9263,12 @@
         },
         {
           "by": "test/entry-trials.test.mjs",
+          "call": "literal",
+          "confidence": "ast",
+          "fromTests": true
+        },
+        {
+          "by": "test/jury.test.mjs",
           "call": "literal",
           "confidence": "ast",
           "fromTests": true
@@ -9340,6 +9844,18 @@
     {
       "readers": [
         {
+          "by": "test/jury.test.mjs",
+          "call": "readFileSync",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "src/jury-cmd.mjs",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
           "by": "audit-manifest.json",
           "call": "configuration",
           "confidence": "config"
@@ -9531,6 +10047,18 @@
         }
       ],
       "target": "src/session.mjs",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "test/jury.test.mjs",
+          "call": "readFileSync",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "src/specialist/jury.mjs",
       "writers": []
     },
     {
@@ -10227,7 +10755,7 @@
   "overlaps": [],
   "submodules": [],
   "symlinks": [],
-  "testFiles": 76,
+  "testFiles": 77,
   "testsNotRun": [
     "tools/conformance-dataset/test_certify_ship_stamp.py",
     "tools/conformance-dataset/test_empty_write_gate.py"

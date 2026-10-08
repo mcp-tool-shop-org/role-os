@@ -1,18 +1,14 @@
 # role-os: how it works
 
-Mapped at 2026-10-08 from commit 5738c96 by Atlas 1.24.0.
+Mapped at 2026-10-08 from commit cfa9765 by Atlas 1.24.0.
 
 ## What this is
 
-15 parts, mostly JavaScript (165 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
+15 parts, mostly JavaScript (168 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-10-01 (91e12b7)
+## What changed since 2026-10-08 (96fecfa)
 
-- bin/roleos.mjs is now also read by test/recipe-card.test.mjs.
-- In bin/roleos.mjs, `printVerbHelp` gained a step, `recipeCommand`, after `specialistCommand`.
-- In src/specialist-cmd.mjs, `specialistCommand` gained a step, `parseRecipeCard`, before `loadRegistry`.
-- In src/specialist-cmd.mjs, `specialistCommand` lost a step, `appendEvent`.
-- 4 files added and 9 changed content, across 7 parts.
+Nothing structural changed since 2026-10-08; 7 files changed content.
 
 ## What comes in
 
@@ -24,7 +20,7 @@ Mapped at 2026-10-08 from commit 5738c96 by Atlas 1.24.0.
 ## What happens through CI
 
 1. The workflow runs bin/roleos.mjs in bin, test/ in test and tools/token-budget-dataset/test_harvester.py in tools.
-2. That reaches src (72 files).
+2. That reaches src (74 files).
 3. It uploads coverage to Codecov.
 
 ## Who reads the results
@@ -50,11 +46,11 @@ CI writes nothing this map can see.
 ## What tends to change together
 
 - **src/specialist/training-programs.mjs** and **test/specialist-training-programs.test.mjs** changed together in 5 of 6 commits, and the test part imports the src part.
-- **src/specialist/record.mjs** and **test/specialist-record.test.mjs** changed together in 5 of 9 commits, and the test part imports the src part.
+- **src/specialist/record.mjs** and **test/specialist-record.test.mjs** changed together in 5 of 10 commits, and the test part imports the src part.
 
 Confidence is low: fewer than 25 source files reach 10 revisions in the window.
 
-Window: 180 days; a pair counts from 3 shared commits, since 1 source file reaches 10 revisions; the floor rises to 10 when 25 do.
+Window: 180 days; a pair counts from 3 shared commits, since 3 source files reach 10 revisions; the floor rises to 10 when 25 do.
 
 ## What no test touches
 
@@ -101,7 +97,7 @@ Read those in order to follow one pull request end to end.
 - 16 writes and 14 reads use paths built at run time and are not named here.
 - 1 write goes to places this repository does not track, so it is not listed as generated.
 - 28 writes and 88 reads go to the directory the command is run in, not to this repository.
-- 44 writes and 48 reads go to a path their caller passes, not to this repository.
+- 45 writes and 50 reads go to a path their caller passes, not to this repository.
 - 23 writes and 23 reads go to the directory the command is run in or a path their caller passes, not to this repository.
 - 8 writes and 1 read go to a temporary directory, not to this repository.
 - 8 commands are built at run time and not followed, 2 of them in tests.
