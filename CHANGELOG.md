@@ -2,7 +2,7 @@
 
 ## 2.12.0 — 2026-10-08
 
-English README, handbook, and landing page cover recipe cards, the jury, and pack calibration. Recorded outcomes boost packs only. Role weights and confidence thresholds do not change. Translations follow the release.
+English README, handbook, and landing page cover recipe cards, the jury, and pack calibration. Recorded outcomes boost packs only. Role weights and confidence thresholds do not change. The README translations (ja, zh, es, fr, hi, it, pt-BR) are updated in this release.
 
 ### Added: recipe evidence gates the jury
 
