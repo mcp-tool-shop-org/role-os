@@ -34,6 +34,7 @@ import {
   readEvents,
 } from "./specialist/events.mjs";
 import { appendClearHaltEvent } from "./specialist/shadow.mjs";
+import { parseRecipeCard } from "./specialist/recipe-card.mjs";
 import { markFor } from "./crew-cmd.mjs";
 import { readFileSafe } from "./fs-utils.mjs";
 import { dirname, join } from "node:path";
@@ -74,7 +75,7 @@ roleos specialist — manage the specialist tier (trained adapters fronted by a 
 Usage:
   roleos specialist list
   roleos specialist status [--role <role>] [--json]
-  roleos specialist register <role> <version.json>
+  roleos specialist register <role> <version.json> [--recipe <card.json>]
   roleos specialist promote <role> <version-id> [--operator <name>]
   roleos specialist rollback <role> <version-id> [--operator <name>] [--reason <text>]
   roleos specialist clear-halt <role> [--operator <name>] [--reason <text>]
@@ -202,6 +203,18 @@ function registerSpecialist(args) {
   let version;
   try { version = JSON.parse(readFileSync(versionFile, "utf8")); }
   catch (err) { throwUsage(`version file not valid JSON: ${err.message}`); }
+  let recipeWarnings = [];
+  if (typeof flags.recipe === "string") {
+    if (!existsSync(flags.recipe)) throwUsage(`recipe card not found: ${flags.recipe}`);
+    const r = parseRecipeCard(readFileSync(flags.recipe, "utf8"));
+    if (!r.ok) {
+      console.error("Recipe card errors (refusing to register):");
+      for (const e of r.errors) console.error(`  - ${e}`);
+      process.exit(2);
+    }
+    version.recipe_card = { id: r.card.id, sha256: r.sha256, path: flags.recipe };
+    recipeWarnings = r.warnings;
+  }
   const registryPath = flags.registry ? resolve(flags.registry) : registryPathFromEnv();
   const { registry: loaded, errors } = loadRegistry(registryPath);
   if (errors.length) {
@@ -237,9 +250,18 @@ function registerSpecialist(args) {
     kind: "register",
     role,
     ts: new Date().toISOString(),
-    data: { version_id: version.id, certified_level: version.certified_level, operator: flags.operator || "(unknown)" },
+    data: {
+      version_id: version.id, certified_level: version.certified_level, operator: flags.operator || "(unknown)",
+      ...(version.recipe_card ? { recipe_card: version.recipe_card.id, recipe_sha256: version.recipe_card.sha256 } : {}),
+    },
   });
   console.log(`registered ${role}/${version.id} (${version.certified_level}) — active_version unchanged (${entry.active_version || "null"}).`);
+  if (version.recipe_card) {
+    console.log(`  recipe ${version.recipe_card.id} · ${version.recipe_card.sha256.slice(0, 12)}`);
+    for (const w of recipeWarnings) console.log(`  recipe gap: ${w}`);
+  } else {
+    console.log("  recipe: none recorded — link the dataset recipe with --recipe <card.json> (roleos recipe init)");
+  }
 }
 
 // ── promote ─────────────────────────────────────────────────────────────────────────────────

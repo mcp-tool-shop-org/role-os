@@ -88,6 +88,7 @@ Field meanings (registry-specific — block fields above carry the same meaning)
 | `versions[].exam_hash` | string | yes | SHA-256 of the certification exam this version was scored against. Two versions with different `exam_hash` cannot be compared without recomputing — the eval gate enforces this. |
 | `versions[].field_audit_window` | number | yes | The rolling-window size for field audit. The eval harness writes outcomes against this. |
 | `versions[].created_at` | string | yes | When this version entered the registry. Used for ordering, not for any decision. |
+| `versions[].recipe_card` | object | no | `{ id, sha256, path? }`: the dataset recipe card this version was trained from (see `recipe-card.md`). Set by `roleos specialist register ... --recipe <card.json>`, which refuses an invalid card. The Record shows it beside the certification. |
 
 ## Reject conditions enforced at registry load
 

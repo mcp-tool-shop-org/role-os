@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "b57fad4ecf82bc3fa3a25fa3fc59ac0914dabe1f17b92f7665a6fb9660dc42e6",
+          "hash": "02217efc6fc4741650b001826d5b46494b6d44dcd79e2d14a8dc02b4a4c3b7c6",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -425,14 +425,14 @@
           "failurePaths": [
             {
               "kind": "throw",
-              "line": 312
+              "line": 324
             },
             {
               "kind": "catch",
-              "line": 315
+              "line": 327
             }
           ],
-          "hash": "a03c0b8fa8d3373a7bf19f2d89f8f330b799bf789bcbae95e69d537dca01128c",
+          "hash": "bbf06ca0b0b8dd0a5ba63006562cee97a8f6b7581e894fd5a5ff731eba9cfcfb",
           "importsFiles": [
             "src/artifacts-cmd.mjs",
             "src/audit-cmd.mjs",
@@ -442,6 +442,7 @@
             "src/mission-cmd.mjs",
             "src/packet.mjs",
             "src/packs-cmd.mjs",
+            "src/recipe-cmd.mjs",
             "src/review.mjs",
             "src/route.mjs",
             "src/run-cmd.mjs",
@@ -559,7 +560,7 @@
                     }
                   ],
                   "innerTruncated": true,
-                  "line": 133,
+                  "line": 138,
                   "name": "swarmCommand",
                   "target": {
                     "file": "src/swarm-cmd.mjs"
@@ -601,7 +602,7 @@
                       "via": "cmdStatus"
                     }
                   ],
-                  "line": 137,
+                  "line": 142,
                   "name": "auditCommand",
                   "target": {
                     "file": "src/audit-cmd.mjs"
@@ -611,7 +612,7 @@
                   "branch": "verb === \"specialist\"",
                   "inner": [
                     {
-                      "line": 100,
+                      "line": 101,
                       "name": "loadRegistry",
                       "target": {
                         "file": "src/specialist/registry.mjs"
@@ -619,7 +620,7 @@
                       "via": "listSpecialists"
                     },
                     {
-                      "line": 143,
+                      "line": 144,
                       "name": "loadState",
                       "target": {
                         "file": "src/specialist/state.mjs"
@@ -627,7 +628,7 @@
                       "via": "statusSpecialists"
                     },
                     {
-                      "line": 146,
+                      "line": 147,
                       "name": "emptyState",
                       "target": {
                         "file": "src/specialist/state.mjs"
@@ -635,7 +636,7 @@
                       "via": "statusSpecialists"
                     },
                     {
-                      "line": 156,
+                      "line": 157,
                       "name": "quotaStateFor",
                       "target": {
                         "file": "src/specialist/state.mjs"
@@ -643,7 +644,7 @@
                       "via": "statusSpecialists"
                     },
                     {
-                      "line": 157,
+                      "line": 158,
                       "name": "getHalt",
                       "target": {
                         "file": "src/specialist/state.mjs"
@@ -651,7 +652,15 @@
                       "via": "statusSpecialists"
                     },
                     {
-                      "line": 206,
+                      "line": 209,
+                      "name": "parseRecipeCard",
+                      "target": {
+                        "file": "src/specialist/recipe-card.mjs"
+                      },
+                      "via": "registerSpecialist"
+                    },
+                    {
+                      "line": 219,
                       "name": "loadRegistry",
                       "target": {
                         "file": "src/specialist/registry.mjs"
@@ -659,7 +668,7 @@
                       "via": "registerSpecialist"
                     },
                     {
-                      "line": 212,
+                      "line": 225,
                       "name": "emptyRegistry",
                       "target": {
                         "file": "src/specialist/registry.mjs"
@@ -667,7 +676,7 @@
                       "via": "registerSpecialist"
                     },
                     {
-                      "line": 233,
+                      "line": 246,
                       "name": "saveRegistry",
                       "target": {
                         "file": "src/specialist/registry.mjs"
@@ -675,7 +684,7 @@
                       "via": "registerSpecialist"
                     },
                     {
-                      "line": 236,
+                      "line": 249,
                       "name": "appendEvent",
                       "target": {
                         "file": "src/specialist/events.mjs"
@@ -683,7 +692,7 @@
                       "via": "registerSpecialist"
                     },
                     {
-                      "line": 274,
+                      "line": 296,
                       "name": "loadRegistry",
                       "target": {
                         "file": "src/specialist/registry.mjs"
@@ -691,27 +700,45 @@
                       "via": "pointerSwap"
                     },
                     {
-                      "line": 296,
+                      "line": 318,
                       "name": "saveRegistry",
                       "target": {
                         "file": "src/specialist/registry.mjs"
                       },
                       "via": "pointerSwap"
-                    },
-                    {
-                      "line": 299,
-                      "name": "appendEvent",
-                      "target": {
-                        "file": "src/specialist/events.mjs"
-                      },
-                      "via": "pointerSwap"
                     }
                   ],
                   "innerTruncated": true,
-                  "line": 141,
+                  "line": 146,
                   "name": "specialistCommand",
                   "target": {
                     "file": "src/specialist-cmd.mjs"
+                  }
+                },
+                {
+                  "branch": "verb === \"recipe\"",
+                  "inner": [
+                    {
+                      "line": 79,
+                      "name": "recipeTemplate",
+                      "target": {
+                        "file": "src/specialist/recipe-card.mjs"
+                      },
+                      "via": "initCard"
+                    },
+                    {
+                      "line": 72,
+                      "name": "parseRecipeCard",
+                      "target": {
+                        "file": "src/specialist/recipe-card.mjs"
+                      },
+                      "via": "readCard"
+                    }
+                  ],
+                  "line": 150,
+                  "name": "recipeCommand",
+                  "target": {
+                    "file": "src/recipe-cmd.mjs"
                   }
                 }
               ],
@@ -733,7 +760,7 @@
       "testRunners": [
         "node --test"
       ],
-      "testedBy": 11,
+      "testedBy": 12,
       "testedThroughSpawn": true,
       "unresolvedSites": 0
     },
@@ -1869,7 +1896,7 @@
           "path": "AUDIT-TESTS-all-components.md"
         },
         {
-          "hash": "a0f544cf03692843592921b54dc2713dc2e122cd7907896d7760090cf2e8d946",
+          "hash": "87254e6a35fe47ba0308fffe31ad942e03c215d165b88dbca0ebbf4d329c2309",
           "path": "CHANGELOG.md"
         },
         {
@@ -1957,7 +1984,7 @@
           "path": "site/astro.config.mjs"
         },
         {
-          "hash": "af5d4f54dca60686724d306eb58759fb25b6f5ba4d66559ab84a968112a184e5",
+          "hash": "0607a19c4f60b635244a906c7ad2424359b50e20c4a83bc140f202abce4a941e",
           "path": "site/package-lock.json"
         },
         {
@@ -2447,15 +2474,15 @@
             {
               "in": "crewCommand",
               "kind": "throw",
-              "line": 289
+              "line": 292
             },
             {
               "in": "crewCommand",
               "kind": "throw",
-              "line": 322
+              "line": 325
             }
           ],
-          "hash": "36cf56caa5286f02444817381324efd35fc22783e7f3c0dcd883fa50ce227a4c",
+          "hash": "e6f7c0f78f6fc76fadbccddcc1f163d36edd093bca1a2a297217d494bfd13d3c",
           "importOrder": [
             "src/fs-utils.mjs",
             "src/dossier-block.mjs",
@@ -3006,6 +3033,113 @@
           "path": "src/prompts.mjs"
         },
         {
+          "entry": "recipeCommand",
+          "entryRule": 4,
+          "exports": [
+            "recipeCommand"
+          ],
+          "failurePaths": [
+            {
+              "in": "throwUsage",
+              "kind": "throw",
+              "line": 66
+            }
+          ],
+          "hash": "f49853af9a700fba84fafb8848a41e48a47fea5c05cc85a00308e3807a3234f0",
+          "importsFiles": [
+            "src/specialist/recipe-card.mjs"
+          ],
+          "path": "src/recipe-cmd.mjs",
+          "sequences": [
+            {
+              "calls": [
+                {
+                  "line": 79,
+                  "name": "recipeTemplate",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "initCard"
+                },
+                {
+                  "line": 72,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "readCard"
+                }
+              ],
+              "exported": true,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "recipeCommand"
+            },
+            {
+              "calls": [
+                {
+                  "line": 72,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "readCard"
+            },
+            {
+              "calls": [
+                {
+                  "line": 79,
+                  "name": "recipeTemplate",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "initCard"
+            },
+            {
+              "calls": [
+                {
+                  "line": 72,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "readCard"
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "checkCard"
+            },
+            {
+              "calls": [
+                {
+                  "line": 72,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "readCard"
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "hashCard"
+            }
+          ]
+        },
+        {
           "exports": [
             "analyzeImpact",
             "createChangeEvent",
@@ -3409,49 +3543,50 @@
             {
               "in": "specialistCommand",
               "kind": "throw",
-              "line": 65
+              "line": 66
             },
             {
               "in": "statusSpecialists",
               "kind": "catch",
-              "line": 144
+              "line": 145
             },
             {
               "in": "registerSpecialist",
               "kind": "catch",
-              "line": 204
+              "line": 205
             },
             {
               "in": "pointerSwap",
               "kind": "throw",
-              "line": 292
+              "line": 314
             },
             {
               "in": "dossierCrewFor",
               "kind": "catch",
-              "line": 333
+              "line": 355
             },
             {
               "in": "clearHaltSpecialist",
               "kind": "catch",
-              "line": 347
+              "line": 369
             },
             {
               "in": "clearHaltSpecialist",
               "kind": "throw",
-              "line": 355
+              "line": 377
             },
             {
               "in": "throwUsage",
               "kind": "throw",
-              "line": 411
+              "line": 433
             }
           ],
-          "hash": "8940e3168878da4d5d4d5683159db253a4dce7f993c881cecfdfdc75083f29bb",
+          "hash": "7e46fb992b2beaf418a30a59a1ac1b9ac1e72124cd158e81b57c43b1c3defd22",
           "importsFiles": [
             "src/crew-cmd.mjs",
             "src/fs-utils.mjs",
             "src/specialist/events.mjs",
+            "src/specialist/recipe-card.mjs",
             "src/specialist/registry.mjs",
             "src/specialist/shadow.mjs",
             "src/specialist/state.mjs"
@@ -3461,7 +3596,7 @@
             {
               "calls": [
                 {
-                  "line": 100,
+                  "line": 101,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3469,7 +3604,7 @@
                   "via": "listSpecialists"
                 },
                 {
-                  "line": 143,
+                  "line": 144,
                   "name": "loadState",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3477,7 +3612,7 @@
                   "via": "statusSpecialists"
                 },
                 {
-                  "line": 146,
+                  "line": 147,
                   "name": "emptyState",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3485,7 +3620,7 @@
                   "via": "statusSpecialists"
                 },
                 {
-                  "line": 156,
+                  "line": 157,
                   "name": "quotaStateFor",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3493,7 +3628,7 @@
                   "via": "statusSpecialists"
                 },
                 {
-                  "line": 157,
+                  "line": 158,
                   "name": "getHalt",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3501,7 +3636,15 @@
                   "via": "statusSpecialists"
                 },
                 {
-                  "line": 206,
+                  "line": 209,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "registerSpecialist"
+                },
+                {
+                  "line": 219,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3509,7 +3652,7 @@
                   "via": "registerSpecialist"
                 },
                 {
-                  "line": 212,
+                  "line": 225,
                   "name": "emptyRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3517,7 +3660,7 @@
                   "via": "registerSpecialist"
                 },
                 {
-                  "line": 233,
+                  "line": 246,
                   "name": "saveRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3525,7 +3668,7 @@
                   "via": "registerSpecialist"
                 },
                 {
-                  "line": 236,
+                  "line": 249,
                   "name": "appendEvent",
                   "target": {
                     "file": "src/specialist/events.mjs"
@@ -3533,7 +3676,7 @@
                   "via": "registerSpecialist"
                 },
                 {
-                  "line": 274,
+                  "line": 296,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3541,7 +3684,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 296,
+                  "line": 318,
                   "name": "saveRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3549,7 +3692,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 299,
+                  "line": 321,
                   "name": "appendEvent",
                   "target": {
                     "file": "src/specialist/events.mjs"
@@ -3557,7 +3700,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 327,
+                  "line": 349,
                   "name": "readFileSafe",
                   "target": {
                     "file": "src/fs-utils.mjs"
@@ -3565,7 +3708,7 @@
                   "via": "dossierCrewFor"
                 },
                 {
-                  "line": 319,
+                  "line": 341,
                   "name": "markFor",
                   "target": {
                     "file": "src/crew-cmd.mjs"
@@ -3573,7 +3716,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 346,
+                  "line": 368,
                   "name": "loadState",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3581,7 +3724,7 @@
                   "via": "clearHaltSpecialist"
                 },
                 {
-                  "line": 357,
+                  "line": 379,
                   "name": "getHalt",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3589,7 +3732,7 @@
                   "via": "clearHaltSpecialist"
                 },
                 {
-                  "line": 362,
+                  "line": 384,
                   "name": "setHalt",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3597,7 +3740,7 @@
                   "via": "clearHaltSpecialist"
                 },
                 {
-                  "line": 363,
+                  "line": 385,
                   "name": "saveState",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3605,7 +3748,7 @@
                   "via": "clearHaltSpecialist"
                 },
                 {
-                  "line": 365,
+                  "line": 387,
                   "name": "appendClearHaltEvent",
                   "target": {
                     "file": "src/specialist/shadow.mjs"
@@ -3621,7 +3764,7 @@
             {
               "calls": [
                 {
-                  "line": 100,
+                  "line": 101,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3636,35 +3779,35 @@
             {
               "calls": [
                 {
-                  "line": 136,
+                  "line": 137,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
                   }
                 },
                 {
-                  "line": 143,
+                  "line": 144,
                   "name": "loadState",
                   "target": {
                     "file": "src/specialist/state.mjs"
                   }
                 },
                 {
-                  "line": 146,
+                  "line": 147,
                   "name": "emptyState",
                   "target": {
                     "file": "src/specialist/state.mjs"
                   }
                 },
                 {
-                  "line": 156,
+                  "line": 157,
                   "name": "quotaStateFor",
                   "target": {
                     "file": "src/specialist/state.mjs"
                   }
                 },
                 {
-                  "line": 157,
+                  "line": 158,
                   "name": "getHalt",
                   "target": {
                     "file": "src/specialist/state.mjs"
@@ -3679,28 +3822,35 @@
             {
               "calls": [
                 {
-                  "line": 206,
+                  "line": 209,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  }
+                },
+                {
+                  "line": 219,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
                   }
                 },
                 {
-                  "line": 212,
+                  "line": 225,
                   "name": "emptyRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
                   }
                 },
                 {
-                  "line": 233,
+                  "line": 246,
                   "name": "saveRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
                   }
                 },
                 {
-                  "line": 236,
+                  "line": 249,
                   "name": "appendEvent",
                   "target": {
                     "file": "src/specialist/events.mjs"
@@ -3715,7 +3865,7 @@
             {
               "calls": [
                 {
-                  "line": 274,
+                  "line": 296,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3723,7 +3873,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 296,
+                  "line": 318,
                   "name": "saveRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3731,7 +3881,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 299,
+                  "line": 321,
                   "name": "appendEvent",
                   "target": {
                     "file": "src/specialist/events.mjs"
@@ -3739,7 +3889,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 327,
+                  "line": 349,
                   "name": "readFileSafe",
                   "target": {
                     "file": "src/fs-utils.mjs"
@@ -3747,7 +3897,7 @@
                   "via": "dossierCrewFor"
                 },
                 {
-                  "line": 319,
+                  "line": 341,
                   "name": "markFor",
                   "target": {
                     "file": "src/crew-cmd.mjs"
@@ -3763,7 +3913,7 @@
             {
               "calls": [
                 {
-                  "line": 274,
+                  "line": 296,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3771,7 +3921,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 296,
+                  "line": 318,
                   "name": "saveRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
@@ -3779,7 +3929,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 299,
+                  "line": 321,
                   "name": "appendEvent",
                   "target": {
                     "file": "src/specialist/events.mjs"
@@ -3787,7 +3937,7 @@
                   "via": "pointerSwap"
                 },
                 {
-                  "line": 327,
+                  "line": 349,
                   "name": "readFileSafe",
                   "target": {
                     "file": "src/fs-utils.mjs"
@@ -3795,7 +3945,7 @@
                   "via": "dossierCrewFor"
                 },
                 {
-                  "line": 319,
+                  "line": 341,
                   "name": "markFor",
                   "target": {
                     "file": "src/crew-cmd.mjs"
@@ -3811,28 +3961,28 @@
             {
               "calls": [
                 {
-                  "line": 274,
+                  "line": 296,
                   "name": "loadRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
                   }
                 },
                 {
-                  "line": 296,
+                  "line": 318,
                   "name": "saveRegistry",
                   "target": {
                     "file": "src/specialist/registry.mjs"
                   }
                 },
                 {
-                  "line": 299,
+                  "line": 321,
                   "name": "appendEvent",
                   "target": {
                     "file": "src/specialist/events.mjs"
                   }
                 },
                 {
-                  "line": 327,
+                  "line": 349,
                   "name": "readFileSafe",
                   "target": {
                     "file": "src/fs-utils.mjs"
@@ -3840,7 +3990,7 @@
                   "via": "dossierCrewFor"
                 },
                 {
-                  "line": 319,
+                  "line": 341,
                   "name": "markFor",
                   "target": {
                     "file": "src/crew-cmd.mjs"
@@ -3855,7 +4005,7 @@
             {
               "calls": [
                 {
-                  "line": 327,
+                  "line": 349,
                   "name": "readFileSafe",
                   "target": {
                     "file": "src/fs-utils.mjs"
@@ -3870,35 +4020,35 @@
             {
               "calls": [
                 {
-                  "line": 346,
+                  "line": 368,
                   "name": "loadState",
                   "target": {
                     "file": "src/specialist/state.mjs"
                   }
                 },
                 {
-                  "line": 357,
+                  "line": 379,
                   "name": "getHalt",
                   "target": {
                     "file": "src/specialist/state.mjs"
                   }
                 },
                 {
-                  "line": 362,
+                  "line": 384,
                   "name": "setHalt",
                   "target": {
                     "file": "src/specialist/state.mjs"
                   }
                 },
                 {
-                  "line": 363,
+                  "line": 385,
                   "name": "saveState",
                   "target": {
                     "file": "src/specialist/state.mjs"
                   }
                 },
                 {
-                  "line": 365,
+                  "line": 387,
                   "name": "appendClearHaltEvent",
                   "target": {
                     "file": "src/specialist/shadow.mjs"
@@ -4206,6 +4356,26 @@
         },
         {
           "exports": [
+            "canonicalJson",
+            "hashRecipeCard",
+            "parseRecipeCard",
+            "recipeTemplate",
+            "summarizeControls",
+            "validateRecipeCard",
+            "validateRecipePointer"
+          ],
+          "failurePaths": [
+            {
+              "in": "parseRecipeCard",
+              "kind": "catch",
+              "line": 144
+            }
+          ],
+          "hash": "a2dcad83cb27439cdb069a67ecdf8b56b0bff8866def847094c70071ca91cde9",
+          "path": "src/specialist/recipe-card.mjs"
+        },
+        {
+          "exports": [
             "buildRecord",
             "deriveTechniques"
           ],
@@ -4256,7 +4426,7 @@
               "line": 116
             }
           ],
-          "hash": "70425a73c252a14d16cfe04937e98f3a54903db864a0e499ca57ea8588c97f4d",
+          "hash": "576fd53c9531569ab624fe36703f884a62eb9de126cd360acb9c93b01d2901f6",
           "importOrder": [
             "src/specialist/events.mjs",
             "src/specialist/field-log.mjs",
@@ -4286,40 +4456,43 @@
             {
               "in": "loadRegistry",
               "kind": "catch",
-              "line": 87
+              "line": 89
             },
             {
               "in": "saveRegistry",
               "kind": "throw",
-              "line": 108
+              "line": 110
             },
             {
               "in": "saveRegistry",
               "kind": "catch",
-              "line": 116
+              "line": 118
             },
             {
               "in": "saveRegistry",
               "kind": "catch",
-              "line": 120
-            },
-            {
-              "in": "saveRegistry",
-              "kind": "catch",
-              "line": 121
-            },
-            {
-              "in": "saveRegistry",
-              "kind": "throw",
               "line": 122
+            },
+            {
+              "in": "saveRegistry",
+              "kind": "catch",
+              "line": 123
+            },
+            {
+              "in": "saveRegistry",
+              "kind": "throw",
+              "line": 124
             },
             {
               "in": "resolveActiveVersion",
               "kind": "throw",
-              "line": 255
+              "line": 260
             }
           ],
-          "hash": "576168fe195c5d7909995d1f8c77a9b21b69be7bd1fa13b18bc1b5dbe1bb14b4",
+          "hash": "649a32f5ca2ab18bc5d3f0c43e7a6ec0dac23e65da5b6c35dcdca3b01774dd39",
+          "importsFiles": [
+            "src/specialist/recipe-card.mjs"
+          ],
           "path": "src/specialist/registry.mjs"
         },
         {
@@ -5247,11 +5420,11 @@
       "origin": "authored",
       "outsidePlaces": [
         {
-          "reads": 22,
+          "reads": 30,
           "where": [
             "caller"
           ],
-          "writes": 10
+          "writes": 11
         },
         {
           "reads": 3,
@@ -5452,13 +5625,13 @@
           "writes": 1
         }
       ],
-      "outsideReads": 133,
-      "outsideWrites": 62,
+      "outsideReads": 141,
+      "outsideWrites": 63,
       "role": "code",
       "testRunners": [
         "node --test"
       ],
-      "testedBy": 72,
+      "testedBy": 73,
       "unresolvedSites": 0
     },
     {
@@ -5686,11 +5859,15 @@
           "path": "starter-pack/schemas/handoff.md"
         },
         {
+          "hash": "2ae14ac03c307345415e247cc91a0fded204cdb45c497628570bb0426bdcf8b2",
+          "path": "starter-pack/schemas/recipe-card.md"
+        },
+        {
           "hash": "4d2320f4714f012170a85eb1d713cd45ee81d0cd820e44566b2e5bbfab236b3a",
           "path": "starter-pack/schemas/review-verdict.md"
         },
         {
-          "hash": "96b3c1149d00721ab3c1d87392e6fdcd343cb03a8661795770b7886e8348f0e2",
+          "hash": "21ef63ad927b9660285b0eb789be095cf4083e27d51b376f82f1b2b98c05c488",
           "path": "starter-pack/schemas/specialist.md"
         },
         {
@@ -6092,6 +6269,18 @@
             "src/route.mjs"
           ],
           "path": "test/packs.test.mjs",
+          "testFramework": "node --test"
+        },
+        {
+          "hash": "7b1be640713ddad15cc44d3536a8b133f3974345c29211594bc2171cd180a28c",
+          "importsFiles": [
+            "src/specialist/recipe-card.mjs",
+            "src/specialist/registry.mjs"
+          ],
+          "path": "test/recipe-card.test.mjs",
+          "spawns": [
+            "bin/roleos.mjs"
+          ],
           "testFramework": "node --test"
         },
         {
@@ -7794,7 +7983,7 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 72
+          "files": 73
         },
         {
           "boundary": "tools",
@@ -7808,7 +7997,7 @@
             "file": "src/init.mjs",
             "from": "bin/roleos.mjs"
           },
-          "files": 70
+          "files": 72
         }
       ],
       "readers": [],
@@ -7847,7 +8036,7 @@
       "tests": [
         {
           "coverage": true,
-          "files": 72,
+          "files": 73,
           "job": "test",
           "junit": true,
           "runner": "node --test",
@@ -7857,7 +8046,7 @@
           ]
         },
         {
-          "files": 72,
+          "files": 73,
           "job": "test",
           "runner": "node --test",
           "step": "8",
@@ -8171,7 +8360,7 @@
         {
           "boundary": "test",
           "depth": 0,
-          "files": 72
+          "files": 73
         },
         {
           "boundary": "src",
@@ -8180,7 +8369,7 @@
             "file": "src/artifacts.mjs",
             "from": "test/artifacts.test.mjs"
           },
-          "files": 58
+          "files": 59
         }
       ],
       "readers": [],
@@ -8208,7 +8397,7 @@
       "stages": [],
       "tests": [
         {
-          "files": 72,
+          "files": 73,
           "job": "publish",
           "runner": "node --test",
           "step": "4",
@@ -8258,7 +8447,7 @@
             "file": "src/init.mjs",
             "from": "bin/roleos.mjs"
           },
-          "files": 60
+          "files": 62
         }
       ],
       "readers": [],
@@ -8316,8 +8505,8 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "91e12b75f3c679b6be952ae0ffeb65dabe54a25e",
-    "tracked": 626
+    "commit": "5738c9634e7765ad5b7c573f8e1ef0c1cf719c6a",
+    "tracked": 630
   },
   "landings": [
     {
@@ -8594,6 +8783,12 @@
         },
         {
           "by": "test/packs-cmd.test.mjs",
+          "call": "literal",
+          "confidence": "ast",
+          "fromTests": true
+        },
+        {
+          "by": "test/recipe-card.test.mjs",
           "call": "literal",
           "confidence": "ast",
           "fromTests": true
@@ -10032,7 +10227,7 @@
   "overlaps": [],
   "submodules": [],
   "symlinks": [],
-  "testFiles": 75,
+  "testFiles": 76,
   "testsNotRun": [
     "tools/conformance-dataset/test_certify_ship_stamp.py",
     "tools/conformance-dataset/test_empty_write_gate.py"

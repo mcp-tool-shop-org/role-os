@@ -1,15 +1,18 @@
 # role-os: how it works
 
-Mapped at 2026-10-01 from commit 91e12b7 by Atlas 1.24.0.
+Mapped at 2026-10-08 from commit 5738c96 by Atlas 1.24.0.
 
 ## What this is
 
-15 parts, mostly JavaScript (162 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
+15 parts, mostly JavaScript (165 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-10-01 (07450c9)
+## What changed since 2026-10-01 (91e12b7)
 
-- CI's pull request trigger no longer names `.claude/role-os/**`, `.github/workflows/**`, `atlas/**`, `bin/**`, `codecov.yml`, `package-lock.json`, `package.json`, `site/astro.config.mjs`, `site/package-lock.json`, `site/package.json`, `src/**`, `starter-pack/**`, `test/**` and `tools/**`.
-- 2 files changed content, across 2 parts.
+- bin/roleos.mjs is now also read by test/recipe-card.test.mjs.
+- In bin/roleos.mjs, `printVerbHelp` gained a step, `recipeCommand`, after `specialistCommand`.
+- In src/specialist-cmd.mjs, `specialistCommand` gained a step, `parseRecipeCard`, before `loadRegistry`.
+- In src/specialist-cmd.mjs, `specialistCommand` lost a step, `appendEvent`.
+- 4 files added and 9 changed content, across 7 parts.
 
 ## What comes in
 
@@ -21,7 +24,7 @@ Mapped at 2026-10-01 from commit 91e12b7 by Atlas 1.24.0.
 ## What happens through CI
 
 1. The workflow runs bin/roleos.mjs in bin, test/ in test and tools/token-budget-dataset/test_harvester.py in tools.
-2. That reaches src (70 files).
+2. That reaches src (72 files).
 3. It uploads coverage to Codecov.
 
 ## Who reads the results
@@ -98,7 +101,7 @@ Read those in order to follow one pull request end to end.
 - 16 writes and 14 reads use paths built at run time and are not named here.
 - 1 write goes to places this repository does not track, so it is not listed as generated.
 - 28 writes and 88 reads go to the directory the command is run in, not to this repository.
-- 43 writes and 40 reads go to a path their caller passes, not to this repository.
+- 44 writes and 48 reads go to a path their caller passes, not to this repository.
 - 23 writes and 23 reads go to the directory the command is run in or a path their caller passes, not to this repository.
 - 8 writes and 1 read go to a temporary directory, not to this repository.
 - 8 commands are built at run time and not followed, 2 of them in tests.
