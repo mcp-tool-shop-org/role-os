@@ -440,6 +440,7 @@ function panelCounts(counts, fitted, items) {
   }
   let correct = 0;
   let scored = 0;
+  let covered = 0;
   for (let i = 0; i < items.length; i++) {
     let wsum = 0;
     let w = 0;
@@ -452,14 +453,49 @@ function panelCounts(counts, fitted, items) {
     }
     if (w === 0) continue;
     const mean = wsum / w;
-    // Equal opposing votes are a panel abstention, not a no.
+    // The panel produced a score, so the item is in coverage.
+    covered += 1;
+    // Equal opposing votes are a panel abstention: in coverage, out of accuracy.
+    // Deleting the next line counts the tie as a no.
     if (mean === 0) continue;
     scored += 1;
     const decision = mean > 0 ? 1 : 0;
     if (decision === items[i].truth) correct += 1;
   }
-  if (scored === 0) return null;
-  return { correct, scored };
+  if (scored === 0 && covered === 0) return null;
+  return { correct, scored, covered };
+}
+
+/**
+ * Refit critics and count an explicit panel.
+ * `covered` includes a panel abstention (mean exactly 0).
+ * `scored` counts only yes and no. Accuracy is correct / scored.
+ */
+export function panelMeasurement(critics, items, members) {
+  const ordered = byId(critics);
+  const fitted = fitAll(ordered, items);
+  const counts = new Map();
+  for (let i = 0; i < members.length; i++) {
+    counts.set(members[i].critic, members[i].count);
+  }
+  const stats = panelCounts(counts, fitted, items);
+  const total = items.length;
+  if (!stats || stats.scored === 0) {
+    return {
+      correct: 0,
+      scored: 0,
+      covered: stats ? stats.covered : 0,
+      accuracy: null,
+      coverage: total === 0 ? null : (stats ? stats.covered : 0) / total,
+    };
+  }
+  return {
+    correct: stats.correct,
+    scored: stats.scored,
+    covered: stats.covered,
+    accuracy: stats.correct / stats.scored,
+    coverage: total === 0 ? null : stats.covered / total,
+  };
 }
 
 /**

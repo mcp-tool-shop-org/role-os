@@ -14,6 +14,7 @@ import { validateArtifact, resolveArtifactContent, warnArtifactValidation } from
 import { enforceBuildGate, formatBuildGateStatus } from "./swarm/build-gate.mjs";
 import { enforceExitCondition } from "./swarm/exit-condition.mjs";
 import { STEP_TRANSITIONS, isValidStepTransition } from "./state-machine.mjs";
+import { recordRunOutcome } from "./calibration.mjs";
 
 let _runCounter = 0;
 
@@ -362,6 +363,10 @@ export function runCompletionGates(active, artifact, cwd, run) {
  * @returns {MissionStep}
  */
 export function completeStep(run, artifact, note, cwd = process.cwd()) {
+  // Callers that omit cwd are in-memory. They must not write a ledger into
+  // whatever directory the process inherited. The persistent CLI records
+  // through run.mjs, which always passes a project directory.
+  const explicitCwd = arguments.length >= 4;
   const active = run.steps.find((s) => s.status === "active");
   if (!active) {
     throw new Error("No active step to complete");
@@ -388,6 +393,7 @@ export function completeStep(run, artifact, note, cwd = process.cwd()) {
     run.completedAt = new Date().toISOString();
   }
 
+  if (explicitCwd) recordMissionOutcome(run, cwd);
   return active;
 }
 
@@ -398,7 +404,8 @@ export function completeStep(run, artifact, note, cwd = process.cwd()) {
  * @param {string} reason
  * @returns {MissionStep}
  */
-export function failStep(run, status, reason) {
+export function failStep(run, status, reason, cwd) {
+  const explicitCwd = arguments.length >= 4;
   if (status !== "partial" && status !== "failed") {
     throw new Error(`Invalid fail status: "${status}". Use "partial" or "failed"`);
   }
@@ -426,7 +433,15 @@ export function failStep(run, status, reason) {
   run.status = status;
   run.completedAt = new Date().toISOString();
 
+  if (explicitCwd) recordMissionOutcome(run, cwd);
   return active;
+}
+
+function recordMissionOutcome(run, cwd) {
+  if (!cwd) return false;
+  const mission = run && run.missionKey ? getMission(run.missionKey) : null;
+  const view = mission && mission.pack ? { ...run, packKey: mission.pack } : run;
+  return recordRunOutcome(view, cwd);
 }
 
 /**

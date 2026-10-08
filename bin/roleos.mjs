@@ -21,10 +21,11 @@ import { specialistCommand } from "../src/specialist-cmd.mjs";
 import { crewCommand } from "../src/crew-cmd.mjs";
 import { recipeCommand } from "../src/recipe-cmd.mjs";
 import { juryCommand } from "../src/jury-cmd.mjs";
+import { calibrationCommand } from "../src/calibration-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
-  escalateCommand, blockCommand, reopenCommand, reportCommand,
+  escalateCommand, blockCommand, reopenCommand, abandonCommand, reportCommand,
   frictionCommand,
 } from "../src/run-cmd.mjs";
 
@@ -54,6 +55,7 @@ Usage:
   roleos escalate <from> <to> <trigger> <action>  Escalate between roles
   roleos block <step-index> <reason> Block a step
   roleos reopen <step-index> <reason> Reopen a completed step
+  roleos abandon [id]               Give up on a run that has not already ended
   roleos report [id]                 Generate completion report
   roleos friction [id]               Measure operator friction
   roleos init                        Scaffold Role OS into .claude/
@@ -99,6 +101,7 @@ Usage:
   roleos jury check <validation.json> Accuracy, intervals, coverage, diversity, inverted and duplicate flags
   roleos jury select <validation.json>  Keep a panel only if it beats the best single critic
   roleos jury score <panel.json> <items>  Score new items with a saved panel
+  roleos calibration [--json]        Recorded runs: calibration report and combination table
   roleos crew                         Crew report — grades (by basis), reps, techniques per role
   roleos crew <role>                  Full sheet: grade band, verbatim dispatch profile, the Record
   roleos crew --programs              Curriculum tech tree (S6 training programs)
@@ -156,6 +159,10 @@ async function printVerbHelp(verb, write = console.log) {
   }
   if (verb === "jury") {
     await juryCommand(["help"]);
+    return;
+  }
+  if (verb === "calibration") {
+    await calibrationCommand(["help"]);
     return;
   }
   if (!verb || verb === "help" || isHelpFlag(verb)) {
@@ -286,6 +293,9 @@ try {
     case "reopen":
       await reopenCommand(args);
       break;
+    case "abandon":
+      await abandonCommand(args);
+      break;
     case "report":
       await reportCommand(args);
       break;
@@ -315,6 +325,9 @@ try {
       break;
     case "jury":
       await juryCommand(args);
+      break;
+    case "calibration":
+      await calibrationCommand(args);
       break;
     case "mission":
       await missionCommand(args);

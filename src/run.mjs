@@ -22,6 +22,7 @@ import { ROLE_ARTIFACT_CONTRACTS, getHandoffContract } from "./artifacts.mjs";
 import { buildSwarmSteps, buildDynamicSteps, runCompletionGates } from "./mission-run.mjs";
 import { isValidStepTransition } from "./state-machine.mjs";
 import { retrieveForDispatch, isKnowledgeConfigured } from "./knowledge/index.mjs";
+import { readOutcomes, recordRunOutcome } from "./calibration.mjs";
 
 // ── Run directory ────────────────────────────────────────────────────────────
 
@@ -38,7 +39,7 @@ function runPath(cwd, id) {
 // ── Run statuses ─────────────────────────────────────────────────────────────
 
 /**
- * @typedef {"planning"|"running"|"paused"|"completed"|"partial"|"failed"} RunStatus
+ * @typedef {"planning"|"running"|"paused"|"completed"|"partial"|"failed"|"abandoned"} RunStatus
  */
 
 /**
@@ -99,7 +100,7 @@ export async function createPersistentRun(taskDescription, cwd, opts = {}) {
     throw new Error("Task description required");
   }
 
-  const entry = decideEntry(taskDescription);
+  const entry = decideEntry(taskDescription, { cwd });
   let level = entry.level;
   let missionKey = null;
   let packKey = null;
@@ -390,6 +391,7 @@ export function completeCurrentStep(run, artifact, note, cwd) {
   }
 
   saveRun(cwd, run);
+  recordRunOutcome(run, cwd);
   return active;
 }
 
@@ -427,6 +429,7 @@ export function failCurrentStep(run, status, reason, cwd) {
   run.completedAt = new Date().toISOString();
 
   saveRun(cwd, run);
+  recordRunOutcome(run, cwd);
   return active;
 }
 
@@ -651,6 +654,47 @@ export function blockStep(run, stepIndex, reason, cwd) {
   });
 
   saveRun(cwd, run);
+  // A blocked step ends the run only when nothing is left pending or active.
+  // The run status stays as it was; the ledger row says "blocked".
+  recordRunOutcome(run, cwd);
+}
+
+/**
+ * Give up on a run that has not already ended.
+ * The first end state is the ledger line. A later call does not rewrite it.
+ * @param {PersistentRun} run
+ * @param {string} cwd
+ * @returns {PersistentRun}
+ */
+export function abandonRun(run, cwd) {
+  if (!run || !run.id) {
+    const err = new Error("No run to abandon");
+    err.exitCode = 1;
+    err.hint = "Abandon applies to a run that was started.";
+    throw err;
+  }
+  if (!cwd) {
+    const err = new Error("cwd is required to abandon a run");
+    err.exitCode = 1;
+    err.hint = "Pass the project directory the run was saved in.";
+    throw err;
+  }
+  if (run.status === "abandoned") {
+    recordRunOutcome(run, cwd);
+    return run;
+  }
+  const prior = readOutcomes(cwd).some((row) => row.runId === run.id);
+  if (prior || run.status === "completed" || run.status === "failed" || run.status === "partial") {
+    const err = new Error(`Cannot abandon a run in "${run.status}" state. The ledger keeps the first end state.`);
+    err.exitCode = 1;
+    err.hint = "A run records one outcome. Re-completing it does not write a second line.";
+    throw err;
+  }
+  run.status = "abandoned";
+  run.completedAt = new Date().toISOString();
+  saveRun(cwd, run);
+  recordRunOutcome(run, cwd);
+  return run;
 }
 
 /**

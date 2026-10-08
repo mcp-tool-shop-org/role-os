@@ -54,9 +54,10 @@ const PACK_MEDIUM_THRESHOLD = 0.3;    // decent match → use pack as fallback
  *   → free routing (when the task is novel or mixed)
  *
  * @param {string} taskDescription
+ * @param {{ cwd?: string, outcomes?: object[], env?: NodeJS.ProcessEnv, minRuns?: number }} [options]
  * @returns {EntryDecision}
  */
-export function decideEntry(taskDescription) {
+export function decideEntry(taskDescription, options = {}) {
   if (!taskDescription || taskDescription.trim().length === 0) {
     return {
       level: "free-routing",
@@ -89,7 +90,7 @@ export function decideEntry(taskDescription) {
   const missionScore = scoreMissionFit(missionSuggestion);
 
   // Step 3: Try pack suggestion
-  const packSuggestion = suggestPack(text);
+  const packSuggestion = suggestPack(text, options);
   const packScore = scorePackFit(packSuggestion);
 
   // Step 4: Check agreement (mission and pack point to the same family)

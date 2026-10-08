@@ -34,7 +34,7 @@ function runSuggest(packetFile) {
     throw err;
   }
 
-  const result = suggestPack(content);
+  const result = suggestPack(content, { cwd: process.cwd() });
   const filename = basename(packetFile);
 
   console.log(`\nroleos packs suggest — ${filename}\n`);

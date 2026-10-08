@@ -64,7 +64,7 @@ jobs:
       # One lcov report from the raw coverage every Node process of the
       # tests left. The exact version keeps npx from fetching whichever c8
       # is newest on the day. --check-coverage is the org line-coverage floor.
-      # This repo clears 90, so the floor is 90.
+      # Measured 90.48% lines on learned selection. Rounded down, the floor stays 90.
       - name: Coverage report for Codecov
         if: ${{ env.COVERAGE_LEG == 'true' }}
         run: npx --yes c8@12.0.0 report --temp-directory "$RUNNER_TEMP/v8-coverage" --reporter=lcov --reporter=text-summary --report-dir coverage/c8 --check-coverage --lines 90

@@ -27,6 +27,7 @@ import {
   jurySelect,
   makeRng,
   nestedEstimate,
+  panelMeasurement,
   panelScore,
   parsePanel,
   parseValidation,
@@ -397,6 +398,33 @@ describe("selection", () => {
     const weighted = scoreItems(members(2), items, critics);
     assert.ok(Math.abs(weighted[0].score - (1 / 3)) < 1e-12);
     assert.equal(weighted[0].decision, 1);
+  });
+
+  it("counts an exact panel tie as coverage and not as a no", () => {
+    // A is z = [-1, -1, 1, 1] (mean 0, sd 1). B is z = [1, 3, 1, 3]
+    // (mean 2, sd 1). On p0 the centred votes are -1 and +1, so the panel
+    // mean is exactly 0. That item is an abstention: in coverage, out of
+    // the accuracy denominator. Counting it as a no (truth is 1) drops the
+    // rate from 1 to 0.75.
+    const critics = [
+      { id: "a", threshold: 0, scores: { p0: -1, p1: -1, p2: 1, p3: 1 } },
+      { id: "b", threshold: 0, scores: { p0: 1, p1: 3, p2: 1, p3: 3 } },
+    ];
+    const items = [
+      { id: "p0", group: "g0", truth: 1 },
+      { id: "p1", group: "g1", truth: 1 },
+      { id: "p2", group: "g2", truth: 1 },
+      { id: "p3", group: "g3", truth: 1 },
+    ];
+    const measured = panelMeasurement(critics, items, [
+      { critic: "a", count: 1 },
+      { critic: "b", count: 1 },
+    ]);
+    assert.equal(measured.covered, 4);
+    assert.equal(measured.coverage, 1);
+    assert.equal(measured.scored, 3);
+    assert.equal(measured.correct, 3);
+    assert.equal(measured.accuracy, 1);
   });
 
   it("gives a repeated seat two votes inside selection", () => {

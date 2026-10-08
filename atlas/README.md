@@ -1,12 +1,12 @@
 # role-os: how it works
 
-Mapped at 2026-10-08 from commit cfa9765 by Atlas 1.24.0.
+Mapped at 2026-10-08 from commit c824c48 by Atlas 1.24.0.
 
 ## What this is
 
-15 parts, mostly JavaScript (168 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
+15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-10-08 (96fecfa)
+## What changed since 2026-10-08 (f4fce23)
 
 Nothing structural changed since 2026-10-08; 7 files changed content.
 
@@ -20,20 +20,21 @@ Nothing structural changed since 2026-10-08; 7 files changed content.
 ## What happens through CI
 
 1. The workflow runs bin/roleos.mjs in bin, test/ in test and tools/token-budget-dataset/test_harvester.py in tools.
-2. That reaches src (74 files).
-3. It uploads coverage to Codecov.
+2. That reaches src (75 files).
+3. It writes to .claude/calibration, which is not tracked.
+4. It uploads coverage to Codecov.
 
 ## Who reads the results
 
-CI writes nothing this map can see.
+CI writes only to .claude/calibration, which is not tracked.
 
 ## The other doors
 
-**Release** runs test/, reaches src, and publishes to npm on a release event.
+**Release** runs test/, reaches src, writes to .claude/calibration, which is not tracked, and publishes to npm on a release event.
 
 **Deploy site to GitHub Pages** runs site/astro.config.mjs and site/src/, and deploys the site.
 
-**roleos** (a command people run) runs bin/roleos.mjs and reaches src.
+**roleos** (a command people run) runs bin/roleos.mjs, reaches src, and writes to .claude/calibration, which is not tracked.
 
 ## What breaks what
 
@@ -95,10 +96,10 @@ Read those in order to follow one pull request end to end.
 
 - 3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.
 - 16 writes and 14 reads use paths built at run time and are not named here.
-- 1 write goes to places this repository does not track, so it is not listed as generated.
-- 28 writes and 88 reads go to the directory the command is run in, not to this repository.
-- 45 writes and 50 reads go to a path their caller passes, not to this repository.
-- 23 writes and 23 reads go to the directory the command is run in or a path their caller passes, not to this repository.
+- 3 writes go to places this repository does not track, so they are not listed as generated.
+- 30 writes and 88 reads go to the directory the command is run in, not to this repository.
+- 43 writes and 50 reads go to a path their caller passes, not to this repository.
+- 23 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.
 - 8 writes and 1 read go to a temporary directory, not to this repository.
 - 8 commands are built at run time and not followed, 2 of them in tests.
 - Statistics confidence is low: fewer than 25 source files reach 10 revisions in the window.
