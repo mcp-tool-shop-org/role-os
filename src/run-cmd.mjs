@@ -14,13 +14,14 @@
  * roleos escalate <from> <to> <trigger> <action> — escalate
  * roleos block <step-index> <reason> — block a step
  * roleos reopen <step-index> <reason> — reopen a completed step
+ * roleos abandon [id] — give up on a run that has not already ended
  * roleos report                    — generate completion report
  * roleos friction                  — measure operator friction
  */
 
 import {
   createPersistentRun, startNext, completeCurrentStep, failCurrentStep,
-  pauseRun, resumeRun, reroute, escalate, retry, blockStep, reopenStep,
+  pauseRun, resumeRun, reroute, escalate, retry, blockStep, reopenStep, abandonRun,
   getPosition, explainRun, formatNext, generateReport, formatReport,
   loadRun, listRuns, findActiveRun, measureFriction, saveRun,
 } from "./run.mjs";
@@ -362,6 +363,33 @@ export async function reopenCommand(args) {
 
   reopenStep(run, stepIndex, reason, cwd);
   console.log(`Re-opened step ${stepIndex} (${run.steps[stepIndex].role}): ${reason}`);
+}
+
+export async function abandonCommand(args) {
+  if (args && args.length > 1) {
+    const err = new Error("Usage: roleos abandon [id]");
+    err.exitCode = 1;
+    err.hint = "Abandon the active run, or pass one run id.";
+    throw err;
+  }
+
+  const cwd = getCwd();
+  const id = args && args[0];
+  let run;
+  if (id) {
+    run = loadRun(cwd, id);
+    if (!run) {
+      const err = new Error(`Run "${id}" not found`);
+      err.exitCode = 1;
+      err.hint = "Use `roleos run list` to see saved runs.";
+      throw err;
+    }
+  } else {
+    run = requireActiveRun(cwd);
+  }
+
+  const ended = abandonRun(run, cwd);
+  console.log(`Abandoned run ${ended.id}. The ledger keeps this end state.`);
 }
 
 // ── roleos report ────────────────────────────────────────────────────────────

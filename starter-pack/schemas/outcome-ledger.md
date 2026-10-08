@@ -34,7 +34,7 @@ after a later reopen.
 | `timestamp` | When the run ended (`completedAt`), or the time of recording. |
 | `suggestedPack` | Pack the entry decision suggested, or the pack the run used when the decision had none. |
 | `suggestedConfidence` | `high`, `medium`, `low`, or null when the decision had no score. |
-| `selectedPack` | Pack the run actually used. Null for free routing. A mission run records that mission's pack. |
+| `selectedPack` | Pack the run actually used. Null for free routing. A mission run records that mission's pack, including when the run's own pack key is empty. An explicit pack key is kept. |
 | `missionKey` | Mission key when the run had one. Otherwise null. The combination table prefers this over the pack. |
 | `operatorOverride` | True when the run was forced onto a different mission or pack than the entry decision. |
 | `rolesUsed` | Sorted unique roles of steps that are not pending and not skipped. |

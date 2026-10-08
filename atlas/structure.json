@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "091756ca83c29467c3c9d7603c679ba7c846c7e36fe042527d18b63108fcf7fd",
+          "hash": "b2f568e26ee1bb4254c549cfb655c593f824509c2558b21ac8560a3b66bba220",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -425,14 +425,14 @@
           "failurePaths": [
             {
               "kind": "throw",
-              "line": 344
+              "line": 348
             },
             {
               "kind": "catch",
-              "line": 347
+              "line": 351
             }
           ],
-          "hash": "49b7efd2ef6e95410c759519c57e53d428004bda53de81a104c575d849bd861f",
+          "hash": "edc120b9d4c48c1a630debb4bead870054203f916c8aa37c968b05dd662b3650",
           "importsFiles": [
             "src/artifacts-cmd.mjs",
             "src/audit-cmd.mjs",
@@ -562,7 +562,7 @@
                     }
                   ],
                   "innerTruncated": true,
-                  "line": 144,
+                  "line": 145,
                   "name": "swarmCommand",
                   "target": {
                     "file": "src/swarm-cmd.mjs"
@@ -604,7 +604,7 @@
                       "via": "cmdStatus"
                     }
                   ],
-                  "line": 148,
+                  "line": 149,
                   "name": "auditCommand",
                   "target": {
                     "file": "src/audit-cmd.mjs"
@@ -711,7 +711,7 @@
                     }
                   ],
                   "innerTruncated": true,
-                  "line": 152,
+                  "line": 153,
                   "name": "specialistCommand",
                   "target": {
                     "file": "src/specialist-cmd.mjs"
@@ -737,7 +737,7 @@
                       "via": "readCard"
                     }
                   ],
-                  "line": 156,
+                  "line": 157,
                   "name": "recipeCommand",
                   "target": {
                     "file": "src/recipe-cmd.mjs"
@@ -839,7 +839,7 @@
                       "via": "scoreNew"
                     }
                   ],
-                  "line": 160,
+                  "line": 161,
                   "name": "juryCommand",
                   "target": {
                     "file": "src/jury-cmd.mjs"
@@ -884,7 +884,7 @@
                       }
                     }
                   ],
-                  "line": 164,
+                  "line": 165,
                   "name": "calibrationCommand",
                   "target": {
                     "file": "src/calibration-cmd.mjs"
@@ -2045,7 +2045,7 @@
           "path": "AUDIT-TESTS-all-components.md"
         },
         {
-          "hash": "ad3fcf426c9a0674153093b9458396d23b9b573e170211a57bda3a1b0773b6aa",
+          "hash": "9379df045791f990f1d7f8820bdfdf4d61699cdf7b8f9c5b63bd04319b2c0b80",
           "path": "CHANGELOG.md"
         },
         {
@@ -2617,10 +2617,13 @@
             {
               "in": "readOutcomes",
               "kind": "catch",
-              "line": 89
+              "line": 90
             }
           ],
-          "hash": "72842f2fedc685eaa46123ff89cf91494caf7bbe6c17a5c4325b6c09ad04a404",
+          "hash": "f687a30085d6182d09ab0b87dc070ea51897a46bb8a424bd6b3da3ada38fc471",
+          "importsFiles": [
+            "src/mission.mjs"
+          ],
           "path": "src/calibration.mjs"
         },
         {
@@ -3800,6 +3803,7 @@
         },
         {
           "exports": [
+            "abandonCommand",
             "blockCommand",
             "completeCommand",
             "escalateCommand",
@@ -3818,75 +3822,85 @@
             {
               "in": "requireActiveRun",
               "kind": "throw",
-              "line": 42
+              "line": 43
             },
             {
               "in": "runCommand",
               "kind": "throw",
-              "line": 87
+              "line": 88
             },
             {
               "in": "runCommand",
               "kind": "throw",
-              "line": 93
+              "line": 94
             },
             {
               "in": "resumeCommand",
               "kind": "throw",
-              "line": 146
+              "line": 147
             },
             {
               "in": "explainCommand",
               "kind": "throw",
-              "line": 217
+              "line": 218
             },
             {
               "in": "completeCommand",
               "kind": "throw",
-              "line": 234
+              "line": 235
             },
             {
               "in": "failCommand",
               "kind": "throw",
-              "line": 262
+              "line": 263
             },
             {
               "in": "retryCommand",
               "kind": "throw",
-              "line": 286
+              "line": 287
             },
             {
               "in": "rerouteCommand",
               "kind": "throw",
-              "line": 301
+              "line": 302
             },
             {
               "in": "escalateCommand",
               "kind": "throw",
-              "line": 318
+              "line": 319
             },
             {
               "in": "blockCommand",
               "kind": "throw",
-              "line": 339
+              "line": 340
             },
             {
               "in": "reopenCommand",
               "kind": "throw",
-              "line": 355
+              "line": 356
+            },
+            {
+              "in": "abandonCommand",
+              "kind": "throw",
+              "line": 373
+            },
+            {
+              "in": "abandonCommand",
+              "kind": "throw",
+              "line": 385
             },
             {
               "in": "reportCommand",
               "kind": "throw",
-              "line": 378
+              "line": 406
             },
             {
               "in": "frictionCommand",
               "kind": "throw",
-              "line": 400
+              "line": 428
             }
           ],
-          "hash": "ab4d3bc58a604763461a52481dbdcef0a32ff8fac430162e60c021c8a02464ec",
+          "hash": "3c7e1910dddc521415e1f6267dbc0258a74a10a71c86b55e1034689ef1cf8e7d",
           "importOrder": [
             "src/run.mjs",
             "src/calibration.mjs",
@@ -6079,7 +6093,7 @@
             "caller",
             "cwd:.claude/"
           ],
-          "writes": 12
+          "writes": 10
         },
         {
           "reads": 6,
@@ -6140,7 +6154,7 @@
           "where": [
             "cwd:.claude/"
           ],
-          "writes": 12
+          "writes": 14
         },
         {
           "reads": 8,
@@ -6493,7 +6507,7 @@
           "path": "starter-pack/schemas/jury.md"
         },
         {
-          "hash": "0ce26c1edcfcab8f5f70d597a9b4f618fce671b22b0030390200cf5deb2caf07",
+          "hash": "a661d4662da934e59ec0a1f51fc3774de7185571e23377c8d7f53d94f0fcc7a2",
           "path": "starter-pack/schemas/outcome-ledger.md"
         },
         {
@@ -6859,7 +6873,7 @@
           "testFramework": "node --test"
         },
         {
-          "hash": "e2b37cc711e7c15f07adc89379b15c3ac10112bf657cba5f14c8272a25164b6e",
+          "hash": "b3d62b163322f008ffc0364c692311f2461cc0cb95c34556c9fdcb6b4fd7021a",
           "importOrder": [
             "src/calibration.mjs",
             "src/packs.mjs",
@@ -9194,7 +9208,7 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "f4fce23c1b4d9646b199ff8c90f4a91195af59cf",
+    "commit": "c824c4833caaaf9c7d00f24c3bcb1406fe36aa45",
     "tracked": 637
   },
   "landings": [

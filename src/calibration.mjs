@@ -19,6 +19,7 @@
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { getMission } from "./mission.mjs";
 
 // ── Outcome record shape ──────────────────────────────────────────────────────
 
@@ -30,7 +31,7 @@ import { join } from "node:path";
  * @property {string} detectedType - feature/integration/identity
  * @property {string|null} suggestedPack - Pack auto-suggested (or null)
  * @property {string|null} suggestedConfidence - high/medium/low, or null when unmeasured
- * @property {string|null} selectedPack - Pack actually used (or null for free routing)
+ * @property {string|null} selectedPack - Pack actually used. A mission records its pack. Null for free routing.
  * @property {string|null} [missionKey] - Mission key when the run had one
  * @property {boolean} operatorOverride - Did operator change the suggestion?
  * @property {boolean} mismatchRedirect - Was a mismatch guard triggered?
@@ -582,6 +583,13 @@ export function terminalStatus(run) {
   return null;
 }
 
+function missionPack(missionKey) {
+  if (!missionKey) return null;
+  const mission = getMission(missionKey);
+  if (!mission || typeof mission.pack !== "string" || mission.pack.length === 0) return null;
+  return mission.pack;
+}
+
 function operatorDidOverride(run, entry, selectedPack, missionKey) {
   if (run && run.operatorOverride === true) return true;
   if (!entry) return false;
@@ -595,6 +603,8 @@ function operatorDidOverride(run, entry, selectedPack, missionKey) {
 
 /**
  * One ledger row from a run. Absent fields stay null. Roles are sorted.
+ * A mission run records that mission's pack even when the run's pack key is empty.
+ * An explicit pack key is kept.
  * @param {object} run
  * @param {string} [now]
  */
@@ -612,8 +622,9 @@ export function outcomeFromRun(run, now = new Date().toISOString()) {
     suggestedPack = run.packKey;
   }
 
-  const selectedPack = run && run.packKey ? run.packKey : null;
   const missionKey = (run && run.missionKey) || (entry && entry.mission && entry.mission.key) || null;
+  const explicitPack = run && run.packKey ? run.packKey : null;
+  const selectedPack = explicitPack || missionPack(missionKey);
   const steps = run && Array.isArray(run.steps) ? run.steps : [];
   const roles = [];
   let rejectedFromNotes = 0;

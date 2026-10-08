@@ -16,6 +16,11 @@
   never names a pack the keywords did not already match. When the boosted pack
   agrees with a medium mission match, the existing entry ladder picks that
   mission. An empty ledger leaves the ladder where it was.
+- A mission run records that mission's pack as the selected pack on every end
+  path, including when the run's own pack key is empty. Those runs feed the
+  boost. An explicit pack key is kept.
+- `roleos abandon [id]` gives up on a run that has not already ended. The
+  ledger keeps that end state.
 - `ROLEOS_NO_CALIBRATION=1` restores keyword routing.
 - `roleos route --verbose` and `roleos explain` print the boost, the run count,
   and the clean rate with its interval. An empty ledger says "no recorded runs
@@ -23,7 +28,7 @@
 - `roleos calibration [--json]` prints the calibration report and the
   combination table. An empty ledger says "no recorded runs yet", not zeros.
 - README.md is unchanged in this change. Translations stay with the release.
-- Measured line coverage is 90.38% (22230/24594). Rounded down, the CI floor
+- Measured line coverage is 90.48% (22292/24637). Rounded down, the CI floor
   stays 90% (`c8 --check-coverage --lines 90`). Codecov project and patch
   targets stay 90%, and the project status allows a 1% drop.
 

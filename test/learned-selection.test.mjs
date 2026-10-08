@@ -19,6 +19,8 @@ import {
   outcomeFromRun,
   recordRunOutcome,
   taskKindOf,
+  formatCalibrationReport,
+  computeCalibration,
 } from "../src/calibration.mjs";
 import { suggestPack } from "../src/packs.mjs";
 import { createRun, startNextStep, completeStep, failStep } from "../src/mission-run.mjs";
@@ -317,6 +319,76 @@ describe("outcome recording", () => {
     failStep(partial, "partial", "pages still open", partialDir);
     assert.equal(readOutcomes(partialDir)[0].completionStatus, "partial");
   });
+
+  it("records the mission pack when the run itself has no pack", () => {
+    const bare = {
+      id: "mission-bare",
+      status: "completed",
+      missionKey: "bugfix",
+      packKey: null,
+      steps: [{ role: "Repo Researcher", status: "completed" }],
+      escalations: [],
+      interventions: [],
+      entryDecision: {
+        level: "mission",
+        confidence: 0.9,
+        mission: { key: "bugfix", pack: "bugfix" },
+        pack: null,
+      },
+    };
+    const row = outcomeFromRun(bare);
+    assert.equal(row.selectedPack, "bugfix");
+    assert.equal(row.missionKey, "bugfix");
+    assert.equal(row.operatorOverride, false);
+    assert.equal(bare.packKey, null);
+
+    const kept = outcomeFromRun({ ...bare, id: "kept", packKey: "feature" });
+    assert.equal(kept.selectedPack, "feature");
+
+    const unknown = outcomeFromRun({
+      ...bare,
+      id: "unknown",
+      missionKey: "not-a-mission",
+      entryDecision: { level: "mission", mission: { key: "not-a-mission" }, pack: null },
+    });
+    assert.equal(unknown.selectedPack, null);
+
+    function missionRun(steps, extra = {}) {
+      return running(steps, {
+        missionKey: "bugfix",
+        packKey: null,
+        entryDecision: {
+          level: "mission",
+          confidence: 0.9,
+          mission: { key: "bugfix", pack: "bugfix" },
+          pack: null,
+          alternative: { level: "pack", key: "bugfix", confidence: 0.5 },
+        },
+        ...extra,
+      });
+    }
+
+    const failedDir = scratch();
+    const failed = missionRun([step("Repo Researcher", "active")]);
+    failCurrentStep(failed, "failed", "cannot reproduce", failedDir);
+    assert.equal(failed.packKey, null);
+    assert.equal(readOutcomes(failedDir)[0].selectedPack, "bugfix");
+    assert.equal(readOutcomes(failedDir)[0].completionStatus, "failed");
+
+    const blockedDir = scratch();
+    const blocked = missionRun([step("Repo Researcher", "active")]);
+    blockStep(blocked, 0, "waiting", blockedDir);
+    assert.equal(blocked.packKey, null);
+    assert.equal(readOutcomes(blockedDir)[0].selectedPack, "bugfix");
+    assert.equal(readOutcomes(blockedDir)[0].completionStatus, "blocked");
+
+    const abandonedDir = scratch();
+    const abandoned = missionRun([step("Repo Researcher", "pending")], { status: "planning" });
+    abandonRun(abandoned, abandonedDir);
+    assert.equal(abandoned.packKey, null);
+    assert.equal(readOutcomes(abandonedDir)[0].selectedPack, "bugfix");
+    assert.equal(readOutcomes(abandonedDir)[0].completionStatus, "abandoned");
+  });
 });
 
 describe("combination stats", () => {
@@ -376,6 +448,24 @@ describe("combination stats", () => {
     assert.equal(pack.status, "insufficient data");
     assert.equal(pack.boost, 0);
     assert.equal(pack.cleanRate, null);
+  });
+
+  it("does not call a completed run clean when it has corrections", () => {
+    const rows = bugfixRuns(5, "completed", { corrections: 1 });
+    const stats = computeCombinationStats(rows);
+    assert.equal(stats.length, 1);
+    assert.equal(stats[0].completed, 5);
+    assert.equal(stats[0].clean, 0);
+    assert.equal(stats[0].status, "measured");
+    assert.equal(stats[0].cleanRate, 0);
+    const table = formatCombinationTable(stats);
+    assert.match(table, /\| 0 clean \|/);
+    assert.doesNotMatch(table, /1\.000/);
+    const evidence = evidenceRows(rows);
+    assert.equal(evidence[0].pack, "bugfix");
+    assert.equal(evidence[0].clean, 0);
+    assert.equal(evidence[0].boost, 0);
+    assert.equal(suggestPack(TIE, { outcomes: rows, env: {} }).pack, "feature");
   });
 
   it("keys a mission ahead of its pack, and says free-routing when neither is set", () => {
@@ -475,6 +565,18 @@ describe("learned pack boost", () => {
     assert.equal(suggestPack(TIE, { outcomes: launch, env }).pack, "feature");
   });
 
+  it("never suggests a boosted pack the keywords did not hit", () => {
+    const launch = bugfixRuns(5, "completed", { selectedPack: "launch" });
+    const env = {};
+    assert.equal(suggestPack("Hello world.", { outcomes: launch, env }), null);
+    const crash = suggestPack("crash", { outcomes: launch, env });
+    assert.equal(crash.pack, "bugfix");
+    assert.equal(crash.confidence, "low");
+    assert.equal(crash.scores.bugfix, 1);
+    assert.equal(crash.scores.launch, undefined);
+    assert.equal(Object.keys(crash.scores).includes("launch"), false);
+  });
+
   it("ignores a passed-in ledger when the kill switch is on", () => {
     const off = suggestPack(TIE, {
       outcomes: bugfixRuns(5),
@@ -514,6 +616,71 @@ describe("learned pack boost", () => {
     process.env.ROLEOS_NO_CALIBRATION = "1";
     try {
       const restored = await createPersistentRun(TIE, cwd);
+      assert.equal(restored.packKey, "feature");
+    } finally {
+      if (previous === undefined) delete process.env.ROLEOS_NO_CALIBRATION;
+      else process.env.ROLEOS_NO_CALIBRATION = previous;
+    }
+  });
+
+  it("learns the tie from five completed bugfix missions", async () => {
+    const cwd = scratch();
+    const task = "diagnose the crash and fix the regression";
+    for (let i = 0; i < 5; i++) {
+      const run = await createPersistentRun(task, cwd);
+      assert.equal(run.entryLevel, "mission");
+      assert.equal(run.missionKey, "bugfix");
+      assert.equal(run.packKey, null);
+      let guard = 0;
+      while (run.status !== "completed") {
+        assert.ok(startNext(run, cwd));
+        completeCurrentStep(
+          run,
+          "The diagnosis names the crash, the fix, and the regression test that holds.",
+          null,
+          cwd,
+        );
+        assert.ok(++guard < 8);
+      }
+    }
+
+    const rows = readOutcomes(cwd);
+    assert.equal(rows.length, 5);
+    for (const row of rows) {
+      assert.equal(row.selectedPack, "bugfix");
+      assert.equal(row.missionKey, "bugfix");
+      assert.equal(row.completionStatus, "completed");
+      assert.equal(row.corrections, 0);
+      assert.equal(row.operatorOverride, false);
+    }
+
+    const report = formatCalibrationReport(computeCalibration(rows));
+    assert.match(report, /Pack usage: 100% \| Free routing: 0%/);
+    assert.doesNotMatch(report, /Pack usage: 0%/);
+    assert.doesNotMatch(report, /Free routing: 100%/);
+    assert.doesNotMatch(calibrationSnapshot({ cwd }).text, /none named a pack/);
+
+    writeFileSync(join(cwd, "tie.md"), `${TIE}\n`);
+    const learned = cli(["route", "tie.md", "--verbose"], cwd);
+    assert.equal(learned.status, 0);
+    assert.match(learned.stdout, /Suggested pack: bugfix/);
+    assert.doesNotMatch(learned.stdout, /none named a pack/);
+    assert.equal(suggestPack(TIE, { cwd }).pack, "bugfix");
+
+    const flipped = await createPersistentRun(TIE, cwd);
+    assert.equal(flipped.entryLevel, "mission");
+    assert.equal(flipped.missionKey, "bugfix");
+    assert.equal(flipped.packKey, null);
+
+    const restoredRoute = cli(["route", "tie.md", "--verbose"], cwd, { ROLEOS_NO_CALIBRATION: "1" });
+    assert.match(restoredRoute.stdout, /Suggested pack: feature/);
+    assert.match(restoredRoute.stdout, /Calibration off \(ROLEOS_NO_CALIBRATION=1\)/);
+    const previous = process.env.ROLEOS_NO_CALIBRATION;
+    process.env.ROLEOS_NO_CALIBRATION = "1";
+    try {
+      assert.equal(suggestPack(TIE, { cwd }).pack, "feature");
+      const restored = await createPersistentRun(TIE, cwd);
+      assert.equal(restored.entryLevel, "pack");
       assert.equal(restored.packKey, "feature");
     } finally {
       if (previous === undefined) delete process.env.ROLEOS_NO_CALIBRATION;
@@ -774,5 +941,56 @@ describe("calibration command and evidence text", () => {
     const bare = cli(["explain"], fresh);
     assert.match(bare.stdout, /Calibration: no recorded runs yet/);
     assert.doesNotMatch(bare.stdout, /Total runs: 0/);
+  });
+
+  it("abandons a run from the CLI", () => {
+    const cwd = scratch();
+    const started = cli(["run", "diagnose the crash and fix the regression"], cwd);
+    assert.equal(started.status, 0);
+    assert.match(started.stdout, /Mission: bugfix/);
+
+    const help = cli(["abandon", "--help"], cwd);
+    assert.equal(help.status, 0);
+    assert.match(help.stdout, /roleos abandon \[id\]/);
+    assert.match(cli(["help"], cwd).stdout, /roleos abandon \[id\]/);
+
+    const abandoned = cli(["abandon"], cwd);
+    assert.equal(abandoned.status, 0);
+    assert.match(abandoned.stdout, /Abandoned run/);
+    const rows = readOutcomes(cwd);
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0].completionStatus, "abandoned");
+    assert.equal(rows[0].selectedPack, "bugfix");
+    assert.equal(rows[0].missionKey, "bugfix");
+
+    const again = cli(["abandon", rows[0].runId], cwd);
+    assert.equal(again.status, 0);
+    assert.equal(readOutcomes(cwd).length, 1);
+    const idle = cli(["abandon"], cwd);
+    assert.equal(idle.status, 1);
+    assert.match(JSON.parse(idle.stderr).message, /No active run/);
+
+    const missing = cli(["abandon", "run-missing"], cwd);
+    assert.equal(missing.status, 1);
+    const missingBody = JSON.parse(missing.stderr);
+    assert.match(missingBody.message, /not found/);
+    assert.match(missingBody.hint, /run list/);
+
+    const extra = cli(["abandon", rows[0].runId, "extra"], cwd);
+    assert.equal(extra.status, 1);
+    assert.match(JSON.parse(extra.stderr).message, /Usage: roleos abandon/);
+
+    const ended = scratch();
+    assert.equal(cli(["run", "diagnose the crash and fix the regression"], ended).status, 0);
+    const failed = cli(["fail", "failed", "cannot reproduce"], ended);
+    assert.equal(failed.status, 0);
+    const refused = cli(["abandon"], ended);
+    assert.equal(refused.status, 1);
+    const refusedBody = JSON.parse(refused.stderr);
+    assert.match(refusedBody.message, /first end state/);
+    assert.equal(typeof refusedBody.hint, "string");
+    assert.equal(readOutcomes(ended).length, 1);
+    assert.equal(readOutcomes(ended)[0].completionStatus, "failed");
+    assert.equal(readOutcomes(ended)[0].selectedPack, "bugfix");
   });
 });

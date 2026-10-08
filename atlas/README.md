@@ -1,19 +1,14 @@
 # role-os: how it works
 
-Mapped at 2026-10-08 from commit f4fce23 by Atlas 1.24.0.
+Mapped at 2026-10-08 from commit c824c48 by Atlas 1.24.0.
 
 ## What this is
 
 15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-10-08 (cfa9765)
+## What changed since 2026-10-08 (f4fce23)
 
-- .claude/calibration is now written by src/calibration.mjs.
-- .claude/calibration/outcome-ledger.jsonl is now written by src/calibration.mjs.
-- .claude/calibration/outcome-ledger.jsonl is now also read by test/learned-selection.test.mjs.
-- And 1 more new writer or reader of a place.
-- In bin/roleos.mjs, `printVerbHelp` gained a step, `calibrationCommand`, after `juryCommand`.
-- 3 files added and 13 changed content, across 6 parts.
+Nothing structural changed since 2026-10-08; 7 files changed content.
 
 ## What comes in
 
@@ -102,9 +97,9 @@ Read those in order to follow one pull request end to end.
 - 3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.
 - 16 writes and 14 reads use paths built at run time and are not named here.
 - 3 writes go to places this repository does not track, so they are not listed as generated.
-- 28 writes and 88 reads go to the directory the command is run in, not to this repository.
+- 30 writes and 88 reads go to the directory the command is run in, not to this repository.
 - 43 writes and 50 reads go to a path their caller passes, not to this repository.
-- 25 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.
+- 23 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.
 - 8 writes and 1 read go to a temporary directory, not to this repository.
 - 8 commands are built at run time and not followed, 2 of them in tests.
 - Statistics confidence is low: fewer than 25 source files reach 10 revisions in the window.

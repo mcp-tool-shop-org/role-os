@@ -25,7 +25,7 @@ import { calibrationCommand } from "../src/calibration-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
-  escalateCommand, blockCommand, reopenCommand, reportCommand,
+  escalateCommand, blockCommand, reopenCommand, abandonCommand, reportCommand,
   frictionCommand,
 } from "../src/run-cmd.mjs";
 
@@ -55,6 +55,7 @@ Usage:
   roleos escalate <from> <to> <trigger> <action>  Escalate between roles
   roleos block <step-index> <reason> Block a step
   roleos reopen <step-index> <reason> Reopen a completed step
+  roleos abandon [id]               Give up on a run that has not already ended
   roleos report [id]                 Generate completion report
   roleos friction [id]               Measure operator friction
   roleos init                        Scaffold Role OS into .claude/
@@ -291,6 +292,9 @@ try {
       break;
     case "reopen":
       await reopenCommand(args);
+      break;
+    case "abandon":
+      await abandonCommand(args);
       break;
     case "report":
       await reportCommand(args);
