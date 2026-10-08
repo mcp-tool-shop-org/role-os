@@ -2,9 +2,12 @@
  * Jury step — pick a panel of trained critics only when it beats the best one.
  *
  * Critics score a validation set (`roleos-jury-validation/v1`). Higher score means
- * "truth = 1"; the decision is score > threshold. The core measures each critic,
- * measures how alike their mistakes are, and keeps a panel only when nested
- * group-clustered resampling says the panel is better than the best single critic.
+ * "truth = 1". A score above the threshold is a yes, a score below it is a no,
+ * and a score exactly equal to the threshold is an abstention: left out of
+ * accuracy, still counted in coverage. A panel score of exactly 0 is a panel
+ * abstention, not a no. The core measures each critic, measures how alike their
+ * mistakes are, and keeps a panel only when nested group-clustered resampling
+ * says the panel is better than the best single critic.
  *
  * Pure module: no I/O and no unseeded draws. Every interval is a function of the
  * items, the critics, and the seed the caller passes.
@@ -84,8 +87,14 @@ function scoreOf(critic, itemId) {
   return v;
 }
 
-function predictsPositive(score, threshold) {
-  return score > threshold;
+/**
+ * 1 when the score is above the threshold, 0 when it is below.
+ * Null when the score is missing or exactly the threshold: that is an abstention,
+ * not a no.
+ */
+function decisionOf(score, threshold) {
+  if (score === null || score === threshold) return null;
+  return score > threshold ? 1 : 0;
 }
 
 /** Population mean and sd (divide by n). Empty input is unmeasured. */
@@ -107,7 +116,8 @@ function meanSd(values) {
  * Z-score on the fit set, then centre on the threshold.
  * (score - mean) / sd - (threshold - mean) / sd = (score - threshold) / sd.
  * Both terms are written out so the stored mean is actually applied.
- * sd of 0 has no scale: the vote is the sign of (score - threshold), or 0 on a tie.
+ * sd of 0 has no scale: the vote is the sign of (score - threshold).
+ * A tie is 0, and a 0 vote is an abstention, not a no.
  */
 function centred(score, mean, sd, threshold) {
   if (mean === null || sd === null || !(sd > 0)) {
@@ -233,7 +243,10 @@ export function hashValidation(doc) {
 /**
  * Point accuracy, coverage, and a 95% group-clustered bootstrap interval.
  * Groups are resampled with replacement; items that share a group stay together.
- * Accuracy is null when the critic scored nothing ("unmeasured").
+ * `scored` counts every finite score, including a score exactly at the threshold.
+ * `decided` counts only yes and no. Accuracy is correct / decided. It is null
+ * when the critic made no decision ("unmeasured"), even if it scored every item
+ * by landing on the threshold.
  */
 export function accuracy(critic, items, { seed = DEFAULT_SEED, B = DEFAULT_BOOTSTRAP } = {}) {
   if (!Number.isInteger(B) || B < 1) {
@@ -244,7 +257,7 @@ export function accuracy(critic, items, { seed = DEFAULT_SEED, B = DEFAULT_BOOTS
   }
   const total = items.length;
   if (total === 0) {
-    return { accuracy: null, coverage: null, scored: 0, total: 0, correct: 0, ci: null };
+    return { accuracy: null, coverage: null, scored: 0, decided: 0, total: 0, correct: 0, ci: null };
   }
 
   const buckets = new Map();
@@ -252,28 +265,36 @@ export function accuracy(critic, items, { seed = DEFAULT_SEED, B = DEFAULT_BOOTS
     const it = items[i];
     let bucket = buckets.get(it.group);
     if (!bucket) {
-      bucket = { correct: 0, scored: 0 };
+      bucket = { correct: 0, decided: 0, covered: 0 };
       buckets.set(it.group, bucket);
     }
     const s = scoreOf(critic, it.id);
     if (s === null) continue;
-    bucket.scored += 1;
-    if ((predictsPositive(s, critic.threshold) ? 1 : 0) === it.truth) bucket.correct += 1;
+    bucket.covered += 1;
+    const decision = decisionOf(s, critic.threshold);
+    if (decision === null) continue;
+    bucket.decided += 1;
+    if (decision === it.truth) bucket.correct += 1;
   }
 
   const groupIds = [...buckets.keys()].sort();
   const stats = [];
   let correct = 0;
-  let scored = 0;
+  let decided = 0;
+  let covered = 0;
   for (let i = 0; i < groupIds.length; i++) {
     const bucket = buckets.get(groupIds[i]);
     stats.push(bucket);
     correct += bucket.correct;
-    scored += bucket.scored;
+    decided += bucket.decided;
+    covered += bucket.covered;
   }
 
-  if (scored === 0) {
-    return { accuracy: null, coverage: 0, scored: 0, total, correct: 0, ci: null };
+  if (covered === 0) {
+    return { accuracy: null, coverage: 0, scored: 0, decided: 0, total, correct: 0, ci: null };
+  }
+  if (decided === 0) {
+    return { accuracy: null, coverage: covered / total, scored: covered, decided: 0, total, correct: 0, ci: null };
   }
 
   const rng = makeRng(seed);
@@ -285,7 +306,7 @@ export function accuracy(critic, items, { seed = DEFAULT_SEED, B = DEFAULT_BOOTS
     for (let g = 0; g < nG; g++) {
       const draw = stats[Math.floor(rng() * nG)];
       cSum += draw.correct;
-      sSum += draw.scored;
+      sSum += draw.decided;
     }
     if (sSum > 0) replicates.push(cSum / sSum);
   }
@@ -301,9 +322,10 @@ export function accuracy(critic, items, { seed = DEFAULT_SEED, B = DEFAULT_BOOTS
   }
 
   return {
-    accuracy: correct / scored,
-    coverage: scored / total,
-    scored,
+    accuracy: correct / decided,
+    coverage: covered / total,
+    scored: covered,
+    decided,
     total,
     correct,
     ci,
@@ -314,10 +336,10 @@ export function pointAccuracy(critic, items) {
   let correct = 0;
   let scored = 0;
   for (let i = 0; i < items.length; i++) {
-    const s = scoreOf(critic, items[i].id);
-    if (s === null) continue;
+    const decision = decisionOf(scoreOf(critic, items[i].id), critic.threshold);
+    if (decision === null) continue;
     scored += 1;
-    if ((predictsPositive(s, critic.threshold) ? 1 : 0) === items[i].truth) correct += 1;
+    if (decision === items[i].truth) correct += 1;
   }
   if (scored === 0) return null;
   return { correct, scored, accuracy: correct / scored };
@@ -332,12 +354,10 @@ function pairStats(a, b, items) {
   let disagree = 0;
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
-    const sa = scoreOf(a, it.id);
-    const sb = scoreOf(b, it.id);
-    if (sa === null || sb === null) continue;
+    const pa = decisionOf(scoreOf(a, it.id), a.threshold);
+    const pb = decisionOf(scoreOf(b, it.id), b.threshold);
+    if (pa === null || pb === null) continue;
     n += 1;
-    const pa = predictsPositive(sa, a.threshold) ? 1 : 0;
-    const pb = predictsPositive(sb, b.threshold) ? 1 : 0;
     const ca = pa === it.truth;
     const cb = pb === it.truth;
     if (ca) aCorrect += 1;
@@ -425,13 +445,17 @@ function panelCounts(counts, fitted, items) {
     let w = 0;
     for (let m = 0; m < members.length; m++) {
       const z = members[m].out[i];
-      if (z === null) continue;
+      // A centred 0 is a threshold tie: that member abstains and casts no vote.
+      if (z === null || z === 0) continue;
       wsum += z * members[m].count;
       w += members[m].count;
     }
     if (w === 0) continue;
+    const mean = wsum / w;
+    // Equal opposing votes are a panel abstention, not a no.
+    if (mean === 0) continue;
     scored += 1;
-    const decision = (wsum / w) > 0 ? 1 : 0;
+    const decision = mean > 0 ? 1 : 0;
     if (decision === items[i].truth) correct += 1;
   }
   if (scored === 0) return null;
@@ -593,11 +617,14 @@ function scoreOne(members, item, criticById) {
     if (!critic || member.mean === null || member.sd === null) continue;
     const s = scoreOf(critic, item.id);
     if (s === null) continue;
-    wsum += centred(s, member.mean, member.sd, member.threshold) * member.count;
+    const z = centred(s, member.mean, member.sd, member.threshold);
+    if (z === 0) continue;
+    wsum += z * member.count;
     w += member.count;
   }
   if (w === 0) return { score: null, decision: null, abstained: true };
   const score = wsum / w;
+  if (score === 0) return { score: 0, decision: null, abstained: true };
   return { score, decision: score > 0 ? 1 : 0, abstained: false };
 }
 
@@ -731,13 +758,34 @@ export function nestedEstimate(critics, items, {
       else train.push(it);
     }
     if (train.length === 0 || test.length === 0) {
-      perFold.push({ fold: k, skipped: true, n: 0 });
+      perFold.push({
+        fold: k,
+        skipped: true,
+        n: 0,
+        heldOut: test.length,
+        reason: train.length === 0 ? "training fold is empty" : "held-out fold is empty",
+        bestSingle: null,
+        members: [],
+      });
       continue;
     }
     const bagged = baggedSelect(ordered, train, { bags, seed: deriveSeed(seed, k + 1), maxSize });
     const best = bestSingle(ordered, train);
     if (!best || bagged.members.length === 0) {
-      perFold.push({ fold: k, skipped: true, n: 0, bestSingle: best ? best.id : null });
+      const why = !best && bagged.members.length === 0
+        ? "no critic has a measured accuracy on the training fold, and bagged selection kept no critic"
+        : !best
+          ? "no critic has a measured accuracy on the training fold"
+          : "bagged selection kept no critic";
+      perFold.push({
+        fold: k,
+        skipped: true,
+        n: 0,
+        heldOut: test.length,
+        reason: why,
+        bestSingle: best ? best.id : null,
+        members: [],
+      });
       continue;
     }
     const members = [];
@@ -756,12 +804,21 @@ export function nestedEstimate(critics, items, {
     const bestCritic = ordered.find((c) => c.id === best.id);
     const byCritic = criticMap(ordered);
     let foldN = 0;
+    let dropPanel = 0;
+    let dropSingle = 0;
+    let dropBoth = 0;
+    let dropTruth = 0;
     for (let i = 0; i < test.length; i++) {
       const it = test[i];
       const panel = scoreOne(members, it, byCritic);
-      const raw = scoreOf(bestCritic, it.id);
-      if (panel.abstained || raw === null || (it.truth !== 0 && it.truth !== 1)) continue;
-      const singleDecision = predictsPositive(raw, bestCritic.threshold) ? 1 : 0;
+      const singleDecision = decisionOf(scoreOf(bestCritic, it.id), bestCritic.threshold);
+      if ((it.truth !== 0 && it.truth !== 1) || panel.abstained || singleDecision === null) {
+        if (it.truth !== 0 && it.truth !== 1) dropTruth += 1;
+        else if (panel.abstained && singleDecision === null) dropBoth += 1;
+        else if (panel.abstained) dropPanel += 1;
+        else dropSingle += 1;
+        continue;
+      }
       const pc = panel.decision === it.truth ? 1 : 0;
       const sc = singleDecision === it.truth ? 1 : 0;
       rows.push({ group: it.group, diff: pc - sc });
@@ -774,6 +831,8 @@ export function nestedEstimate(critics, items, {
       fold: k,
       skipped: false,
       n: foldN,
+      heldOut: test.length,
+      reason: leftOutReason(dropPanel, dropSingle, dropBoth, dropTruth),
       bestSingle: best.id,
       members: members.map((m) => ({ critic: m.critic, count: m.count })),
     });
@@ -796,6 +855,16 @@ export function nestedEstimate(critics, items, {
   };
 }
 
+function leftOutReason(dropPanel, dropSingle, dropBoth, dropTruth) {
+  const parts = [];
+  if (dropBoth > 0) parts.push(`${dropBoth} where both abstained`);
+  if (dropPanel > 0) parts.push(`${dropPanel} where the panel abstained`);
+  if (dropSingle > 0) parts.push(`${dropSingle} where the best single abstained`);
+  if (dropTruth > 0) parts.push(`${dropTruth} where truth is missing`);
+  if (parts.length === 0) return null;
+  return `left out ${parts.join(", ")}`;
+}
+
 function criticReports(critics, items, seed, B) {
   const reports = [];
   const ordered = byId(critics);
@@ -809,6 +878,7 @@ function criticReports(critics, items, seed, B) {
       accuracy: measured.accuracy,
       coverage: measured.coverage,
       scored: measured.scored,
+      decided: measured.decided,
       total: measured.total,
       correct: measured.correct,
       ci: measured.ci ? { low: measured.ci.low, high: measured.ci.high } : null,

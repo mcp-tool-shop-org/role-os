@@ -1,18 +1,14 @@
 # role-os: how it works
 
-Mapped at 2026-10-08 from commit 96fecfa by Atlas 1.24.0.
+Mapped at 2026-10-08 from commit cfa9765 by Atlas 1.24.0.
 
 ## What this is
 
 15 parts, mostly JavaScript (168 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-10-08 (5738c96)
+## What changed since 2026-10-08 (96fecfa)
 
-- bin/roleos.mjs is now also read by test/jury.test.mjs.
-- src/jury-cmd.mjs is now read by test/jury.test.mjs.
-- src/specialist/jury.mjs is now read by test/jury.test.mjs.
-- In bin/roleos.mjs, `printVerbHelp` gained a step, `juryCommand`, after `recipeCommand`.
-- 4 files added and 2 changed content, across 5 parts.
+Nothing structural changed since 2026-10-08; 7 files changed content.
 
 ## What comes in
 
@@ -54,7 +50,7 @@ CI writes nothing this map can see.
 
 Confidence is low: fewer than 25 source files reach 10 revisions in the window.
 
-Window: 180 days; a pair counts from 3 shared commits, since 2 source files reach 10 revisions; the floor rises to 10 when 25 do.
+Window: 180 days; a pair counts from 3 shared commits, since 3 source files reach 10 revisions; the floor rises to 10 when 25 do.
 
 ## What no test touches
 

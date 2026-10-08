@@ -99,14 +99,40 @@ function confusionPair() {
 }
 
 describe("accuracy and error consistency", () => {
-  it("counts a tie with the threshold as the negative class", () => {
-    const critic = { id: "c", threshold: 0, scores: { p: 0 } };
-    const items = [{ id: "p", group: "g", truth: 1 }];
-    const acc = pointAccuracy(critic, items);
-    assert.equal(acc.correct, 0);
-    assert.equal(acc.accuracy, 0);
-    const onZero = pointAccuracy(critic, [{ id: "p", group: "g", truth: 0 }]);
-    assert.equal(onZero.correct, 1);
+  it("treats a score equal to the threshold as an abstention, not a no", () => {
+    const critic = { id: "c", threshold: 0, scores: { tie: 0, yes: 1, no: -1 } };
+    const items = [
+      { id: "tie", group: "g0", truth: 1 },
+      { id: "yes", group: "g1", truth: 1 },
+      { id: "no", group: "g2", truth: 1 },
+    ];
+    assert.equal(pointAccuracy(critic, items).correct, 1);
+    assert.equal(pointAccuracy(critic, items).scored, 2);
+    assert.equal(pointAccuracy({ id: "c", threshold: 0, scores: { tie: 0 } }, [items[0]]), null);
+    const acc = accuracy(critic, items, { seed: 0, B: 40 });
+    assert.equal(acc.scored, 3);
+    assert.equal(acc.decided, 2);
+    assert.equal(acc.correct, 1);
+    assert.equal(acc.accuracy, 0.5);
+    assert.equal(acc.coverage, 1);
+    const onZeroTruth = accuracy(
+      { id: "c", threshold: 0, scores: { tie: 0 } },
+      [{ id: "tie", group: "g", truth: 0 }],
+      { seed: 0, B: 20 },
+    );
+    assert.equal(onZeroTruth.accuracy, null);
+    assert.equal(onZeroTruth.correct, 0);
+    assert.equal(onZeroTruth.coverage, 1);
+
+    const a = { id: "a", threshold: 0, scores: { tie: 0, q: 1 } };
+    const b = { id: "b", threshold: 0, scores: { tie: -1, q: 1 } };
+    const pairItems = [
+      { id: "tie", group: "g", truth: 1 },
+      { id: "q", group: "h", truth: 1 },
+    ];
+    const pair = diversityMatrix([a, b], pairItems);
+    assert.equal(pair[0].n, 1);
+    assert.equal(pair[0].disagreement, 0);
   });
 
   it("excludes abstentions from accuracy and reports coverage", () => {
@@ -364,10 +390,34 @@ describe("selection", () => {
     ]);
     const tied = scoreItems(members(1), items, critics);
     assert.equal(tied[0].score, 0);
-    assert.equal(tied[0].decision, 0);
+    assert.equal(tied[0].decision, null);
+    const tiedSummary = panelScore(members(1), items, critics);
+    assert.equal(tiedSummary.accuracy, null);
+    assert.equal(tiedSummary.scored, 0);
     const weighted = scoreItems(members(2), items, critics);
     assert.ok(Math.abs(weighted[0].score - (1 / 3)) < 1e-12);
     assert.equal(weighted[0].decision, 1);
+  });
+
+  it("gives a repeated seat two votes inside selection", () => {
+    // A is a constant no. One seat of A loses to B on p1; two seats of A win it.
+    // Ignoring member count leaves the panel at one seat each and accuracy 0.75.
+    const critics = [
+      { id: "a", threshold: 0, scores: { p0: -4, p1: -4, p2: -4, p3: -4 } },
+      { id: "b", threshold: 0, scores: { p0: 1, p1: 2, p2: 3, p3: 4 } },
+    ];
+    const items = [
+      { id: "p0", group: "g0", truth: 0 },
+      { id: "p1", group: "g1", truth: 0 },
+      { id: "p2", group: "g2", truth: 1 },
+      { id: "p3", group: "g3", truth: 1 },
+    ];
+    const picked = greedySelect(critics, items, { maxSize: 3 });
+    const a = picked.members.find((m) => m.critic === "a");
+    const b = picked.members.find((m) => m.critic === "b");
+    assert.equal(a.count, 2);
+    assert.equal(b.count, 1);
+    assert.equal(picked.accuracy, 1);
   });
 
   it("centres on the threshold with the stored mean and sd", () => {
@@ -394,8 +444,8 @@ describe("selection", () => {
       [{ id: "p", group: "g", truth: 1 }],
       [{ id: "a", threshold: 0, scores: { p: 0 } }],
     );
-    assert.equal(tie[0].score, 0);
-    assert.equal(tie[0].decision, 0);
+    assert.equal(tie[0].score, null);
+    assert.equal(tie[0].decision, null);
   });
 
   it("abstains when every member lacks a score", () => {
@@ -439,6 +489,81 @@ describe("selection", () => {
     assert.deepEqual(empty.members, []);
     const none = baggedSelect(critics, items, { bags: 4, seed: 0, maxSize: 0 });
     assert.deepEqual(none.members, []);
+  });
+
+  it("keeps the best single when the nested interval straddles 0", () => {
+    const rng = makeRng(103);
+    const items = [];
+    const a = { id: "a", kind: "pointwise", threshold: 0, scores: {} };
+    const b = { id: "b", kind: "pointwise", threshold: 0, scores: {} };
+    for (let i = 0; i < 40; i++) {
+      const id = `p${i}`;
+      const truth = rng() < 0.5 ? 1 : 0;
+      items.push({ id, group: `g${i % 12}`, truth });
+      const signal = truth === 1 ? 1 : -1;
+      a.scores[id] = signal + (rng() * 2 - 1) * 2.2;
+      b.scores[id] = signal + (rng() * 2 - 1) * 2.4;
+      if (i % 5 === 0) b.scores[id] = -signal + (rng() * 2 - 1) * 0.4;
+    }
+    const report = jurySelect([a, b], items, { seed: 1, B: 80, bags: 12, folds: 5, maxSize: 3 });
+    assert.equal(report.verdict.decision, "best-single");
+    assert.equal(report.verdict.critic, "a");
+    assert.ok(report.bagged.members.length >= 1);
+    assert.ok(report.nested.differenceCi.low < 0, JSON.stringify(report.nested.differenceCi));
+    assert.ok(report.nested.differenceCi.high > 0, JSON.stringify(report.nested.differenceCi));
+    assert.match(report.verdict.reason, /does not lie entirely above 0/);
+  });
+
+  it("says why a nested fold was skipped or left items out", () => {
+    const lone = [{ id: "p", group: "g", truth: 1 }];
+    const critic = [{ id: "a", threshold: 0, scores: { p: 1 } }];
+    const empty = nestedEstimate(critic, lone, { folds: 2, seed: 0, bags: 2, maxSize: 2, B: 8 });
+    const emptyReasons = empty.perFold.map((fold) => fold.reason).join(" | ");
+    assert.match(emptyReasons, /training fold is empty/);
+    assert.match(emptyReasons, /held-out fold is empty/);
+
+    const items = [
+      { id: "d", group: "decided", truth: 1 },
+      { id: "t", group: "tie", truth: 1 },
+    ];
+    const critics = [{ id: "a", threshold: 0, scores: { d: 1, t: 0 } }];
+    const mixed = nestedEstimate(critics, items, { folds: 2, seed: 0, bags: 2, maxSize: 2, B: 8 });
+    const mixedReasons = mixed.perFold.map((fold) => `${fold.skipped ? "skip" : "ran"} ${fold.reason}`).join(" | ");
+    assert.match(mixedReasons, /no critic has a measured accuracy/);
+    assert.match(mixedReasons, /abstained/);
+    const ran = mixed.perFold.find((fold) => fold.skipped === false);
+    assert.equal(ran.n, 0);
+    assert.ok(ran.heldOut > 0);
+
+    const train = [
+      { id: "p0", group: "train", truth: 0 },
+      { id: "p1", group: "train", truth: 0 },
+      { id: "p2", group: "train", truth: 1 },
+      { id: "p3", group: "train", truth: 1 },
+    ];
+    const bTie = 2 * Math.sqrt(1.25);
+    const held = [
+      { id: "panel", group: "held", truth: 0 },
+      { id: "single", group: "held", truth: 1 },
+      { id: "missing", group: "held" },
+    ];
+    const both = [
+      {
+        id: "a",
+        threshold: 0,
+        scores: { p0: -4, p1: -4, p2: -4, p3: -4, panel: -4, single: 0, missing: 1 },
+      },
+      {
+        id: "b",
+        threshold: 0,
+        scores: { p0: 1, p1: 2, p2: 3, p3: 4, panel: bTie, single: 1, missing: 1 },
+      },
+    ];
+    const split = nestedEstimate(both, train.concat(held), { folds: 2, seed: 0, bags: 4, maxSize: 3, B: 8 });
+    const explained = split.perFold.map((fold) => fold.reason || "").join(" | ");
+    assert.match(explained, /where the panel abstained/);
+    assert.match(explained, /where the best single abstained/);
+    assert.match(explained, /where truth is missing/);
   });
 });
 
@@ -700,6 +825,8 @@ describe("roleos jury CLI", () => {
       assert.equal(selected.status, 0, selected.stderr);
       assert.match(selected.stdout, /verdict: best-single \(solo\)/);
       assert.match(selected.stdout, /not written/);
+      assert.match(selected.stdout, /n \d+ of 40/);
+      assert.match(selected.stdout, /fold 0: n /);
       assert.equal(existsSync(out), false);
 
       const json = run(["jury", "select", file, "--json", "--bags", "6", "--folds", "5", "--seed", "1", "--out", out]);
@@ -710,6 +837,59 @@ describe("roleos jury CLI", () => {
       const silent = body.critics.find((c) => c.id === "silent");
       assert.equal(silent.accuracy, null);
       assert.equal(silent.ci, null);
+      assert.equal(silent.decided, 0);
+      assert.ok(Array.isArray(body.nested.per_fold));
+      assert.equal(body.nested.per_fold.length, 5);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("prints skipped folds and an exact-zero panel abstention", () => {
+    const dir = mkdtempSync(join(tmpdir(), "roleos-jury-"));
+    try {
+      const items = [];
+      const scores = {};
+      for (let i = 0; i < 30; i++) {
+        items.push({ id: `p${i}`, group: `g${i % 10}`, truth: i % 2 });
+        scores[`p${i}`] = i === 0 ? 0 : (i % 2 === 1 ? 1 : -1);
+      }
+      const file = join(dir, "val.json");
+      writeFileSync(file, JSON.stringify(validationDoc(items, [
+        { id: "a", kind: "pointwise", threshold: 0, scores },
+      ])));
+      const selected = run(["jury", "select", file, "--folds", "12", "--bags", "4", "--seed", "0"]);
+      assert.equal(selected.status, 0, selected.stderr);
+      assert.match(selected.stdout, /fold \d+: skipped — held-out fold is empty/);
+      assert.match(selected.stdout, /left out \d+ where both abstained/);
+      assert.match(selected.stdout, /n \d+ of 30/);
+
+      const panel = {
+        schema: PANEL_SCHEMA,
+        verdict: "panel",
+        members: [
+          { critic: "a", count: 1, mean: 0, sd: 1, threshold: 0 },
+          { critic: "b", count: 1, mean: 0, sd: 1, threshold: 0 },
+        ],
+      };
+      const panelFile = join(dir, "panel.json");
+      const itemsFile = join(dir, "items.json");
+      writeFileSync(panelFile, JSON.stringify(panel));
+      writeFileSync(itemsFile, JSON.stringify({
+        schema: VALIDATION_SCHEMA,
+        items: [{ id: "p" }],
+        critics: {
+          a: { threshold: 0, scores: { p: 1 } },
+          b: { threshold: 0, scores: { p: -1 } },
+        },
+      }));
+      const scored = run(["jury", "score", panelFile, itemsFile]);
+      assert.equal(scored.status, 0, scored.stderr);
+      assert.match(scored.stdout, /score 0\.0000  decision abstain/);
+      const scoredJson = run(["jury", "score", panelFile, itemsFile, "--json"]);
+      const row = JSON.parse(scoredJson.stdout).items[0];
+      assert.equal(row.score, 0);
+      assert.equal(row.decision, null);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "02217efc6fc4741650b001826d5b46494b6d44dcd79e2d14a8dc02b4a4c3b7c6",
+          "hash": "49a0d4907ffbad0dbf9fa46344205b18d9cf18167995c5c1eef6ddba41462f2d",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -746,7 +746,7 @@
                   "branch": "verb === \"jury\"",
                   "inner": [
                     {
-                      "line": 145,
+                      "line": 148,
                       "name": "parseValidation",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -754,7 +754,7 @@
                       "via": "loadValidation"
                     },
                     {
-                      "line": 273,
+                      "line": 288,
                       "name": "juryCheck",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -762,7 +762,7 @@
                       "via": "checkValidation"
                     },
                     {
-                      "line": 136,
+                      "line": 139,
                       "name": "DEFAULT_SEED",
                       "passed": true,
                       "target": {
@@ -771,7 +771,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 137,
+                      "line": 140,
                       "name": "DEFAULT_MAX_SIZE",
                       "passed": true,
                       "target": {
@@ -780,7 +780,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 138,
+                      "line": 141,
                       "name": "DEFAULT_BAGS",
                       "passed": true,
                       "target": {
@@ -789,7 +789,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 139,
+                      "line": 142,
                       "name": "DEFAULT_FOLDS",
                       "passed": true,
                       "target": {
@@ -798,7 +798,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 282,
+                      "line": 297,
                       "name": "jurySelect",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -806,7 +806,7 @@
                       "via": "selectPanel"
                     },
                     {
-                      "line": 298,
+                      "line": 313,
                       "name": "hashValidation",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -814,7 +814,7 @@
                       "via": "selectPanel"
                     },
                     {
-                      "line": 296,
+                      "line": 311,
                       "name": "buildPanelFile",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -822,7 +822,7 @@
                       "via": "selectPanel"
                     },
                     {
-                      "line": 331,
+                      "line": 346,
                       "name": "parsePanel",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -830,7 +830,7 @@
                       "via": "scoreNew"
                     },
                     {
-                      "line": 334,
+                      "line": 349,
                       "name": "scoreItems",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -1999,7 +1999,7 @@
           "path": "AUDIT-TESTS-all-components.md"
         },
         {
-          "hash": "598ad4a61771b97a7bfdfd6f4afc4b1c47a4da2cc237ecdca284ff56a51fcbec",
+          "hash": "8a492857d1e756fcb6de03ecefe6a8cc56367df84a258b547b4be3447ebe6694",
           "path": "CHANGELOG.md"
         },
         {
@@ -2051,7 +2051,7 @@
           "path": "audit-manifest.json"
         },
         {
-          "hash": "59ca3f6a5be96b80fee73bebf2b778211208d17cd3fb82e2134608dff0729c76",
+          "hash": "78156004cb3543382c8e80ee737b05dcc5eec9f0e8a91f570ff6e8b0348d36a3",
           "path": "codecov.yml"
         },
         {
@@ -2836,30 +2836,30 @@
             {
               "in": "throwUsage",
               "kind": "throw",
-              "line": 88
+              "line": 91
             },
             {
               "in": "failParse",
               "kind": "throw",
-              "line": 95
+              "line": 98
             },
             {
               "in": "readJson",
               "kind": "catch",
-              "line": 104
+              "line": 107
             },
             {
               "in": "readJson",
               "kind": "catch",
-              "line": 109
+              "line": 112
             },
             {
               "in": "selectPanel",
               "kind": "catch",
-              "line": 308
+              "line": 323
             }
           ],
-          "hash": "f453e110bd75163ac6f83b6ca00bb2d6673a0a5b9115a6bb5d5cb98ecd21b21e",
+          "hash": "41e60a166e2ef578b49392928f610fcc22918452b9eb843fe476bfde0eb94f14",
           "importsFiles": [
             "src/specialist/jury.mjs"
           ],
@@ -2868,7 +2868,7 @@
             {
               "calls": [
                 {
-                  "line": 145,
+                  "line": 148,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -2876,7 +2876,7 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 273,
+                  "line": 288,
                   "name": "juryCheck",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -2884,7 +2884,7 @@
                   "via": "checkValidation"
                 },
                 {
-                  "line": 136,
+                  "line": 139,
                   "name": "DEFAULT_SEED",
                   "passed": true,
                   "target": {
@@ -2893,7 +2893,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 137,
+                  "line": 140,
                   "name": "DEFAULT_MAX_SIZE",
                   "passed": true,
                   "target": {
@@ -2902,7 +2902,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 138,
+                  "line": 141,
                   "name": "DEFAULT_BAGS",
                   "passed": true,
                   "target": {
@@ -2911,7 +2911,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 139,
+                  "line": 142,
                   "name": "DEFAULT_FOLDS",
                   "passed": true,
                   "target": {
@@ -2920,7 +2920,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 282,
+                  "line": 297,
                   "name": "jurySelect",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -2928,7 +2928,7 @@
                   "via": "selectPanel"
                 },
                 {
-                  "line": 298,
+                  "line": 313,
                   "name": "hashValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -2936,7 +2936,7 @@
                   "via": "selectPanel"
                 },
                 {
-                  "line": 296,
+                  "line": 311,
                   "name": "buildPanelFile",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -2944,7 +2944,7 @@
                   "via": "selectPanel"
                 },
                 {
-                  "line": 331,
+                  "line": 346,
                   "name": "parsePanel",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -2952,7 +2952,7 @@
                   "via": "scoreNew"
                 },
                 {
-                  "line": 334,
+                  "line": 349,
                   "name": "scoreItems",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -2968,7 +2968,7 @@
             {
               "calls": [
                 {
-                  "line": 136,
+                  "line": 139,
                   "name": "DEFAULT_SEED",
                   "passed": true,
                   "target": {
@@ -2976,7 +2976,7 @@
                   }
                 },
                 {
-                  "line": 137,
+                  "line": 140,
                   "name": "DEFAULT_MAX_SIZE",
                   "passed": true,
                   "target": {
@@ -2984,7 +2984,7 @@
                   }
                 },
                 {
-                  "line": 138,
+                  "line": 141,
                   "name": "DEFAULT_BAGS",
                   "passed": true,
                   "target": {
@@ -2992,7 +2992,7 @@
                   }
                 },
                 {
-                  "line": 139,
+                  "line": 142,
                   "name": "DEFAULT_FOLDS",
                   "passed": true,
                   "target": {
@@ -3008,7 +3008,7 @@
             {
               "calls": [
                 {
-                  "line": 145,
+                  "line": 148,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3023,7 +3023,7 @@
             {
               "calls": [
                 {
-                  "line": 145,
+                  "line": 148,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3031,7 +3031,7 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 273,
+                  "line": 288,
                   "name": "juryCheck",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3046,7 +3046,7 @@
             {
               "calls": [
                 {
-                  "line": 145,
+                  "line": 148,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3054,7 +3054,7 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 136,
+                  "line": 139,
                   "name": "DEFAULT_SEED",
                   "passed": true,
                   "target": {
@@ -3063,7 +3063,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 137,
+                  "line": 140,
                   "name": "DEFAULT_MAX_SIZE",
                   "passed": true,
                   "target": {
@@ -3072,7 +3072,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 138,
+                  "line": 141,
                   "name": "DEFAULT_BAGS",
                   "passed": true,
                   "target": {
@@ -3081,7 +3081,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 139,
+                  "line": 142,
                   "name": "DEFAULT_FOLDS",
                   "passed": true,
                   "target": {
@@ -3090,21 +3090,21 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 282,
+                  "line": 297,
                   "name": "jurySelect",
                   "target": {
                     "file": "src/specialist/jury.mjs"
                   }
                 },
                 {
-                  "line": 298,
+                  "line": 313,
                   "name": "hashValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
                   }
                 },
                 {
-                  "line": 296,
+                  "line": 311,
                   "name": "buildPanelFile",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3119,14 +3119,14 @@
             {
               "calls": [
                 {
-                  "line": 331,
+                  "line": 346,
                   "name": "parsePanel",
                   "target": {
                     "file": "src/specialist/jury.mjs"
                   }
                 },
                 {
-                  "line": 145,
+                  "line": 148,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3134,7 +3134,7 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 334,
+                  "line": 349,
                   "name": "scoreItems",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -4805,25 +4805,25 @@
             {
               "in": "accuracy",
               "kind": "throw",
-              "line": 243
+              "line": 256
             },
             {
               "in": "nestedEstimate",
               "kind": "throw",
-              "line": 710
+              "line": 737
             },
             {
               "in": "jurySelect",
               "kind": "throw",
-              "line": 887
+              "line": 957
             },
             {
               "in": "jurySelect",
               "kind": "throw",
-              "line": 893
+              "line": 963
             }
           ],
-          "hash": "154907a46381c1e4d76cda92e2a946926672ed5cd7e2b15c554955475a9ef3e5",
+          "hash": "99dd1aab8a64dd384d4df9ed6fa6fe158303cb7bec6c28610467c5eaeff02303",
           "importsFiles": [
             "src/specialist/recipe-card.mjs"
           ],
@@ -6334,7 +6334,7 @@
           "path": "starter-pack/schemas/handoff.md"
         },
         {
-          "hash": "48dfcf0eac8e51fb1d3372148b6e1a411878265456d6dae3217c703351fe311f",
+          "hash": "f2cda9c023418b9ee345ee8182bff2ac32302aa94f0796bf5fcc1abe0eaa5c25",
           "path": "starter-pack/schemas/jury.md"
         },
         {
@@ -6635,7 +6635,7 @@
           "testFramework": "node --test"
         },
         {
-          "hash": "9820c2671f02760342c22f1dc371b076f0bceded0cb547512e64d630f1b73190",
+          "hash": "ca4e4bd4a91b8196fdb271c99fe5c45ff64f6e4fade8a45aa8fc6ac0cb659a81",
           "importOrder": [
             "src/specialist/recipe-card.mjs",
             "src/specialist/jury.mjs"
@@ -9003,7 +9003,7 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "96fecfafa38a2293532ebd2356c36fa915a305af",
+    "commit": "cfa9765be94c479784db6dd83edc244aa5dea4ae",
     "tracked": 634
   },
   "landings": [

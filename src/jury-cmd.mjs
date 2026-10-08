@@ -55,9 +55,12 @@ roleos jury — measure critics, and keep a panel only when it beats the best on
       and a verdict. --out writes a panel file only when the verdict is "panel".
 
   roleos jury score <panel.json> <items.json> [--json]
-      Apply a saved panel to new items. A missing score is an abstention.
+      Apply a saved panel to new items. A missing score is unmeasured.
+      A score exactly at a critic's threshold is an abstention, and so is a
+      panel score of exactly 0.
 
 The same seed repeats the same numbers. Absent data is printed as "unmeasured".
+A tie is printed as "abstain".
 `);
 }
 
@@ -161,6 +164,7 @@ function reportBody(report) {
       ci: c.ci,
       coverage: c.coverage,
       scored: c.scored,
+      decided: c.decided,
       total: c.total,
     })),
     pairs: report.pairs.map((p) => ({
@@ -218,7 +222,7 @@ function renderCheck(report) {
   for (let i = 0; i < report.critics.length; i++) {
     const c = report.critics[i];
     const kind = c.kind ? `${c.kind}, ` : "";
-    lines.push(`  ${c.id}  accuracy ${fmt(c.accuracy)}  CI ${fmtCi(c.ci)}  coverage ${fmt(c.coverage)}  (${kind}threshold ${c.threshold})`);
+    lines.push(`  ${c.id}  accuracy ${fmt(c.accuracy)}  CI ${fmtCi(c.ci)}  coverage ${fmt(c.coverage)}  decided ${c.decided}/${c.scored}  (${kind}threshold ${c.threshold})`);
   }
   lines.push("inverted (accuracy interval entirely below 0.5; scores are not flipped)");
   lines.push(report.inverted.length === 0 ? "  none" : `  ${report.inverted.join(", ")}`);
@@ -255,10 +259,21 @@ function renderSelect(report) {
     lines.push("nested estimate not run");
   } else {
     const n = report.nested;
-    lines.push(`nested ${n.folds}-fold, grouped, n ${n.n}`);
+    lines.push(`nested ${n.folds}-fold, grouped, n ${n.n} of ${report.items}`);
     lines.push(`  panel out-of-fold accuracy       ${fmt(n.panelAccuracy)}`);
     lines.push(`  best single out-of-fold accuracy ${fmt(n.bestSingleAccuracy)}`);
     lines.push(`  difference                       ${fmt(n.difference)}  CI ${fmtCi(n.differenceCi)}`);
+    const folds = n.perFold || [];
+    for (let i = 0; i < folds.length; i++) {
+      const fold = folds[i];
+      if (fold.skipped) {
+        lines.push(`  fold ${fold.fold}: skipped — ${fold.reason}`);
+      } else if (fold.reason) {
+        lines.push(`  fold ${fold.fold}: n ${fold.n} of ${fold.heldOut} — ${fold.reason}`);
+      } else {
+        lines.push(`  fold ${fold.fold}: n ${fold.n} of ${fold.heldOut}`);
+      }
+    }
   }
   const v = report.verdict;
   if (v.decision === "best-single") lines.push(`verdict: best-single (${v.critic})`);
@@ -341,7 +356,8 @@ function scoreNew(args) {
   const lines = ["jury score"];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    lines.push(`  ${row.id}  score ${fmt(row.score)}  decision ${row.decision === null ? "unmeasured" : row.decision}`);
+    const word = row.decision === null ? (row.score === null ? "unmeasured" : "abstain") : row.decision;
+    lines.push(`  ${row.id}  score ${fmt(row.score)}  decision ${word}`);
   }
   console.log(lines.join("\n"));
 }
