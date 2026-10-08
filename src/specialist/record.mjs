@@ -279,6 +279,7 @@ export function buildRecord(role, { cwd = process.cwd() } = {}) {
           exam_artifact: reg.active.exam_artifact || null,
           certified_at: reg.active.created_at || null,
           lineage: reg.active.lineage || null,
+          recipe_card: reg.active.recipe_card || null,
         }
       : null,
     basis: reg?.active ? "certified" : "assessed",

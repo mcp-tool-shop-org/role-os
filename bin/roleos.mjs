@@ -19,6 +19,7 @@ import { verifyCitationsCommand } from "../src/verify-citations-cmd.mjs";
 import { verifyClaimsCommand } from "../src/verify-claims-cmd.mjs";
 import { specialistCommand } from "../src/specialist-cmd.mjs";
 import { crewCommand } from "../src/crew-cmd.mjs";
+import { recipeCommand } from "../src/recipe-cmd.mjs";
 import {
   runCommand, resumeCommand, nextCommand, explainCommand,
   completeCommand, failCommand, retryCommand, rerouteCommand,
@@ -90,6 +91,10 @@ Usage:
   roleos specialist promote <r> <v>   Promote a certified version to active (refused on L0)
   roleos specialist rollback <r> <v>  NAMED COMPENSATOR — pointer-swap to a prior certified version
   roleos specialist clear-halt <r>    Clear a shadow-probe halt on a role
+  roleos recipe init <role>           Start a dataset recipe card for a trained role
+  roleos recipe check <card.json>     Validate a recipe card; show evidence gaps, controls and hash
+  roleos recipe hash <card.json>      Print a recipe card's sha256
+  roleos recipe controls              List the standard controls a critic recipe ships with
   roleos crew                         Crew report — grades (by basis), reps, techniques per role
   roleos crew <role>                  Full sheet: grade band, verbatim dispatch profile, the Record
   roleos crew --programs              Curriculum tech tree (S6 training programs)
@@ -139,6 +144,10 @@ async function printVerbHelp(verb, write = console.log) {
   }
   if (verb === "specialist") {
     await specialistCommand(["help"]);
+    return;
+  }
+  if (verb === "recipe") {
+    await recipeCommand(["help"]);
     return;
   }
   if (!verb || verb === "help" || isHelpFlag(verb)) {
@@ -292,6 +301,9 @@ try {
       break;
     case "crew":
       await crewCommand(args);
+      break;
+    case "recipe":
+      await recipeCommand(args);
       break;
     case "mission":
       await missionCommand(args);

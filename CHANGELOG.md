@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+### Added: recipe cards for trained roles
+
+- **`roleos recipe init|check|hash|controls`**: a dataset recipe card (`roleos-recipe-card/v1`)
+  records how a trained role's data was made: the attribute, the negatives and their generators,
+  the filters, the format, the splits, the controls and the pins. `check` separates errors from
+  evidence gaps (one generator family, no held-out generator or natural-error split, missing
+  standard controls, pairwise data without order randomisation, and so on) and prints the card's
+  canonical SHA-256.
+- **`roleos specialist register ... --recipe <card.json>`** pins the card on the version
+  (`versions[].recipe_card: { id, sha256, path }`), refuses an invalid card, and lists its gaps.
+  The registry validates the pointer, and the Record and `roleos crew <role>` show it.
+- Eight standard controls, from a positive marker to a natural-error check, each guarding a way a
+  critic can look good without learning its attribute. Grounded in the R&D library's
+  dataset-recipe study (mcp-tool-shop-org/rnd).
+- CI: coverage floor at 89% lines (c8 `--check-coverage`, measured 89.6%; org target 90, rolled
+  out gradually).
+
 ## 2.11.0
 
 Dogfood swarm `swarm-1789443181-cf62` health pass (Stages A–D) plus harness-agnostic public copy. Feature-audit is collected and parked (Law 8); leftover MED/LOW and deferred HIGH are in the swarm handoff, not this release.

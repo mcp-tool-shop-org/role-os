@@ -12,6 +12,7 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, unlinkSync } from "node:fs";
 import { dirname } from "node:path";
+import { validateRecipePointer } from "./recipe-card.mjs";
 
 export const REGISTRY_SCHEMA = "roleos-specialist-registry/v1";
 
@@ -50,6 +51,7 @@ export function isClaudeFamily(baseModel) {
  * @property {string} created_at
  * @property {string} [notes]
  * @property {number[]} [exam_centroid]      optional pre-computed centroid for embedding-similarity scoring
+ * @property {{id:string, sha256:string, path?:string}} [recipe_card]  the dataset recipe card this version was trained from
  */
 
 /**
@@ -222,6 +224,9 @@ function validateVersion(v, tag) {
   if (v.exam_centroid !== undefined && !Array.isArray(v.exam_centroid)) {
     errors.push(`${tag}: exam_centroid, if present, must be an array of numbers`);
   }
+  // recipe_card: the dataset recipe this version was trained from (roleos-recipe-card/v1),
+  // pinned by sha256 so a certified role traces to the data design that made it.
+  if (v.recipe_card !== undefined) errors.push(...validateRecipePointer(v.recipe_card, tag));
   // lineage: cross-trained versions record their ancestry (specialists layer S4) — the
   // parents are version ids (possibly from other roles' entries) and method names the merge.
   if (v.lineage !== undefined) {

@@ -136,6 +136,9 @@ function renderSheet(name, dossier, record) {
     const c = record.certification.current;
     lines.push(`  certification: ${c.certified_level} (${c.version_id}), certified ${c.certified_at || "—"}, exam ${c.exam_hash ? c.exam_hash.slice(0, 12) : "—"}`);
     if (c.lineage) lines.push(`  lineage: ${c.lineage.parents.join(" × ")} → ${c.version_id} (${c.lineage.method})`);
+    lines.push(c.recipe_card
+      ? `  recipe: ${c.recipe_card.id} · ${c.recipe_card.sha256.slice(0, 12)}${c.recipe_card.path ? ` (${c.recipe_card.path})` : ""}`
+      : "  recipe: none recorded");
     for (const e of record.certification.ledger) {
       lines.push(`    ${e.ts}  ${e.kind}${e?.data?.to_version ? ` → ${e.data.to_version}` : ""}${e?.data?.backfilled ? " (backfilled)" : ""}`);
     }
