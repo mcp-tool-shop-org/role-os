@@ -95,11 +95,11 @@ Usage:
   roleos specialist rollback <r> <v>  NAMED COMPENSATOR — pointer-swap to a prior certified version
   roleos specialist clear-halt <r>    Clear a shadow-probe halt on a role
   roleos recipe init <role>           Start a dataset recipe card for a trained role
-  roleos recipe check <card.json>     Validate a recipe card; show evidence gaps, controls and hash
+  roleos recipe check <card.json>     Validate a card; measure gaps, unresolved, reversed-correction, hash
   roleos recipe hash <card.json>      Print a recipe card's sha256
   roleos recipe controls              List the standard controls a critic recipe ships with
-  roleos jury check <validation.json> Accuracy, intervals, coverage, diversity, inverted and duplicate flags
-  roleos jury select <validation.json>  Keep a panel only if it beats the best single critic
+  roleos jury check <validation.json> Accuracy, intervals, recipe controls, inverted and duplicate flags
+  roleos jury select <validation.json>  Panel only if it beats the best critic; --allow-unproven --require-recipe
   roleos jury score <panel.json> <items>  Score new items with a saved panel
   roleos calibration [--json]        Recorded runs: calibration report and combination table
   roleos crew                         Crew report — grades (by basis), reps, techniques per role

@@ -211,6 +211,26 @@ export function parseValidation(doc, { requireTruth = true } = {}) {
       continue;
     }
     if (c.kind !== undefined && typeof c.kind !== "string") errors.push(`${tag}.kind must be a string`);
+    let recipe = null;
+    if (c.recipe !== undefined) {
+      const pointer = c.recipe;
+      if (!pointer || typeof pointer !== "object" || Array.isArray(pointer)) {
+        errors.push(`${tag}.recipe must be an object { path, sha256 }`);
+      } else {
+        if (typeof pointer.path !== "string" || pointer.path.length === 0) {
+          errors.push(`${tag}.recipe.path must be a non-empty string`);
+        }
+        if (typeof pointer.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(pointer.sha256)) {
+          errors.push(`${tag}.recipe.sha256 must be a 64-char lowercase hex sha256`);
+        }
+        if (
+          typeof pointer.path === "string" && pointer.path.length > 0
+          && typeof pointer.sha256 === "string" && /^[0-9a-f]{64}$/.test(pointer.sha256)
+        ) {
+          recipe = { path: pointer.path, sha256: pointer.sha256 };
+        }
+      }
+    }
     const scores = {};
     const keys = Object.keys(c.scores);
     for (let k = 0; k < keys.length; k++) {
@@ -227,6 +247,7 @@ export function parseValidation(doc, { requireTruth = true } = {}) {
       kind: typeof c.kind === "string" ? c.kind : null,
       threshold: c.threshold,
       scores,
+      recipe,
     });
   }
 
@@ -901,6 +922,58 @@ function leftOutReason(dropPanel, dropSingle, dropBoth, dropTruth) {
   return `left out ${parts.join(", ")}`;
 }
 
+function lookupAssessment(recipes, id) {
+  if (recipes instanceof Map) return recipes.has(id) ? recipes.get(id) : null;
+  if (recipes && Object.prototype.hasOwnProperty.call(recipes, id)) return recipes[id];
+  return null;
+}
+
+/**
+ * A failed or unresolved standard control excludes the critic unless
+ * allowUnproven is set. A missing card is a note, and excludes only when
+ * requireRecipe is set. Gaps never exclude. `recipes == null` leaves the
+ * gate off so existing callers are unchanged.
+ */
+function recipeAssessments(critics, recipes, { allowUnproven = false, requireRecipe = false } = {}) {
+  if (recipes == null) return { applied: false, byId: new Map(), excluded: [] };
+  const views = new Map();
+  const excluded = [];
+  const ordered = byId(critics);
+  for (let i = 0; i < ordered.length; i++) {
+    const critic = ordered[i];
+    const assessment = lookupAssessment(recipes, critic.id);
+    const view = assessment
+      ? {
+          id: typeof assessment.id === "string" ? assessment.id : null,
+          sha256: typeof assessment.sha256 === "string" ? assessment.sha256 : null,
+          passed: Array.isArray(assessment.passed) ? assessment.passed : [],
+          failed: Array.isArray(assessment.failed) ? assessment.failed : [],
+          unresolved: Array.isArray(assessment.unresolved) ? assessment.unresolved : [],
+          gaps: Array.isArray(assessment.gaps) ? assessment.gaps : [],
+          note: null,
+        }
+      : {
+          id: null,
+          sha256: null,
+          passed: [],
+          failed: [],
+          unresolved: [],
+          gaps: [],
+          note: "unproven: no recipe card",
+        };
+    const problems = [];
+    for (let f = 0; f < view.failed.length; f++) problems.push(`${view.failed[f]} failed`);
+    for (let u = 0; u < view.unresolved.length; u++) problems.push(`${view.unresolved[u]} unresolved`);
+    if (!assessment && requireRecipe) {
+      excluded.push({ id: critic.id, reason: "unproven: no recipe card" });
+    } else if (problems.length > 0 && !allowUnproven) {
+      excluded.push({ id: critic.id, reason: problems.join(", ") });
+    }
+    views.set(critic.id, view);
+  }
+  return { applied: true, byId: views, excluded };
+}
+
 function criticReports(critics, items, seed, B) {
   const reports = [];
   const ordered = byId(critics);
@@ -928,7 +1001,13 @@ function criticReports(critics, items, seed, B) {
  * A critic is inverted when its accuracy interval lies entirely below 0.5.
  * The tool reports that and does not flip the critic's scores.
  */
-export function juryCheck(critics, items, { seed = DEFAULT_SEED, B = DEFAULT_BOOTSTRAP } = {}) {
+export function juryCheck(critics, items, {
+  seed = DEFAULT_SEED,
+  B = DEFAULT_BOOTSTRAP,
+  recipes,
+  allowUnproven = false,
+  requireRecipe = false,
+} = {}) {
   const reports = criticReports(critics, items, seed, B);
   const pairs = diversityMatrix(critics, items);
   const inverted = [];
@@ -943,6 +1022,10 @@ export function juryCheck(critics, items, { seed = DEFAULT_SEED, B = DEFAULT_BOO
       duplicates.push({ a: pair.a, b: pair.b, errorConsistency: pair.errorConsistency });
     }
   }
+  const gate = recipeAssessments(critics, recipes, { allowUnproven, requireRecipe });
+  for (let i = 0; i < reports.length; i++) {
+    reports[i].recipe = gate.applied ? (gate.byId.get(reports[i].id) || null) : null;
+  }
   return {
     items: items.length,
     groups: sortedGroups(items).length,
@@ -952,6 +1035,9 @@ export function juryCheck(critics, items, { seed = DEFAULT_SEED, B = DEFAULT_BOO
     pairs,
     inverted,
     duplicates,
+    excluded: gate.excluded,
+    allowUnproven: gate.applied ? allowUnproven === true : false,
+    requireRecipe: gate.applied ? requireRecipe === true : false,
   };
 }
 
@@ -985,6 +1071,9 @@ export function jurySelect(critics, items, {
   bags = DEFAULT_BAGS,
   folds = DEFAULT_FOLDS,
   maxSize = DEFAULT_MAX_SIZE,
+  recipes,
+  allowUnproven = false,
+  requireRecipe = false,
 } = {}) {
   if (!Number.isInteger(bags) || bags < 1) {
     const err = new Error("bags must be an integer ≥ 1");
@@ -998,7 +1087,7 @@ export function jurySelect(critics, items, {
     err.hint = "The default is 5.";
     throw err;
   }
-  const check = juryCheck(critics, items, { seed, B });
+  const check = juryCheck(critics, items, { seed, B, recipes, allowUnproven, requireRecipe });
   const base = {
     ...check,
     maxSize,
@@ -1019,18 +1108,21 @@ export function jurySelect(critics, items, {
   }
 
   const inverted = new Set(check.inverted);
-  const eligible = byId(critics).filter((c) => !inverted.has(c.id) && pointAccuracy(c, items) !== null);
+  const excludedIds = new Set(check.excluded.map((row) => row.id));
+  const eligible = byId(critics).filter((c) => !inverted.has(c.id) && !excludedIds.has(c.id) && pointAccuracy(c, items) !== null);
   if (eligible.length === 0) {
-    const everyInverted = check.critics.length > 0 && check.inverted.length === check.critics.filter((c) => c.accuracy !== null).length
-      && check.inverted.length > 0;
+    const measured = byId(critics).filter((c) => pointAccuracy(c, items) !== null);
+    const notInverted = measured.filter((c) => !inverted.has(c.id));
+    let reason;
+    if (measured.length === 0) reason = "no critic has a measured accuracy";
+    else if (notInverted.length === 0) reason = "every critic with a measured accuracy has an interval entirely below 0.5";
+    else reason = "every measured critic is excluded by its recipe card";
     return {
       ...base,
       verdict: {
         decision: "insufficient-data",
         critic: null,
-        reason: everyInverted
-          ? "every critic with a measured accuracy has an interval entirely below 0.5"
-          : "no critic has a measured accuracy",
+        reason,
       },
       bagged: null,
       nested: null,
@@ -1040,7 +1132,15 @@ export function jurySelect(critics, items, {
   const best = bestSingle(eligible, items);
   const bagged = baggedSelect(eligible, items, { bags, seed, maxSize });
   const nested = nestedEstimate(eligible, items, { folds, seed, bags, maxSize, B });
-  const fitted = fitMembers(bagged.members, eligible, items);
+  const fitted = fitMembers(bagged.members, eligible, items).map((member) => {
+    const view = check.critics.find((row) => row.id === member.critic);
+    const recipe = view && view.recipe ? view.recipe : null;
+    return {
+      ...member,
+      recipeId: recipe && recipe.id ? recipe.id : null,
+      recipeSha256: recipe && recipe.sha256 ? recipe.sha256 : null,
+    };
+  });
   const clears = nested.differenceCi !== null && nested.differenceCi.low > 0;
   const hasMembers = fitted.length > 0;
 
@@ -1075,15 +1175,19 @@ export function buildPanelFile({
   folds,
   bootstrap,
   nested,
+  allowUnproven = false,
 }) {
   return {
     schema: PANEL_SCHEMA,
+    allow_unproven: allowUnproven === true,
     members: members.map((m) => ({
       critic: m.critic,
       count: m.count,
       mean: m.mean,
       sd: m.sd,
       threshold: m.threshold,
+      recipe_id: m.recipeId || m.recipe_id || null,
+      recipe_sha256: m.recipeSha256 || m.recipe_sha256 || null,
     })),
     selected_on: {
       validation_sha256: validationSha256,
@@ -1113,6 +1217,9 @@ export function parsePanel(doc) {
   }
   if (doc.schema !== PANEL_SCHEMA) errors.push(`schema must be ${PANEL_SCHEMA}`);
   if (doc.verdict !== "panel") errors.push('verdict must be "panel"');
+  if (doc.allow_unproven !== undefined && typeof doc.allow_unproven !== "boolean") {
+    errors.push("allow_unproven must be a boolean when present");
+  }
   if (!Array.isArray(doc.members) || doc.members.length === 0) errors.push("members must be a non-empty array");
   const members = [];
   if (Array.isArray(doc.members)) {
@@ -1128,12 +1235,16 @@ export function parsePanel(doc) {
       if (typeof m.mean !== "number" || !Number.isFinite(m.mean)) errors.push(`${tag}.mean must be a finite number`);
       if (typeof m.sd !== "number" || !Number.isFinite(m.sd) || m.sd < 0) errors.push(`${tag}.sd must be a finite number ≥ 0`);
       if (typeof m.threshold !== "number" || !Number.isFinite(m.threshold)) errors.push(`${tag}.threshold must be a finite number`);
+      const recipeId = optionalRecipeField(m.recipe_id, `${tag}.recipe_id`, errors);
+      const recipeSha = optionalRecipeSha(m.recipe_sha256, `${tag}.recipe_sha256`, errors);
       if (
         typeof m.critic === "string" && m.critic.length > 0
         && Number.isInteger(m.count) && m.count >= 1
         && typeof m.mean === "number" && Number.isFinite(m.mean)
         && typeof m.sd === "number" && Number.isFinite(m.sd) && m.sd >= 0
         && typeof m.threshold === "number" && Number.isFinite(m.threshold)
+        && recipeId !== undefined
+        && recipeSha !== undefined
       ) {
         members.push({
           critic: m.critic,
@@ -1141,9 +1252,35 @@ export function parsePanel(doc) {
           mean: m.mean,
           sd: m.sd,
           threshold: m.threshold,
+          recipe_id: recipeId,
+          recipe_sha256: recipeSha,
         });
       }
     }
   }
-  return { ok: errors.length === 0, errors, members };
+  return {
+    ok: errors.length === 0,
+    errors,
+    members,
+    allowUnproven: doc && doc.allow_unproven === true,
+  };
+}
+
+/** Absent or null stays null. A wrong type is an error and returns undefined so the member is dropped. */
+function optionalRecipeField(value, tag, errors) {
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "string" || value.length === 0) {
+    errors.push(`${tag} must be a non-empty string or null`);
+    return undefined;
+  }
+  return value;
+}
+
+function optionalRecipeSha(value, tag, errors) {
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "string" || !/^[0-9a-f]{64}$/.test(value)) {
+    errors.push(`${tag} must be a 64-char lowercase hex sha256 or null`);
+    return undefined;
+  }
+  return value;
 }

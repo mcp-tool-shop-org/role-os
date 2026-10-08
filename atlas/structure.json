@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "b2f568e26ee1bb4254c549cfb655c593f824509c2558b21ac8560a3b66bba220",
+          "hash": "20b5d0bf31f7291a5692e50fc22b4f28ca8658b1795f6057927fb34d92536dd8",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -432,7 +432,7 @@
               "line": 351
             }
           ],
-          "hash": "edc120b9d4c48c1a630debb4bead870054203f916c8aa37c968b05dd662b3650",
+          "hash": "ea3636f5c7747b13361145cb1d58728bab96f4a6b4dbaad357f139748e6e80b6",
           "importsFiles": [
             "src/artifacts-cmd.mjs",
             "src/audit-cmd.mjs",
@@ -721,7 +721,7 @@
                   "branch": "verb === \"recipe\"",
                   "inner": [
                     {
-                      "line": 79,
+                      "line": 87,
                       "name": "recipeTemplate",
                       "target": {
                         "file": "src/specialist/recipe-card.mjs"
@@ -729,7 +729,7 @@
                       "via": "initCard"
                     },
                     {
-                      "line": 72,
+                      "line": 80,
                       "name": "parseRecipeCard",
                       "target": {
                         "file": "src/specialist/recipe-card.mjs"
@@ -747,7 +747,7 @@
                   "branch": "verb === \"jury\"",
                   "inner": [
                     {
-                      "line": 148,
+                      "line": 160,
                       "name": "parseValidation",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -755,7 +755,15 @@
                       "via": "loadValidation"
                     },
                     {
-                      "line": 288,
+                      "line": 429,
+                      "name": "parseRecipeCard",
+                      "target": {
+                        "file": "src/specialist/recipe-card.mjs"
+                      },
+                      "via": "loadRecipes"
+                    },
+                    {
+                      "line": 332,
                       "name": "juryCheck",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -763,7 +771,7 @@
                       "via": "checkValidation"
                     },
                     {
-                      "line": 139,
+                      "line": 149,
                       "name": "DEFAULT_SEED",
                       "passed": true,
                       "target": {
@@ -772,7 +780,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 140,
+                      "line": 150,
                       "name": "DEFAULT_MAX_SIZE",
                       "passed": true,
                       "target": {
@@ -781,7 +789,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 141,
+                      "line": 151,
                       "name": "DEFAULT_BAGS",
                       "passed": true,
                       "target": {
@@ -790,7 +798,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 142,
+                      "line": 152,
                       "name": "DEFAULT_FOLDS",
                       "passed": true,
                       "target": {
@@ -799,7 +807,7 @@
                       "via": "selectionOpts"
                     },
                     {
-                      "line": 297,
+                      "line": 346,
                       "name": "jurySelect",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -807,7 +815,7 @@
                       "via": "selectPanel"
                     },
                     {
-                      "line": 313,
+                      "line": 365,
                       "name": "hashValidation",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -815,7 +823,7 @@
                       "via": "selectPanel"
                     },
                     {
-                      "line": 311,
+                      "line": 363,
                       "name": "buildPanelFile",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -823,7 +831,7 @@
                       "via": "selectPanel"
                     },
                     {
-                      "line": 346,
+                      "line": 457,
                       "name": "parsePanel",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -831,7 +839,7 @@
                       "via": "scoreNew"
                     },
                     {
-                      "line": 349,
+                      "line": 460,
                       "name": "scoreItems",
                       "target": {
                         "file": "src/specialist/jury.mjs"
@@ -2045,7 +2053,7 @@
           "path": "AUDIT-TESTS-all-components.md"
         },
         {
-          "hash": "9379df045791f990f1d7f8820bdfdf4d61699cdf7b8f9c5b63bd04319b2c0b80",
+          "hash": "1654030e631dd0fdb36310de6dd80f4a769db704d08cd9ba296c90e1833283bb",
           "path": "CHANGELOG.md"
         },
         {
@@ -2966,39 +2974,50 @@
             {
               "in": "throwUsage",
               "kind": "throw",
-              "line": 91
+              "line": 101
             },
             {
               "in": "failParse",
               "kind": "throw",
-              "line": 98
+              "line": 108
             },
             {
               "in": "readJson",
               "kind": "catch",
-              "line": 107
+              "line": 117
             },
             {
               "in": "readJson",
               "kind": "catch",
-              "line": 112
+              "line": 122
             },
             {
               "in": "selectPanel",
               "kind": "catch",
-              "line": 323
+              "line": 376
+            },
+            {
+              "in": "failRecipe",
+              "kind": "throw",
+              "line": 400
+            },
+            {
+              "in": "loadRecipes",
+              "kind": "catch",
+              "line": 423
             }
           ],
-          "hash": "41e60a166e2ef578b49392928f610fcc22918452b9eb843fe476bfde0eb94f14",
+          "hash": "055eebd96942c440cf070e6bf9757491af9da621a0db3e93d4a4564c7e2f9ad4",
           "importsFiles": [
-            "src/specialist/jury.mjs"
+            "src/specialist/jury.mjs",
+            "src/specialist/recipe-card.mjs"
           ],
           "path": "src/jury-cmd.mjs",
           "sequences": [
             {
               "calls": [
                 {
-                  "line": 148,
+                  "line": 160,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3006,7 +3025,15 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 288,
+                  "line": 429,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "loadRecipes"
+                },
+                {
+                  "line": 332,
                   "name": "juryCheck",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3014,7 +3041,7 @@
                   "via": "checkValidation"
                 },
                 {
-                  "line": 139,
+                  "line": 149,
                   "name": "DEFAULT_SEED",
                   "passed": true,
                   "target": {
@@ -3023,7 +3050,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 140,
+                  "line": 150,
                   "name": "DEFAULT_MAX_SIZE",
                   "passed": true,
                   "target": {
@@ -3032,7 +3059,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 141,
+                  "line": 151,
                   "name": "DEFAULT_BAGS",
                   "passed": true,
                   "target": {
@@ -3041,7 +3068,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 142,
+                  "line": 152,
                   "name": "DEFAULT_FOLDS",
                   "passed": true,
                   "target": {
@@ -3050,7 +3077,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 297,
+                  "line": 346,
                   "name": "jurySelect",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3058,7 +3085,7 @@
                   "via": "selectPanel"
                 },
                 {
-                  "line": 313,
+                  "line": 365,
                   "name": "hashValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3066,7 +3093,7 @@
                   "via": "selectPanel"
                 },
                 {
-                  "line": 311,
+                  "line": 363,
                   "name": "buildPanelFile",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3074,7 +3101,7 @@
                   "via": "selectPanel"
                 },
                 {
-                  "line": 346,
+                  "line": 457,
                   "name": "parsePanel",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3082,7 +3109,7 @@
                   "via": "scoreNew"
                 },
                 {
-                  "line": 349,
+                  "line": 460,
                   "name": "scoreItems",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3098,7 +3125,7 @@
             {
               "calls": [
                 {
-                  "line": 139,
+                  "line": 149,
                   "name": "DEFAULT_SEED",
                   "passed": true,
                   "target": {
@@ -3106,7 +3133,7 @@
                   }
                 },
                 {
-                  "line": 140,
+                  "line": 150,
                   "name": "DEFAULT_MAX_SIZE",
                   "passed": true,
                   "target": {
@@ -3114,7 +3141,7 @@
                   }
                 },
                 {
-                  "line": 141,
+                  "line": 151,
                   "name": "DEFAULT_BAGS",
                   "passed": true,
                   "target": {
@@ -3122,7 +3149,7 @@
                   }
                 },
                 {
-                  "line": 142,
+                  "line": 152,
                   "name": "DEFAULT_FOLDS",
                   "passed": true,
                   "target": {
@@ -3138,7 +3165,7 @@
             {
               "calls": [
                 {
-                  "line": 148,
+                  "line": 160,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3153,7 +3180,7 @@
             {
               "calls": [
                 {
-                  "line": 148,
+                  "line": 160,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3161,7 +3188,15 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 288,
+                  "line": 429,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "loadRecipes"
+                },
+                {
+                  "line": 332,
                   "name": "juryCheck",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3176,7 +3211,7 @@
             {
               "calls": [
                 {
-                  "line": 148,
+                  "line": 160,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3184,7 +3219,7 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 139,
+                  "line": 149,
                   "name": "DEFAULT_SEED",
                   "passed": true,
                   "target": {
@@ -3193,7 +3228,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 140,
+                  "line": 150,
                   "name": "DEFAULT_MAX_SIZE",
                   "passed": true,
                   "target": {
@@ -3202,7 +3237,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 141,
+                  "line": 151,
                   "name": "DEFAULT_BAGS",
                   "passed": true,
                   "target": {
@@ -3211,7 +3246,7 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 142,
+                  "line": 152,
                   "name": "DEFAULT_FOLDS",
                   "passed": true,
                   "target": {
@@ -3220,21 +3255,29 @@
                   "via": "selectionOpts"
                 },
                 {
-                  "line": 297,
+                  "line": 429,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  },
+                  "via": "loadRecipes"
+                },
+                {
+                  "line": 346,
                   "name": "jurySelect",
                   "target": {
                     "file": "src/specialist/jury.mjs"
                   }
                 },
                 {
-                  "line": 313,
+                  "line": 365,
                   "name": "hashValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
                   }
                 },
                 {
-                  "line": 311,
+                  "line": 363,
                   "name": "buildPanelFile",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3249,14 +3292,29 @@
             {
               "calls": [
                 {
-                  "line": 346,
+                  "line": 429,
+                  "name": "parseRecipeCard",
+                  "target": {
+                    "file": "src/specialist/recipe-card.mjs"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "loadRecipes"
+            },
+            {
+              "calls": [
+                {
+                  "line": 457,
                   "name": "parsePanel",
                   "target": {
                     "file": "src/specialist/jury.mjs"
                   }
                 },
                 {
-                  "line": 148,
+                  "line": 160,
                   "name": "parseValidation",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3264,7 +3322,7 @@
                   "via": "loadValidation"
                 },
                 {
-                  "line": 349,
+                  "line": 460,
                   "name": "scoreItems",
                   "target": {
                     "file": "src/specialist/jury.mjs"
@@ -3602,10 +3660,10 @@
             {
               "in": "throwUsage",
               "kind": "throw",
-              "line": 66
+              "line": 74
             }
           ],
-          "hash": "f49853af9a700fba84fafb8848a41e48a47fea5c05cc85a00308e3807a3234f0",
+          "hash": "c728d06589010acbf97bce2537ec06afb322aeb535f46223a52f021e9ee328bc",
           "importsFiles": [
             "src/specialist/recipe-card.mjs"
           ],
@@ -3614,7 +3672,7 @@
             {
               "calls": [
                 {
-                  "line": 79,
+                  "line": 87,
                   "name": "recipeTemplate",
                   "target": {
                     "file": "src/specialist/recipe-card.mjs"
@@ -3622,7 +3680,7 @@
                   "via": "initCard"
                 },
                 {
-                  "line": 72,
+                  "line": 80,
                   "name": "parseRecipeCard",
                   "target": {
                     "file": "src/specialist/recipe-card.mjs"
@@ -3638,7 +3696,7 @@
             {
               "calls": [
                 {
-                  "line": 72,
+                  "line": 80,
                   "name": "parseRecipeCard",
                   "target": {
                     "file": "src/specialist/recipe-card.mjs"
@@ -3653,7 +3711,7 @@
             {
               "calls": [
                 {
-                  "line": 79,
+                  "line": 87,
                   "name": "recipeTemplate",
                   "target": {
                     "file": "src/specialist/recipe-card.mjs"
@@ -3668,7 +3726,7 @@
             {
               "calls": [
                 {
-                  "line": 72,
+                  "line": 80,
                   "name": "parseRecipeCard",
                   "target": {
                     "file": "src/specialist/recipe-card.mjs"
@@ -3684,7 +3742,7 @@
             {
               "calls": [
                 {
-                  "line": 72,
+                  "line": 80,
                   "name": "parseRecipeCard",
                   "target": {
                     "file": "src/specialist/recipe-card.mjs"
@@ -4974,25 +5032,25 @@
             {
               "in": "accuracy",
               "kind": "throw",
-              "line": 256
+              "line": 277
             },
             {
               "in": "nestedEstimate",
               "kind": "throw",
-              "line": 773
+              "line": 794
             },
             {
               "in": "jurySelect",
               "kind": "throw",
-              "line": 993
+              "line": 1082
             },
             {
               "in": "jurySelect",
               "kind": "throw",
-              "line": 999
+              "line": 1088
             }
           ],
-          "hash": "4d6ec55a9f82e9a9a527d736f8167c7adaa9e7d712b83eb6239e9f475f66d2a1",
+          "hash": "a3ec5ceaf281ece2a4553ef3e7a667a8e686b46ff8866f65c6b735fc2687d98a",
           "importsFiles": [
             "src/specialist/recipe-card.mjs"
           ],
@@ -5012,10 +5070,10 @@
             {
               "in": "parseRecipeCard",
               "kind": "catch",
-              "line": 144
+              "line": 365
             }
           ],
-          "hash": "a2dcad83cb27439cdb069a67ecdf8b56b0bff8866def847094c70071ca91cde9",
+          "hash": "2a540ecccee05475d813902d25d9ceeeed2e21a6dde1db7af04c9678cf59ce3d",
           "path": "src/specialist/recipe-card.mjs"
         },
         {
@@ -6064,7 +6122,7 @@
       "origin": "authored",
       "outsidePlaces": [
         {
-          "reads": 32,
+          "reads": 36,
           "where": [
             "caller"
           ],
@@ -6269,7 +6327,7 @@
           "writes": 1
         }
       ],
-      "outsideReads": 145,
+      "outsideReads": 149,
       "outsideWrites": 64,
       "role": "code",
       "testRunners": [
@@ -6503,7 +6561,7 @@
           "path": "starter-pack/schemas/handoff.md"
         },
         {
-          "hash": "f2cda9c023418b9ee345ee8182bff2ac32302aa94f0796bf5fcc1abe0eaa5c25",
+          "hash": "80a9114548a36d19e2f191c11c32f572ebca547d2e8887dbd5889d081490f729",
           "path": "starter-pack/schemas/jury.md"
         },
         {
@@ -6511,7 +6569,7 @@
           "path": "starter-pack/schemas/outcome-ledger.md"
         },
         {
-          "hash": "2ae14ac03c307345415e247cc91a0fded204cdb45c497628570bb0426bdcf8b2",
+          "hash": "208420c2a7c32a75e36b9ec9e8efad6a7bea3f1cc24b180ca30c8cfdf14ea27d",
           "path": "starter-pack/schemas/recipe-card.md"
         },
         {
@@ -6808,7 +6866,7 @@
           "testFramework": "node --test"
         },
         {
-          "hash": "692ea08c36357bafdb89e451bd783ad7710aec3b0820b2499a409048e26e4723",
+          "hash": "a0000d91c46184d0810704cff9b40e289a1f263a59efb918efa045ee32b9740c",
           "importOrder": [
             "src/specialist/recipe-card.mjs",
             "src/specialist/jury.mjs"
@@ -6963,7 +7021,7 @@
           "testFramework": "node --test"
         },
         {
-          "hash": "7b1be640713ddad15cc44d3536a8b133f3974345c29211594bc2171cd180a28c",
+          "hash": "e7cd9b4a957e286c8c343757d1bfc1d9c567a45c58e3bc4fa15de5ffa5c4d53f",
           "importsFiles": [
             "src/specialist/recipe-card.mjs",
             "src/specialist/registry.mjs"
@@ -9208,7 +9266,7 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "c824c4833caaaf9c7d00f24c3bcb1406fe36aa45",
+    "commit": "d218de70a2c77995f8002eaf76c9a0e621c38ea0",
     "tracked": 637
   },
   "landings": [

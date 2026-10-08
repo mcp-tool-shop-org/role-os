@@ -1,14 +1,15 @@
 # role-os: how it works
 
-Mapped at 2026-10-08 from commit c824c48 by Atlas 1.24.0.
+Mapped at 2026-10-08 from commit d218de7 by Atlas 1.24.0.
 
 ## What this is
 
 15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-10-08 (f4fce23)
+## What changed since 2026-10-08 (c824c48)
 
-Nothing structural changed since 2026-10-08; 7 files changed content.
+- In src/jury-cmd.mjs, `juryCommand` gained a step, `parseRecipeCard`, before `juryCheck`.
+- 11 files changed content, across 6 parts.
 
 ## What comes in
 
@@ -98,7 +99,7 @@ Read those in order to follow one pull request end to end.
 - 16 writes and 14 reads use paths built at run time and are not named here.
 - 3 writes go to places this repository does not track, so they are not listed as generated.
 - 30 writes and 88 reads go to the directory the command is run in, not to this repository.
-- 43 writes and 50 reads go to a path their caller passes, not to this repository.
+- 43 writes and 54 reads go to a path their caller passes, not to this repository.
 - 23 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.
 - 8 writes and 1 read go to a temporary directory, not to this repository.
 - 8 commands are built at run time and not followed, 2 of them in tests.

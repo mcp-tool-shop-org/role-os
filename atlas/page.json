@@ -66,23 +66,30 @@
   "changes": {
     "fileCounts": {
       "added": 0,
-      "changed": 7,
+      "changed": 11,
       "moved": 0,
       "parts": 6,
       "removed": 0
     },
     "items": [
       {
+        "kind": "sequence",
+        "sentence": "In src/jury-cmd.mjs, `juryCommand` gained a step, `parseRecipeCard`, before `juryCheck`.",
+        "subjects": [
+          "src/jury-cmd.mjs"
+        ]
+      },
+      {
         "kind": "counts",
-        "sentence": "Nothing structural changed since 2026-10-08; 7 files changed content.",
+        "sentence": "11 files changed content, across 6 parts.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "f4fce23c1b4d9646b199ff8c90f4a91195af59cf",
-      "generatedAt": "2026-10-08T16:49:44.160Z"
+      "commit": "c824c4833caaaf9c7d00f24c3bcb1406fe36aa45",
+      "generatedAt": "2026-10-08T17:26:36.414Z"
     },
-    "unchanged": true
+    "unchanged": false
   },
   "changesTogether": [
     {
@@ -121,7 +128,7 @@
     "Window: 180 days; a pair counts from 3 shared commits, since 3 source files reach 10 revisions; the floor rises to 10 when 25 do."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "c824c4833caaaf9c7d00f24c3bcb1406fe36aa45",
+  "commit": "d218de70a2c77995f8002eaf76c9a0e621c38ea0",
   "defaultBranch": "main",
   "derived": "15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
   "doors": [
@@ -355,13 +362,13 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-08T17:26:36.414Z",
+  "generatedAt": "2026-10-08T18:06:31.077Z",
   "limits": [
     "3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.",
     "16 writes and 14 reads use paths built at run time and are not named here.",
     "3 writes go to places this repository does not track, so they are not listed as generated.",
     "30 writes and 88 reads go to the directory the command is run in, not to this repository.",
-    "43 writes and 50 reads go to a path their caller passes, not to this repository.",
+    "43 writes and 54 reads go to a path their caller passes, not to this repository.",
     "23 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.",
     "8 writes and 1 read go to a temporary directory, not to this repository.",
     "8 commands are built at run time and not followed, 2 of them in tests.",

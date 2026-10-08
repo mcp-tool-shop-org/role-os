@@ -21,6 +21,26 @@ import { validateRegistry, REGISTRY_SCHEMA } from "../src/specialist/registry.mj
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CLI = join(ROOT, "bin", "roleos.mjs");
 
+/** A measure that satisfies the method rule for this control, so a complete card still has no gaps. */
+function satisfyingMeasure(name) {
+  if (name === "shuffled-labels") {
+    return {
+      metric: "accuracy", point: 0.5, ci: [0.4, 0.6], n: 100, clusters: "prompt",
+      method: "balanced-permutation", p: 0.2, nulls: 19,
+    };
+  }
+  if (name === "same-generator-no-error") {
+    return {
+      metric: "edit-rate", point: 0.5, ci: [0.4, 0.6], n: 100, clusters: "prompt",
+      method: "word-swap", paraphrase_median: 3, error_median: 4,
+    };
+  }
+  if (name === "reversed-correction") {
+    return { metric: "accuracy", point: 0.8, ci: [0.7, 0.9], n: 80, clusters: "prompt" };
+  }
+  return { metric: "accuracy", point: 0.8, ci: [0.7, 0.9], n: 50, clusters: "prompt" };
+}
+
 function goodCard(over = {}) {
   return {
     schema: RECIPE_SCHEMA,
@@ -38,7 +58,7 @@ function goodCard(over = {}) {
       error_taxonomy: ["wrong fact or number", "reasoning step that does not follow"],
     },
     splits: { train: { pairs: 603 }, validation: { pairs: 149 }, final: { pairs: 127 }, held_out_generator: { family: "granite" }, natural_errors: { items: 80 } },
-    controls: STANDARD_CONTROLS.map((c) => ({ name: c.name, status: "passed" })),
+    controls: STANDARD_CONTROLS.map((c) => ({ name: c.name, status: "passed", measure: satisfyingMeasure(c.name) })),
     pins: { features: "Qwen/Qwen2.5-1.5B-Instruct@989aa79" },
     ...over,
   };
@@ -182,7 +202,7 @@ describe("roleos recipe CLI", () => {
       writeFileSync(cardPath, JSON.stringify(goodCard({ controls: [{ name: "positive-marker", status: "passed" }] }), null, 2));
       const ok = execFileSync(process.execPath, [CLI, "recipe", "check", cardPath], { encoding: "utf8" });
       assert.match(ok, /✓/);
-      assert.match(ok, /1\/8 standard controls passed/);
+      assert.match(ok, new RegExp(`1/${STANDARD_CONTROLS.length} standard controls passed`));
       const sha = execFileSync(process.execPath, [CLI, "recipe", "hash", cardPath], { encoding: "utf8" }).trim();
       assert.equal(sha, hashRecipeCard(JSON.parse(readFileSync(cardPath, "utf8"))));
       assert.match(execFileSync(process.execPath, [CLI, "recipe", "controls"], { encoding: "utf8" }), /held-out-generator/);
@@ -219,7 +239,286 @@ describe("roleos recipe CLI", () => {
   });
 
   it("prints help and rejects unknown subcommands", () => {
-    assert.match(execFileSync(process.execPath, [CLI, "recipe", "help"], { encoding: "utf8" }), /roleos recipe check/);
+    const help = execFileSync(process.execPath, [CLI, "recipe", "help"], { encoding: "utf8" });
+    assert.match(help, /roleos recipe check/);
+    assert.match(help, /unresolved/);
+    assert.match(help, /reversed-correction/);
+    assert.match(help, /1\/\(nulls\+1\)/);
+    const catalog = execFileSync(process.execPath, [CLI, "help"], { encoding: "utf8" });
+    assert.match(catalog, /reversed-correction/);
     assert.notEqual(spawnSync(process.execPath, [CLI, "recipe", "bogus"], { encoding: "utf8" }).status, 0);
+  });
+});
+
+describe("recipe measure and method rules", () => {
+  function one(control) {
+    return goodCard({ controls: [control] });
+  }
+
+  it("errors on each inconsistent measure and accepts an empty measure as not one of those errors", () => {
+    const lowHigh = validateRecipeCard(one({
+      name: "positive-marker", status: "passed",
+      measure: { point: 0.5, ci: [0.8, 0.2] },
+    }));
+    assert.equal(lowHigh.ok, false);
+    assert.ok(lowHigh.errors.some((e) => e.includes("low 0.8 is above high 0.2")));
+
+    const outside = validateRecipeCard(one({
+      name: "positive-marker", status: "passed",
+      measure: { point: 0.9, ci: [0.2, 0.4] },
+    }));
+    assert.equal(outside.ok, false);
+    assert.ok(outside.errors.some((e) => e.includes("outside its CI")));
+
+    const pZero = validateRecipeCard(one({
+      name: "positive-marker", status: "passed",
+      measure: { p: 0, ci: [0.2, 0.4], point: 0.3 },
+    }));
+    assert.equal(pZero.ok, false);
+    assert.ok(pZero.errors.some((e) => e.includes("p must be in (0, 1]")));
+
+    const pAbove = validateRecipeCard(one({
+      name: "positive-marker", status: "passed",
+      measure: { p: 1.1, ci: [0.2, 0.4], point: 0.3 },
+    }));
+    assert.ok(pAbove.errors.some((e) => e.includes("p must be in (0, 1]")));
+
+    const pOne = validateRecipeCard(one({
+      name: "positive-marker", status: "not-run",
+      measure: { p: 1, ci: [0.2, 0.4], point: 0.3 },
+    }));
+    assert.equal(pOne.errors.some((e) => e.includes("p must be in")), false);
+
+    const nulls = validateRecipeCard(one({
+      name: "positive-marker", status: "passed",
+      measure: { nulls: 0, ci: [0.2, 0.4], point: 0.3 },
+    }));
+    assert.equal(nulls.ok, false);
+    assert.ok(nulls.errors.some((e) => e.includes("nulls must be an integer ≥ 1")));
+
+    const fraction = validateRecipeCard(one({
+      name: "positive-marker", status: "not-run",
+      measure: { nulls: 1.5 },
+    }));
+    assert.ok(fraction.errors.some((e) => e.includes("nulls must be an integer ≥ 1")));
+
+    const notObject = validateRecipeCard(one({
+      name: "positive-marker", status: "passed", measure: [],
+    }));
+    assert.ok(notObject.errors.some((e) => e.includes("measure must be an object")));
+
+    const badCi = validateRecipeCard(one({
+      name: "positive-marker", status: "not-run", measure: { ci: [0.2] },
+    }));
+    assert.ok(badCi.errors.some((e) => e.includes("pair of finite numbers")));
+
+    const empty = validateRecipeCard(one({ name: "graded-marker", status: "not-run", measure: {} }));
+    assert.equal(empty.errors.some((e) => /low|outside its CI|p must be in|nulls must be/.test(e)), false);
+  });
+
+  it("accepts balanced-permutation, and gaps a missing or wrong shuffle method", () => {
+    const present = validateRecipeCard(one({
+      name: "shuffled-labels", status: "passed", measure: satisfyingMeasure("shuffled-labels"),
+    }));
+    assert.equal(present.ok, true, present.errors.join("; "));
+    assert.equal(present.warnings.some((w) => w.includes("balanced-permutation")), false);
+    assert.ok(present.notes.some((n) => n.includes("permutation floor is 1/20")));
+    assert.equal(present.notes.some((n) => n.includes("beat every null")), false);
+
+    const absent = validateRecipeCard(one({
+      name: "shuffled-labels", status: "passed",
+      measure: { metric: "accuracy", point: 0.5, ci: [0.4, 0.6], p: 0.2, nulls: 19 },
+    }));
+    assert.equal(absent.ok, true, absent.errors.join("; "));
+    assert.ok(absent.warnings.some((w) => w.includes("Ojala & Garriga 2010")));
+    assert.ok(absent.warnings.some((w) => w.includes("shuffle imbalance")));
+
+    const wrong = validateRecipeCard(one({
+      name: "shuffled-labels", status: "failed",
+      measure: { method: "random-shuffle", p: 0.2, nulls: 19, point: 0.5, ci: [0.4, 0.6] },
+    }));
+    assert.equal(wrong.ok, true, wrong.errors.join("; "));
+    assert.ok(wrong.warnings.some((w) => w.includes("balanced-permutation") && w.includes("plain random shuffle")));
+    assert.equal(wrong.controls.failed.includes("shuffled-labels"), true);
+  });
+
+  it("prints the 1/21 floor at 20 nulls, and errors when a pass is below it", () => {
+    const onFloor = validateRecipeCard(one({
+      name: "shuffled-labels", status: "passed",
+      measure: { method: "balanced-permutation", p: 1 / 21, nulls: 20, point: 0.5, ci: [0.4, 0.6] },
+    }));
+    assert.equal(onFloor.ok, true, onFloor.errors.join("; "));
+    assert.ok(onFloor.notes.some((n) => n.includes("1/21") && n.includes("beat every null")));
+
+    const below = validateRecipeCard(one({
+      name: "shuffled-labels", status: "passed",
+      measure: { method: "balanced-permutation", p: 1 / 21 / 2, nulls: 20, point: 0.5, ci: [0.4, 0.6] },
+    }));
+    assert.equal(below.ok, false);
+    assert.ok(below.errors.some((e) => e.includes("1/21")));
+    assert.ok(below.notes.some((n) => n.includes("permutation floor is 1/21")));
+    assert.equal(below.notes.some((n) => n.includes("beat every null")), false);
+
+    const missingP = validateRecipeCard(one({
+      name: "shuffled-labels", status: "passed",
+      measure: { method: "balanced-permutation", nulls: 20, point: 0.5, ci: [0.4, 0.6] },
+    }));
+    assert.ok(missingP.errors.some((e) => e.includes("p and nulls")));
+
+    const dir = mkdtempSync(join(tmpdir(), "roleos-recipe-floor-"));
+    try {
+      const cardPath = join(dir, "card.json");
+      writeFileSync(cardPath, JSON.stringify(one({
+        name: "shuffled-labels", status: "passed",
+        measure: { method: "balanced-permutation", p: 1 / 21, nulls: 20, point: 0.5, ci: [0.4, 0.6] },
+      })));
+      const text = execFileSync(process.execPath, [CLI, "recipe", "check", cardPath], { encoding: "utf8" });
+      assert.match(text, /note\s+.*1\/21/);
+      assert.match(text, /beat every null/);
+      const body = JSON.parse(execFileSync(process.execPath, [CLI, "recipe", "check", cardPath, "--json"], { encoding: "utf8" }));
+      assert.ok(body.notes.some((n) => n.includes("1/21")));
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("gaps a paraphrase median that exceeds twice the error median", () => {
+    const gap = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "passed",
+      measure: {
+        metric: "edit-rate", point: 0.5, ci: [0.4, 0.6], method: "sentence-rewrite",
+        paraphrase_median: 9, error_median: 4,
+      },
+    }));
+    assert.equal(gap.ok, true, gap.errors.join("; "));
+    assert.ok(gap.warnings.some((w) => w.includes("exceeds 2×")));
+
+    const exact = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "passed",
+      measure: {
+        metric: "edit-rate", point: 0.5, ci: [0.4, 0.6], method: "word-swap",
+        paraphrase_median: 8, error_median: 4,
+      },
+    }));
+    assert.equal(exact.warnings.some((w) => w.includes("exceeds 2×")), false);
+
+    const missing = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "failed",
+      measure: { method: "word-swap", point: 0.5, ci: [0.4, 0.6] },
+    }));
+    assert.ok(missing.warnings.some((w) => w.includes("paraphrase_median and error_median are required")));
+
+    const offHalf = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "passed",
+      measure: {
+        method: "word-swap", point: 0.8, ci: [0.7, 0.9],
+        paraphrase_median: 3, error_median: 4,
+      },
+    }));
+    assert.equal(offHalf.ok, false);
+    assert.ok(offHalf.errors.some((e) => e.includes("include 0.5")));
+  });
+
+  it("requires unresolved when the two edit-method intervals do not overlap", () => {
+    const measure = {
+      metric: "edit-rate", point: 0.25, ci: [0.2, 0.3], n: 40, clusters: "prompt",
+      method: "word-swap", paraphrase_median: 3, error_median: 4,
+      methods: [{ method: "sentence-rewrite", ci: [0.7, 0.8], point: 0.75, paraphrase_median: 4, error_median: 4 }],
+    };
+    const bad = validateRecipeCard(one({ name: "same-generator-no-error", status: "passed", measure }));
+    assert.equal(bad.ok, false);
+    assert.ok(bad.errors.some((e) => e.includes('status must be "unresolved"')));
+
+    const held = validateRecipeCard(one({ name: "same-generator-no-error", status: "unresolved", measure }));
+    assert.equal(held.ok, true, held.errors.join("; "));
+    assert.deepEqual(held.controls.unresolved, ["same-generator-no-error"]);
+    assert.ok(held.warnings.some((w) => w.includes("control unresolved: same-generator-no-error")));
+
+    const touching = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "passed",
+      measure: {
+        ...measure,
+        ci: [0.45, 0.5],
+        point: 0.5,
+        methods: [{ method: "sentence-rewrite", ci: [0.5, 0.6], point: 0.55, paraphrase_median: 3, error_median: 4 }],
+      },
+    }));
+    assert.equal(touching.ok, true, touching.errors.join("; "));
+    assert.equal(touching.errors.some((e) => e.includes("unresolved")), false);
+
+    const secondRatio = validateRecipeCard(one({
+      name: "same-generator-no-error", status: "unresolved",
+      measure: {
+        ...measure,
+        methods: [{ method: "sentence-rewrite", ci: [0.7, 0.8], paraphrase_median: 10, error_median: 4 }],
+      },
+    }));
+    assert.ok(secondRatio.warnings.some((w) => w.includes("methods[0]") && w.includes("exceeds 2×")));
+  });
+
+  it("puts reversed-correction in the template and the summary, and requires the CI above 0.5", () => {
+    const template = recipeTemplate("Skeptic");
+    assert.equal(template.controls.length, STANDARD_CONTROLS.length);
+    const names = template.controls.map((c) => c.name);
+    const at = names.indexOf("reversed-correction");
+    assert.equal(names[at - 1], "same-generator-no-error");
+    assert.equal(template.controls[at].status, "not-run");
+    assert.match(execFileSync(process.execPath, [CLI, "recipe", "controls"], { encoding: "utf8" }), /reversed-correction/);
+
+    const summary = summarizeControls([
+      { name: "reversed-correction", status: "passed" },
+      { name: "same-generator-no-error", status: "unresolved" },
+    ]);
+    assert.deepEqual(summary.passed, ["reversed-correction"]);
+    assert.deepEqual(summary.unresolved, ["same-generator-no-error"]);
+    assert.equal(summary.coverage, `1/${STANDARD_CONTROLS.length}`);
+
+    const touch = validateRecipeCard(one({
+      name: "reversed-correction", status: "passed",
+      measure: { metric: "accuracy", point: 0.6, ci: [0.5, 0.7] },
+    }));
+    assert.equal(touch.ok, false);
+    assert.ok(touch.errors.some((e) => e.includes("entirely above 0.5") && e.includes("touching 0.5")));
+
+    const above = validateRecipeCard(one({
+      name: "reversed-correction", status: "passed",
+      measure: satisfyingMeasure("reversed-correction"),
+    }));
+    assert.equal(above.ok, true, above.errors.join("; "));
+
+    const noCi = validateRecipeCard(one({
+      name: "reversed-correction", status: "passed",
+      measure: { metric: "accuracy", point: 0.8 },
+    }));
+    assert.ok(noCi.errors.some((e) => e.includes("entirely above 0.5")));
+  });
+
+  it("keeps an old free-text card valid, with gaps and no new errors", () => {
+    const old = goodCard({
+      controls: [
+        { name: "positive-marker", status: "passed", result: "marker learned, accuracy 0.91" },
+        { name: "shuffled-labels", status: "not-run", result: "not run yet" },
+        { name: "natural-errors", status: "failed", result: "missed the real errors" },
+      ],
+    });
+    const r = validateRecipeCard(old);
+    assert.equal(r.ok, true, r.errors.join("; "));
+    assert.equal(r.errors.length, 0);
+    assert.ok(r.warnings.some((w) => w.includes("passed without a measure")));
+    assert.ok(r.warnings.some((w) => w.includes("standard controls not recorded") && w.includes("reversed-correction")));
+    assert.equal(r.warnings.some((w) => w.includes("shuffled-labels") && w.includes("balanced-permutation")), false);
+    assert.ok(r.warnings.some((w) => w.includes("control failed: natural-errors")));
+  });
+
+  it("gaps a passed control once when the measure is absent, including a failed special control", () => {
+    const passed = validateRecipeCard(one({ name: "graded-marker", status: "passed", result: "it worked" }));
+    assert.equal(passed.ok, true, passed.errors.join("; "));
+    const measureGaps = passed.warnings.filter((w) => w.includes("passed without a measure"));
+    assert.equal(measureGaps.length, 1);
+
+    const failed = validateRecipeCard(one({ name: "reversed-correction", status: "failed" }));
+    assert.equal(failed.ok, true, failed.errors.join("; "));
+    assert.ok(failed.warnings.some((w) => w.includes("no measure") && w.includes("above 0.5")));
+    assert.equal(failed.warnings.filter((w) => w.includes("reversed-correction") && w.includes("measure")).length, 1);
   });
 });

@@ -2,6 +2,46 @@
 
 ## Unreleased
 
+### Added: recipe evidence gates the jury
+
+- A recipe control may carry a `measure`: metric, point, CI, n, cluster unit,
+  and p and nulls for a permutation test. A free-text `result` stays valid.
+  A passed control without a measure is a gap. An inconsistent measure is an
+  error: CI low above high, a point outside its CI, p outside (0, 1], or
+  nulls below 1.
+- `shuffled-labels` must record method `balanced-permutation` (exactly half
+  of each cluster's labels flipped; Ojala & Garriga 2010). A plain shuffle is
+  a gap, because a consistent edit direction lets the imbalance set the sign.
+  A pass also needs p at or above 1/(nulls+1). `recipe check` prints that
+  floor, and says when a pass means the result beat every null.
+- `same-generator-no-error` must record method `word-swap` or
+  `sentence-rewrite`, plus the paraphrase and error-edit medians. A
+  paraphrase median above 2× the error median is a gap. A pass needs the
+  edit-rate CI to include 0.5. When both methods are recorded and their CIs
+  do not overlap, the status must be `unresolved`. `recipe check` and the
+  jury treat unresolved as not passed.
+- New standard control `reversed-correction`: the edited copy is the
+  corrected, stronger one, so the critic is not just an edit detector. A
+  pass needs the accuracy CI entirely above 0.5. Touching 0.5 is not above.
+  Cards that do not record it get the usual "not recorded" gap, never an
+  error.
+- A validation critic may name `recipe: { path, sha256 }`. The path is
+  relative to the validation file. The sha256 is the card's canonical hash.
+  `jury check` prints passed, failed, and unresolved standard controls, plus
+  gaps. A hash mismatch is an error.
+- `jury select` leaves out a critic whose card has a failed or unresolved
+  standard control, and lists the reason. `--allow-unproven` admits that
+  critic, and the panel file records the flag. A critic with no card is
+  admitted with an "unproven: no recipe card" note. `--require-recipe` makes
+  the card required. Each panel member records its recipe id and sha256, or
+  null.
+- The entry ladder is unchanged. A critic that does not name a recipe is
+  still seated unless `--require-recipe` is set.
+- README.md is unchanged in this change. Translations stay with the release.
+- Measured line coverage is 90.57% (22755/25123). Rounded down, the CI floor
+  stays 90% (`c8 --check-coverage --lines 90`). Codecov project and patch
+  targets stay 90%, and the project status allows a 1% drop.
+
 ### Added: outcome-learned pack selection
 
 - A run records one outcome when it ends: completed, failed, partial, abandoned,
