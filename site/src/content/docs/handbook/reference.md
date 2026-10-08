@@ -243,7 +243,7 @@ roleos recipe controls
 roleos specialist register <role> <version.json> --recipe <card.json>
 ```
 
-Checks a dataset recipe card (`roleos-recipe-card/v1`). `check` separates errors from evidence gaps and prints the card's canonical SHA-256. A passed control with no measure is a gap. An inconsistent measure is an error. `shuffled-labels` prints its permutation floor, 1/(nulls+1). `same-generator-no-error` can be `unresolved` when two edit methods disagree. `reversed-correction` passes only when the accuracy interval lies entirely above 0.5. `controls` lists the nine standard controls. `--recipe` pins `{ id, sha256, path }` on a specialist version.
+Checks a dataset recipe card (`roleos-recipe-card/v1`). `check` separates errors from evidence gaps and prints the card's canonical SHA-256. A passed control with no measure is a gap. An inconsistent measure is an error. `shuffled-labels` prints its permutation floor, 1/(nulls+1). `same-generator-no-error`: when both edit methods are recorded and their intervals don't overlap, the status must be `unresolved`, or the check fails. `reversed-correction` passes only when the accuracy interval lies entirely above 0.5. `controls` lists the nine standard controls. `--recipe` pins `{ id, sha256, path }` on a specialist version.
 
 ### jury
 

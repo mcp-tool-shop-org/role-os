@@ -302,7 +302,7 @@ A trained critic is only as good as the data it learned from. Role OS records th
 
 ### Recipe cards
 
-`roleos recipe` checks a card (`roleos-recipe-card/v1`). Nine standard controls each guard a way a critic can look good without having learned its attribute. A passed control with no measure is a gap. An inconsistent measure is an error. `shuffled-labels` has to use the method `balanced-permutation`. `same-generator-no-error` is `unresolved` when the two edit methods disagree. `reversed-correction` passes only when its accuracy interval lies entirely above 0.5.
+`roleos recipe` checks a card (`roleos-recipe-card/v1`). Nine standard controls each guard a way a critic can look good without having learned its attribute. A passed control with no measure is a gap. An inconsistent measure is an error. `shuffled-labels` has to use the method `balanced-permutation`. `same-generator-no-error`: when both edit methods are recorded and their intervals don't overlap, the status must be `unresolved`, or the check fails. `reversed-correction` passes only when its accuracy interval lies entirely above 0.5.
 
 ```bash
 roleos recipe check starter-pack/examples/auditor-recipe-card.json
@@ -327,7 +327,7 @@ The note is a fact, not a gap. `roleos specialist register` takes `--recipe` and
 roleos jury select starter-pack/examples/jury-validation.json --seed 0
 ```
 
-On this synthetic file the verdict is `best-single (echo)`. echo and sharp make the same mistakes, so error consistency is 1.0000 and the duplicate flag names them. The flag does not drop either critic. The nested interval is [-0.1000, 0.0000]. It touches 0, so it does not lie entirely above 0, and the command writes no panel file. The [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/jury/) has the full report.
+On this synthetic file the verdict is `best-single (echo)`. echo and sharp make the same mistakes, so error consistency is 1.0000 and the duplicate flag names them. The flag does not drop either critic. The nested interval is [-0.1000, 0.0000]. It touches 0, so it does not lie entirely above 0, and even with --out it would write no panel file, because --out writes one only for a panel verdict. The [handbook](https://mcp-tool-shop-org.github.io/role-os/handbook/jury/) has the full report.
 
 ### Pack calibration
 

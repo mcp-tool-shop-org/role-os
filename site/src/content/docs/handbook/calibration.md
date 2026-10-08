@@ -13,7 +13,7 @@ The line is written when the run ends: completed, failed, partial, abandoned, or
 
 The line names the run, when it ended, the pack the entry decision suggested, the confidence of that suggestion, and the pack the run actually used. A mission run records that mission's pack, including when the run's own pack key is empty. An explicit pack key is kept. Free routing leaves the selected pack empty.
 
-It also records whether the operator overrode the suggestion, how long the chain was, how many escalations fired, how many verdicts were rejected, how many corrections were made, the completion status, and the roles that actually ran. Corrections are the interventions `reroute`, `retry`, and `reopen`. Rejected verdicts are `reject` interventions, plus step notes that start with "reject".
+It also records whether the operator overrode the suggestion, how long the chain was, how many escalations fired, how many verdicts were rejected, how many corrections were made, the completion status, and the roles that actually ran. Corrections are the interventions `reroute`, `retry`, and `reopen`. Rejected verdicts are `reject` interventions, plus step notes that start with the word "reject".
 
 `roleos abandon`, with an optional run id, gives up on a run that has not already ended. The ledger keeps that end state.
 
