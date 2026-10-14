@@ -31,26 +31,32 @@ def test_scrub_redacts_real_secrets():
     # detection: (1) ANDON hits the raw string, (2) the raw needle is gone after
     # scrub, (3) the named placeholder is present, (4) ANDON is clean. Scrub/andon
     # consistency is not proof of detection (a no-op pattern would pass both).
+    # built at runtime so secret scanners don't flag a test fixture
+    gh_tok = "ghp_" + "A" * 36
+    openai_tok = "sk-" + "A" * 24
+    aws_tok = "AKIA" + "A" * 16
+    google_tok = "AIza" + "A" * 35
+    bearer_tok = "abcdefghijklmnopqrstuvwxyz12"
     samples = {
         "GH_TOKEN": (
-            "token ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA here",
-            "ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            f"token {gh_tok} here",
+            gh_tok,
         ),
         "OPENAI_KEY": (
-            "key sk-AAAAAAAAAAAAAAAAAAAAAAAA done",
-            "sk-AAAAAAAAAAAAAAAAAAAAAAAA",
+            f"key {openai_tok} done",
+            openai_tok,
         ),
         "AWS_KEY": (
-            "id AKIAAAAAAAAAAAAAAAAA end",
-            "AKIAAAAAAAAAAAAAAAAA",
+            f"id {aws_tok} end",
+            aws_tok,
         ),
         "GOOGLE_KEY": (
-            "g AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA z",
-            "AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            f"g {google_tok} z",
+            google_tok,
         ),
         "BEARER": (
-            "Authorization: Bearer abcdefghijklmnopqrstuvwxyz12",
-            "abcdefghijklmnopqrstuvwxyz12",
+            "Authorization: Bearer " + bearer_tok,
+            bearer_tok,
         ),
         "ASSIGNED_SECRET": (
             'password = "hunter2hunter2hunter2"',
@@ -74,7 +80,8 @@ def test_scrub_redacts_real_secrets():
 def test_andon_catches_unscrubbed_secret():
     print("test_andon_catches_unscrubbed_secret")
     # a record that BYPASSED scrub still gets caught by the re-scan gate
-    bad = [{"dispatch_id": "leak1", "task_text": "ghp_BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", "source_file": ""}]
+    # built at runtime so secret scanners don't flag a test fixture
+    bad = [{"dispatch_id": "leak1", "task_text": "ghp_" + "B" * 36, "source_file": ""}]
     survivors = scrub.andon_rescan(bad)
     check("andon flags an un-scrubbed GH token", len(survivors) == 1)
     check("survivor names the dispatch", survivors and survivors[0][0] == "leak1")
