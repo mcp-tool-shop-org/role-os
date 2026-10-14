@@ -66,21 +66,21 @@
   "changes": {
     "fileCounts": {
       "added": 0,
-      "changed": 11,
+      "changed": 0,
       "moved": 0,
-      "parts": 4,
+      "parts": 0,
       "removed": 0
     },
     "items": [
       {
         "kind": "counts",
-        "sentence": "Nothing structural changed since 2026-10-08; 11 files changed content.",
+        "sentence": "Nothing structural changed since 2026-10-14; no file changed.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "d218de70a2c77995f8002eaf76c9a0e621c38ea0",
-      "generatedAt": "2026-10-08T18:06:31.077Z"
+      "commit": "080a383a186fca6e5d92d64692aec00c8c912880",
+      "generatedAt": "2026-10-14T22:47:21.765Z"
     },
     "unchanged": true
   },
@@ -121,7 +121,7 @@
     "Window: 180 days; a pair counts from 3 shared commits, since 3 source files reach 10 revisions; the floor rises to 10 when 25 do."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "ced8f13c8d14fc7cd8c46c7a036b8fea575cc41d",
+  "commit": "bd32c7482f98018d04047f99e98d56e42ddb2d9b",
   "defaultBranch": "main",
   "derived": "15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
   "doors": [
@@ -355,7 +355,7 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-08T19:46:57.991Z",
+  "generatedAt": "2026-10-14T22:49:47.209Z",
   "limits": [
     "3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.",
     "16 writes and 14 reads use paths built at run time and are not named here.",
