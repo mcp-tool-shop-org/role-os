@@ -358,8 +358,8 @@
         "path": ".role-os/specialists.json"
       },
       {
-        "commits": 20,
-        "lines": 378,
+        "commits": 21,
+        "lines": 386,
         "path": "CHANGELOG.md"
       },
       {
@@ -418,8 +418,8 @@
         "path": "SHIP_GATE.md"
       },
       {
-        "commits": 13,
-        "lines": 427,
+        "commits": 14,
+        "lines": 434,
         "path": "atlas/README.md"
       },
       {
@@ -428,18 +428,18 @@
         "path": "atlas/boundaries.yaml"
       },
       {
-        "commits": 13,
-        "lines": 1408,
+        "commits": 14,
+        "lines": 1432,
         "path": "atlas/page.json"
       },
       {
-        "commits": 13,
-        "lines": 13221,
+        "commits": 14,
+        "lines": 13521,
         "path": "atlas/statistics.json"
       },
       {
-        "commits": 13,
-        "lines": 19398,
+        "commits": 14,
+        "lines": 19527,
         "path": "atlas/structure.json"
       },
       {
@@ -1548,13 +1548,13 @@
         "path": "dossier/tune-aptitudes.mjs"
       },
       {
-        "commits": 2,
-        "lines": 8,
+        "commits": 3,
+        "lines": 12,
         "path": "package-lock.json"
       },
       {
-        "commits": 14,
-        "lines": 32,
+        "commits": 15,
+        "lines": 34,
         "path": "package.json"
       },
       {
@@ -2623,45 +2623,45 @@
     "level": "low",
     "reason": "fewer than 25 source files reach 10 revisions in the window"
   },
-  "generatedAt": "2026-10-14T22:47:21.765Z",
+  "generatedAt": "2026-10-14T22:49:47.209Z",
   "generatedFrom": {
-    "commit": "080a383a186fca6e5d92d64692aec00c8c912880"
+    "commit": "bd32c7482f98018d04047f99e98d56e42ddb2d9b"
   },
   "pairs": [
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/README.md",
-      "either": 14,
+      "either": 15,
       "shared": 8,
-      "strength": 0.571429
+      "strength": 0.533333
     },
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/page.json",
-      "either": 14,
+      "either": 15,
       "shared": 8,
-      "strength": 0.571429
+      "strength": 0.533333
     },
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/statistics.json",
-      "either": 14,
+      "either": 15,
       "shared": 8,
-      "strength": 0.571429
+      "strength": 0.533333
     },
     {
       "a": ".github/workflows/ci.yml",
       "b": "atlas/structure.json",
-      "either": 14,
+      "either": 15,
       "shared": 8,
-      "strength": 0.571429
+      "strength": 0.533333
     },
     {
       "a": "CHANGELOG.md",
       "b": "package.json",
-      "either": 18,
-      "shared": 12,
-      "strength": 0.666667
+      "either": 19,
+      "shared": 13,
+      "strength": 0.684211
     },
     {
       "a": "README.es.md",
@@ -2855,9 +2855,9 @@
     {
       "a": "README.md",
       "b": "package.json",
-      "either": 13,
+      "either": 14,
       "shared": 7,
-      "strength": 0.538462
+      "strength": 0.5
     },
     {
       "a": "README.md",
@@ -2876,43 +2876,43 @@
     {
       "a": "atlas/README.md",
       "b": "atlas/page.json",
-      "either": 9,
-      "shared": 9,
+      "either": 10,
+      "shared": 10,
       "strength": 1
     },
     {
       "a": "atlas/README.md",
       "b": "atlas/statistics.json",
-      "either": 9,
-      "shared": 9,
+      "either": 10,
+      "shared": 10,
       "strength": 1
     },
     {
       "a": "atlas/README.md",
       "b": "atlas/structure.json",
-      "either": 9,
-      "shared": 9,
+      "either": 10,
+      "shared": 10,
       "strength": 1
     },
     {
       "a": "atlas/page.json",
       "b": "atlas/statistics.json",
-      "either": 9,
-      "shared": 9,
+      "either": 10,
+      "shared": 10,
       "strength": 1
     },
     {
       "a": "atlas/page.json",
       "b": "atlas/structure.json",
-      "either": 9,
-      "shared": 9,
+      "either": 10,
+      "shared": 10,
       "strength": 1
     },
     {
       "a": "atlas/statistics.json",
       "b": "atlas/structure.json",
-      "either": 9,
-      "shared": 9,
+      "either": 10,
+      "shared": 10,
       "strength": 1
     },
     {
@@ -2940,16 +2940,16 @@
     "floor": "fallen",
     "floorHeld": false,
     "floorTrigger": "revision-depth",
-    "headDate": "2026-10-14T14:19:57-07:00",
+    "headDate": "2026-10-14T18:47:28-04:00",
     "inScopeFiles": 647,
     "pinnedStart": null,
     "priorFloor": "fallen",
-    "qualifyingCommits": 109,
+    "qualifyingCommits": 110,
     "qualifyingMinimum": 30,
     "revisions": 5,
     "shared": 10,
     "sharedFloorUsed": 3,
-    "since": "2026-04-17T21:19:57.000Z",
+    "since": "2026-04-17T22:47:28.000Z",
     "sourceExtensions": [
       ".js",
       ".mjs",
