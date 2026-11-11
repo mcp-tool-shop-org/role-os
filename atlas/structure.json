@@ -341,7 +341,7 @@
       "externals": 0,
       "files": [
         {
-          "hash": "c4f60a759d9b0d85e2344a7af5463026161df4b0e1f142fc653454cd732fa322",
+          "hash": "b74f1015c77c9779940c5f4a252d2439c3dac575bef1e302a822e505a1cf32ae",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -7453,7 +7453,7 @@
       "unresolvedSites": 3
     },
     {
-      "dynamicReads": 4,
+      "dynamicReads": 7,
       "dynamicSpawns": 0,
       "dynamicSpawnsInTests": 0,
       "dynamicWrites": 3,
@@ -8594,7 +8594,7 @@
       "origin": "mixed",
       "outsidePlaces": [
         {
-          "reads": 9,
+          "reads": 11,
           "where": [
             "caller"
           ],
@@ -8608,7 +8608,7 @@
           "writes": 2
         }
       ],
-      "outsideReads": 9,
+      "outsideReads": 11,
       "outsideWrites": 10,
       "role": "code",
       "testRunners": [
@@ -9284,9 +9284,9 @@
       "to": "src"
     }
   ],
-  "engine": "1.24.0",
+  "engine": "1.26.0",
   "generatedFrom": {
-    "commit": "bd32c7482f98018d04047f99e98d56e42ddb2d9b",
+    "commit": "43e187e91d53ac8c1fd1e56b5f208baf4aefa76f",
     "tracked": 642
   },
   "landings": [
@@ -10628,6 +10628,17 @@
     {
       "readers": [
         {
+          "by": "tools/conformance-dataset/live-tools/RECEIPT.md",
+          "call": "--test",
+          "confidence": "text"
+        }
+      ],
+      "target": "test/live-tool-contracts.test.mjs",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
           "by": "audit-manifest.json",
           "call": "configuration",
           "confidence": "config"
@@ -10786,6 +10797,12 @@
       "writers": []
     },
     {
+      "mayReaders": [
+        {
+          "by": "tools/token-budget-dataset/harvester/locate.py",
+          "pattern": "*/*.jsonl"
+        }
+      ],
       "readers": [
         {
           "by": "tools/conformance-dataset/build_conformance_dataset.py",
@@ -10813,18 +10830,8 @@
           "by": "tools/conformance-dataset/build_tool_constraints.mjs",
           "confidence": "ast"
         }
-      ]
-    },
-    {
-      "readers": [
-        {
-          "by": "tools/conformance-dataset/build_conformance_dataset.py",
-          "call": "import",
-          "confidence": "ast"
-        }
       ],
-      "target": "tools/conformance-dataset/audit.py",
-      "writers": []
+      "writesInto": true
     },
     {
       "readers": [
@@ -10836,43 +10843,6 @@
         }
       ],
       "target": "tools/conformance-dataset/certify",
-      "writers": []
-    },
-    {
-      "readers": [
-        {
-          "by": "tools/conformance-dataset/build_conformance_dataset.py",
-          "call": "import",
-          "confidence": "ast"
-        },
-        {
-          "by": "tools/conformance-dataset/certify_conformance.py",
-          "call": "import",
-          "confidence": "ast"
-        },
-        {
-          "by": "tools/conformance-dataset/conformance_puzzles.py",
-          "call": "import",
-          "confidence": "ast"
-        },
-        {
-          "by": "tools/conformance-dataset/dogfood_conformance.py",
-          "call": "import",
-          "confidence": "ast"
-        }
-      ],
-      "target": "tools/conformance-dataset/config.py",
-      "writers": []
-    },
-    {
-      "readers": [
-        {
-          "by": "tools/conformance-dataset/build_conformance_dataset.py",
-          "call": "import",
-          "confidence": "ast"
-        }
-      ],
-      "target": "tools/conformance-dataset/conformance_puzzles.py",
       "writers": []
     },
     {
@@ -11038,22 +11008,6 @@
         }
       ],
       "target": "tools/conformance-dataset/live-tools/tools.json",
-      "writers": []
-    },
-    {
-      "readers": [
-        {
-          "by": "tools/conformance-dataset/ood_floor_eval.mjs",
-          "call": "import",
-          "confidence": "ast"
-        },
-        {
-          "by": "tools/conformance-dataset/test_ood_floor_gate.mjs",
-          "call": "import",
-          "confidence": "ast"
-        }
-      ],
-      "target": "tools/conformance-dataset/ood_floor_gate.mjs",
       "writers": []
     },
     {

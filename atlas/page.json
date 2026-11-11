@@ -66,23 +66,31 @@
   "changes": {
     "fileCounts": {
       "added": 0,
-      "changed": 0,
+      "changed": 1,
       "moved": 0,
-      "parts": 0,
+      "parts": 1,
       "removed": 0
     },
     "items": [
       {
+        "kind": "landing",
+        "sentence": "test/live-tool-contracts.test.mjs is now read by tools/conformance-dataset/live-tools/RECEIPT.md.",
+        "subjects": [
+          "test/live-tool-contracts.test.mjs",
+          "tools/conformance-dataset/live-tools/RECEIPT.md"
+        ]
+      },
+      {
         "kind": "counts",
-        "sentence": "Nothing structural changed since 2026-10-14; no file changed.",
+        "sentence": "1 file changed content, across 1 part.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "080a383a186fca6e5d92d64692aec00c8c912880",
-      "generatedAt": "2026-10-14T22:47:21.765Z"
+      "commit": "bd32c7482f98018d04047f99e98d56e42ddb2d9b",
+      "generatedAt": "2026-10-14T22:49:47.209Z"
     },
-    "unchanged": true
+    "unchanged": false
   },
   "changesTogether": [
     {
@@ -121,7 +129,7 @@
     "Window: 180 days; a pair counts from 3 shared commits, since 3 source files reach 10 revisions; the floor rises to 10 when 25 do."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "bd32c7482f98018d04047f99e98d56e42ddb2d9b",
+  "commit": "43e187e91d53ac8c1fd1e56b5f208baf4aefa76f",
   "defaultBranch": "main",
   "derived": "15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.",
   "doors": [
@@ -289,7 +297,7 @@
       "to": "src"
     }
   ],
-  "engine": "1.24.0",
+  "engine": "1.26.0",
   "generated": [
     {
       "place": ".claude/role-os/tool-contracts.json",
@@ -323,6 +331,7 @@
       ]
     },
     {
+      "into": true,
       "place": "tools/conformance-dataset/",
       "writers": [
         "tools/conformance-dataset/build_conformance_dataset.py",
@@ -355,13 +364,13 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-14T22:49:47.209Z",
+  "generatedAt": "2026-11-11T22:37:09.884Z",
   "limits": [
     "3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.",
-    "16 writes and 14 reads use paths built at run time and are not named here.",
+    "16 writes and 17 reads use paths built at run time and are not named here.",
     "3 writes go to places this repository does not track, so they are not listed as generated.",
     "30 writes and 88 reads go to the directory the command is run in, not to this repository.",
-    "43 writes and 54 reads go to a path their caller passes, not to this repository.",
+    "43 writes and 56 reads go to a path their caller passes, not to this repository.",
     "23 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.",
     "8 writes and 1 read go to a temporary directory, not to this repository.",
     "8 commands are built at run time and not followed, 2 of them in tests.",
@@ -392,16 +401,27 @@
   "spawnTested": [
     "bin"
   ],
+  "startBeside": [
+    {
+      "files": [
+        "src/swarm/domain-detect.mjs",
+        "src/artifacts.mjs",
+        "src/swarm/exit-condition.mjs",
+        "src/swarm/build-gate.mjs"
+      ],
+      "from": "src/swarm-cmd.mjs"
+    }
+  ],
   "startDoor": ".github/workflows/ci.yml",
   "startHere": [
     ".github/workflows/ci.yml",
     "bin/roleos.mjs",
     "src/swarm-cmd.mjs",
-    "src/swarm/domain-detect.mjs",
     "src/run.mjs",
-    "src/artifacts.mjs",
-    "src/swarm/exit-condition.mjs",
-    "src/swarm/build-gate.mjs"
+    "src/entry.mjs",
+    "src/mission.mjs",
+    "src/packs.mjs",
+    "src/calibration.mjs"
   ],
   "summary": null,
   "summaryFrom": null,
@@ -412,6 +432,7 @@
     "src": 75,
     "tools": 3
   },
+  "testedCodeParts": 4,
   "unnamedWrites": 16,
   "unread": [],
   "unreadFiles": 0,
