@@ -1,14 +1,15 @@
 # role-os: how it works
 
-Mapped at 2026-10-14 from commit bd32c74 by Atlas 1.24.0.
+Mapped at 2026-11-11 from commit 43e187e by Atlas 1.26.0.
 
 ## What this is
 
 15 parts, mostly JavaScript (170 files), Python (30), Astro (2), CSS (2), HTML (2) and TypeScript (2). Work enters through 4 doors; the busiest is CI, which reaches 4 parts. It publishes to npm. It deploys a site to GitHub Pages. People run roleos.
 
-## What changed since 2026-10-14 (080a383)
+## What changed since 2026-10-14 (bd32c74)
 
-Nothing structural changed since 2026-10-14; no file changed.
+- test/live-tool-contracts.test.mjs is now read by tools/conformance-dataset/live-tools/RECEIPT.md.
+- 1 file changed content, across 1 part.
 
 ## What comes in
 
@@ -76,7 +77,7 @@ No two parts export a helper that looks alike.
 - **dossier/data.js** is written by dossier/build-gallery.mjs.
 - **dossier/portraits/briefs/** is written by dossier/portraits/write-prompt.mjs.
 - **dossier/portraits/web/** is written by dossier/optimize-portraits.py.
-- **tools/conformance-dataset/** is written by tools/conformance-dataset/build_conformance_dataset.py and tools/conformance-dataset/build_tool_constraints.mjs.
+- **tools/conformance-dataset/** holds files written by tools/conformance-dataset/build_conformance_dataset.py and tools/conformance-dataset/build_tool_constraints.mjs.
 - **tools/conformance-dataset/corpus_l4.json** is written by tools/conformance-dataset/author_l4.py.
 - **tools/conformance-dataset/corpus_tools.json** has a block written by tools/conformance-dataset/merge_corpus.py.
 - **tools/conformance-dataset/live-tools/corpus.json** is written by tools/conformance-dataset/live-tools/prep_inputs.mjs.
@@ -88,17 +89,19 @@ People write .github/, .role-os/, assets/, design/, examples/, the repository ro
 
 ## Where to start
 
-.github/workflows/ci.yml → bin/roleos.mjs → src/swarm-cmd.mjs → src/swarm/domain-detect.mjs → src/run.mjs → src/artifacts.mjs → src/swarm/exit-condition.mjs → src/swarm/build-gate.mjs
+.github/workflows/ci.yml → bin/roleos.mjs → src/swarm-cmd.mjs → src/run.mjs → src/entry.mjs → src/mission.mjs → src/packs.mjs → src/calibration.mjs
 
 Read those in order to follow one pull request end to end.
+
+Beside the path, src/swarm-cmd.mjs also calls src/swarm/domain-detect.mjs, src/artifacts.mjs, src/swarm/exit-condition.mjs and src/swarm/build-gate.mjs.
 
 ## What this map cannot see
 
 - 3 imports could not be resolved: `test/knowledge-integration.test.mjs` imports a path built at run time, 3 times.
-- 16 writes and 14 reads use paths built at run time and are not named here.
+- 16 writes and 17 reads use paths built at run time and are not named here.
 - 3 writes go to places this repository does not track, so they are not listed as generated.
 - 30 writes and 88 reads go to the directory the command is run in, not to this repository.
-- 43 writes and 54 reads go to a path their caller passes, not to this repository.
+- 43 writes and 56 reads go to a path their caller passes, not to this repository.
 - 23 writes and 25 reads go to the directory the command is run in or a path their caller passes, not to this repository.
 - 8 writes and 1 read go to a temporary directory, not to this repository.
 - 8 commands are built at run time and not followed, 2 of them in tests.
